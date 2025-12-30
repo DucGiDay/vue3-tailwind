@@ -8,6 +8,8 @@ module.exports = {
   theme: {
     extend: {},
     colors: {
+      "primary": '#0560A6',
+      "white": '#fff',
       "brand": {
         "25": "#FCFAFF",
         "50": "#F9F5FF",
@@ -113,8 +115,10 @@ module.exports = {
         "950": "#4E1D09",
         DEFAULT: "#F7941D",
       }
+    },
+    shadow: {
+      button: 'box-shadow: inset 0px -2px 0px 0px rgba(39, 39, 39, 0.35), inset 1.2px 0px 0px 0px rgba(255, 255, 255, 0.15), inset -1.2px 0px 0px 0px rgba(255, 255, 255, 0.15), inset 0px 1.2px 0px 0px rgba(255, 255, 255, 0.48);'
     }
-
   },
   plugins: [],
 }

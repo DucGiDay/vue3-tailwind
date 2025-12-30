@@ -1,10 +1,3 @@
-import ReportList from '../../views/ReportList.vue'
-
-export default [
-  {
-    path: '/reports',
-    name: 'Reports',
-    component: ReportList,
-    meta: { requiresAuth: true }
-  }
-]
+export const componentMap = {
+  'DuckReport': () => import('@/views/micro-report/duck-report/index.vue'),
+};

@@ -1,0 +1,6 @@
+| Mục đích             | Prompt mẫu                                                                      |
+| -------------------- | ------------------------------------------------------------------------------- |
+| Lấy dữ liệu thiết kế | `#get_design_context`                                                           |
+| Sinh code Vue 3      | `#get_design_context → generate a Vue 3 component using TailwindCSS.`           |
+| Phân tích bố cục     | `#get_design_context and describe the layout hierarchy in human-readable form.` |
+| Tạo tokens           | `#get_design_context → extract color and typography tokens as JSON.`            |
