@@ -1,0 +1,85 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git checkout stie, build and upload image to Registry') {
+            steps {
+                // sh 'git checkout $WORKSPACE'
+                // sh 'git pull origin $WORKSPACE'
+                script {
+                    /* groovylint-disable-next-line NestedBlockDepth */
+                    try {
+                        /* groovylint-disable-next-line DuplicateStringLiteral, NestedBlockDepth */
+                        if (params.WORKSPACE=="site-dev") {
+                            sh 'bash ./cicd/build_image.sh $WORKSPACE ${WORKSPACE}-${IMAGES}  $IMAGE_VERSION ${URL_PRIVATE_REGISTRY}'
+                            sh 'sudo docker images "${URL_PRIVATE_REGISTRY}/${WORKSPACE}-${IMAGES}" --digests'
+                            currentBuild.result = 'SUCCESS'
+                            // stage ('Building and uploading') {
+                            //     sh 'bash ./cicd/build_image.sh $WORKSPACE ${WORKSPACE}-${IMAGES}  $IMAGE_VERSION ${URL_PRIVATE_REGISTRY}'
+                            //     sh 'sudo docker images "${URL_PRIVATE_REGISTRY}/${WORKSPACE}-${IMAGES}" --digests'
+                            //     currentBuild.result = 'SUCCESS'
+                            // }
+                        }
+                        if (params.WORKSPACE=="site-staging") {
+                            sh 'bash ./cicd/build_image.sh $WORKSPACE ${WORKSPACE}-${IMAGES}  $IMAGE_VERSION ${URL_PRIVATE_REGISTRY}'
+                            sh 'sudo docker images "${URL_PRIVATE_REGISTRY}/${WORKSPACE}-${IMAGES}" --digests'
+                            currentBuild.result = 'SUCCESS'
+                            
+                        }
+                        if (params.WORKSPACE=="site-product") {
+                            sh 'bash ./cicd/build_image.sh $WORKSPACE ${WORKSPACE}-${IMAGES}  $IMAGE_VERSION ${URL_PRIVATE_REGISTRY}'
+                            sh 'sudo docker images "${URL_PRIVATE_REGISTRY}/${WORKSPACE}-${IMAGES}" --digests'
+                            currentBuild.result = 'SUCCESS'
+                            
+                        }
+                    }
+                    catch (err) {
+                        /* groovylint-disable-next-line DuplicateStringLiteral */
+                        currentBuild.result = 'FAILURE'
+                        echo 'BECOME SERVICES... exception occures!'
+                    }
+                    
+                }
+		    }
+        }
+        stage('Run Functional Test') {
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        currentBuild.result = 'SUCCESS'
+                        echo 'Do not thing, auto pass...'
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        echo 'FAILED IN TURNED APPLICATION TO SERVICES!'
+                    }
+                }
+            }
+        }
+        stage('Running Perfomance') {
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        echo 'Do not thing, auto pass...'
+                        currentBuild.result = 'SUCCESS'
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                        echo 'FAILED IN TURNED APPLICATION TO SERVICES!'
+                    }
+                }
+            }
+        }
+	    stage('Promote to Deverloper') {
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        echo 'Runing ..'
+                        sh 'bash ./cicd/update_image_to_service_on_k8s.sh $WORKSPACE ${WORKSPACE}-${IMAGES}  $IMAGE_VERSION ${URL_PRIVATE_REGISTRY}'
+                    } else {
+                        echo 'FAILED IN TURNED APPLICATION TO SERVICES!'
+                    }
+                }
+            }
+        }
+        
+    }
+}

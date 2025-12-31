@@ -2,6 +2,9 @@
 
 Quick starter project created for the user.
 
+## Requirements
+- Node.js 22
+
 Features:
 - Vue 3 + Vite
 - Tailwind CSS
@@ -14,7 +17,7 @@ How to run
 1. Install dependencies:
 
 ```bash
-cd c:\Users\duc.hoang01\Documents\duc\ipos\projects\vue3-starter
+cd c:\Users\duc.hoang01\Documents\duc\ipos\projects\micro-cms\fabi-cms-sub-vue3
 npm install
 ```
 
