@@ -3,6 +3,6 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
-  color: $color-text;
-  background-color: var(--color-bg);
+  color: $color-text !important;
+  background-color: var(--color-bg) !important;
 }

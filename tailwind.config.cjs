@@ -1,15 +1,25 @@
-module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{vue,js,ts,jsx,tsx}'
-  ],
+/** @type {import('tailwindcss').Config} */
+import PrimeUI from 'tailwindcss-primeui';
 
-  darkMode: 'class', // or 'media'
+export default {
+  prefix: 'fb-',
+  darkMode: ['selector', '[class*="fabi-cms-sub-dark"]'],
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  plugins: [PrimeUI],
   theme: {
     extend: {},
+    screens: {
+      sm: '576px',
+      md: '768px',
+      lg: '992px',
+      xl: '1200px',
+      '2xl': '1920px'
+    },
+
     colors: {
       "primary": '#0560A6',
-      "white": '#fff',
+      "white": '#FFFFFF',
+      "black": '#000000',
       "brand": {
         "25": "#FCFAFF",
         "50": "#F9F5FF",
@@ -116,9 +126,5 @@ module.exports = {
         DEFAULT: "#F7941D",
       }
     },
-    shadow: {
-      button: 'box-shadow: inset 0px -2px 0px 0px rgba(39, 39, 39, 0.35), inset 1.2px 0px 0px 0px rgba(255, 255, 255, 0.15), inset -1.2px 0px 0px 0px rgba(255, 255, 255, 0.15), inset 0px 1.2px 0px 0px rgba(255, 255, 255, 0.48);'
-    }
-  },
-  plugins: [],
-}
+  }
+};

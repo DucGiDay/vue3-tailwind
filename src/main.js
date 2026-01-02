@@ -2,17 +2,12 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import createAppRouter from './router'
 import { createPinia } from 'pinia'
-import './assets/styles/tailwind.css'
-import './assets/styles/main.scss'
 import { renderWithQiankun, qiankunWindow } from 'vite-plugin-qiankun/dist/helper'
 import PrimeVue from 'primevue/config';
-import Aura from '@primeuix/themes/aura';
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
-
+import MyDesignPreset from './theme/my-design-preset';
+import './assets/styles/tailwind.css'
+import './assets/styles/main.scss'
 
 let app = null
 
@@ -21,29 +16,30 @@ function render(props = {}) {
   app = createApp(App)
   app.use(createPinia());
 
-  const router = createAppRouter(props?.microRouters || []);
+  const router = createAppRouter(props?.microRouters || {});
   app.use(router)
 
   app.use(PrimeVue, {
     theme: {
-      preset: Aura,
+      preset: MyDesignPreset,
       options: {
-        darkModeSelector: '.app-dark'
+        darkModeSelector: '.fabi-cms-sub-dark',
       }
+    },
+    zIndex: {
+      modal: 1100,        //dialog, drawer
+      overlay: 1000,      //select, popover
+      menu: 1000,         //overlay menus
+      tooltip: 1100       //tooltip
     }
   });
-
-  app.component('DataTable', DataTable);
-  app.component('Column', Column);
-  app.component('ColumnGroup', ColumnGroup);
-  app.component('Row', Row);
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app')
   console.log('[sub-vue3] mounted ')
 }
 
-// 👇 Khi chạy trong Qiankun
+// Khi chạy trong Qiankun
 renderWithQiankun({
   bootstrap() {
     console.log('[sub-vue3] bootstraped')
@@ -54,7 +50,7 @@ renderWithQiankun({
       messageFromSub: 'pong'
     });
     localStorage.removeItem('router_config');
-    localStorage.setItem('router_config', JSON.stringify(props?.microRouters || []));
+    localStorage.setItem('router_config', JSON.stringify(props?.microRouters || {}));
     return Promise.resolve(render(props))
   },
   unmount() {

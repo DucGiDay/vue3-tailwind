@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import qiankun from 'vite-plugin-qiankun'
 import path from 'path'
+import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import Components from 'unplugin-vue-components/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +14,10 @@ export default defineConfig({
     qiankun('fabi-cms-sub-vue3', {
       useDevMode: true, //  cho phép chạy ở vite dev server
     }),
+
+    Components({
+      resolvers: [PrimeVueResolver()]
+    })
   ],
 
   resolve: {
