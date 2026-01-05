@@ -1,14 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@use './scss/variables' as *;
 @use 'primeicons/primeicons.css';
 @use './tailwind.css';
+
 @use '../layout/layout.scss';
 @use '../demo/demo.scss';
-
-body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif;
-  color: $color-text !important;
-  // background-color: var(--color-bg) !important;
-}

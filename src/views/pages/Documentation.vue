@@ -96,7 +96,7 @@ primevue: {
         theme: {
             preset: Aura,
             options: {
-                darkModeSelector: '.app-dark'
+                darkModeSelector: '.fabi-cms-sub-dark'
             }
         }
     }

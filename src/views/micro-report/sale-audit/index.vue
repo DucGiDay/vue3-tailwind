@@ -6,7 +6,9 @@
     </div>
 
     <!-- Filters and Actions -->
-    <div class="fb-flex fb-justify-between fb-items-center fb-mb-4 fb-bg-white fb-p-3 fb-rounded-lg fb-shadow">
+    <div
+      class="fb-flex fb-justify-between fb-items-center fb-mb-4 fb-bg-white fb-p-3 fb-rounded-lg fb-shadow"
+    >
       <div class="fb-flex fb-items-center fb-space-x-3">
         <!-- Placeholder for report-date-range-picker -->
         <div class="fb-flex fb-items-center fb-space-x-2">
@@ -24,7 +26,9 @@
       <div class="fb-flex fb-items-center fb-space-x-2">
         <Button @click="exportReport('FILTER')" variant="outlined">Xuất báo cáo</Button>
         <div v-if="isExportingReport" class="fb-flex fb-items-center fb-space-x-1">
-          <div class="fb-w-6 fb-h-6 fb-border-4 fb-border-blue-500 fb-border-t-transparent fb-rounded-full fb-animate-spin"></div>
+          <div
+            class="fb-w-6 fb-h-6 fb-border-4 fb-border-blue-500 fb-border-t-transparent fb-rounded-full fb-animate-spin"
+          ></div>
           <span>{{ percentageOfExportedData }}%</span>
         </div>
       </div>
@@ -56,19 +60,27 @@
           <MultiSelect
             :modelValue="selectedColumns"
             :options="columns"
+            filter
             optionLabel="header"
             @update:modelValue="onToggle"
             display="chip"
-            placeholder="Select Columns"
+            placeholder="Chọn cột hiển thị"
+            class="fb-w-full md:fb-w-80"
           />
         </div>
       </template>
-      <Column field="no" header="#" :reorderableColumn="false">
+      <Column field="no" header="#" :reorderableColumn="false" headerClass="!fb-bg-gray-50">
         <template #body="{ index }">
           {{ `${index + 1}` }}
-        </template></Column
+        </template>
+      </Column>
+      <Column
+        v-for="(col, index) of selectedColumns"
+        :field="col.field"
+        :header="col.header"
+        :key="col.field + '_' + index"
+        headerClass="!fb-bg-gray-50"
       >
-      <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header" :key="col.field + '_' + index">
         <template #body="{ data }">
           <Skeleton v-if="loading" />
           <span v-else>{{ data[col.field] }}</span>
@@ -83,7 +95,7 @@ import { ref, onMounted, reactive } from 'vue';
 import moment from 'moment';
 
 // --- Reactive State ---
-const dates = reactive([new Date(), new Date()]);
+let dates = reactive([new Date(), new Date()]);
 const columns = ref([
   { field: 'item_id', header: 'Mã hàng' },
   { field: 'item_name', header: 'Tên hàng' },
@@ -284,7 +296,10 @@ const fetchData = async () => {
     voucher_amount: mockData.reduce((sum, item) => sum + item.voucher_amount, 0),
     ship_fee_amount: mockData.reduce((sum, item) => sum + item.ship_fee_amount, 0),
     commission_amount: mockData.reduce((sum, item) => sum + item.commission_amount, 0),
-    partner_marketing_amount: mockData.reduce((sum, item) => sum + item.partner_marketing_amount, 0),
+    partner_marketing_amount: mockData.reduce(
+      (sum, item) => sum + item.partner_marketing_amount,
+      0
+    ),
     peo_count: mockData.reduce((sum, item) => sum + item.peo_count, 0),
     total_amount: mockData.reduce((sum, item) => sum + item.total_amount, 0)
   };

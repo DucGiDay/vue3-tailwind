@@ -1,24 +1,27 @@
 html {
   height: 100%;
-  font-size: 14px;
-  line-height: 1.2;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
-body {
-  font-family: 'Lato', sans-serif;
-  color: var(--text-color);
-  background-color: var(--surface-ground);
+body #sub-app {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
   margin: 0;
   padding: 0;
+  color: var(--text-color);
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  text-decoration: none;
-}
+#sub-app {
+  a {
+    text-decoration: none;
+  }
 
-.layout-wrapper {
-  min-height: 100vh;
+  .layout-wrapper {
+    min-height: 100vh;
+  }
 }
