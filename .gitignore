@@ -28,3 +28,10 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# lock file
+package-lock.json
+yarn.lock
+
+# Auto generated components
+components.d.ts

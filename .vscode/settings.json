@@ -1,3 +1,18 @@
 {
-    "CodeGPT.apiKey": "Gemini CLI"
+  "CodeGPT.apiKey": "Gemini CLI",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+//   "editor.wordWrap": "on",
+//   "editor.wordWrapColumn": 150
 }
