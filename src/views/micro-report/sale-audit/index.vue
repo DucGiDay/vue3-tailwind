@@ -2,7 +2,7 @@
   <div class="fb-p-4 fb-bg-gray-100 fb-min-h-screen">
     <!-- Header -->
     <div class="fb-mb-4 fb-mt-4">
-      <h1 class="fb-text-2xl fb-font-bold">Báo cáo bán hàng</h1>
+      <!-- <h1 class="fb-text-2xl fb-font-bold">Báo cáo bán hàng</h1> -->
     </div>
 
     <!-- Filters and Actions -->
@@ -10,16 +10,10 @@
       class="fb-flex fb-justify-between fb-items-center fb-mb-4 fb-bg-white fb-p-3 fb-rounded-lg fb-shadow"
     >
       <div class="fb-flex fb-items-center fb-space-x-3">
-        <!-- Placeholder for report-date-range-picker -->
-        <div class="fb-flex fb-items-center fb-space-x-2">
-          <DatePicker v-model="dates" selectionMode="range" :manualInput="false" />
-        </div>
-        <!-- Placeholder for select-cities-stores-filter -->
-        <select v-model="listStore" multiple class="fb-border fb-rounded fb-px-2 fb-py-1 fb-h-10">
-          <option value="store1">Store 1</option>
-          <option value="store2">Store 2</option>
-        </select>
-        <Button @click="filter" raised>Lọc</Button>
+        <DatePicker v-model="dates" selectionMode="range" :manualInput="false" />
+        <FbSelectCityStore
+          :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        />
       </div>
 
       <!-- Placeholder for export-button-many-choice -->
@@ -91,10 +85,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
 import moment from 'moment';
 
-// --- Reactive State ---
+// State
 let dates = reactive([new Date(), new Date()]);
 const columns = ref([
   { field: 'item_id', header: 'Mã hàng' },
@@ -133,18 +126,12 @@ const columns = ref([
   { field: 'customer_phone', header: 'SĐT KH' }
 ]);
 const selectedColumns = ref(columns.value);
-
-const listStore = ref([]);
 const items = ref([]);
 const loading = ref(false);
 const isExportingReport = ref(false);
 const percentageOfExportedData = ref(0);
 
-onMounted(() => {
-  fetchData();
-});
-
-// --- Utility Functions (replacing Vue 2 filters) ---
+// mapFilter
 const onToggle = (val) => {
   selectedColumns.value = columns.value.filter((col) => val.includes(col));
 };
@@ -185,132 +172,7 @@ const getPromotionName = (item) => {
   return '';
 };
 
-// --- Mock Data Fetching ---
-const fetchData = async () => {
-  items.value = Array.from({ length: 5 }).map((_, i) => ({
-    id: i.toString()
-  }));
-  loading.value = true;
-
-  console.log('Fetching data with filters:', {
-    dates: dates,
-    stores: listStore.value
-  });
-
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // Mock data - replace with actual API call
-  const mockData = [
-    {
-      id: '1',
-      item_id: 'ITM001',
-      item_name: 'Cà phê sữa',
-      item_type_name: 'Đồ uống',
-      item_class_name: 'Cà phê',
-      package_id: '',
-      payment_method_name: 'Tiền mặt',
-      source_name: 'Tại quán',
-      area_name: 'Tầng 1',
-      table_name: 'Bàn 1',
-      tran_id: 'TRANS_1234567890',
-      tran_no: 'TN001',
-      tran_date: '2025-12-30T10:00:00Z',
-      quantity: 2,
-      unit_id: 'Ly',
-      ots_price: 25000,
-      price: 25000,
-      amount: 50000,
-      discount_amount: 5000,
-      discount_extra_amount: 0,
-      partner_marketing_amount: 0,
-      voucher_amount: 0,
-      service_charge_amount: 2500,
-      vat_tax_rate: 0.1,
-      vat_amount: 4750,
-      deduct_tax_amount: 0,
-      discount_vat_amount: 0,
-      ship_fee_amount: 0,
-      vat_tax_reverse_amount: 0,
-      commission_amount: 0,
-      total_amount: 52250,
-      promotion_name: 'Giảm giá 10%',
-      voucher_code: 'ABCDE',
-      customer_name: 'Nguyễn Văn A',
-      peo_count: 2,
-      customer_phone: '090xxxxxxx'
-    },
-    {
-      id: '2',
-      item_id: 'ITM002',
-      item_name: 'Bánh mì',
-      item_type_name: 'Đồ ăn',
-      item_class_name: 'Bánh',
-      package_id: '',
-      payment_method_name: 'Thẻ',
-      source_name: 'Mang về',
-      area_name: '',
-      table_name: '',
-      tran_id: 'TRANS_1234567891',
-      tran_no: 'TN002',
-      tran_date: '2025-12-30T10:05:00Z',
-      quantity: 1,
-      unit_id: 'Cái',
-      ots_price: 20000,
-      price: 20000,
-      amount: 20000,
-      discount_amount: 0,
-      discount_extra_amount: 0,
-      partner_marketing_amount: 0,
-      voucher_amount: 0,
-      service_charge_amount: 0,
-      vat_tax_rate: 0.08,
-      vat_amount: 1600,
-      deduct_tax_amount: 0,
-      discount_vat_amount: 0,
-      ship_fee_amount: 0,
-      vat_tax_reverse_amount: 0,
-      commission_amount: 0,
-      total_amount: 21600,
-      promotion_name: '',
-      voucher_code: '',
-      customer_name: 'Trần Thị B',
-      peo_count: 1,
-      customer_phone: '091xxxxxxx'
-    }
-  ];
-
-  const sumRow = {
-    id: 'SUM',
-    item_id: 'SUM',
-    item_name: 'Tổng cộng',
-    quantity: mockData.reduce((sum, item) => sum + item.quantity, 0),
-    amount: mockData.reduce((sum, item) => sum + item.amount, 0),
-    discount_amount: mockData.reduce((sum, item) => sum + item.discount_amount, 0),
-    discount_extra_amount: mockData.reduce((sum, item) => sum + item.discount_extra_amount, 0),
-    service_charge_amount: mockData.reduce((sum, item) => sum + item.service_charge_amount, 0),
-    vat_tax_reverse_amount: mockData.reduce((sum, item) => sum + item.vat_tax_reverse_amount, 0),
-    vat_amount: mockData.reduce((sum, item) => sum + item.vat_amount, 0),
-    discount_vat_amount: mockData.reduce((sum, item) => sum + item.discount_vat_amount, 0),
-    deduct_tax_amount: mockData.reduce((sum, item) => sum + item.deduct_tax_amount, 0),
-    voucher_amount: mockData.reduce((sum, item) => sum + item.voucher_amount, 0),
-    ship_fee_amount: mockData.reduce((sum, item) => sum + item.ship_fee_amount, 0),
-    commission_amount: mockData.reduce((sum, item) => sum + item.commission_amount, 0),
-    partner_marketing_amount: mockData.reduce(
-      (sum, item) => sum + item.partner_marketing_amount,
-      0
-    ),
-    peo_count: mockData.reduce((sum, item) => sum + item.peo_count, 0),
-    total_amount: mockData.reduce((sum, item) => sum + item.total_amount, 0)
-  };
-
-  items.value = [...mockData, sumRow];
-  loading.value = false;
-};
-
-const filter = () => {
-  fetchData();
-};
+const filter = () => {};
 
 const exportReport = async (exportType) => {
   isExportingReport.value = true;
@@ -328,11 +190,6 @@ const exportReport = async (exportType) => {
     }
   }, 200);
 };
-
-// --- Lifecycle Hooks ---
-onMounted(() => {
-  fetchData();
-});
 </script>
 
 <style scoped>

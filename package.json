@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "preview": "vite preview",
+    "apply-local": "yes | cp src/env/env.local.js src/env.js",
+    "apply-dev": "yes | cp src/env/env.dev.js src/env.js",
+    "apply-staging": "yes | cp src/env/env.staging.js src/env.js",
+    "apply-prod": "yes | cp src/env/env.prod.js src/env.js",
+    "apply-prod_test": "yes | cp src/env/env.prod_test.js src/env.js"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.2",
@@ -34,6 +39,7 @@
     "prettier": "^3.2.5",
     "sass": "^1.55.0",
     "tailwindcss": "^3.4.6",
+    "unplugin-auto-import": "^20.3.0",
     "unplugin-vue-components": "^0.27.3",
     "vite": "^5.3.1"
   }

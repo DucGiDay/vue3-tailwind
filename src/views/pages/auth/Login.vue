@@ -1,6 +1,5 @@
 <script setup>
 import FloatingConfigurator from '@/components/PageComponent/FloatingConfigurator.vue';
-import { ref } from 'vue';
 
 const email = ref('');
 const password = ref('');

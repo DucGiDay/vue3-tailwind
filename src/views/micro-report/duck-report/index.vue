@@ -25,11 +25,7 @@
           />
         </div>
         <!-- Placeholder for select-cities-stores-filter -->
-        <select
-          v-model="listStore"
-          multiple
-          class="fb-border fb-rounded fb-px-2 fb-py-1 fb-h-10"
-        >
+        <select v-model="listStore" multiple class="fb-border fb-rounded fb-px-2 fb-py-1 fb-h-10">
           <option value="store1">Store 1</option>
           <option value="store2">Store 2</option>
         </select>
@@ -49,10 +45,7 @@
         >
           Xuất báo cáo
         </button>
-        <div
-          v-if="isExportingReport"
-          class="fb-flex fb-items-center fb-space-x-1"
-        >
+        <div v-if="isExportingReport" class="fb-flex fb-items-center fb-space-x-1">
           <div
             class="fb-w-6 fb-h-6 fb-border-4 fb-border-blue-500 fb-border-t-transparent fb-rounded-full fb-animate-spin"
           ></div>
@@ -270,22 +263,18 @@
           <tr v-if="loading" class="fb-text-center">
             <td colspan="38" class="fb-py-4">Đang tải dữ liệu...</td>
           </tr>
-          <tr
-            v-for="(item, index) in items"
-            :key="item.id"
-            class="hover:fb-bg-gray-50"
-          >
+          <tr v-for="(item, index) in items" :key="item.id" class="hover:fb-bg-gray-50">
             <td
               class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-sticky fb-left-0 fb-bg-white"
               :class="{ 'fb-font-bold': item.item_id === 'SUM' }"
             >
-              {{ item.item_id !== "SUM" ? index + 1 : "" }}
+              {{ item.item_id !== 'SUM' ? index + 1 : '' }}
             </td>
             <td
               class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-sticky fb-left-[50px] fb-bg-white"
               :class="{ 'fb-font-bold': item.item_id === 'SUM' }"
             >
-              {{ item.item_id !== "SUM" ? item.item_id : "" }}
+              {{ item.item_id !== 'SUM' ? item.item_id : '' }}
             </td>
             <td
               class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-sticky fb-left-[183px] fb-bg-white"
@@ -314,10 +303,7 @@
             <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap">
               {{ item.table_name }}
             </td>
-            <td
-              class="fb-px-6 fb-py-4 fb-whitespace-nowrap"
-              :title="item.tran_id"
-            >
+            <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap" :title="item.tran_id">
               #{{ truncateString(item.tran_id) }}
             </td>
             <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap">
@@ -378,11 +364,7 @@
               {{ formatCurrency(item.service_charge_amount) }}
             </td>
             <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-text-right">
-              {{
-                item.item_id !== "SUM"
-                  ? `${converVatToNumber(item.vat_tax_rate)}%`
-                  : ""
-              }}
+              {{ item.item_id !== 'SUM' ? `${converVatToNumber(item.vat_tax_rate)}%` : '' }}
             </td>
             <td
               class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-text-right"
@@ -439,7 +421,7 @@
               {{ getPromotionName(item) }}
             </td>
             <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-text-right">
-              {{ getPromotionName(item) && (item.voucher_code || "") }}
+              {{ getPromotionName(item) && (item.voucher_code || '') }}
             </td>
             <td class="fb-px-6 fb-py-4 fb-whitespace-nowrap fb-text-right">
               {{ item.customer_name }}
@@ -470,12 +452,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
-
 // --- Reactive State ---
 const dateRange = reactive({
   startDate: new Date().toISOString().slice(0, 10),
-  endDate: new Date().toISOString().slice(0, 10),
+  endDate: new Date().toISOString().slice(0, 10)
 });
 const listStore = ref([]);
 const items = ref([]);
@@ -485,43 +465,43 @@ const percentageOfExportedData = ref(0);
 
 // --- Utility Functions (replacing Vue 2 filters) ---
 const formatCurrency = (value, decimals = 0) => {
-  if (value === null || value === undefined) return "";
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
+  if (value === null || value === undefined) return '';
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
     minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    maximumFractionDigits: decimals
   }).format(value);
 };
 
 const formatDate = (value) => {
-  if (!value) return "";
+  if (!value) return '';
   const date = new Date(value);
-  return date.toLocaleDateString("vi-VN");
+  return date.toLocaleDateString('vi-VN');
 };
 
-const truncateString = (str = "", length = 8) => {
-  if (typeof str !== "string" || str.length <= length) return str;
-  return str.substring(0, length) + "...";
+const truncateString = (str = '', length = 8) => {
+  if (typeof str !== 'string' || str.length <= length) return str;
+  return str.substring(0, length) + '...';
 };
 
 const converVatToNumber = (vatRate) => {
-  if (typeof vatRate !== "number") return 0;
+  if (typeof vatRate !== 'number') return 0;
   return vatRate * 100;
 };
 
 const getPromotionName = (item) => {
   // Mock implementation
   if (item.promotion_name) return item.promotion_name;
-  return "";
+  return '';
 };
 
 // --- Mock Data Fetching ---
 const fetchData = async () => {
   loading.value = true;
-  console.log("Fetching data with filters:", {
+  console.log('Fetching data with filters:', {
     dates: dateRange,
-    stores: listStore.value,
+    stores: listStore.value
   });
 
   // Simulate API call
@@ -530,21 +510,21 @@ const fetchData = async () => {
   // Mock data - replace with actual API call
   const mockData = [
     {
-      id: "1",
-      item_id: "ITM001",
-      item_name: "Cà phê sữa",
-      item_type_name: "Đồ uống",
-      item_class_name: "Cà phê",
-      package_id: "",
-      payment_method_name: "Tiền mặt",
-      source_name: "Tại quán",
-      area_name: "Tầng 1",
-      table_name: "Bàn 1",
-      tran_id: "TRANS_1234567890",
-      tran_no: "TN001",
-      tran_date: "2025-12-30T10:00:00Z",
+      id: '1',
+      item_id: 'ITM001',
+      item_name: 'Cà phê sữa',
+      item_type_name: 'Đồ uống',
+      item_class_name: 'Cà phê',
+      package_id: '',
+      payment_method_name: 'Tiền mặt',
+      source_name: 'Tại quán',
+      area_name: 'Tầng 1',
+      table_name: 'Bàn 1',
+      tran_id: 'TRANS_1234567890',
+      tran_no: 'TN001',
+      tran_date: '2025-12-30T10:00:00Z',
       quantity: 2,
-      unit_id: "Ly",
+      unit_id: 'Ly',
       ots_price: 25000,
       price: 25000,
       amount: 50000,
@@ -561,28 +541,28 @@ const fetchData = async () => {
       vat_tax_reverse_amount: 0,
       commission_amount: 0,
       total_amount: 52250,
-      promotion_name: "Giảm giá 10%",
-      voucher_code: "ABCDE",
-      customer_name: "Nguyễn Văn A",
+      promotion_name: 'Giảm giá 10%',
+      voucher_code: 'ABCDE',
+      customer_name: 'Nguyễn Văn A',
       peo_count: 2,
-      customer_phone: "090xxxxxxx",
+      customer_phone: '090xxxxxxx'
     },
     {
-      id: "2",
-      item_id: "ITM002",
-      item_name: "Bánh mì",
-      item_type_name: "Đồ ăn",
-      item_class_name: "Bánh",
-      package_id: "",
-      payment_method_name: "Thẻ",
-      source_name: "Mang về",
-      area_name: "",
-      table_name: "",
-      tran_id: "TRANS_1234567891",
-      tran_no: "TN002",
-      tran_date: "2025-12-30T10:05:00Z",
+      id: '2',
+      item_id: 'ITM002',
+      item_name: 'Bánh mì',
+      item_type_name: 'Đồ ăn',
+      item_class_name: 'Bánh',
+      package_id: '',
+      payment_method_name: 'Thẻ',
+      source_name: 'Mang về',
+      area_name: '',
+      table_name: '',
+      tran_id: 'TRANS_1234567891',
+      tran_no: 'TN002',
+      tran_date: '2025-12-30T10:05:00Z',
       quantity: 1,
-      unit_id: "Cái",
+      unit_id: 'Cái',
       ots_price: 20000,
       price: 20000,
       amount: 20000,
@@ -599,63 +579,36 @@ const fetchData = async () => {
       vat_tax_reverse_amount: 0,
       commission_amount: 0,
       total_amount: 21600,
-      promotion_name: "",
-      voucher_code: "",
-      customer_name: "Trần Thị B",
+      promotion_name: '',
+      voucher_code: '',
+      customer_name: 'Trần Thị B',
       peo_count: 1,
-      customer_phone: "091xxxxxxx",
-    },
+      customer_phone: '091xxxxxxx'
+    }
   ];
 
   const sumRow = {
-    id: "SUM",
-    item_id: "SUM",
-    item_name: "Tổng cộng",
+    id: 'SUM',
+    item_id: 'SUM',
+    item_name: 'Tổng cộng',
     quantity: mockData.reduce((sum, item) => sum + item.quantity, 0),
     amount: mockData.reduce((sum, item) => sum + item.amount, 0),
-    discount_amount: mockData.reduce(
-      (sum, item) => sum + item.discount_amount,
-      0
-    ),
-    discount_extra_amount: mockData.reduce(
-      (sum, item) => sum + item.discount_extra_amount,
-      0
-    ),
-    service_charge_amount: mockData.reduce(
-      (sum, item) => sum + item.service_charge_amount,
-      0
-    ),
-    vat_tax_reverse_amount: mockData.reduce(
-      (sum, item) => sum + item.vat_tax_reverse_amount,
-      0
-    ),
+    discount_amount: mockData.reduce((sum, item) => sum + item.discount_amount, 0),
+    discount_extra_amount: mockData.reduce((sum, item) => sum + item.discount_extra_amount, 0),
+    service_charge_amount: mockData.reduce((sum, item) => sum + item.service_charge_amount, 0),
+    vat_tax_reverse_amount: mockData.reduce((sum, item) => sum + item.vat_tax_reverse_amount, 0),
     vat_amount: mockData.reduce((sum, item) => sum + item.vat_amount, 0),
-    discount_vat_amount: mockData.reduce(
-      (sum, item) => sum + item.discount_vat_amount,
-      0
-    ),
-    deduct_tax_amount: mockData.reduce(
-      (sum, item) => sum + item.deduct_tax_amount,
-      0
-    ),
-    voucher_amount: mockData.reduce(
-      (sum, item) => sum + item.voucher_amount,
-      0
-    ),
-    ship_fee_amount: mockData.reduce(
-      (sum, item) => sum + item.ship_fee_amount,
-      0
-    ),
-    commission_amount: mockData.reduce(
-      (sum, item) => sum + item.commission_amount,
-      0
-    ),
+    discount_vat_amount: mockData.reduce((sum, item) => sum + item.discount_vat_amount, 0),
+    deduct_tax_amount: mockData.reduce((sum, item) => sum + item.deduct_tax_amount, 0),
+    voucher_amount: mockData.reduce((sum, item) => sum + item.voucher_amount, 0),
+    ship_fee_amount: mockData.reduce((sum, item) => sum + item.ship_fee_amount, 0),
+    commission_amount: mockData.reduce((sum, item) => sum + item.commission_amount, 0),
     partner_marketing_amount: mockData.reduce(
       (sum, item) => sum + item.partner_marketing_amount,
       0
     ),
     peo_count: mockData.reduce((sum, item) => sum + item.peo_count, 0),
-    total_amount: mockData.reduce((sum, item) => sum + item.total_amount, 0),
+    total_amount: mockData.reduce((sum, item) => sum + item.total_amount, 0)
   };
 
   items.value = [...mockData, sumRow];
@@ -678,7 +631,7 @@ const exportReport = async (exportType) => {
     } else {
       clearInterval(progressInterval);
       isExportingReport.value = false;
-      alert("Xuất báo cáo thành công!");
+      alert('Xuất báo cáo thành công!');
     }
   }, 200);
 };

@@ -8,7 +8,12 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/eslint-config-prettier'],
+  extends: [
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
+    '@vue/eslint-config-prettier',
+    './.eslintrc-auto-import.json'
+  ],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'

@@ -35,3 +35,7 @@ yarn.lock
 
 # Auto generated components
 components.d.ts
+auto-imports.d.ts
+
+#env
+.env

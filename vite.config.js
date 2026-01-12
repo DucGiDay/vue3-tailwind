@@ -4,6 +4,7 @@ import qiankun from 'vite-plugin-qiankun';
 import path from 'path';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import Components from 'unplugin-vue-components/vite';
+import AutoImport from 'unplugin-auto-import/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,6 +19,14 @@ export default defineConfig({
     Components({
       dirs: ['src/components/Common'], // Chỉ tự động generated component nằm trong các thư mục này
       resolvers: [PrimeVueResolver()]
+    }),
+    AutoImport({
+      imports: [
+        'vue',
+        {
+          '@/common/i18n/index': ['$t']
+        }
+      ]
     })
   ],
 

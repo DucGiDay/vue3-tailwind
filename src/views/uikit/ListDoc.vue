@@ -1,6 +1,5 @@
 <script setup>
 import { ProductService } from '@/service/ProductService';
-import { onMounted, ref } from 'vue';
 
 const products = ref(null);
 const picklistProducts = ref(null);
@@ -82,7 +81,7 @@ function getSeverity(product) {
                         "
                       >
                         <span class="fb-text-surface-900 fb-font-medium fb-text-sm">{{ item.rating }}</span>
-                        <i class="pi pi-star-fill fb-text-yellow-500"></i>
+                        <i class="pi pi-star-fill fb-text-warning-500"></i>
                       </div>
                     </div>
                   </div>
@@ -141,7 +140,7 @@ function getSeverity(product) {
                         "
                       >
                         <span class="fb-text-surface-900 fb-font-medium fb-text-sm">{{ item.rating }}</span>
-                        <i class="pi pi-star-fill fb-text-yellow-500"></i>
+                        <i class="pi pi-star-fill fb-text-warning-500"></i>
                       </div>
                     </div>
                   </div>

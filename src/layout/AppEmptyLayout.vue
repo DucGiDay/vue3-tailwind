@@ -1,6 +1,5 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { computed, ref, watch } from 'vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 

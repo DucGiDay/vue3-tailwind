@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 
 const menu = ref(null);
 
@@ -26,9 +25,9 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-orange-500 fb-h-full" style="width: 50%"></div>
+            <div class="fb-bg-warning-500 fb-h-full" style="width: 50%"></div>
           </div>
-          <span class="fb-text-orange-500 fb-ml-4 fb-font-medium">%50</span>
+          <span class="fb-text-warning-500 fb-ml-4 fb-font-medium">%50</span>
         </div>
       </li>
       <li class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center md:fb-justify-between fb-mb-6">
@@ -38,9 +37,9 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-ml-0 md:fb-ml-20 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-cyan-500 fb-h-full" style="width: 16%"></div>
+            <div class="fb-bg-brand-500 fb-h-full" style="width: 16%"></div>
           </div>
-          <span class="fb-text-cyan-500 fb-ml-4 fb-font-medium">%16</span>
+          <span class="fb-text-brand-500 fb-ml-4 fb-font-medium">%16</span>
         </div>
       </li>
       <li class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center md:fb-justify-between fb-mb-6">
@@ -50,9 +49,9 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-ml-0 md:fb-ml-20 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-pink-500 fb-h-full" style="width: 67%"></div>
+            <div class="fb-bg-brand-500 fb-h-full" style="width: 67%"></div>
           </div>
-          <span class="fb-text-pink-500 fb-ml-4 fb-font-medium">%67</span>
+          <span class="fb-text-brand-500 fb-ml-4 fb-font-medium">%67</span>
         </div>
       </li>
       <li class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center md:fb-justify-between fb-mb-6">
@@ -62,7 +61,7 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-ml-0 md:fb-ml-20 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-green-500 fb-h-full" style="width: 35%"></div>
+            <div class="fb-bg-success-500 fb-h-full" style="width: 35%"></div>
           </div>
           <span class="fb-text-primary fb-ml-4 fb-font-medium">%35</span>
         </div>
@@ -74,9 +73,9 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-ml-0 md:fb-ml-20 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-purple-500 fb-h-full" style="width: 75%"></div>
+            <div class="fb-bg-brand-500 fb-h-full" style="width: 75%"></div>
           </div>
-          <span class="fb-text-purple-500 fb-ml-4 fb-font-medium">%75</span>
+          <span class="fb-text-brand-500 fb-ml-4 fb-font-medium">%75</span>
         </div>
       </li>
       <li class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center md:fb-justify-between fb-mb-6">
@@ -86,9 +85,9 @@ const items = ref([
         </div>
         <div class="fb-mt-2 md:fb-mt-0 fb-ml-0 md:fb-ml-20 fb-flex fb-items-center">
           <div class="fb-bg-surface-300 dark:fb-bg-surface-500 fb-rounded-border fb-overflow-hidden fb-w-40 lg:fb-w-24" style="height: 8px">
-            <div class="fb-bg-teal-500 fb-h-full" style="width: 40%"></div>
+            <div class="fb-bg-brand-500 fb-h-full" style="width: 40%"></div>
           </div>
-          <span class="fb-text-teal-500 fb-ml-4 fb-font-medium">%40</span>
+          <span class="fb-text-brand-500 fb-ml-4 fb-font-medium">%40</span>
         </div>
       </li>
     </ul>

@@ -2,7 +2,6 @@
 import { CustomerService } from '@/service/CustomerService';
 import { ProductService } from '@/service/ProductService';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { onBeforeMount, reactive, ref } from 'vue';
 
 const customers1 = ref(null);
 const customers2 = ref(null);
@@ -274,7 +273,7 @@ function calculateCustomerTotal(name) {
       </Column>
       <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
         <template #body="{ data }">
-          <i class="pi" :class="{ 'pi-check-circle fb-text-green-500 ': data.verified, 'pi-times-circle fb-text-red-500': !data.verified }"></i>
+          <i class="pi" :class="{ 'pi-check-circle fb-text-success-500 ': data.verified, 'pi-times-circle fb-text-error-500': !data.verified }"></i>
         </template>
         <template #filter="{ filterModel }">
           <label for="verified-filter" class="fb-font-bold"> Verified </label>

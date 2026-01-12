@@ -1,6 +1,5 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { onMounted, ref, watch } from 'vue';
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 const lineData = ref(null);
@@ -80,14 +79,14 @@ function setColorOptions() {
       {
         data: [540, 325, 702],
         backgroundColor: [
-          documentStyle.getPropertyValue('--p-indigo-500'),
-          documentStyle.getPropertyValue('--p-purple-500'),
-          documentStyle.getPropertyValue('--p-teal-500')
+          documentStyle.getPropertyValue('--p-brand-500'),
+          documentStyle.getPropertyValue('--p-brand-400'),
+          documentStyle.getPropertyValue('--p-brand-300')
         ],
         hoverBackgroundColor: [
-          documentStyle.getPropertyValue('--p-indigo-400'),
-          documentStyle.getPropertyValue('--p-purple-400'),
-          documentStyle.getPropertyValue('--p-teal-400')
+          documentStyle.getPropertyValue('--p-brand-400'),
+          documentStyle.getPropertyValue('--p-brand-300'),
+          documentStyle.getPropertyValue('--p-brand-200')
         ]
       }
     ]
@@ -161,15 +160,15 @@ function setColorOptions() {
       {
         data: [11, 16, 7, 3],
         backgroundColor: [
-          documentStyle.getPropertyValue('--p-indigo-500'),
-          documentStyle.getPropertyValue('--p-purple-500'),
-          documentStyle.getPropertyValue('--p-teal-500'),
-          documentStyle.getPropertyValue('--p-orange-500')
+          documentStyle.getPropertyValue('--p-brand-500'),
+          documentStyle.getPropertyValue('--p-brand-400'),
+          documentStyle.getPropertyValue('--p-brand-300'),
+          documentStyle.getPropertyValue('--p-warning-500')
         ],
         label: 'My dataset'
       }
     ],
-    labels: ['Indigo', 'Purple', 'Teal', 'Orange']
+    labels: ['Brand', 'Brand', 'Brand', 'Warning']
   };
 
   polarOptions.value = {
@@ -194,20 +193,20 @@ function setColorOptions() {
     datasets: [
       {
         label: 'My First dataset',
-        borderColor: documentStyle.getPropertyValue('--p-indigo-400'),
-        pointBackgroundColor: documentStyle.getPropertyValue('--p-indigo-400'),
-        pointBorderColor: documentStyle.getPropertyValue('--p-indigo-400'),
+        borderColor: documentStyle.getPropertyValue('--p-brand-400'),
+        pointBackgroundColor: documentStyle.getPropertyValue('--p-brand-400'),
+        pointBorderColor: documentStyle.getPropertyValue('--p-brand-400'),
         pointHoverBackgroundColor: textColor,
-        pointHoverBorderColor: documentStyle.getPropertyValue('--p-indigo-400'),
+        pointHoverBorderColor: documentStyle.getPropertyValue('--p-brand-400'),
         data: [65, 59, 90, 81, 56, 55, 40]
       },
       {
         label: 'My Second dataset',
-        borderColor: documentStyle.getPropertyValue('--p-purple-400'),
-        pointBackgroundColor: documentStyle.getPropertyValue('--p-purple-400'),
-        pointBorderColor: documentStyle.getPropertyValue('--p-purple-400'),
+        borderColor: documentStyle.getPropertyValue('--p-brand-300'),
+        pointBackgroundColor: documentStyle.getPropertyValue('--p-brand-300'),
+        pointBorderColor: documentStyle.getPropertyValue('--p-brand-300'),
         pointHoverBackgroundColor: textColor,
-        pointHoverBorderColor: documentStyle.getPropertyValue('--p-purple-400'),
+        pointHoverBorderColor: documentStyle.getPropertyValue('--p-brand-300'),
         data: [28, 48, 40, 19, 96, 27, 100]
       }
     ]

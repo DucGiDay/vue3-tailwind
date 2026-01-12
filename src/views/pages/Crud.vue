@@ -2,7 +2,6 @@
 import { ProductService } from '@/service/ProductService';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
 
 onMounted(() => {
   ProductService.getProducts().then((data) => (products.value = data));
@@ -227,7 +226,7 @@ function getStatusLabel(status) {
         <div>
           <label for="name" class="fb-block fb-font-bold fb-mb-3">Name</label>
           <InputText id="name" v-model.trim="product.name" required="true" autofocus :invalid="submitted && !product.name" fluid />
-          <small v-if="submitted && !product.name" class="fb-text-red-500">Name is required.</small>
+          <small v-if="submitted && !product.name" class="fb-text-error-500">Name is required.</small>
         </div>
         <div>
           <label for="description" class="fb-block fb-font-bold fb-mb-3">Description</label>

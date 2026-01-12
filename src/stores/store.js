@@ -2,6 +2,7 @@ import service from '@/service';
 import { defineStore } from 'pinia';
 export const useStoreManageStore = defineStore('store', {
   state: () => ({}),
+
   getters: {},
 
   actions: {

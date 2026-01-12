@@ -17,8 +17,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-yellow-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-users !fb-text-2xl fb-text-yellow-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-warning-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-users !fb-text-2xl fb-text-warning-700"></i>
             </div>
             <h5 class="mb-2 text-surface-900 dark:text-surface-0">Easy to Use</h5>
             <span class="text-surface-600 dark:text-surface-200">Posuere morbi leo urna molestie.</span>
@@ -37,8 +37,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-cyan-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-palette !fb-text-2xl fb-text-cyan-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-brand-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-palette !fb-text-2xl fb-text-brand-700"></i>
             </div>
             <h5 class="mb-2 text-surface-900 dark:text-surface-0">Fresh Design</h5>
             <span class="text-surface-600 dark:text-surface-200">Semper risus in hendrerit.</span>
@@ -97,8 +97,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-orange-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-star !fb-text-2xl fb-text-orange-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-warning-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-star !fb-text-2xl fb-text-warning-700"></i>
             </div>
             <div class="mt-6 mb-1 text-surface-900 dark:text-surface-0 text-xl font-semibold">Clean Code</div>
             <span class="text-surface-600 dark:text-surface-200">Condimentum lacinia quis vel eros.</span>
@@ -117,8 +117,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-pink-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-moon !fb-text-2xl fb-text-pink-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-brand-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-moon !fb-text-2xl fb-text-brand-700"></i>
             </div>
             <div class="mt-6 mb-1 text-surface-900 dark:text-surface-0 text-xl font-semibold">Dark Mode</div>
             <span class="text-surface-600 dark:text-surface-200">Convallis tellus id interdum velit laoreet.</span>
@@ -137,8 +137,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-teal-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-shopping-cart !fb-text-2xl fb-text-teal-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-brand-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-shopping-cart !fb-text-2xl fb-text-brand-700"></i>
             </div>
             <div class="mt-6 mb-1 text-surface-900 dark:text-surface-0 text-xl font-semibold">Ready to Use</div>
             <span class="text-surface-600 dark:text-surface-200">Mauris sit amet massa vitae.</span>
@@ -157,8 +157,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-blue-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-globe !fb-text-2xl fb-text-blue-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-gray-blue-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-globe !fb-text-2xl fb-text-gray-blue-700"></i>
             </div>
             <div class="mt-6 mb-1 text-surface-900 dark:text-surface-0 text-xl font-semibold">Modern Practices</div>
             <span class="text-surface-600 dark:text-surface-200">Elementum nibh tellus molestie nunc non.</span>
@@ -177,8 +177,8 @@
           "
         >
           <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-            <div class="fb-flex fb-items-center fb-justify-center fb-bg-purple-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-              <i class="pi pi-fw pi-eye !fb-text-2xl fb-text-purple-700"></i>
+            <div class="fb-flex fb-items-center fb-justify-center fb-bg-brand-200 fb-mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
+              <i class="pi pi-fw pi-eye !fb-text-2xl fb-text-brand-700"></i>
             </div>
             <div class="mt-6 mb-1 text-surface-900 dark:text-surface-0 text-xl font-semibold">Privacy</div>
             <span class="text-surface-600 dark:text-surface-200">Neque egestas congue quisque.</span>

@@ -1,5 +1,3 @@
-import { computed, reactive } from 'vue';
-
 const layoutConfig = reactive({
   preset: 'Aura',
   primary: 'emerald',
@@ -50,7 +48,9 @@ export function useLayout() {
     }
   };
 
-  const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
+  const isSidebarActive = computed(
+    () => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive
+  );
 
   const isDarkTheme = computed(() => layoutConfig.darkTheme);
 

@@ -18,24 +18,24 @@
               <span class="fb-text-5xl fb-font-bold fb-mr-2 fb-text-surface-900 dark:fb-text-surface-0">$0</span>
               <span class="fb-text-surface-600 dark:fb-text-surface-200">per month</span>
             </div>
-            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-blue-500 fb-text-white"></Button>
+            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-gray-blue-500 fb-text-white"></Button>
           </div>
           <Divider class="fb-w-full fb-bg-surface-200"></Divider>
           <ul class="fb-my-8 fb-list-none fb-p-0 fb-flex fb-text-surface-900 dark:fb-text-surface-0 fb-flex-col fb-px-8">
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Responsive Layout</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Unlimited Push Messages</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">50 Support Ticket</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Free Shipping</span>
             </li>
           </ul>
@@ -54,24 +54,24 @@
               <span class="fb-text-5xl fb-font-bold fb-mr-2 fb-text-surface-900 dark:fb-text-surface-0">$1</span>
               <span class="fb-text-surface-600 dark:fb-text-surface-200">per month</span>
             </div>
-            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-blue-500 fb-text-white"></Button>
+            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-gray-blue-500 fb-text-white"></Button>
           </div>
           <Divider class="fb-w-full fb-bg-surface-200"></Divider>
           <ul class="fb-my-8 fb-list-none fb-p-0 fb-flex fb-text-surface-900 dark:fb-text-surface-0 fb-flex-col fb-px-8">
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Responsive Layout</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Unlimited Push Messages</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">50 Support Ticket</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Free Shipping</span>
             </li>
           </ul>
@@ -90,24 +90,24 @@
               <span class="fb-text-5xl fb-font-bold fb-mr-2 fb-text-surface-900 dark:fb-text-surface-0">$5</span>
               <span class="fb-text-surface-600 dark:fb-text-surface-200">per month</span>
             </div>
-            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-blue-500 fb-text-white"></Button>
+            <Button label="Get Started" class="p-button-rounded fb-border-0 fb-ml-4 fb-font-light fb-leading-tight fb-bg-gray-blue-500 fb-text-white"></Button>
           </div>
           <Divider class="fb-w-full fb-bg-surface-200"></Divider>
           <ul class="fb-my-8 fb-list-none fb-p-0 fb-flex fb-text-surface-900 dark:fb-text-surface-0 fb-flex-col fb-px-8">
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Responsive Layout</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Unlimited Push Messages</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">50 Support Ticket</span>
             </li>
             <li class="fb-py-2">
-              <i class="pi pi-fw pi-check fb-text-xl fb-text-cyan-500 fb-mr-2"></i>
+              <i class="pi pi-fw pi-check fb-text-xl fb-text-brand-500 fb-mr-2"></i>
               <span class="fb-text-xl fb-leading-normal">Free Shipping</span>
             </li>
           </ul>
