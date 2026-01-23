@@ -31,15 +31,6 @@ function render(props = {}) {
   pinia.use(sessionStoragePlugin);
   app.use(pinia);
 
-  const globalStore = useGlobalStore();
-
-  // Gàn các global state từ Vuex Host sang Pinia Sub
-  if (props?.onGlobalStateChange) {
-    props.onGlobalStateChange((state, _prev) => {
-      globalStore.setGlobalState(state);
-    }, true);
-  }
-
   router = createAppRouter(props?.microRouters || {});
   app.use(router);
 
@@ -60,6 +51,14 @@ function render(props = {}) {
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app');
+  const globalStore = useGlobalStore();
+  // Gàn các global state từ Vuex Host sang Pinia Sub
+  if (props?.onGlobalStateChange) {
+    props.onGlobalStateChange((state, _prev) => {
+      globalStore.setGlobalState(state);
+    }, true);
+  }
+
   console.log('[sub-vue3] mounted edited');
 }
 

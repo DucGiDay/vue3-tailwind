@@ -6,6 +6,13 @@ import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 
+// const allowedOrigins = [
+//   'https://fabidev.ipos.vn',
+//   'https://fabi.ipos.vn',
+//   'https://fabi.nport.link',
+//   'http://localhost:6969'
+// ];
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -27,6 +34,32 @@ export default defineConfig({
         }
       ]
     })
+
+    // {
+    //   name: 'configure-cors',
+    //   configureServer(server) {
+    //     server.middlewares.use((req, res, next) => {
+    //       const origin = req.headers.origin;
+
+    //       // Chỉ set origin nếu nó nằm trong allowlist
+    //       if (origin && allowedOrigins.includes(origin)) {
+    //         res.setHeader('Access-Control-Allow-Origin', origin); // ← Động, không duplicate
+    //         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    //         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    //         res.setHeader('Access-Control-Allow-Credentials', 'true');
+    //       }
+
+    //       // Handle preflight
+    //       if (req.method === 'OPTIONS') {
+    //         res.statusCode = 204;
+    //         res.end();
+    //         return;
+    //       }
+
+    //       next();
+    //     });
+    //   }
+    // }
   ],
 
   resolve: {
@@ -48,11 +81,10 @@ export default defineConfig({
   server: {
     port: 5173,
     host: '0.0.0.0',
-    cors: true, 
-    // Hoặc dùng:
-    // headers: {
-    //   'Access-Control-Allow-Origin': '*'
-    // }
+
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   },
 
   base: '/',
@@ -61,7 +93,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'static',
     target: 'esnext',
-    cssCodeSplit: false, // Quan trọng cho qiankun
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         format: 'umd',
