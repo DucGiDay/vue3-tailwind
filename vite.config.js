@@ -6,6 +6,13 @@ import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 
+const allowedOrigins = [
+  'https://fabidev.ipos.vn',
+  'https://fabi.ipos.vn',
+  'https://fabi.nport.link', // Chạy https cho local
+  'http://localhost:6969'
+];
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -47,7 +54,15 @@ export default defineConfig({
   },
 
   server: {
-    port: 5173
+    port: 5173,
+    cors: {
+      origin: allowedOrigins,
+      credentials: true
+    },
+    headers: {
+      'Access-Control-Allow-Origin': allowedOrigins.join(','),
+      'Access-Control-Allow-Credentials': 'true'
+    }
     // cors: true,
     // origin: 'http://localhost:5173',
   },

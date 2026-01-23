@@ -24,6 +24,18 @@
       </div>
     </template>
 
+    <template #option="{ node }">
+      <p class="fb-text-base">
+        {{ node.label }}
+      </p>
+      <Tag
+        v-if="getFranchiseTag(node?.is_franchise)"
+        :value="getFranchiseTag(node?.is_franchise).text"
+        :severity="getFranchiseTag(node?.is_franchise).severity"
+        class="fb-text-xs"
+      ></Tag>
+    </template>
+
     <template #header>
       <div class="fb-p-2">
         <Select
@@ -67,10 +79,7 @@ const emit = defineEmits(['update:modelValue']);
 
 // State
 const expandedKeys = ref({});
-const choosenStores = ref([]);
 const selectedBusinessType = ref(-1);
-const selectedStoresInCity = ref([]);
-const storeBusinessType = ref('');
 
 // Computed
 const currentBrand = computed(() => globalStore.currentBrand);
@@ -84,32 +93,45 @@ const storeBusinessTypeOptions = computed(() => {
 });
 
 const filteredItems = computed(() => {
-  const data = (props.options || currentBrand?.value?.cities || []).map((dataStore) => ({
-    ...dataStore,
-    key: dataStore.id,
-    label: dataStore.city_name,
-    value: dataStore.city_id,
-    children: dataStore.stores
-      .filter((store) => {
-        return (
-          store.active === 1 &&
-          (storeBusinessType.value !== '' ? store.is_franchise === storeBusinessType.value : true)
-        );
-      })
-      .map((store) => ({
-        ...store,
-        key: store.id,
-        label: store.store_name,
-        value: store.store_id
-      }))
-  }));
-
+  const data = (props.options || currentBrand?.value?.cities || [])
+    .map(({ stores, ...dataStore }) => ({
+      ...dataStore,
+      key: dataStore.id,
+      label: dataStore.city_name,
+      value: dataStore.city_id,
+      children: stores
+        .filter((store) => {
+          return (
+            store.active === 1 &&
+            (selectedBusinessType.value !== -1
+              ? store.is_franchise === selectedBusinessType.value
+              : true)
+          );
+        })
+        .map((store) => ({
+          ...store,
+          key: store.id,
+          label: store.store_name,
+          value: store.store_id
+        }))
+    }))
+    .filter((city) => city.children && city.children.length);
   return data;
 });
+
 const itemSelected = computed({
+  /* Data dạng:
+    [
+      {
+        [key của city/key của store]:  {
+          checked: boolean,
+          partialChecked: boolean
+        }
+      }
+  ]
+*/
   get() {
     const stores = filterStore?.report?.stores_uid || [];
-
     if (!stores.length) {
       return null;
     }
@@ -161,42 +183,48 @@ const expandNode = (node) => {
 };
 
 const setStoreSelected = (value) => {
-  const results = [];
+  const listStoreUids = [];
   filteredItems.value.forEach((city) => {
     const isEmptyCity = !city.children || !city.children.length;
     if (!isEmptyCity) {
       city.children.forEach((store) => {
         if (value[store.key]?.checked) {
-          results.push(store.key);
+          listStoreUids.push(store.key);
         }
       });
     }
   });
-  filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: results } });
+
+  // update filter trong Pinia
+  filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
 };
 
 const getStoreSelected = (value) => {
-  console.log(value);
-
+  // Lấy danh sách tất cả các cửa hàng được chọn nhưng không bao gồm thành phố
   if (!value) return [];
-  return value.flatMap((city) => (city?.children ? [...city.children] : []));
+  // Loại bỏ value là Thành phố
+  return value.flatMap((city) => (city?.children ? [] : city));
 };
-// const toggleSelectAllStoreInCity = (cities) => {
-//   choosenStores.value = cities.flatMap((cityUid) =>
-//     filteredItems.value?.some((city) => city.id === cityUid)
-//       ? filteredItems.value.find((city) => city.id === cityUid).stores.map((store) => store.id)
-//       : []
-//   );
-
-//   selectedStoresInCity.value = [].concat(cities);
-// };
-
-// const selectAllCities = () => {
-//   const cities = filteredItems.value.filter((item) => item.stores.length).map(({ id }) => id);
-//   toggleSelectAllStoreInCity(cities);
-// };
 
 const onBusinessTypeChange = () => {
-  console.log(selectedBusinessType.value);
+  const listStoreUids = filteredItems.value
+    .flatMap((city) => (city?.children ? city?.children : []))
+    .map((store) => store.id);
+  filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+};
+
+const getFranchiseTag = (is_franchise) => {
+  if (is_franchise === undefined) return null;
+  const result = {
+    0: {
+      text: $t('STORE_LIST--BUSSINESS_TYPE_BRAND_CHAIN'),
+      severity: 'info'
+    },
+    1: {
+      text: $t('STORE_LIST--BUSSINESS_TYPE_FRANCHISE'),
+      severity: 'warn'
+    }
+  };
+  return result[is_franchise];
 };
 </script>

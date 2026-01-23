@@ -1,6 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { $t, updatePreset, updateSurfacePalette } from '@primeuix/themes';
+import { $t as t, updatePreset, updateSurfacePalette } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
@@ -537,7 +537,11 @@ const onPresetChange = () => {
   const presetValue = presets[preset.value];
   const surfacePalette = surfaces.value.find((s) => s.name === layoutConfig.surface)?.palette;
 
-  $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
+  t()
+    .preset(presetValue)
+    .preset(getPresetExt())
+    .surfacePalette(surfacePalette)
+    .use({ useDefaultOptions: true });
 };
 
 const onMenuModeChange = () => {
@@ -563,7 +567,9 @@ const onMenuModeChange = () => {
               'fb-border-none fb-w-5 fb-h-5 fb-rounded-full fb-p-0 fb-cursor-pointer fb-outline-none fb-outline-offset-1',
               { 'fb-outline-primary': layoutConfig.primary === primaryColor.name }
             ]"
-            :style="{ backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}` }"
+            :style="{
+              backgroundColor: `${primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500']}`
+            }"
           ></button>
         </div>
       </div>
@@ -592,7 +598,12 @@ const onMenuModeChange = () => {
       </div>
       <div class="fb-flex fb-flex-col fb-gap-2">
         <span class="fb-text-sm fb-text-muted-color fb-font-semibold">Presets</span>
-        <SelectButton v-model="preset" @change="onPresetChange" :options="presetOptions" :allowEmpty="false" />
+        <SelectButton
+          v-model="preset"
+          @change="onPresetChange"
+          :options="presetOptions"
+          :allowEmpty="false"
+        />
       </div>
       <div class="fb-flex fb-flex-col fb-gap-2">
         <span class="fb-text-sm fb-text-muted-color fb-font-semibold">Menu Mode</span>

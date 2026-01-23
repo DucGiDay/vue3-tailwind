@@ -4,6 +4,7 @@ import Aura from '@primeuix/themes/aura'; // aura | lara | nora
 const MyDesignPreset = definePreset(Aura, {
   semantic: {
     primary: {
+      // Màu primary
       25: '#FCFAFD',
       50: '#EEF6FC',
       100: '#CAE5FA',
@@ -15,7 +16,7 @@ const MyDesignPreset = definePreset(Aura, {
       700: '#015697',
       800: '#014981',
       900: '#023257',
-      950: '#012846',
+      950: '#012846'
     },
     colorScheme: {
       light: {

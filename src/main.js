@@ -12,6 +12,9 @@ import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
 
 let app = null;
+let offGlobalStateChange = null
+let pinia = null;
+let router = null;
 
 function render(props = {}) {
   const { container, i18n } = props;
@@ -19,13 +22,12 @@ function render(props = {}) {
 
   if (i18n) {
     setupI18n(i18n);
-
     app.config.globalProperties.$i18n = i18n;
     app.config.globalProperties.$t = i18n.t.bind(i18n);
     app.config.globalProperties.$tc = i18n.tc.bind(i18n);
   }
 
-  const pinia = createPinia();
+  pinia = createPinia();
   pinia.use(sessionStoragePlugin);
   app.use(pinia);
 
@@ -33,12 +35,12 @@ function render(props = {}) {
 
   // Gàn các global state từ Vuex Host sang Pinia Sub
   if (props?.onGlobalStateChange) {
-    props.onGlobalStateChange((state, prev) => {
+    offGlobalStateChange = props.onGlobalStateChange((state, _prev) => {
       globalStore.setGlobalState(state);
     }, true);
   }
 
-  const router = createAppRouter(props?.microRouters || {});
+  router = createAppRouter(props?.microRouters || {});
   app.use(router);
 
   app.use(PrimeVue, {
@@ -71,16 +73,27 @@ renderWithQiankun({
     props.actions.setGlobalState({
       messageFromSub: 'pong'
     });
-    // localStorage.removeItem('router_config');
-    // localStorage.setItem('router_config', JSON.stringify(props?.microRouters || {}));
     return Promise.resolve(render(props));
   },
   unmount() {
     console.log('[sub-vue3] unmount');
+    if (offGlobalStateChange) {
+      offGlobalStateChange();
+      offGlobalStateChange = null;
+    }
+
+    if (pinia) {
+      const globalStore = useGlobalStore();
+      globalStore.$reset();
+    }
+
     if (app) {
       app.unmount();
       app = null;
     }
+
+    router = null;
+    pinia = null;
     return Promise.resolve();
   }
 });

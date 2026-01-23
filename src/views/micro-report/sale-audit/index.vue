@@ -1,9 +1,9 @@
 <template>
   <div class="fb-p-4 fb-bg-gray-100 fb-min-h-screen">
     <!-- Header -->
-    <div class="fb-mb-4 fb-mt-4">
-      <!-- <h1 class="fb-text-2xl fb-font-bold">Báo cáo bán hàng</h1> -->
-    </div>
+    <!-- <div class="fb-mb-4 fb-mt-4">
+      <h1 class="fb-text-2xl fb-font-bold">Báo cáo bán hàng</h1>
+    </div> -->
 
     <!-- Filters and Actions -->
     <div
@@ -13,6 +13,16 @@
         <DatePicker v-model="dates" selectionMode="range" :manualInput="false" />
         <FbSelectCityStore
           :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        />
+        <MultiSelect
+          :modelValue="selectedColumns"
+          :options="columns"
+          filter
+          optionLabel="header"
+          @update:modelValue="onToggle"
+          display="chip"
+          placeholder="Chọn cột hiển thị"
+          class="fb-w-full md:fb-w-80"
         />
       </div>
 
@@ -38,49 +48,58 @@
     </div>
 
     <!-- Table -->
-    <DataTable
-      :value="items"
-      :reorderableColumns="true"
-      resizableColumns
-      columnResizeMode="expand"
-      stripedRows
-      showGridlines
-      :loading="loading"
-      @columnReorder="onColReorder"
-      tableStyle="min-width: 50rem"
-    >
-      <template #header>
-        <div style="text-align: left">
-          <MultiSelect
-            :modelValue="selectedColumns"
-            :options="columns"
-            filter
-            optionLabel="header"
-            @update:modelValue="onToggle"
-            display="chip"
-            placeholder="Chọn cột hiển thị"
-            class="fb-w-full md:fb-w-80"
-          />
-        </div>
-      </template>
-      <Column field="no" header="#" :reorderableColumn="false" headerClass="!fb-bg-gray-50">
-        <template #body="{ index }">
-          {{ `${index + 1}` }}
-        </template>
-      </Column>
-      <Column
-        v-for="(col, index) of selectedColumns"
-        :field="col.field"
-        :header="col.header"
-        :key="col.field + '_' + index"
-        headerClass="!fb-bg-gray-50"
+    <div class="card fb-shadow">
+      <DataTable
+        :value="items"
+        :reorderableColumns="true"
+        resizableColumns
+        columnResizeMode="expand"
+        stripedRows
+        showGridlines
+        :loading="loading"
+        @columnReorder="onColReorder"
+        tableStyle="min-width: 50rem"
       >
-        <template #body="{ data }">
-          <Skeleton v-if="loading" />
-          <span v-else>{{ data[col.field] }}</span>
-        </template>
-      </Column>
-    </DataTable>
+        <!-- <template #header>
+          <div style="text-align: left">
+            <MultiSelect
+              :modelValue="selectedColumns"
+              :options="columns"
+              filter
+              optionLabel="header"
+              @update:modelValue="onToggle"
+              display="chip"
+              placeholder="Chọn cột hiển thị"
+              class="fb-w-full md:fb-w-80"
+            />
+          </div>
+        </template> -->
+        <Column
+          field="no"
+          header="#"
+          :reorderableColumn="false"
+          headerClass="!fb-bg-gray-50 fb-rounded-ss-lg"
+          bodyClass="fb-rounded-es-lg"
+        >
+          <template #body="{ index }">
+            {{ `${index + 1}` }}
+          </template>
+        </Column>
+        <Column
+          v-for="(col, index) of selectedColumns"
+          :field="col.field"
+          :header="col.header"
+          :key="col.field + '_' + index"
+          headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg"
+          bodyClass="last:fb-rounded-ee-lg"
+        >
+          <template #body="{ data }">
+            <Skeleton v-if="loading" />
+            <span v-else>{{ data[col.field] }}</span>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
   </div>
 </template>
 
@@ -126,7 +145,7 @@ const columns = ref([
   { field: 'customer_phone', header: 'SĐT KH' }
 ]);
 const selectedColumns = ref(columns.value);
-const items = ref([]);
+const items = ref([{}]);
 const loading = ref(false);
 const isExportingReport = ref(false);
 const percentageOfExportedData = ref(0);
