@@ -12,7 +12,7 @@ import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
 
 let app = null;
-let offGlobalStateChange = null
+// let offGlobalStateChange = null;
 let pinia = null;
 let router = null;
 
@@ -35,7 +35,7 @@ function render(props = {}) {
 
   // Gàn các global state từ Vuex Host sang Pinia Sub
   if (props?.onGlobalStateChange) {
-    offGlobalStateChange = props.onGlobalStateChange((state, _prev) => {
+    props.onGlobalStateChange((state, _prev) => {
       globalStore.setGlobalState(state);
     }, true);
   }
@@ -60,7 +60,7 @@ function render(props = {}) {
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app');
-  console.log('[sub-vue3] mounted ');
+  console.log('[sub-vue3] mounted edited');
 }
 
 // Khi chạy trong Qiankun
@@ -77,23 +77,23 @@ renderWithQiankun({
   },
   unmount() {
     console.log('[sub-vue3] unmount');
-    if (offGlobalStateChange) {
-      offGlobalStateChange();
-      offGlobalStateChange = null;
-    }
+    // if (offGlobalStateChange) {
+    //   offGlobalStateChange();
+    //   offGlobalStateChange = null;
+    // }
 
-    if (pinia) {
-      const globalStore = useGlobalStore();
-      globalStore.$reset();
-    }
+    // if (pinia) {
+    //   const globalStore = useGlobalStore();
+    //   globalStore.$reset();
+    // }
 
     if (app) {
       app.unmount();
       app = null;
     }
 
-    router = null;
-    pinia = null;
+    // router = null;
+    // pinia = null;
     return Promise.resolve();
   }
 });
