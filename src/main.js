@@ -51,9 +51,9 @@ function render(props = {}) {
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app');
-  const globalStore = useGlobalStore();
   // Gàn các global state từ Vuex Host sang Pinia Sub
   if (props?.onGlobalStateChange) {
+    const globalStore = useGlobalStore();
     props.onGlobalStateChange((state, _prev) => {
       globalStore.setGlobalState(state);
     }, true);
