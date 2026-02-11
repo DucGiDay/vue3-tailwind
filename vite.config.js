@@ -80,8 +80,8 @@ export default defineConfig({
 
   server: {
     port: 5173,
-    host: '0.0.0.0',
-    allowedHosts: ['sub-fabi.nport.link', 'localhost'],
+    // host: '0.0.0.0',
+    allowedHosts: ['sub-fabi.nport.link', 'localhost', 'cms.iposdev.com', 'cms.ipos.com'],
     headers: {
       'Access-Control-Allow-Origin': '*'
     }
