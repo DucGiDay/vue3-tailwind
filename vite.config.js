@@ -80,14 +80,17 @@ export default defineConfig({
 
   server: {
     port: 5173,
-    // host: '0.0.0.0',
+    host: '0.0.0.0',
+    // cors: true,
     allowedHosts: ['sub-fabi.nport.link', 'localhost', 'cms.iposdev.com', 'cms.ipos.com'],
     headers: {
       'Access-Control-Allow-Origin': '*'
+      // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      // 'Access-Control-Allow-Headers': 'Content-Type'
     }
   },
 
-  base: '/',
+  // base: '/',
 
   build: {
     outDir: 'dist',
