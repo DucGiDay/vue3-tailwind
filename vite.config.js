@@ -90,7 +90,7 @@ export default defineConfig({
     }
   },
 
-  // base: '/',
+  base: 'https://cms.iposdev.com/',
 
   build: {
     outDir: 'dist',
