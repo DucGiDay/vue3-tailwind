@@ -1,3 +1,4 @@
+// main.js
 import App from './App.vue';
 import createAppRouter from './router';
 import { createPinia } from 'pinia';
@@ -12,11 +13,12 @@ import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
 
 let app = null;
-// let offGlobalStateChange = null;
+let offGlobalStateChange = null;
 let pinia = null;
 let router = null;
 
 function render(props = {}) {
+  
   const { container, i18n } = props;
   app = createApp(App);
 
@@ -54,7 +56,7 @@ function render(props = {}) {
   // Gàn các global state từ Vuex Host sang Pinia Sub
   if (props?.onGlobalStateChange) {
     const globalStore = useGlobalStore();
-    props.onGlobalStateChange((state, _prev) => {
+    offGlobalStateChange = props.onGlobalStateChange((state, _prev) => {
       globalStore.setGlobalState(state);
     }, true);
   }
@@ -76,23 +78,28 @@ renderWithQiankun({
   },
   unmount() {
     console.log('[sub-vue3] unmount');
-    // if (offGlobalStateChange) {
-    //   offGlobalStateChange();
-    //   offGlobalStateChange = null;
-    // }
 
-    // if (pinia) {
-    //   const globalStore = useGlobalStore();
-    //   globalStore.$reset();
-    // }
+    if (offGlobalStateChange) {
+      offGlobalStateChange();
+      offGlobalStateChange = null;
+    }
+
+    if (pinia) {
+      pinia._s.forEach((store) => {
+        store.$dispose?.();
+      });
+      pinia = null;
+    }
+
+    if (router) {
+      router = null;
+    }
 
     if (app) {
       app.unmount();
       app = null;
     }
 
-    // router = null;
-    // pinia = null;
     return Promise.resolve();
   }
 });

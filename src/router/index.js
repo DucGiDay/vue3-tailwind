@@ -1,30 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { pascalToKebab } from '@/common/ulties';
 import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
+import { settingComponentMap } from './modules/setting';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
 import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 
-const mapMicroRouters = (microRouters, parentComponentName = '') => {
-  return (microRouters || []).map((route) => {
-    const path = route.path;
-    const componentPath =
-      parentComponentName +
-      '/' +
-      pascalToKebab(route.name) +
-      (route?.redirect ? '' : route?.meta?.viewType === 'list' ? '/index.vue' : '.vue');
-    // const component = route?.redirect ? null : () => import('../views' + componentPath);
-    const component = route?.redirect ? null : reportComponentMap[route?.name] || NotFound;
-    const children = route.children ? mapMicroRouters(route.children, componentPath) : [];
+const componentMap = {
+  MicroReport: reportComponentMap,
+  Setting: settingComponentMap
+};
+
+const mapMicroRouters = (routes, inheritedAbstractName = '') => {
+  let activeAbstractName = inheritedAbstractName;
+
+  return (routes || []).map((route) => {
+    const { path, name, children, meta = {} } = route;
+    const isAbstract = meta.isAbstractRoute;
+
+    // Nếu route hiện tại là abstract → update activeAbstractName
+    activeAbstractName = isAbstract ? name : inheritedAbstractName;
+
+    // Abstract routes không có component thực
+    const component = isAbstract ? null : componentMap?.[activeAbstractName]?.[name] || NotFound;
+
+    // Đệ quy xử lý children routes
+    const mappedChildren = children ? mapMicroRouters(children, activeAbstractName) : [];
+
     return {
       path,
-      name: route.name,
+      name,
       component,
-      children,
-      meta: route?.meta || {}
+      children: mappedChildren,
+      meta
     };
   });
 };
@@ -37,6 +47,7 @@ const createAppRouter = (microRouter) => {
           path: '/' + route.path
         }))
       : reportRouters;
+
   const routes = [
     {
       path: '/',

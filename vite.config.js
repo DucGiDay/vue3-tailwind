@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import qiankun from 'vite-plugin-qiankun';
 import path from 'path';
@@ -13,98 +13,104 @@ import AutoImport from 'unplugin-auto-import/vite';
 //   'http://localhost:6969'
 // ];
 
-export default defineConfig({
-  plugins: [
-    vue(),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
 
-    qiankun('fabi-cms-sub-vue3', {
-      useDevMode: true
-    }),
+  return {
+    plugins: [
+      vue(),
 
-    Components({
-      dirs: ['src/components/Common'],
-      resolvers: [PrimeVueResolver()]
-    }),
+      qiankun('fabi-cms-sub-vue3', {
+        useDevMode: true
+      }),
 
-    AutoImport({
-      imports: [
-        'vue',
-        {
-          '@/common/i18n/index': ['$t']
+      // Tự động import các component trong '/components/Common' và component Primevue
+      Components({
+        dirs: ['src/components/Common'],
+        resolvers: [PrimeVueResolver()]
+      }),
+
+      // Tự động import $t để xử lý i18n
+      AutoImport({
+        imports: [
+          'vue',
+          {
+            '@/common/i18n/index': ['$t']
+          }
+        ]
+      })
+
+      // {
+      //   name: 'configure-cors',
+      //   configureServer(server) {
+      //     server.middlewares.use((req, res, next) => {
+      //       const origin = req.headers.origin;
+
+      //       // Chỉ set origin nếu nó nằm trong allowlist
+      //       if (origin && allowedOrigins.includes(origin)) {
+      //         res.setHeader('Access-Control-Allow-Origin', origin); // ← Động, không duplicate
+      //         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      //         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      //         res.setHeader('Access-Control-Allow-Credentials', 'true');
+      //       }
+
+      //       // Handle preflight
+      //       if (req.method === 'OPTIONS') {
+      //         res.statusCode = 204;
+      //         res.end();
+      //         return;
+      //       }
+
+      //       next();
+      //     });
+      //   }
+      // }
+    ],
+
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+        vue: 'vue/dist/vue.esm-bundler.js'
+      }
+    },
+
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use "@/assets/styles/scss/_variables.scss" as *;`,
+          silenceDeprecations: ['legacy-js-api']
         }
-      ]
-    })
+      }
+    },
 
-    // {
-    //   name: 'configure-cors',
-    //   configureServer(server) {
-    //     server.middlewares.use((req, res, next) => {
-    //       const origin = req.headers.origin;
+    server: {
+      port: 5173,
+      host: '0.0.0.0',
+      cors: true,
+      allowedHosts: ['sub-fabi.nport.link', 'localhost', 'cms.iposdev.com', 'cms.ipos.com'],
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+        // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        // 'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    },
 
-    //       // Chỉ set origin nếu nó nằm trong allowlist
-    //       if (origin && allowedOrigins.includes(origin)) {
-    //         res.setHeader('Access-Control-Allow-Origin', origin); // ← Động, không duplicate
-    //         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    //         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    //         res.setHeader('Access-Control-Allow-Credentials', 'true');
-    //       }
+    base: env.VITE_BASE_URL,
 
-    //       // Handle preflight
-    //       if (req.method === 'OPTIONS') {
-    //         res.statusCode = 204;
-    //         res.end();
-    //         return;
-    //       }
-
-    //       next();
-    //     });
-    //   }
-    // }
-  ],
-
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      vue: 'vue/dist/vue.esm-bundler.js'
-    }
-  },
-
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "@/assets/styles/scss/_variables.scss" as *;`,
-        silenceDeprecations: ['legacy-js-api']
+    build: {
+      outDir: 'dist',
+      assetsDir: 'static',
+      target: 'esnext',
+      cssCodeSplit: false,
+      rollupOptions: {
+        output: {
+          format: 'system',
+          name: 'fabiCmsSubVue3',
+          entryFileNames: 'js/[name].js',
+          chunkFileNames: 'js/[name].js',
+          assetFileNames: 'static/[name].[ext]'
+        }
       }
     }
-  },
-
-  server: {
-    port: 5173,
-    host: '0.0.0.0',
-    // cors: true,
-    allowedHosts: ['sub-fabi.nport.link', 'localhost', 'cms.iposdev.com', 'cms.ipos.com'],
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-      // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      // 'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  },
-
-  base: 'https://cms.iposdev.com/',
-
-  build: {
-    outDir: 'dist',
-    assetsDir: 'static',
-    target: 'esnext',
-    cssCodeSplit: false,
-    rollupOptions: {
-      output: {
-        format: 'umd',
-        name: 'fabiCmsSubVue3',
-        entryFileNames: 'js/[name].js',
-        chunkFileNames: 'js/[name].js',
-        assetFileNames: 'static/[name].[ext]'
-      }
-    }
-  }
+  };
 });
