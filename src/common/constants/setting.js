@@ -1,0 +1,67 @@
+export const ORDER_STATUS = {
+  PAYING: 'PAYING',
+  PENDING: 'PENDING',
+  RECEIVED: 'RECEIVED',
+  PROCESSED: 'PROCESSED',
+  SHIPPING: 'SHIPPING',
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED'
+};
+
+export const ORDER_STATUS_COLOR = {
+  PAYING: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAYING'),
+    class: 'fb-text-warning-700 fb-bg-warning-100'
+  },
+  PENDING: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PENDING'),
+    class: 'fb-text-[#6B7280] fb-bg-[#F3F4F6]' // xám
+  },
+  RECEIVED: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--RECEIVED'),
+    class: 'fb-text-[#2563EB] fb-bg-[#DBEAFE]' // xanh dương
+  },
+  PROCESSED: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PROCESSED'),
+    class: 'fb-text-[#7C3AED] fb-bg-[#EDE9FE]' // tím
+  },
+  SHIPPING: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--SHIPPING'),
+    class: 'fb-text-[#D97706] fb-bg-[#FEF3C7]' // cam
+  },
+  COMPLETED: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--COMPLETED'),
+    class: 'fb-text-success-700 fb-bg-success-100'
+  },
+  CANCELED: {
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--CANCELED'),
+    class: 'fb-text-[#DC2626] fb-bg-[#FEE2E2]' // đỏ
+  }
+};
+
+export const ORDER_STATUS_FILTER_LIST = [
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAYING'),
+    code: ORDER_STATUS.PAYING
+  },
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PENDING'),
+    code: ORDER_STATUS.PENDING
+  },
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--RECEIVED'),
+    code: ORDER_STATUS.RECEIVED
+  },
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PROCESSED'),
+    code: ORDER_STATUS.PROCESSED
+  },
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--SHIPPING'),
+    code: ORDER_STATUS.SHIPPING
+  },
+  {
+    name: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--COMPLETED'),
+    code: ORDER_STATUS.COMPLETED
+  }
+];

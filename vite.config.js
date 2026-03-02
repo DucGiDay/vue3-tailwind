@@ -95,7 +95,7 @@ export default defineConfig(({ mode }) => {
       }
     },
 
-    base: env.VITE_BASE_URL,
+    base: env.VITE_SUB_APP_URL,
 
     build: {
       outDir: 'dist',

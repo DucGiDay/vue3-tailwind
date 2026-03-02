@@ -1,6 +1,6 @@
 <template>
-  <div class="fb-p-4 fb-min-h-screen">
-    <!-- Filters and Actions -->
+  <div class="fb-p-4 fb-min-h-[calc(100dvh-60px)]">
+    <!-- START Toolbar -->
     <div
       :class="[
         'fb-flex fb-justify-between fb-items-center fb-mb-4 fb-bg-white fb-p-3 fb-rounded-lg fb-shadow',
@@ -26,21 +26,8 @@
           class="fb-w-full md:fb-w-80"
         />
       </div>
-
-      <!-- Action bar -->
-      <div class="fb-flex fb-items-center fb-space-x-2">
-        <slot name="action-button" />
-        <slot v-if="showExport" name="export-button">
-          <Button @click="exportReport('FILTER')" variant="outlined">Xuất báo cáo</Button>
-          <div v-if="isExportingReport" class="fb-flex fb-items-center fb-space-x-1">
-            <div
-              class="fb-w-6 fb-h-6 fb-border-4 fb-border-blue-500 fb-border-t-transparent fb-rounded-full fb-animate-spin"
-            ></div>
-            <span>{{ percentageOfExportedData }}%</span>
-          </div>
-        </slot>
-      </div>
     </div>
+    <!-- END Toolbar -->
 
     <!-- Guide Text -->
     <slot name="guide-text">
@@ -58,9 +45,15 @@
       <FbTable
         :selectedColumns="selectedColumns"
         :items="items"
+        :is-loading="isLoading"
         :resizableColumns="resizableColumns"
         :reorderableColumns="reorderableColumns"
-      />
+        v-bind="$attrs"
+      >
+        <template v-for="(_, name) in $slots" #[name]="slotProps">
+          <slot :name="name" v-bind="slotProps ?? {}" />
+        </template>
+      </FbTable>
     </div>
   </div>
 </template>
@@ -85,7 +78,11 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: () => []
+    default: () => [{}]
+  },
+  isLoading: {
+    type: Boolean,
+    default: false
   },
   reorderableColumns: {
     type: Boolean,

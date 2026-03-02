@@ -15,3 +15,8 @@ export const pascalToCamel = (str) => {
   if (!str) return str;
   return str[0].toLowerCase() + str.slice(1);
 };
+
+export const formatCurrency = (value) => {
+  if (!value) return '';
+  return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+};

@@ -1,5 +1,10 @@
 <template>
-  <FbTableView :columns="tableColumns" :show-export="false">
+  <FbTableView
+    :columns="tableColumns"
+    :show-export="false"
+    :is-loading="isLoading"
+    :items="orderHistory"
+  >
     <template #filter>
       <IconField>
         <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
@@ -20,44 +25,73 @@
             />
           </svg>
         </InputIcon>
-        <InputText v-model="value1" placeholder="Tìm kiếm mã hóa đơn" size="small" />
+        <InputText v-model="searchField" placeholder="Tìm kiếm mã hóa đơn" size="small" />
       </IconField>
 
       <Select
-        v-model="selectedCity"
-        :options="cities"
+        v-model="statusField"
+        :options="statusOptions"
         optionLabel="name"
-        placeholder="Select a City"
-        class="w-full md:w-56"
+        placeholder="Chọn trạng thái"
+        class="fb-w-full md:fb-w-56"
         size="small"
       />
     </template>
     <template #guide-text>
       <div></div>
     </template>
+    <template #deliveryInfo="{ record }">
+      {{ record?.receiverName }}
+    </template>
+    <template #amount="{ record }">
+      {{ formatCurrency(record) }}
+    </template>
+    <template #status="{ record }">
+      <span
+        :class="statusMap(record)?.class"
+        class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
+      >
+        {{ statusMap(record)?.label }}
+      </span>
+    </template>
+    <template #action>
+      <span class="fb-text-primary">Thanh toán lại</span>
+    </template>
   </FbTableView>
 </template>
 
 <script setup>
-import InputIcon from 'primevue/inputicon';
+import { ORDER_STATUS_FILTER_LIST, ORDER_STATUS_COLOR } from '@/common/constants/setting';
+import { useSettingStore } from '@/stores/setting';
+import { useGlobalStore } from '@/stores/global';
+import { storeToRefs } from 'pinia';
+import { formatCurrency } from '@/common/ulties';
 
 const tableColumns = [
-  { field: 'tran_id', header: 'Mã hóa đơn' },
-  { field: 'customer', header: 'Người liên hệ' },
-  { field: 'phone_number', header: 'Số điện thoại' },
-  { field: 'email', header: 'Email' },
-  { field: 'total', header: 'Tổng tiền' },
-  { field: 'status', header: 'Trạng thái' }
+  { field: 'orderCode', header: 'Mã hóa đơn' },
+  { field: 'deliveryInfo', header: 'Người liên hệ' },
+  { field: 'contactPhone', header: 'Số điện thoại' },
+  { field: 'companyTaxEmail', header: 'Email' },
+  { field: 'amount', header: 'Tổng tiền' },
+  { field: 'status', header: 'Trạng thái' },
+  { field: 'action', header: '' }
 ];
+const searchField = ref('');
+const statusField = ref(null);
+const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }, ...ORDER_STATUS_FILTER_LIST]);
+const statusMap = (status) => {
+  return ORDER_STATUS_COLOR[status];
+};
 
-const value1 = ref('');
+// stores
+const settingStore = useSettingStore();
+const globalStore = useGlobalStore();
+const { orderHistory, isLoading } = storeToRefs(settingStore);
 
-const selectedCity = ref();
-const cities = ref([
-  { name: 'New York', code: 'NY' },
-  { name: 'Rome', code: 'RM' },
-  { name: 'London', code: 'LDN' },
-  { name: 'Istanbul', code: 'IST' },
-  { name: 'Paris', code: 'PRS' }
-]);
+onMounted(() => {
+  settingStore.getListOrderHistory({
+    companyId: globalStore?.currentUser?.company_id,
+    page: 1
+  });
+});
 </script>
