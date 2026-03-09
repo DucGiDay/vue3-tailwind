@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
-import { settingComponentMap } from './modules/setting';
+import { extendLicenseComponentMap } from './modules/extend-license.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
@@ -10,7 +10,7 @@ import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 
 const componentMap = {
   MicroReport: reportComponentMap,
-  Setting: settingComponentMap
+  ExtendLicense: extendLicenseComponentMap
 };
 
 const mapMicroRouters = (routes, inheritedAbstractName = '') => {
@@ -79,15 +79,6 @@ const createAppRouter = (microRouter) => {
     history: createWebHistory(qiankunWindow.__POWERED_BY_QIANKUN__ ? '/micro' : '/'),
     routes
   });
-
-  // router.beforeEach((to, from) => {
-  //   if (to.meta && to.meta.requiresAuth) {
-  //     const token = localStorage.getItem('token');
-  //     if (!token) {
-  //       return { name: 'Login', query: { redirect: to.fullPath } };
-  //     }
-  //   }
-  // });
 
   return router;
 };

@@ -17,6 +17,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
+    optimizeDeps: {
+      noDiscovery: mode !== 'development'
+    },
+
     plugins: [
       vue(),
 

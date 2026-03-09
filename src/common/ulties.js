@@ -20,3 +20,18 @@ export const formatCurrency = (value) => {
   if (!value) return '';
   return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 };
+
+export const wait = (miliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, miliseconds));
+};
+
+export const withRetry = async (fn, retries = 3, delay = 1000) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt)); // delay tăng dần
+    }
+  }
+};

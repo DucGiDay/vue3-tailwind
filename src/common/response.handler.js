@@ -1,0 +1,35 @@
+export const handleReportResponse = (response) => {
+  if (!response?.success) {
+    throw new Error(response?.data?.message || response?.message || 'Có lỗi xảy ra');
+  }
+
+  return {
+    data: response.data?.data ?? [],
+    next_cursor: response.data?.next_cursor?.last_tran_date || response.data?.next_cursor || null,
+    last_id: next_cursor?.last_id || null,
+    last_tran_id: next_cursor?.last_tran_id || null,
+    error: null,
+    meta: response?.data ?? {}
+  };
+};
+
+export const handleListResponse = (response) => {
+  if (!response?.success) {
+    throw new Error(response?.data?.message || response?.message || 'Có lỗi xảy ra');
+  }
+
+  return {
+    data: response.data?.data ?? [],
+    error: null,
+    meta: response?.data ?? {}
+  };
+};
+
+export const handleListHasTotalPageResponse = (response) => {
+
+  return {
+    data: response.data?.data ?? [],
+    error: null,
+    meta: response?.data ?? {}
+  };
+};

@@ -43,7 +43,7 @@
     <!-- Table -->
     <div class="card fb-shadow">
       <FbTable
-        :selectedColumns="selectedColumns"
+        :columns="selectedColumns"
         :items="items"
         :is-loading="isLoading"
         :resizableColumns="resizableColumns"
@@ -64,8 +64,6 @@ import moment from 'moment';
 // State
 let dates = reactive([new Date(), new Date()]);
 const selectedColumns = ref([]);
-const isExportingReport = ref(false);
-const percentageOfExportedData = ref(0);
 
 // Props
 const props = defineProps({
@@ -78,7 +76,7 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: () => [{}]
+    default: () => []
   },
   isLoading: {
     type: Boolean,
@@ -127,6 +125,4 @@ const formatDate = (value) => {
   const date = new Date(value);
   return moment(date).format('DD/MM/YYYY HH:mm');
 };
-
-const exportReport = async (exportType) => {};
 </script>

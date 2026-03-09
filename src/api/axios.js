@@ -27,8 +27,6 @@ instance.interceptors.response.use(
   (response) => response.data, // unwrap data luôn
   async (error) => {
     const { response } = error;
-    console.log(response);
-    console.log(error);
 
     if (response?.status === 401) {
       const authStore = useAuthStore();

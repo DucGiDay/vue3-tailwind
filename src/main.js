@@ -4,6 +4,8 @@ import createAppRouter from './router';
 import { createPinia } from 'pinia';
 import { renderWithQiankun, qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 import { useGlobalStore } from './stores/global';
 import { sessionStoragePlugin } from './common/plugins/session-storage-plugin';
 import { setupI18n } from './common/i18n';
@@ -18,7 +20,6 @@ let pinia = null;
 let router = null;
 
 function render(props = {}) {
-  
   const { container, i18n } = props;
   app = createApp(App);
 
@@ -50,6 +51,8 @@ function render(props = {}) {
       tooltip: 1100 //tooltip
     }
   });
+  app.use(ToastService);
+  app.use(ConfirmationService);
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app');

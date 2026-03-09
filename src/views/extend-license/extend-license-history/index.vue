@@ -3,7 +3,8 @@
     :columns="tableColumns"
     :show-export="false"
     :is-loading="isLoading"
-    :items="orderHistory"
+    :items="orderHistory.data"
+    :scrollable="false"
   >
     <template #filter>
       <IconField>
@@ -61,15 +62,15 @@
 </template>
 
 <script setup>
-import { ORDER_STATUS_FILTER_LIST, ORDER_STATUS_COLOR } from '@/common/constants/setting';
-import { useSettingStore } from '@/stores/setting';
+import { ORDER_STATUS_FILTER_LIST, ORDER_STATUS_COLOR } from '@/common/constant/extend-license.constant';
+import { useExtendLicenseServiceStore } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global';
 import { storeToRefs } from 'pinia';
 import { formatCurrency } from '@/common/ulties';
 
 const tableColumns = [
-  { field: 'orderCode', header: 'Mã hóa đơn' },
-  { field: 'deliveryInfo', header: 'Người liên hệ' },
+  { field: 'roCode', header: 'Mã hóa đơn' },
+  { field: 'contactName', header: 'Người liên hệ' },
   { field: 'contactPhone', header: 'Số điện thoại' },
   { field: 'companyTaxEmail', header: 'Email' },
   { field: 'amount', header: 'Tổng tiền' },
@@ -84,12 +85,12 @@ const statusMap = (status) => {
 };
 
 // stores
-const settingStore = useSettingStore();
+const extendLicenseServiceStore = useExtendLicenseServiceStore();
 const globalStore = useGlobalStore();
-const { orderHistory, isLoading } = storeToRefs(settingStore);
+const { orderHistory, isLoading } = storeToRefs(extendLicenseServiceStore);
 
 onMounted(() => {
-  settingStore.getListOrderHistory({
+  extendLicenseServiceStore.getListOrderHistory({
     companyId: globalStore?.currentUser?.company_id,
     page: 1
   });
