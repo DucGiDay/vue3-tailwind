@@ -25,6 +25,14 @@ export const useExtendLicenseServiceStore = defineStore('extendLicenseService', 
       } finally {
         this.isLoading = false;
       }
+    },
+    async getQRPayment(params) {
+      try {
+        const response = await extendLicenseService.getQRPayment(params);
+        return response;
+      } catch (err) {
+        return err?.message;
+      }
     }
   }
 });

@@ -26,10 +26,10 @@ export const handleListResponse = (response) => {
 };
 
 export const handleListHasTotalPageResponse = (response) => {
-
+  const { data = [], ...meta } = response?.data || {};
   return {
-    data: response.data?.data ?? [],
+    data,
     error: null,
-    meta: response?.data ?? {}
+    meta
   };
 };

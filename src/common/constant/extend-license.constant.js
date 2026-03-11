@@ -1,37 +1,42 @@
 export const ORDER_STATUS = {
+  PENDING: 'PENDING', //chờ thanh toán
   PAYING: 'PAYING',
-  PENDING: 'PENDING',
   RECEIVED: 'RECEIVED',
   PROCESSED: 'PROCESSED',
   SHIPPING: 'SHIPPING',
   COMPLETED: 'COMPLETED',
-  CANCELED: 'CANCELED',
-  WAIT_QUALIFY: 'WAIT_QUALIFY'
+  WAIT_QUALIFY: 'WAIT_QUALIFY',
+  CANCELED: 'CANCELED'
 };
 
 export const ORDER_STATUS_COLOR = {
   PAYING: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAYING'),
-    class: 'fb-text-warning-700 fb-bg-warning-100'
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
+    class: 'fb-text-success-700 fb-bg-success-100'
   },
   PENDING: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PENDING'),
-    class: 'fb-text-[#6B7280] fb-bg-[#F3F4F6]' // xám
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--WAIT_TO_PAID'),
+    // class: 'fb-text-[#6B7280] fb-bg-[#F3F4F6]' // xám
+    class: 'fb-text-warning-700 fb-bg-warning-100'
   },
   RECEIVED: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--RECEIVED'),
-    class: 'fb-text-[#2563EB] fb-bg-[#DBEAFE]' // xanh dương
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
+    // class: 'fb-text-[#2563EB] fb-bg-[#DBEAFE]' // xanh dương
+
+    class: 'fb-text-success-700 fb-bg-success-100'
   },
   PROCESSED: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PROCESSED'),
-    class: 'fb-text-[#7C3AED] fb-bg-[#EDE9FE]' // tím
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
+    // class: 'fb-text-[#7C3AED] fb-bg-[#EDE9FE]' // tím
+    class: 'fb-text-success-700 fb-bg-success-100'
   },
   SHIPPING: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--SHIPPING'),
-    class: 'fb-text-[#D97706] fb-bg-[#FEF3C7]' // cam
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
+    // class: 'fb-text-[#D97706] fb-bg-[#FEF3C7]' // cam
+    class: 'fb-text-success-700 fb-bg-success-100'
   },
   COMPLETED: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--COMPLETED'),
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
     class: 'fb-text-success-700 fb-bg-success-100'
   },
   CANCELED: {
@@ -39,8 +44,9 @@ export const ORDER_STATUS_COLOR = {
     class: 'fb-text-[#DC2626] fb-bg-[#FEE2E2]' // đỏ
   },
   WAIT_QUALIFY: {
-    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--WAIT_QUALIFY'),
-    class: 'fb-text-warning-700 fb-bg-warning-100'
+    label: $t('MARKETPLACE_CONSTANT--ORDER_STATUS_FILTER_LIST--PAID'),
+    // class: 'fb-text-warning-700 fb-bg-warning-100'
+    class: 'fb-text-success-700 fb-bg-success-100'
   }
 };
 

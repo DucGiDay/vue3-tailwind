@@ -38,6 +38,4 @@ components.d.ts
 auto-imports.d.ts
 
 #env
-.env
-.env.development
-.env.production
+.env.development.local

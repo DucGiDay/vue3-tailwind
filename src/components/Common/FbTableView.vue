@@ -46,7 +46,6 @@
         :columns="selectedColumns"
         :items="items"
         :is-loading="isLoading"
-        :resizableColumns="resizableColumns"
         :reorderableColumns="reorderableColumns"
         v-bind="$attrs"
       >
@@ -86,10 +85,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  resizableColumns: {
-    type: Boolean,
-    default: false
-  },
+ 
   showFilter: {
     type: Boolean,
     default: true

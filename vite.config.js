@@ -15,6 +15,8 @@ import AutoImport from 'unplugin-auto-import/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
+  console.log('BASE URL:', env.VITE_SUB_APP_URL); // check giá trị
+  console.log(mode);
 
   return {
     optimizeDeps: {
@@ -43,32 +45,6 @@ export default defineConfig(({ mode }) => {
           }
         ]
       })
-
-      // {
-      //   name: 'configure-cors',
-      //   configureServer(server) {
-      //     server.middlewares.use((req, res, next) => {
-      //       const origin = req.headers.origin;
-
-      //       // Chỉ set origin nếu nó nằm trong allowlist
-      //       if (origin && allowedOrigins.includes(origin)) {
-      //         res.setHeader('Access-Control-Allow-Origin', origin); // ← Động, không duplicate
-      //         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      //         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      //         res.setHeader('Access-Control-Allow-Credentials', 'true');
-      //       }
-
-      //       // Handle preflight
-      //       if (req.method === 'OPTIONS') {
-      //         res.statusCode = 204;
-      //         res.end();
-      //         return;
-      //       }
-
-      //       next();
-      //     });
-      //   }
-      // }
     ],
 
     resolve: {
