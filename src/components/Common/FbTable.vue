@@ -240,7 +240,7 @@ import moment from 'moment';
 import { formatCurrency, getAssetUrl } from '@/common/ulties';
 import { useToast } from 'primevue/usetoast';
 
-const trashIcon = getAssetUrl('/images/icon/trash.svg');
+const trashIcon = getAssetUrl('@/assets/img/icon/trash.svg');
 const toast = useToast();
 
 // Props

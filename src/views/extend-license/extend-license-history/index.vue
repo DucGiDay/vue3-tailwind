@@ -67,8 +67,6 @@
         <Button size="small" variant="text" @click="togglePayingDialog(row)">Thanh toán lại</Button>
         <Button size="small" variant="text" severity="contrast" @click="toggleConfirmDialog(row)">
           <img :src="trashIcon" alt="Trash icon" />
-          <img :src="trashIconPath" alt="Trash icon" />
-          <img src="@/assets/img/icon/trash.svg" alt="Trash icon" />
         </Button>
       </div>
     </template>
@@ -122,10 +120,9 @@ import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.v
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
-import trashIconPath from '@/assets/img/icon/trash.svg'
 
 // Constants
-const trashIcon = getAssetUrl('/images/icon/trash.svg');
+const trashIcon = getAssetUrl('@/assets/img/icon/trash.svg');
 const tableColumns = [
   { field: 'roCode', header: 'Mã hóa đơn' },
   { field: 'contactName', header: 'Người liên hệ' },

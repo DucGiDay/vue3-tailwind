@@ -404,11 +404,11 @@ import QrcodeVue from 'qrcode.vue';
 import { useToast } from 'primevue/usetoast';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { formatCurrency, getAssetUrl } from '@/common/ulties';
-const logoIposText = getAssetUrl('/src/assets/img/logo/logo-ipos-text.png');
-const logoMomoText = getAssetUrl('/src/assets/img/logo/logo-momo-text.png');
-const logoVietqrText = getAssetUrl('/src/assets/img/logo/logo-vietqr-text.png');
-const logoNapasText = getAssetUrl('/src/assets/img/logo/logo-napas-text.png');
-const logoMomo = getAssetUrl('/src/assets/img/logo/logo-momo.png');
+const logoIposText = getAssetUrl('@/assets/img/logo/logo-ipos-text.png');
+const logoMomoText = getAssetUrl('@/assets/img/logo/logo-momo-text.png');
+const logoVietqrText = getAssetUrl('@/assets/img/logo/logo-vietqr-text.png');
+const logoNapasText = getAssetUrl('@/assets/img/logo/logo-napas-text.png');
+const logoMomo = getAssetUrl('@/assets/img/logo/logo-momo.png');
 
 // ── Props ──────────────────────────────────────────────────────────────
 const props = defineProps({

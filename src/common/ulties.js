@@ -43,14 +43,14 @@ export const withRetry = async (fn, retries = 3, delay = 1000) => {
  * Helper này prepend BASE_URL (vd: http://localhost:5173/) để trỏ đúng sub-app.
  *
  * Cách dùng:
- *   import img from '@/assets/img/photo.png'
- *   const imgUrl = getAssetUrl(img)
+ *   const imgUrl = getAssetUrl('@/assets/img/photo.png')
  *   <img :src="imgUrl" />
  */
 export const getAssetUrl = (importedUrl) => {
-  const base = import.meta.env.VITE_SUB_APP_URL;  
-  if (base && base.startsWith('http') && importedUrl.startsWith('/')) {
-    return base.replace(/\/$/, '') + importedUrl;
+  const base = import.meta.env.VITE_SUB_APP_URL;
+
+  if (base && base.startsWith('http://localhost') && importedUrl.startsWith('@/')) {
+    return base.replace(/\/$/, '') + importedUrl.replace('@', '/src');
   }
   return importedUrl;
 };
