@@ -47,13 +47,12 @@ export const withRetry = async (fn, retries = 3, delay = 1000) => {
  *   <img :src="imgUrl" />
  */
 export const getAssetUrl = (importedUrl) => {
-  const base = import.meta.env.VITE_SUB_APP_URL;
-
-  if (base && base.startsWith('http://localhost') && importedUrl.startsWith('@/')) {
-    return base.replace(/\/$/, '') + importedUrl.replace('@', '/src');
+  const base = import.meta.env.VITE_SUB_APP_URL
+  if (base && base.startsWith('http') && importedUrl.startsWith('/')) {
+    return base.replace(/\/$/, '') + importedUrl
   }
-  return importedUrl;
-};
+  return importedUrl
+}
 
 export const setCookie = (name, value, minutes) => {
   const date = new Date();

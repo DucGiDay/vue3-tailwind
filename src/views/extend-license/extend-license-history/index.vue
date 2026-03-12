@@ -121,8 +121,11 @@ import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.v
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
+import trashIconPath from '@/assets/img/icon/trash.svg' // Vite resolve thành URL thật
+
 // Constants
-const trashIcon = getAssetUrl('@/assets/img/icon/trash.svg');
+const trashIcon = getAssetUrl(trashIconPath) // truyền URL đã resolve
+
 const tableColumns = [
   { field: 'roCode', header: 'Mã hóa đơn' },
   { field: 'contactName', header: 'Người liên hệ' },
