@@ -77,20 +77,20 @@ export default defineConfig(({ mode }) => {
 
     base: env.VITE_SUB_APP_URL,
 
-    build: {
-      outDir: 'dist',
-      assetsDir: 'static',
-      target: 'esnext',
-      cssCodeSplit: false,
-      rollupOptions: {
-        output: {
-          format: 'system',
-          name: 'fabiCmsSubVue3',
-          entryFileNames: 'js/[name].js',
-          chunkFileNames: 'js/[name].js',
-          assetFileNames: 'static/[name].[ext]'
-        }
-      }
-    }
+    // build: {
+    //   outDir: 'dist',
+    //   assetsDir: 'static',
+    //   target: 'esnext',
+    //   cssCodeSplit: false,
+    //   rollupOptions: {
+    //     output: {
+    //       format: 'system',
+    //       name: 'fabiCmsSubVue3',
+    //       entryFileNames: 'js/[name].js',
+    //       chunkFileNames: 'js/[name].js',
+    //       assetFileNames: 'static/[name].[ext]'
+    //     }
+    //   }
+    // }
   };
 });
