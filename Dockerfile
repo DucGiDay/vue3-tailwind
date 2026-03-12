@@ -10,8 +10,16 @@ RUN npm install
 
 # Copy toàn bộ mã nguồn và build ứng dụng
 COPY . .
-RUN npm run build
+ARG WORKSPACE=site-product
 
+RUN if [ "$WORKSPACE" = "site-product" ]; then \
+      npm run build:prod; \
+    elif [ "$WORKSPACE" = "site-staging" ]; then \
+      npm run build:staging; \
+    else \
+      npm run build:dev; \
+    fi
+    
 # Stage 2: Serve với nginx
 FROM nginx:stable-alpine
 
