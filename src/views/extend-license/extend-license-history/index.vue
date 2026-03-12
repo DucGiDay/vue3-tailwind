@@ -122,7 +122,7 @@ import { extendLicenseService } from '@/api/services/extend-license/extend-licen
 import { useToast } from 'primevue/usetoast';
 
 // Constants
-const trashIcon = getAssetUrl('/src/assets/img/icon/trash.svg');
+const trashIcon = getAssetUrl('/images/icon/trash.svg');
 const tableColumns = [
   { field: 'roCode', header: 'Mã hóa đơn' },
   { field: 'contactName', header: 'Người liên hệ' },
