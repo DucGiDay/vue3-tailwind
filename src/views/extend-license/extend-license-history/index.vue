@@ -102,10 +102,9 @@
   <ModalPayingOrder
     v-model:visible="displayPaying"
     :item="selectedItem"
-    @success="onPayingSuccess"
+    @success="reloadTable"
     @hide="onHidePaying"
   />
-
 </template>
 
 <script setup>
@@ -174,17 +173,20 @@ const onDeleteItem = async () => {
     if (!selectedItem.value?.roCode) throw new Error('Không tìm thấy roCode');
 
     const payload = {
-      status: 'CANCELED',
+      // status: 'CANCELED',
       orderCode: selectedItem.value?.roCode,
-      cancelNote: reason.value
+      cancelNote: reason.value,
+      _id: selectedItem.value?._id
     };
     isLoading.value = true;
     displayConfirmation.value = false;
-    const response = await extendLicenseService.updateStatusOrder(payload);
+    const response = await extendLicenseService.cancelOrder(payload);
     if (response.error)
       toast.add({ severity: 'error', summary: response.error?.message, life: 3000 });
-    else toast.add({ severity: 'success', summary: 'Hủy đơn thành công', life: 3000 });
-
+    else {
+      toast.add({ severity: 'success', summary: 'Hủy đơn thành công', life: 3000 });
+      await reloadTable();
+    }
   } catch (error) {
     displayConfirmation.value = true;
     console.error(error?.message);
@@ -193,7 +195,7 @@ const onDeleteItem = async () => {
   }
 };
 
-const onPayingSuccess = async () => {
+const reloadTable = async () => {
   await getData();
 };
 

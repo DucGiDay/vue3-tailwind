@@ -6,5 +6,6 @@ export const extendLicenseService = {
   getQRPayment: (params) => api.get(EXTEND_LICENSE_ENDPOINTS.QR_PAYMENT, { params }),
   checkPayment: (params) => api.get(EXTEND_LICENSE_ENDPOINTS.CHECK_PAYMENT, { params }),
 
-  updateStatusOrder: (payload) => api.post(EXTEND_LICENSE_ENDPOINTS.UPDATE_STATUS_ORDER, payload)
+  updateStatusOrder: (payload) => api.post(EXTEND_LICENSE_ENDPOINTS.UPDATE_STATUS_ORDER, payload),
+  cancelOrder: (payload) => api.post(EXTEND_LICENSE_ENDPOINTS.CANCEL_ORDER, payload)
 };
