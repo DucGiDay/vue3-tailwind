@@ -54,8 +54,9 @@
 </template>
 <script setup>
 import { formatCurrency, getAssetUrl } from '@/common/ulties';
+import trashIconPath from '@/assets/img/icon/trash.svg';
 
-const trashIcon = getAssetUrl('@/assets/img/icon/trash.svg');
+const trashIcon = getAssetUrl(trashIconPath);
 
 // Props
 const props = defineProps({
