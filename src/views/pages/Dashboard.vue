@@ -9,12 +9,11 @@ const SUB_APP_URL = import.meta.env.VITE_SUB_APP_URL;
 </script>
 
 <template>
-  {{ mode }}
-  {{ SUB_APP_URL }}
   <div class="fb-grid fb-grid-cols-12 fb-gap-8">
     <StatsWidget />
 
     <div class="fb-col-span-12 xl:fb-col-span-6">
+      <div class="card">{{ mode }} {{ SUB_APP_URL }}</div>
       <RecentSalesWidget />
       <BestSellingWidget />
     </div>
