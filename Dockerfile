@@ -12,14 +12,8 @@ RUN npm install
 COPY . .
 ARG WORKSPACE=site-product
 
-RUN if [ "$WORKSPACE" = "site-product" ]; then \
-      npm run build:prod; \
-    elif [ "$WORKSPACE" = "site-staging" ]; then \
-      npm run build:staging; \
-    else \
-      npm run build:dev; \
-    fi
-    
+RUN npm run build:${WORKSPACE}
+
 # Stage 2: Serve với nginx
 FROM nginx:stable-alpine
 

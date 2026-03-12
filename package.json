@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "build:staging": "vite build --mode staging",
-    "build:prod": "vite build --mode production",
+    "build:site-dev": "vite build --mode development",
+    "build:site-staging": "vite build --mode staging",
+    "build:site-product": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@primeuix/themes": "^2.0.2",
+    "@primeuiPx/themes": "^2.0.2",
     "axios": "^1.11.0",
     "chart.js": "3.3.2",
     "moment": "^2.30.1",
