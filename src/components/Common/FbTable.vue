@@ -235,13 +235,12 @@
 </template>
 
 <script setup>
-import trashIconPath from '@/assets/img/icon/trash.svg';
 import { onMounted, ref, computed, watch } from 'vue';
 import moment from 'moment';
 import { formatCurrency, getAssetUrl } from '@/common/ulties';
 import { useToast } from 'primevue/usetoast';
 
-const trashIcon = getAssetUrl(trashIconPath);
+const trashIcon = getAssetUrl('/images/icon/trash.svg');
 const toast = useToast();
 
 // Props
