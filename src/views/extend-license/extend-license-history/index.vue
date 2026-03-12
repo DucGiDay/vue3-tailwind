@@ -68,6 +68,7 @@
         <Button size="small" variant="text" severity="contrast" @click="toggleConfirmDialog(row)">
           <img :src="trashIcon" alt="Trash icon" />
           <img :src="trashIconPath" alt="Trash icon" />
+          <img src="@/assets/img/icon/trash.svg" alt="Trash icon" />
         </Button>
       </div>
     </template>
