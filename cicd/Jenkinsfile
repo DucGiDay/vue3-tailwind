@@ -80,6 +80,40 @@ pipeline {
                 }
             }
         }
+        stage('Notify Telegram') {
+            steps {
+                script {
+                    if (params.WORKSPACE=="site-product"){
+                    // Telegram bot info
+                    def telegramToken_2 = "5963974462:AAH4drQ2VL2BCvytrG0qAfPWoYZSH-nK0uE"       // Thay bằng token bot của bạn
+                    def chatId_2 = "-553492641"              // Thay bằng chat ID group hoặc user
+                    // Lấy tên người trigger build
+                    // def logPath = "${env.JENKINS_HOME}/jobs/${env.JOB_NAME}/builds/${env.BUILD_NUMBER}/log"
+                    // def startedBy = sh(
+                    //     script: "grep -i 'Started by user' ${logPath} || true",
+                    //     returnStdout: true
+                    // ).trim()
+                    // buildUser = startedBy.replaceFirst(/(?i)Started by user\s+/, "")
+                    // def parts = buildUser.split(/\s+/)
+                    // def lastTwo = parts.size() >= 3 ? parts[-2..-1].join(" ") : buildUser
+                    def commitHash = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    def commitAuthor = sh(script: "git log -1 --pretty=%an", returnStdout: true).trim()
+                    def message = currentBuild.result == 'SUCCESS' ?
+                    "✅ Build ${env.JOB_NAME}\nBuild number: #${env.BUILD_NUMBER} thành công!\nCommit Hash: ${commitHash}\nCommit Message: ${commitMessage}\ncommit Author: ${commitAuthor}\nConsole log: ${env.BUILD_URL}console" :
+                    "❌ Build ${env.JOB_NAME}\nBuild number: #${env.BUILD_NUMBER} thất bại!\nCommit Hash: ${commitHash}\nCommit Message: ${commitMessage}\ncommit Author: ${commitAuthor}\nConsole log: ${env.BUILD_URL}console"
+                    // Gửi message tới Telegram
+                    sh """
+                    curl -s -X POST "https://api.telegram.org/bot${telegramToken_2}/sendMessage" \
+                    -d chat_id=${chatId_2} \
+                    -d text="${message}"
+                    """
+                    } else {
+                        echo "Ignore Send Notifacation deploy on workspace ${WORKSPACE}"
+                    }
+                }
+            }
+        }
         
     }
 }
