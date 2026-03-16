@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { handleListHasTotalPageResponse } from '@/common/response.handler';
 
-export const useExtendLicenseServiceStore = defineStore('extendLicenseService', {
+export const useExtendLicenseStore = defineStore('extendLicense', {
   state: () => ({
     orderHistory: {},
     isLoading: false,

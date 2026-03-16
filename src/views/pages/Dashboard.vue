@@ -13,7 +13,9 @@ const SUB_APP_URL = import.meta.env.VITE_SUB_APP_URL;
     <StatsWidget />
 
     <div class="fb-col-span-12 xl:fb-col-span-6">
-      <div class="card">{{ mode }} {{ SUB_APP_URL }}</div>
+      <div class="card">
+        {{ mode }} {{ SUB_APP_URL }}
+      </div>
       <RecentSalesWidget />
       <BestSellingWidget />
     </div>

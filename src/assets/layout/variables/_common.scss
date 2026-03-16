@@ -1,8 +1,14 @@
 :root {
+  // Ghi đè variables của primevue
+  --p-content-border-radius: var(--p-border-radius-lg) !important;
+  --p-select-border-radius: var(--p-border-radius-lg) !important;
+  --p-inputtext-border-radius: var(--p-border-radius-lg) !important;
+
+  // Varables của project
   --primary-color: var(--p-primary-color);
+  --primary-light-color: var(--p-primary-50);
   --primary-contrast-color: var(--p-primary-contrast-color);
   --text-color: var(--p-text-color);
-  // --text-color: pink;
   --text-color-secondary: var(--p-text-muted-color);
   --surface-border: var(--p-content-border-color);
   --surface-card: var(--p-content-background);

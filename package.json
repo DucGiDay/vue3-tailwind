@@ -19,7 +19,7 @@
     "primeicons": "^7.0.0",
     "primevue": "^4.3.1",
     "qiankun": "^2.10.16",
-    "qrcode.vue": "^3.8.0",
+    "quill": "^2.0.3",
     "tailwindcss-primeui": "^0.5.0",
     "vite-plugin-qiankun": "^1.0.15",
     "vue": "^3.4.34",

@@ -25,7 +25,7 @@
 </template>
 <script setup>
 import PayingComponent from '@/components/PageComponent/extend-license/PayingComponent.vue';
-import { useExtendLicenseServiceStore } from '@/stores/extend-license.store';
+import { useExtendLicense } from '@/stores/extend-license.store';
 import { setCookie, getCookie } from '@/common/ulties';
 
 // Props
@@ -39,7 +39,7 @@ const emit = defineEmits(['success', 'hide']);
 const visible = defineModel('visible', { default: false });
 
 // Stores
-const extendLicenseServiceStore = useExtendLicenseServiceStore();
+const extendLicenseStore = useExtendLicense();
 
 // States
 const isLoading = ref(false);
@@ -72,7 +72,7 @@ const getQRCode = async () => {
     returnUrl: 'https://fabidev.ipos.vn/shop/extend-license-status'
   };
   isLoading.value = true;
-  const response = await extendLicenseServiceStore.getQRPayment(payload);
+  const response = await extendLicenseStore.getQRPayment(payload);
   qrCode.value = response;
 
   // Nếu thành công thì lưu vào cookie (100 phút = 1 giờ 40 phút)

@@ -66,7 +66,7 @@
       <div v-if="row?.status === 'PENDING' && row.amount > 0" class="fb-flex fb-items-center">
         <Button size="small" variant="text" @click="togglePayingDialog(row)">Thanh toán lại</Button>
         <Button size="small" variant="text" severity="contrast" @click="toggleConfirmDialog(row)">
-          <img :src="trashIcon" alt="Trash icon" />
+          <IconTrash />
         </Button>
       </div>
     </template>
@@ -112,19 +112,16 @@ import {
   ORDER_STATUS_FILTER_LIST,
   ORDER_STATUS_COLOR
 } from '@/common/constant/extend-license.constant';
-import { useExtendLicenseServiceStore } from '@/stores/extend-license.store';
+import { useExtendLicense } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global';
 import { storeToRefs } from 'pinia';
-import { formatCurrency, getAssetUrl } from '@/common/ulties';
+import { formatCurrency } from '@/common/ulties';
 import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.vue';
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
-import trashIconPath from '@/assets/img/icon/trash.svg';
 
 // Constants
-const trashIcon = getAssetUrl(trashIconPath);
-
 const tableColumns = [
   { field: 'roCode', header: 'Mã hóa đơn' },
   { field: 'contactName', header: 'Người liên hệ' },
@@ -153,15 +150,15 @@ const selectedItem = ref({});
 const reason = ref('Hủy đơn từ CMS');
 
 // Stores
-const extendLicenseServiceStore = useExtendLicenseServiceStore();
+const extendLicenseStore = useExtendLicense();
 const globalStore = useGlobalStore();
-const { orderHistory, isLoading } = storeToRefs(extendLicenseServiceStore);
+const { orderHistory, isLoading } = storeToRefs(extendLicenseStore);
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
   currentPage.value = page || currentPage.value;
   numPerPage.value = rows || numPerPage.value;
-  await extendLicenseServiceStore.getListOrderHistory({
+  await extendLicenseStore.getListOrderHistory({
     companyId: globalStore?.currentUser?.company_id,
     page: currentPage.value,
     numPerPage: numPerPage.value
