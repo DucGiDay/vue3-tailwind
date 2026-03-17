@@ -21,19 +21,13 @@ export const formatCurrency = (value) => {
   return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 };
 
-export const wait = (miliseconds) => {
-  return new Promise((resolve) => setTimeout(resolve, miliseconds));
+export const formatNumber = (value) => {
+  if (value === null || value === undefined || isNaN(value)) return '';
+  return Number(value).toLocaleString('en-US');
 };
 
-export const withRetry = async (fn, retries = 3, delay = 1000) => {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (attempt === retries) throw err;
-      await new Promise((resolve) => setTimeout(resolve, delay * attempt)); // delay tăng dần
-    }
-  }
+export const wait = (miliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, miliseconds));
 };
 
 /**
@@ -43,16 +37,17 @@ export const withRetry = async (fn, retries = 3, delay = 1000) => {
  * Helper này prepend BASE_URL (vd: http://localhost:5173/) để trỏ đúng sub-app.
  *
  * Cách dùng:
- *   const imgUrl = getAssetUrl('@/assets/img/photo.png')
+ *   import imgPath from '@/assets/img/photo.png'
+ *   const imgUrl = getAssetUrl(imgPath)
  *   <img :src="imgUrl" />
  */
-export const getAssetUrl = (importedUrl) => {  
-  const base = import.meta.env.VITE_SUB_APP_URL
+export const getAssetUrl = (importedUrl) => {
+  const base = import.meta.env.VITE_SUB_APP_URL;
   if (base && base.startsWith('http') && importedUrl.startsWith('/')) {
-    return base.replace(/\/$/, '') + importedUrl
+    return base.replace(/\/$/, '') + importedUrl;
   }
-  return importedUrl
-}
+  return importedUrl;
+};
 
 export const setCookie = (name, value, minutes) => {
   const date = new Date();

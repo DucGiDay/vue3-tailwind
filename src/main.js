@@ -6,7 +6,7 @@ import { renderWithQiankun, qiankunWindow } from 'vite-plugin-qiankun/dist/helpe
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
-import { useGlobalStore } from './stores/global';
+import { useGlobalStore } from './stores/global.store';
 import { sessionStoragePlugin } from './common/plugins/session-storage-plugin';
 import { setupI18n } from './common/i18n';
 

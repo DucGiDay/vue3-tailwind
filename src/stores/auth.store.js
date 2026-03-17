@@ -1,4 +1,4 @@
-// stores/auth.js
+// stores/auth.store.js
 import { defineStore } from 'pinia';
 import { authService } from '@/api/services/auth/auth.service';
 

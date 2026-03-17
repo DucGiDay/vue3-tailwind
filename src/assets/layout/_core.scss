@@ -128,4 +128,12 @@ body #sub-app {
   .layout-wrapper {
     min-height: 100vh;
   }
+
+  .p-button:focus-visible {
+    outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  }
+  .p-button:focus {
+    outline-color: transparent;
+    // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  }
 }

@@ -10,6 +10,17 @@ export const useGlobalStore = defineStore('global', {
     currentUser: {}
   }),
 
+  getters: {
+    storesAccessibleInCurrentBrand(state) {
+      const cities = state.currentBrand.cities || [];
+      return cities.flatMap((city) => city.stores);
+    },
+
+    storesIdAccessibleInCurrentBrand(_) {
+      return this.storesAccessibleInCurrentBrand.map((store) => store.id);
+    }
+  },
+
   actions: {
     setGlobalState(state) {
       if (!state || typeof state !== 'object') return;

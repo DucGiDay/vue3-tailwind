@@ -112,8 +112,8 @@ import {
   ORDER_STATUS_FILTER_LIST,
   ORDER_STATUS_COLOR
 } from '@/common/constant/extend-license.constant';
-import { useExtendLicense } from '@/stores/extend-license.store';
-import { useGlobalStore } from '@/stores/global';
+import { useExtendLicenseStore } from '@/stores/extend-license.store';
+import { useGlobalStore } from '@/stores/global.store';
 import { storeToRefs } from 'pinia';
 import { formatCurrency } from '@/common/ulties';
 import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.vue';
@@ -150,7 +150,7 @@ const selectedItem = ref({});
 const reason = ref('Hủy đơn từ CMS');
 
 // Stores
-const extendLicenseStore = useExtendLicense();
+const extendLicenseStore = useExtendLicenseStore();
 const globalStore = useGlobalStore();
 const { orderHistory, isLoading } = storeToRefs(extendLicenseStore);
 

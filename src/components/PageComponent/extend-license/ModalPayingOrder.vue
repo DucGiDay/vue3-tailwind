@@ -25,7 +25,7 @@
 </template>
 <script setup>
 import PayingComponent from '@/components/PageComponent/extend-license/PayingComponent.vue';
-import { useExtendLicense } from '@/stores/extend-license.store';
+import { useExtendLicenseStore } from '@/stores/extend-license.store';
 import { setCookie, getCookie } from '@/common/ulties';
 
 // Props
@@ -39,7 +39,7 @@ const emit = defineEmits(['success', 'hide']);
 const visible = defineModel('visible', { default: false });
 
 // Stores
-const extendLicenseStore = useExtendLicense();
+const extendLicenseStore = useExtendLicenseStore();
 
 // States
 const isLoading = ref(false);

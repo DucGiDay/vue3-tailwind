@@ -56,8 +56,8 @@
 </template>
 
 <script setup>
-import { useGlobalStore } from '@/stores/global';
-import { useFilterStore } from '@/stores/filter';
+import { useGlobalStore } from '@/stores/global.store';
+import { useFilterStore } from '@/stores/filter.store';
 
 // Store
 const globalStore = useGlobalStore();

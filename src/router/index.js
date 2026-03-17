@@ -3,6 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
 import { extendLicenseComponentMap } from './modules/extend-license.router';
+import { eInvoiceComponentMap, eInvoiceRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
@@ -11,6 +12,7 @@ import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 const componentMap = {
   MicroReport: reportComponentMap,
   ExtendLicense: extendLicenseComponentMap
+  // EInvoice: eInvoiceComponentMap
 };
 
 const mapMicroRouters = (routes, inheritedAbstractName = '') => {
@@ -64,8 +66,30 @@ const createAppRouter = (microRouter) => {
           name: 'Document',
           redirect: '/pages/documentation'
         },
+        // {
+        //   path: '/pages/documentation',
+        //   name: 'Documentation',
+        //   component: () => import('@/views/e-invoice/summary.vue')
+        // },
         ...pagesExampleRouter,
-        ...uikitRouter
+        ...uikitRouter,
+        ...eInvoiceRouter
+        // {
+        //   path: '/e-invoice',
+        //   name: 'EInvoicePage',
+    
+
+        //   children: [
+        //     {
+        //       path: 'summary',
+        //       name: 'EInvoiceSummary',
+        //       component: () => import('@/views/e-invoice/summary.vue'),
+        //       meta: {
+        //         title: 'Tổng quan - HDDT'
+        //       }
+        //     }
+        //   ]
+        // }
       ]
     },
 
