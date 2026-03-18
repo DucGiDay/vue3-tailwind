@@ -1,6 +1,6 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import { INVOICE_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import { INVOICE_STATUS_COLOR, VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -25,7 +25,7 @@ const tableColumns = [
       >
         <template #vat_publish_status="{ record }">
           <span
-            :class="INVOICE_STATUS_COLOR[record?.name]?.class"
+            :class="VAT_PUBLISH_STATUS_COLOR[record?.code]?.class"
             class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
           >
             {{ record?.name }}

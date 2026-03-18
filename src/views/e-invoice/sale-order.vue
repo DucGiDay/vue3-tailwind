@@ -1,84 +1,3 @@
-<script setup>
-// State
-let dates = reactive([new Date(), new Date()]);
-const selectButtonValue = ref({ name: 'Option 1' });
-const selectButtonValues = ref([{ name: 'Option 1' }, { name: 'Option 2' }]);
-const searchField = ref(null);
-const statusField = ref(null);
-const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }]);
-
-const columns = [
-  { field: 'tran_info', header: 'Thông tin hóa đơn' },
-  { field: 'tran_id', header: 'Số hóa đơn', classes: 'fb-text-muted-color' },
-  { field: 'customer_type', header: 'Người mua', classes: 'fb-text-muted-color' },
-  { field: 'customer', header: 'Thông tin khách hàng' },
-  { field: 'tran_date', header: 'Ngày hóa đơn', classes: 'fb-text-muted-color', format: 'date' },
-  { field: 'amount', header: 'Tổng tiền', format: 'currency' },
-  { field: 'type', header: 'Loại hóa đơn', classes: 'fb-text-muted-color' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '' }
-];
-const saleSelecteds = ref([]);
-const sales = ref([
-  {
-    search_code: 'SC-001',
-    tran_info: 'HD-2024-001',
-    tran_id: 'INV001',
-    tran_id_origin: '2C26MAA0000040',
-    customer_type: 'Cá nhân',
-    customer: { customer_name: 'Nguyễn Văn A', tax_code: '' },
-    tran_date: '2024-01-15',
-    amount: 1500000,
-    type: 'Thay thế',
-    status: 1
-  },
-  {
-    search_code: 'SC-002',
-    tran_info: 'HD-2024-002',
-    tran_id: 'INV002',
-    customer_type: 'Doanh nghiệp',
-    customer: { customer_name: 'Công ty TNHH ABC', tax_code: '0123456789' },
-    tran_date: '2024-01-16',
-    amount: 8750000,
-    type: 'Hóa đơn GTGT',
-    status: 2
-  },
-  {
-    search_code: 'SC-003',
-    tran_info: 'HD-2024-003',
-    tran_id: 'INV003',
-    customer_type: 'Cá nhân',
-    customer: { customer_name: 'Trần Thị B', tax_code: '' },
-    tran_date: '2024-01-17',
-    amount: 320000,
-    type: 'Hóa đơn bán lẻ',
-    status: 3
-  },
-  {
-    search_code: 'SC-004',
-    tran_info: 'HD-2024-004',
-    tran_id: 'INV004',
-    customer_type: 'Doanh nghiệp',
-    customer: { customer_name: 'Công ty CP XYZ', tax_code: '9876543210' },
-    tran_date: '2024-01-18',
-    amount: 24600000,
-    type: 'Hóa đơn GTGT',
-    status: 1
-  },
-  {
-    search_code: 'SC-005',
-    tran_info: 'HD-2024-005',
-    tran_id: 'INV005',
-    customer_type: 'Cá nhân',
-    customer: { customer_name: 'Lê Văn C', tax_code: '' },
-    tran_date: '2024-01-19',
-    amount: 670000,
-    type: 'Hóa đơn bán lẻ',
-    status: 2
-  }
-]);
-</script>
-
 <template>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-8']">
     <div class="fb-flex fb-items-center fb-space-x-3">
@@ -87,15 +6,15 @@ const sales = ref([
   </div>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="name"
-        placeholder="Chọn trạng thái"
-        class="fb-w-full md:fb-w-48"
+      <DatePicker
+        ref="datePicker"
+        v-model="dates"
+        selectionMode="range"
+        :manualInput="false"
+        dateFormat="dd/mm/yy"
         size="small"
+        @update:modelValue="onDateChange"
       />
-      <DatePicker v-model="dates" selectionMode="range" :manualInput="false" size="small" />
     </div>
     <div>
       <IconField>
@@ -106,7 +25,7 @@ const sales = ref([
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            class="fb-h-[16px]"
+            class="fb-h-[1rem]"
           >
             <path
               d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
@@ -122,6 +41,7 @@ const sales = ref([
           placeholder="Tìm kiếm mã hóa đơn hoặc tên khách hàng"
           size="small"
           class="fb-w-full md:fb-w-80"
+          @input="onSearchChange"
         />
       </IconField>
     </div>
@@ -131,9 +51,15 @@ const sales = ref([
     <FbTable
       v-model:selection="saleSelecteds"
       :columns="columns"
-      :value="sales"
-      enableCheckbox
+      :items="sales"
+      enableScrollPagination
       :stripedRows="false"
+      :isLoading="isLoading"
+      :currentPage="currentPage"
+      :pageSize="pageSize"
+      :totalRecords="saleNotSyncVat.data?.num_results || 0"
+      :totalPages="saleNotSyncVat.data?.total_pages || 0"
+      @page-change="getData"
     >
       <template #tran_info="{ row }">
         <div class="fb-text-sm">{{ `Ký hiệu: ${row.tran_info}` }}</div>
@@ -143,14 +69,112 @@ const sales = ref([
         </div>
       </template>
 
-      <template #customer="{ record }">
-        <div>{{ `Tên: ${record.customer_name}` }}</div>
-        <div class="fb-text-muted-color">{{ `Mã/MST: ${record.tax_code}` }}</div>
+      <template #inv_buyerLegalName="{ record, row }">
+        <div>{{ `Tên: ${record}` }}</div>
+        <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.inv_buyerTaxCode}` }}</div>
       </template>
+
       <template #type="{ record, row }">
         <div>{{ record }}</div>
         <div v-if="row?.tran_id_origin" class="fb-text-primary">({{ row.tran_id_origin }})</div>
       </template>
+
+      <template #empty>
+        {{ saleNotSyncVat?.error || 'Chưa có hóa đơn' }}
+      </template>
     </FbTable>
   </div>
 </template>
+
+<script setup>
+import { useEInoiveStore } from '@/stores/e-invoice.store';
+import { useGlobalStore } from '@/stores/global.store';
+import { useFilterStore } from '@/stores/filter.store';
+import { onMounted } from 'vue';
+
+// Store/Getter
+const invoiceStore = useEInoiveStore();
+const globalStore = useGlobalStore();
+const filterStore = useFilterStore();
+
+// Constants
+const columns = [
+  { field: 'tran_id', header: 'Mã hóa đơn', format: 'truncate' },
+  { field: 'tran_no', header: 'Số hóa đơn' },
+  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
+  { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
+  { field: 'staff', header: 'Nhân viên' },
+  { field: 'table_name', header: 'Bàn' },
+  { field: 'area_name', header: 'Khu vực' },
+  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
+  {
+    field: 'start_date',
+    header: 'Thời gian vào',
+    format: 'datetime'
+  },
+  {
+    field: 'end_date',
+    header: 'Thời gian ra'
+  }
+];
+
+// State
+const datePicker = ref();
+let dates = reactive([
+  new Date(filterStore.report.start_date),
+  new Date(filterStore.report.end_date)
+]);
+const searchField = ref(null);
+
+const saleSelecteds = ref([]);
+const saleNotSyncVat = computed(() => invoiceStore.saleNotSyncVat);
+const sales = ref([]);
+const isLoading = ref(false);
+const currentPage = ref(1);
+const pageSize = 50;
+
+// Methods
+const getData = async () => {
+  const payload = {
+    brand_uid: globalStore?.brandUid,
+    company_uid: globalStore?.currentUser?.company_uid,
+    list_store_uid: (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
+    start_date: new Date(dates[0]).getTime(),
+    end_date: new Date(dates[1]).getTime(),
+    page: currentPage.value,
+    results_per_page: pageSize,
+    search: searchField.value
+  };
+
+  isLoading.value = true;
+  await invoiceStore.getSaleNotSyncVat(payload);
+  sales.value = [...sales.value, ...(saleNotSyncVat.value?.data?.data || [])];
+  currentPage.value++;
+  isLoading.value = false;
+};
+
+const filter = async () => {
+  currentPage.value = 1;
+  sales.value = [];
+  await getData();
+};
+
+const onDateChange = (value) => {
+  if (value && value[0] && value[1]) {
+    datePicker.value.overlayVisible = false;
+    filter();
+  }
+};
+
+let searchTimeout = null;
+const onSearchChange = async () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    await filter();
+  }, 500);
+};
+
+onMounted(() => {
+  getData();
+});
+</script>

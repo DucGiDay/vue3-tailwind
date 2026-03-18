@@ -7,5 +7,7 @@ export const INVOICE_ENDPOINTS = {
   DAILY_STATISTICS: '/api/einvoice/v1/dashboard/daily-statistics',
 
   // Invoice manage
-  VAT_INVOCIE: '/api/v3/pos-cms/vat-invoice'
+  VAT_INVOCIE: '/api/v3/pos-cms/vat-invoice',
+  SALE_NOT_SYNC_VAT: 'api/v3/pos-client/sale-not-sync-vat',
+  STORE_SETTING_INVOICE: 'api/invoice/v1/store-setting-invoice'
 };

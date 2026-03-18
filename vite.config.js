@@ -15,9 +15,6 @@ import AutoImport from 'unplugin-auto-import/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  console.log('BASE URL:', env.VITE_SUB_APP_URL); // check giá trị
-  console.log(mode);
-
   return {
     optimizeDeps: {
       noDiscovery: mode !== 'development'

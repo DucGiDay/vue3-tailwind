@@ -10,6 +10,7 @@
     v-model:expandedKeys="expandedKeys"
     class="md:fb-w-[300px] fb-w-full"
     display="chip"
+    :size="size"
   >
     <template #value="{ value }">
       <div v-if="!value || Object.keys(value).length === 0">
@@ -20,6 +21,9 @@
           v-for="(store, index) in getStoreSelected(value)"
           :key="index"
           :label="store?.label"
+          :class="{
+            'fb-text-xs': props.size === 'small'
+          }"
         />
       </div>
     </template>
@@ -71,6 +75,10 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: ''
+  },
+  size: {
+    type: String,
+    default: 'small'
   }
 });
 
@@ -182,7 +190,7 @@ const expandNode = (node) => {
   }
 };
 
-const setStoreSelected = (value) => {
+const setStoreSelected = async (value) => {
   const listStoreUids = [];
   filteredItems.value.forEach((city) => {
     const isEmptyCity = !city.children || !city.children.length;
@@ -196,7 +204,8 @@ const setStoreSelected = (value) => {
   });
 
   // update filter trong Pinia
-  filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  emit('update:modelValue', listStoreUids);
 };
 
 const getStoreSelected = (value) => {
@@ -206,11 +215,12 @@ const getStoreSelected = (value) => {
   return value.flatMap((city) => (city?.children ? [] : city));
 };
 
-const onBusinessTypeChange = () => {
+const onBusinessTypeChange = async () => {
   const listStoreUids = filteredItems.value
     .flatMap((city) => (city?.children ? city?.children : []))
     .map((store) => store.id);
-  filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  emit('update:modelValue', listStoreUids);
 };
 
 const getFranchiseTag = (is_franchise) => {

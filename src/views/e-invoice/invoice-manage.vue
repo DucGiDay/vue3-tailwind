@@ -4,15 +4,14 @@
       <h4 class="!fb-m-0">Quản lý hóa đơn</h4>
     </div>
   </div>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
-    <div class="fb-flex fb-items-center fb-space-x-3">
+  <div :class="['fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center fb-mb-4']">
+    <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
       <Select
         v-model="statusField"
         :options="statusOptions"
         optionLabel="name"
         placeholder="Chọn trạng thái"
         class="fb-w-full md:fb-w-48"
-        size="small"
       />
       <DatePicker
         ref="datePicker"
@@ -20,8 +19,12 @@
         selectionMode="range"
         :manualInput="false"
         dateFormat="dd/mm/yy"
-        size="small"
         @update:modelValue="onDateChange"
+      />
+      <FbSelectCityStore
+        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        size="normal"
+        @update:modelValue="filter"
       />
     </div>
     <div>
@@ -47,8 +50,8 @@
         <InputText
           v-model="searchField"
           placeholder="Tìm kiếm mã hóa đơn hoặc tên khách hàng"
-          size="small"
           class="fb-w-full md:fb-w-80"
+          @input="onSearchChange"
         />
       </IconField>
     </div>
@@ -78,20 +81,29 @@
       </Tabs> -->
 
       <template #tran_info="{ row }">
-        <div class="fb-text-sm">{{ `Ký hiệu: ${row.tran_info}` }}</div>
+        <div class="fb-text-sm">{{ `Ký hiệu: ${row?.inv_series}` }}</div>
         <div class="fb-text-sm fb-text-muted-color">
           Mã tra cứu:
-          <span class="fb-text-primary">{{ row.search_code }}</span>
+          <span class="fb-text-primary">{{ row.id }}</span>
         </div>
       </template>
 
-      <template #customer="{ record }">
-        <div>{{ `Tên: ${record?.customer_name}` }}</div>
-        <div class="fb-text-muted-color">{{ `Mã/MST: ${record?.tax_code}` }}</div>
+      <template #inv_buyerLegalName="{ record, row }">
+        <div>{{ `Tên: ${record}` }}</div>
+        <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
       </template>
-      <template #type="{ record, row }">
+      <template #invoice_type="{ record, row }">
         <div>{{ record }}</div>
-        <div v-if="row?.tran_id_origin" class="fb-text-primary">({{ row.tran_id_origin }})</div>
+        <div v-if="row?.tran_id" class="fb-text-primary">({{ row.tran_id }})</div>
+      </template>
+
+      <template #vat_publish_status="{ record }">
+        <span
+          :class="statusMap(record)?.class"
+          class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
+        >
+          {{ statusMap(record)?.label }}
+        </span>
       </template>
 
       <template #empty>
@@ -105,6 +117,7 @@
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -114,13 +127,18 @@ const filterStore = useFilterStore();
 // constants
 const columns = [
   { field: 'tran_info', header: 'Thông tin hóa đơn' },
-  { field: 'tran_id', header: 'Số hóa đơn', classes: 'fb-text-muted-color' },
-  { field: 'customer_type', header: 'Người mua', classes: 'fb-text-muted-color' },
-  { field: 'customer', header: 'Thông tin khách hàng' },
-  { field: 'tran_date', header: 'Ngày hóa đơn', classes: 'fb-text-muted-color', format: 'date' },
-  { field: 'amount', header: 'Tổng tiền', format: 'currency' },
-  { field: 'type', header: 'Loại hóa đơn', classes: 'fb-text-muted-color' },
-  { field: 'status', header: 'Trạng thái' },
+  { field: 'list_tran_no', header: 'Số hóa đơn', classes: 'fb-text-muted-color' },
+  { field: 'inv_buyerDisplayName', header: 'Người mua', classes: 'fb-text-muted-color' },
+  { field: 'inv_buyerLegalName', header: 'Thông tin khách hàng' },
+  {
+    field: 'vat_invoice_date',
+    header: 'Ngày hóa đơn',
+    classes: 'fb-text-muted-color',
+    format: 'date'
+  },
+  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
+  { field: 'invoice_type', header: 'Loại hóa đơn', classes: 'fb-text-muted-color' },
+  { field: 'vat_publish_status', header: 'Trạng thái' },
   { field: 'action', header: '' }
 ];
 
@@ -134,49 +152,63 @@ const searchField = ref(null);
 const statusField = ref(null);
 const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }]);
 
+const statusMap = (status) => {
+  return VAT_PUBLISH_STATUS_COLOR[status] || VAT_PUBLISH_STATUS_COLOR[null];
+};
+
 const saleSelecteds = ref([]);
 const vatInvoice = computed(() => invoiceStore.vatInvoice);
 const sales = ref([]);
 const isLoading = ref(false);
 const currentPage = ref(1);
-const pageSize = 50;
+const pageSize = 10;
 
 // Methods
-const getData = async ({ page = 1, rows = pageSize } = {}) => {
+const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
+    list_store_uid: filterStore?.report?.stores_uid?.length
+      ? filterStore?.report?.stores_uid.join(',')
+      : (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
     start_date: new Date(dates[0]).getTime(),
     end_date: new Date(dates[1]).getTime(),
-    page: page,
-    results_per_page: rows
+    page: currentPage.value,
+    results_per_page: pageSize,
+    search: searchField.value
   };
 
   isLoading.value = true;
   await invoiceStore.getVatInvoice(payload);
   sales.value = [...sales.value, ...(vatInvoice.value?.data?.data || [])];
-  currentPage.value = page;
+  currentPage.value++;
   isLoading.value = false;
 };
 
 const filter = async () => {
   currentPage.value = 1;
   sales.value = [];
-  await getData({ page: 1, rows: pageSize });
+  await getData();
 };
 
-const onDateChange = (value) => {
+const onDateChange = async (value) => {
   if (value && value[0] && value[1]) {
     datePicker.value.overlayVisible = false;
-    filter();
+    await filter();
   }
+};
+let searchTimeout = null;
+const onSearchChange = async () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    await filter();
+  }, 500);
 };
 
 // life cycle
-// onMounted(() => {
-//   getData();
-// });
+onMounted(() => {
+  getData();
+});
 </script>
 
 <style lang="scss">

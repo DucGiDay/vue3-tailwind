@@ -1,15 +1,12 @@
 <template>
   <div class="fb_table--relative">
-    {{ hasMoreData }}
-    {{ internalPage }}
-    {{ totalPageCount }}
     <DataTable
       ref="dataTableRef"
       :value="paginatedData"
       columnResizeMode="expand"
       stripedRows
       showGridlines
-      :loading="isLoadmore && !enableScrollPagination"
+      :loading="props.isLoading && !isLoadmore"
       scrollable
       :scrollHeight="
         $attrs?.scrollable === false || (props.enablePagination && !props.enableScrollPagination)
@@ -164,6 +161,8 @@
         headerStyle="width: 3rem"
         headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3 !fb-px-4"
         :bodyClass="'!fb-py-4 !fb-px-4'"
+        alignFrozen="lefft"
+        frozen
       ></Column>
 
       <Column
@@ -176,6 +175,8 @@
         "
         :bodyClass="`!fb-py-4 !fb-px-6`"
         :class="[props.enableCheckbox && '!fb-border-l-0']"
+        alignFrozen="lefft"
+        frozen
       >
         <template #body="{ index }">
           {{ `${index + 1}` }}
@@ -186,16 +187,18 @@
         :field="col.field"
         :header="col.header"
         :key="col.field + '_' + index"
+        :sortable="col?.sortable"
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-6"
         :bodyClass="'!fb-py-4 !fb-px-6' + (col?.classes || '')"
         :class="['!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap']"
       >
         <template #body="{ data }">
-          <Skeleton v-if="isFirstLoad && isLoading" />
+          <Skeleton v-if="props.isLoading && !isLoadmore" />
           <span v-else-if="!$slots?.[col.field]">
-            {{ formatData(data[col.field], col?.format) }}
+            {{ formatData(data[col.field], data, col?.format) }}
           </span>
           <slot
+            v-else
             :name="col.field"
             v-bind="{
               row: data,
@@ -211,6 +214,8 @@
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-4"
         bodyClass="!fb-py-4 !fb-px-4"
         class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap"
+        alignFrozen="right"
+        frozen
       >
         <template #body="{ data }">
           <Button
@@ -229,8 +234,10 @@
       <Column
         v-if="menuItems"
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-4"
-        bodyClass="!fb-py-4 !fb-px-4"
+        bodyClass="!fb-py-4 !fb-px-2"
         class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap"
+        alignFrozen="right"
+        frozen
       >
         <template #body="{ data }">
           <Button
@@ -238,6 +245,7 @@
             @click="toggleActionMenu($event, data)"
             aria-haspopup="true"
             aria-controls="overlay_menu"
+            size="small"
             text
           >
             <svg
@@ -283,7 +291,7 @@
           class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color"
         >
           <div>
-            <img :src="emptyIcon" alt="Empty image" />
+            <img :src="emptyIcon" alt="Empty image" loading="lazy" />
           </div>
           <slot name="empty">No data found!</slot>
         </div>
@@ -291,7 +299,7 @@
     </DataTable>
 
     <!-- Scroll pagination loading indicator (absolute) -->
-    <div v-if="enableScrollPagination && isLoading && !isFirstLoad" class="fb-scroll-loading">
+    <div v-if="isLoadmore" class="fb-scroll-loading">
       <ProgressSpinner class="!fb-m-0 !fb-inline" style="width: 2rem; height: 2rem" />
       <span class="fb-ml-2">Loading...</span>
     </div>
@@ -342,7 +350,7 @@ const props = defineProps({
 
   isLoading: {
     type: Boolean,
-    default: true
+    default: false
   },
 
   enableCheckbox: {
@@ -408,13 +416,14 @@ const dataTableRef = ref();
 let scrollContainer = null;
 
 // tách riêng first load (skeleton) và loadmore (spinner overlay)
-const isFirstLoad = ref(true);
-const isLoadmore = computed(() => props.isLoading && !isFirstLoad.value);
+const isLoadmore = computed(
+  () => props.enableScrollPagination && props.isLoading && props.currentPage > 1
+);
 
 // Scroll pagination: còn data để load không?
 const hasMoreData = computed(() => {
   if (!props.enableScrollPagination) return false;
-  return internalPage.value < totalPageCount.value;
+  return internalPage.value <= totalPageCount.value;
 });
 
 const displayConfirmation = ref(false);
@@ -423,16 +432,16 @@ const menu = ref();
 const resolvedMenuItems = ref([]);
 
 // Khi data load xong lần đầu -> tắt isFirstLoad, setup scroll listener
-watch(
-  () => props.isLoading,
-  (loading, prevLoading) => {
-    if (prevLoading && !loading && isFirstLoad.value && internalPage.value === 1) {
-      isFirstLoad.value = false;
-    }
-  }
-);
+// watch(
+//   () => props.isLoading,
+//   (loading, prevLoading) => {
+//     if (prevLoading && !loading && isFirstLoad.value && internalPage.value === 1) {
+//       isFirstLoad.value = false;
+//     }
+//   }
+// );
 
-// Sync with parent props
+// Sync khi props thay đổi
 watch(
   () => props.currentPage,
   (val) => {
@@ -495,7 +504,8 @@ const visiblePages = computed(() => {
 // Data hiển thị
 const paginatedData = computed(() => {
   // Lần đầu chưa có data -> fill skeleton placeholder
-  if (isFirstLoad.value && props.isLoading) return Array(internalRows.value).fill({});
+  // if (isFirstLoad.value && props.isLoading) return Array(internalRows.value).fill({});
+  if (props.isLoading && !isLoadmore.value) return Array(8).fill({});
   return props.items;
 });
 
@@ -533,21 +543,22 @@ const toggleActionMenu = (event, data) => {
   menu.value.toggle(event);
 };
 
-const formatData = (value, format) => {
-  if (format === 'date') {
-    const date = new Date(value);
-    return moment(date).format('DD/MM/YYYY');
-  }
-  if (format === 'datetime') {
-    const date = new Date(value);
-    return moment(date).format('DD/MM/YYYY HH:mm');
-  }
-  if (format === 'currency') {
-    return formatCurrency(value);
-  }
-  if (typeof format === 'function') return format(value);
+const formatData = (node, row, format) => {
+  if (typeof format === 'function') return format(node, row);
+  if (!format || node === null || node === undefined) return node;
 
-  return value;
+  switch (format) {
+    case 'date':
+      return moment(node).format('DD/MM/YYYY');
+    case 'datetime':
+      return moment(node).format('DD/MM/YYYY HH:mm');
+    case 'currency':
+      return formatCurrency(node);
+    case 'truncate':
+      return node ? `#${node.toString().slice(-5)}` : '';
+    default:
+      return node;
+  }
 };
 
 // Scroll pagination handler
@@ -559,8 +570,8 @@ const onScrollLoadMore = () => {
 
   const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
   if (scrollTop + clientHeight >= scrollHeight - props.scrollThreshold) {
-    internalPage.value++;
-    emit('page-change', { page: internalPage.value, rows: internalRows.value });
+    // internalPage.value++;
+    emit('page-change');
   }
 };
 
@@ -587,7 +598,7 @@ const setupScrollListener = () => {
 
 onMounted(() => {
   setupScrollListener();
-  emit('page-change', { page: 1, rows: internalRows.value });
+  // emit('page-change', { page: 1, rows: internalRows.value });
 });
 
 onBeforeUnmount(() => {

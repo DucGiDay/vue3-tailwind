@@ -11,4 +11,6 @@ export const invoiceService = {
 
   // Invoice Manage
   getVatInvoice: (params) => api.get(INVOICE_ENDPOINTS.VAT_INVOCIE, { params }),
+  getSaleNotSyncVat: (params) => api.get(INVOICE_ENDPOINTS.SALE_NOT_SYNC_VAT, { params }),
+  getStoreSettingInvoice: (params) => api.get(INVOICE_ENDPOINTS.STORE_SETTING_INVOICE, { params })
 };

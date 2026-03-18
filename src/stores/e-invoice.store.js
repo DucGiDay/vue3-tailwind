@@ -8,7 +8,9 @@ export const useEInoiveStore = defineStore('eInoive', {
     totalQuantityInvoices: {},
     statusInvoices: {},
     dailyStatistics: {},
-    vatInvoice: {}
+    vatInvoice: {},
+    saleNotSyncVat: {},
+    storeSettingInvoices: {}
   }),
 
   getters: {
@@ -106,6 +108,22 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.vatInvoice.data = response;
       } catch (err) {
         this.vatInvoice.error = err?.message;
+      }
+    },
+    async getSaleNotSyncVat(params) {
+      try {
+        const response = await invoiceService.getSaleNotSyncVat(params);
+        this.saleNotSyncVat.data = response;
+      } catch (err) {
+        this.saleNotSyncVat.error = err?.message;
+      }
+    },
+    async getStoreSettingInvoice(params) {
+      try {
+        const response = await invoiceService.getStoreSettingInvoice(params);
+        this.storeSettingInvoices.data = response;
+      } catch (err) {
+        this.storeSettingInvoices.error = err?.message;
       }
     }
   }
