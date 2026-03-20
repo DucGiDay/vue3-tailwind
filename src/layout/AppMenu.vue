@@ -3,7 +3,7 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const models = ref([
   {
-    label: 'HDDT',
+    label: '',
     items: [
       { label: 'Tổng quan', to: '/e-invoice/summary' },
       { label: 'Quản lý hóa đơn', to: '/e-invoice/invoice-manage' },

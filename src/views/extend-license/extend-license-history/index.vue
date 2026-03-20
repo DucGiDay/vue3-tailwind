@@ -129,7 +129,7 @@ const tableColumns = [
   { field: 'companyTaxEmail', header: 'Email' },
   { field: 'amount', header: 'Tổng tiền' },
   { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '', classes: '!fb-py-0' }
+  { field: 'action', header: '', style: {padding: '0 !important'} }
 ];
 const toast = useToast();
 

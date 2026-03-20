@@ -6,14 +6,11 @@
   </div>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <DatePicker
-        ref="datePicker"
-        v-model="dates"
-        selectionMode="range"
-        :manualInput="false"
-        dateFormat="dd/mm/yy"
-        size="small"
-        @update:modelValue="onDateChange"
+      <FbDateFilter @update:modelValue="filter" />
+      <FbSelectCityStore
+        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        size="normal"
+        @update:modelValue="filter"
       />
     </div>
     <div>
@@ -39,8 +36,7 @@
         <InputText
           v-model="searchField"
           placeholder="Tìm kiếm mã hóa đơn hoặc tên khách hàng"
-          size="small"
-          class="fb-w-full md:fb-w-80"
+          class="fb-w-full md:fb-w-96"
           @input="onSearchChange"
         />
       </IconField>
@@ -119,11 +115,6 @@ const columns = [
 ];
 
 // State
-const datePicker = ref();
-let dates = reactive([
-  new Date(filterStore.report.start_date),
-  new Date(filterStore.report.end_date)
-]);
 const searchField = ref(null);
 
 const saleSelecteds = ref([]);
@@ -138,9 +129,11 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
-    start_date: new Date(dates[0]).getTime(),
-    end_date: new Date(dates[1]).getTime(),
+    list_store_uid: filterStore?.report?.stores_uid?.length
+      ? filterStore?.report?.stores_uid.join(',')
+      : (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
+    start_date: new Date(filterStore?.report?.start_date).getTime(),
+    end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
     results_per_page: pageSize,
     search: searchField.value
@@ -157,13 +150,6 @@ const filter = async () => {
   currentPage.value = 1;
   sales.value = [];
   await getData();
-};
-
-const onDateChange = (value) => {
-  if (value && value[0] && value[1]) {
-    datePicker.value.overlayVisible = false;
-    filter();
-  }
 };
 
 let searchTimeout = null;

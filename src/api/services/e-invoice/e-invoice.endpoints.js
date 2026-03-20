@@ -8,6 +8,12 @@ export const INVOICE_ENDPOINTS = {
 
   // Invoice manage
   VAT_INVOCIE: '/api/v3/pos-cms/vat-invoice',
-  SALE_NOT_SYNC_VAT: 'api/v3/pos-client/sale-not-sync-vat',
-  STORE_SETTING_INVOICE: 'api/invoice/v1/store-setting-invoice'
+  SALE_NOT_SYNC_VAT: '/api/v3/pos-client/sale-not-sync-vat',
+
+  // Config store
+  STORE_SETTING_INVOICE: '/api/invoice/v1/store-setting-invoice',
+
+  // Export
+  EXPORT_XML: '/api/einvoice/v1/invoice/get-xml',
+  EXPORT_PDF: '/api/einvoice/v1/invoice/get-pdf'
 };

@@ -4,11 +4,11 @@
   .layout-sidebar {
     position: fixed;
     width: 20rem;
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 3.5rem);
     // z-index: 999;
     overflow-y: auto;
     user-select: none;
-    top: 4rem;
+    top: 3.5rem;
     left: 0;
     transition:
       transform var(--layout-section-transition-duration),

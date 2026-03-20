@@ -6,7 +6,6 @@
       columnResizeMode="expand"
       stripedRows
       showGridlines
-      :loading="props.isLoading && !isLoadmore"
       scrollable
       :scrollHeight="
         $attrs?.scrollable === false || (props.enablePagination && !props.enableScrollPagination)
@@ -20,148 +19,15 @@
       @columnReorder="onColReorder"
     >
       <slot />
-      <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
-        <nav class="fb-flex fb-items-center">
-          <slot name="footer" />
-          <div
-            class="fb-paginator fb-ml-auto"
-            v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
-          >
-            <!-- Rows per page -->
-            <Select
-              v-model="internalRows"
-              :options="computedRowsPerPageOptions"
-              size="small"
-              @change="onRowsChange"
-            />
 
-            <!-- Page info -->
-            <div class="fb-paginator__info">
-              Hiển thị {{ rangeStart }} - {{ rangeEnd }} trên tổng số {{ totalRecordsCount }}
-            </div>
-
-            <!-- Page navigation -->
-            <ButtonGroup>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage <= 1"
-                @click="goToPage(1)"
-                title="Trang đầu"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M11.727 12L7.773 8l3.954-4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M7.727 12L3.773 8l3.954-4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </Button>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage <= 1"
-                @click="goToPage(internalPage - 1)"
-                title="Trang trước"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M10 12L6 8l4-4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </Button>
-              <template v-for="page in visiblePages" :key="page">
-                <Button
-                  v-if="page === '...'"
-                  size="small"
-                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
-                  severity="secondary"
-                  variant="outlined"
-                  disabled
-                >
-                  …
-                </Button>
-                <Button
-                  v-else
-                  size="small"
-                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
-                  :severity="page !== internalPage ? 'secondary' : null"
-                  :variant="page !== internalPage ? 'outlined' : null"
-                  @click="goToPage(page)"
-                >
-                  {{ page }}
-                </Button>
-              </template>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage >= totalPageCount"
-                @click="goToPage(internalPage + 1)"
-                title="Trang sau"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M6 4l4 4-4 4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </Button>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage >= totalPageCount"
-                @click="goToPage(totalPageCount)"
-                title="Trang cuối"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M4.273 4L8.227 8l-3.954 4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M8.273 4L12.227 8l-3.954 4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </Button>
-            </ButtonGroup>
-          </div>
-        </nav>
-      </template>
-
+      <!-- Checkbox column-->
       <Column
         v-if="enableCheckbox"
         selectionMode="multiple"
         headerStyle="width: 3rem"
         headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3 !fb-px-4"
         :bodyClass="'!fb-py-4 !fb-px-4'"
-        alignFrozen="lefft"
+        alignFrozen="left"
         frozen
       ></Column>
 
@@ -170,12 +36,12 @@
         header="#"
         :reorderableColumn="false"
         :headerClass="
-          '!fb-bg-gray-50 !fb-text-gray !fb-py-3 !fb-px-6' +
+          '!fb-bg-gray-50 !fb-text-gray !fb-py-3' +
           (!props.enableCheckbox ? 'fb-rounded-ss-lg' : '')
         "
-        :bodyClass="`!fb-py-4 !fb-px-6`"
-        :class="[props.enableCheckbox && '!fb-border-l-0']"
-        alignFrozen="lefft"
+        :bodyClass="`!fb-py-4`"
+        :class="[props.enableCheckbox && '!fb-border-l-0', '!fb-px-6']"
+        alignFrozen="left"
         frozen
       >
         <template #body="{ index }">
@@ -189,8 +55,11 @@
         :key="col.field + '_' + index"
         :sortable="col?.sortable"
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-6"
-        :bodyClass="'!fb-py-4 !fb-px-6' + (col?.classes || '')"
+        :bodyClass="'!fb-py-4 !fb-px-6 ' + (col?.classes || '')"
         :class="['!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap']"
+        :alignFrozen="col?.alignFrozen || 'left'"
+        :frozen="col?.frozen"
+        :style="col?.style || {}"
       >
         <template #body="{ data }">
           <Skeleton v-if="props.isLoading && !isLoadmore" />
@@ -233,47 +102,31 @@
       <!-- Action Column -->
       <Column
         v-if="menuItems"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-4"
-        bodyClass="!fb-py-4 !fb-px-2"
-        class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        bodyClass="!fb-py-4"
+        class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap !fb-px-2"
         alignFrozen="right"
         frozen
       >
         <template #body="{ data }">
+          <div v-if="loadingActionRow === data" class="fb-flex fb-items-center fb-justify-center">
+            <ProgressSpinner
+              class="!fb-m-0"
+              strokeWidth="6"
+              style="width: 1.5rem; height: 1.5rem"
+            />
+          </div>
           <Button
+            v-else
             type="button"
             @click="toggleActionMenu($event, data)"
             aria-haspopup="true"
             aria-controls="overlay_menu"
             size="small"
             text
+            :disabled="isLoading && !isLoadmore"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M6.66669 8C6.66669 7.26362 7.26364 6.66667 8.00002 6.66667C8.7364 6.66667 9.33335 7.26362 9.33335 8C9.33335 8.73638 8.7364 9.33333 8.00002 9.33333C7.26364 9.33333 6.66669 8.73638 6.66669 8Z"
-                fill="#A4A7AE"
-              />
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M6.66669 3.33333C6.66669 2.59695 7.26364 2 8.00002 2C8.7364 2 9.33335 2.59695 9.33335 3.33333C9.33335 4.06971 8.7364 4.66667 8.00002 4.66667C7.26364 4.66667 6.66669 4.06971 6.66669 3.33333Z"
-                fill="#A4A7AE"
-              />
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M6.66669 12.6667C6.66669 11.9303 7.26364 11.3333 8.00002 11.3333C8.7364 11.3333 9.33335 11.9303 9.33335 12.6667C9.33335 13.403 8.7364 14 8.00002 14C7.26364 14 6.66669 13.403 6.66669 12.6667Z"
-                fill="#A4A7AE"
-              />
-            </svg>
+            <IconOption />
           </Button>
           <Menu
             ref="menu"
@@ -281,20 +134,124 @@
             :model="resolvedMenuItems"
             :popup="true"
             @hide="selectedItem = {}"
-          />
+          >
+            <template #item="{ item, props }">
+              <a v-ripple class="flex items-center" v-bind="props.action">
+                <component v-if="item.icon" :is="item.icon" />
+                <span :class="item?.class || ''">{{ item.label }}</span>
+                <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
+                <span
+                  v-if="item.shortcut"
+                  class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
+                >
+                  {{ item.shortcut }}
+                </span>
+              </a>
+            </template>
+          </Menu>
         </template>
       </Column>
 
       <!-- Empty slot -->
       <template #empty>
         <div
-          class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color"
+          class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color fb-font-medium"
         >
           <div>
             <img :src="emptyIcon" alt="Empty image" loading="lazy" />
           </div>
           <slot name="empty">No data found!</slot>
         </div>
+      </template>
+
+      <!-- Footer -->
+      <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
+        <nav class="fb-flex fb-items-center">
+          <slot name="footer" />
+          <div
+            class="fb-paginator fb-ml-auto"
+            v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
+          >
+            <!-- Rows per page -->
+            <Select
+              v-model="internalRows"
+              :options="computedRowsPerPageOptions"
+              size="small"
+              @change="onRowsChange"
+            />
+
+            <!-- Page info -->
+            <div class="fb-paginator__info">
+              Hiển thị {{ rangeStart }} - {{ rangeEnd }} trên tổng số {{ totalRecordsCount }}
+            </div>
+
+            <!-- Page navigation -->
+            <ButtonGroup>
+              <Button
+                size="small"
+                severity="secondary"
+                variant="outlined"
+                :disabled="internalPage <= 1"
+                @click="goToPage(1)"
+                title="Trang đầu"
+              >
+                <IconChevronLeftDouble />
+              </Button>
+              <Button
+                size="small"
+                severity="secondary"
+                variant="outlined"
+                :disabled="internalPage <= 1"
+                @click="goToPage(internalPage - 1)"
+                title="Trang trước"
+              >
+                <IconChevronLeft />
+              </Button>
+              <template v-for="page in visiblePages" :key="page">
+                <Button
+                  v-if="page === '...'"
+                  size="small"
+                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
+                  severity="secondary"
+                  variant="outlined"
+                  disabled
+                >
+                  …
+                </Button>
+                <Button
+                  v-else
+                  size="small"
+                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
+                  :severity="page !== internalPage ? 'secondary' : null"
+                  :variant="page !== internalPage ? 'outlined' : null"
+                  @click="goToPage(page)"
+                >
+                  {{ page }}
+                </Button>
+              </template>
+              <Button
+                size="small"
+                severity="secondary"
+                variant="outlined"
+                :disabled="internalPage >= totalPageCount"
+                @click="goToPage(internalPage + 1)"
+                title="Trang sau"
+              >
+                <IconChevronRight />
+              </Button>
+              <Button
+                size="small"
+                severity="secondary"
+                variant="outlined"
+                :disabled="internalPage >= totalPageCount"
+                @click="goToPage(totalPageCount)"
+                title="Trang cuối"
+              >
+                <IconChevronRightDouble />
+              </Button>
+            </ButtonGroup>
+          </div>
+        </nav>
       </template>
     </DataTable>
 
@@ -428,6 +385,7 @@ const hasMoreData = computed(() => {
 
 const displayConfirmation = ref(false);
 const selectedItem = ref({});
+const loadingActionRow = ref(null);
 const menu = ref();
 const resolvedMenuItems = ref([]);
 
@@ -537,9 +495,31 @@ const onColReorder = () => {
 
 const toggleActionMenu = (event, data) => {
   selectedItem.value = data;
+  let items = [];
   if (typeof props.menuItems === 'function') {
-    resolvedMenuItems.value = props.menuItems(data);
+    items = props.menuItems(data);
+  } else {
+    items = props.menuItems || [];
   }
+
+  // Bọc lại các hàm command để bắt trạng thái loading (nếu là async function)
+  resolvedMenuItems.value = items.map((item) => ({
+    ...item,
+    command: (cmdEvent) => {
+      if (typeof item.command === 'function') {
+        const result = item.command(cmdEvent);
+
+        // Nếu command trả về một Promise (thường là API call)
+        if (result instanceof Promise) {
+          loadingActionRow.value = data;
+          result.finally(() => {
+            loadingActionRow.value = null;
+          });
+        }
+      }
+    }
+  }));
+
   menu.value.toggle(event);
 };
 

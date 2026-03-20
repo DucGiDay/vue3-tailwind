@@ -125,6 +125,20 @@ export const useEInoiveStore = defineStore('eInoive', {
       } catch (err) {
         this.storeSettingInvoices.error = err?.message;
       }
+    },
+    async updateStoreSettingInvoice(payload) {
+      try {
+        const response = await invoiceService.updateStoreSettingInvoice(payload);
+        return {
+          data: response?.data || null,
+          error: null
+        };
+      } catch (err) {
+        return {
+          data: null,
+          error: err
+        };
+      }
     }
   }
 });

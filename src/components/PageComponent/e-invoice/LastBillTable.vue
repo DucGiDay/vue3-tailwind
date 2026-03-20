@@ -1,6 +1,6 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import { INVOICE_STATUS_COLOR, VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
