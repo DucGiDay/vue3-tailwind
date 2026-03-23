@@ -33,17 +33,22 @@
             />
           </svg>
         </InputIcon>
-        <InputText v-model="searchField" placeholder="Tìm kiếm mã hóa đơn" size="small" />
+        <InputText
+          v-model="searchField"
+          placeholder="Tìm kiếm mã hóa đơn"
+          size="small"
+          @input="onSearchChange"
+        />
       </IconField>
 
-      <Select
+      <!-- <Select
         v-model="statusField"
         :options="statusOptions"
         optionLabel="name"
         placeholder="Chọn trạng thái"
         class="fb-w-full md:fb-w-56"
         size="small"
-      />
+      /> -->
     </template>
     <template #guide-text>
       <div></div>
@@ -120,6 +125,7 @@ import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.v
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
+import { onMounted } from 'vue';
 
 // Constants
 const tableColumns = [
@@ -129,7 +135,7 @@ const tableColumns = [
   { field: 'companyTaxEmail', header: 'Email' },
   { field: 'amount', header: 'Tổng tiền' },
   { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '', style: {padding: '0 !important'} }
+  { field: 'action', header: '', style: { padding: '0 !important' } }
 ];
 const toast = useToast();
 
@@ -161,7 +167,9 @@ const getData = async ({ page, rows } = {}) => {
   await extendLicenseStore.getListOrderHistory({
     companyId: globalStore?.currentUser?.company_id,
     page: currentPage.value,
-    numPerPage: numPerPage.value
+    numPerPage: numPerPage.value,
+    list_store_uid: globalStore.storesIdPermissionActive.join(','),
+    search: searchField.value
   });
 
   totalRecords.value = orderHistory.value?.meta?.count;
@@ -214,4 +222,16 @@ const toggleDetail = ({ data } = {}) => {
   selectedItem.value = data || {};
   displayDetail.value = true;
 };
+
+let searchTimeout = null;
+const onSearchChange = async () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    await getData();
+  }, 500);
+};
+
+onMounted(() => {
+  getData();
+});
 </script>

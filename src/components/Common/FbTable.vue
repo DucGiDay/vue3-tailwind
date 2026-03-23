@@ -319,6 +319,7 @@ const props = defineProps({
     type: Function,
     default: null
   },
+
   menuItems: {
     type: Function,
     default: null
@@ -326,10 +327,12 @@ const props = defineProps({
 
   // Pagination props
   enablePagination: {
+    // Cho phép phân trang (Cả 2 loại: nút bấm | cuộn chuột)
     type: Boolean,
     default: false
   },
   enableScrollPagination: {
+    // Phân trang bằng cuộn chuột
     type: Boolean,
     default: false
   },
@@ -388,16 +391,6 @@ const selectedItem = ref({});
 const loadingActionRow = ref(null);
 const menu = ref();
 const resolvedMenuItems = ref([]);
-
-// Khi data load xong lần đầu -> tắt isFirstLoad, setup scroll listener
-// watch(
-//   () => props.isLoading,
-//   (loading, prevLoading) => {
-//     if (prevLoading && !loading && isFirstLoad.value && internalPage.value === 1) {
-//       isFirstLoad.value = false;
-//     }
-//   }
-// );
 
 // Sync khi props thay đổi
 watch(

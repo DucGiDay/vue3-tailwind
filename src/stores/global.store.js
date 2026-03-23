@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
 
-const SHARED_STATE_KEYS = ['brandsInStorage', 'brandUid', 'currentBrand', 'currentUser'];
+const SHARED_STATE_KEYS = ['brandUid', 'currentBrand', 'currentUser'];
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
-    brandsInStorage: [],
     brandUid: null,
     currentBrand: {},
     currentUser: {}
@@ -18,6 +17,20 @@ export const useGlobalStore = defineStore('global', {
 
     storesIdAccessibleInCurrentBrand(_) {
       return this.storesAccessibleInCurrentBrand.map((store) => store.id);
+    },
+
+    storesPermissionActive(state) {
+      return (state.currentUser.brands || []).flatMap((brand) =>
+        brand.cities.flatMap((city) => city.stores.filter((store) => store.active === 1))
+      );
+    },
+
+    storesIdPermissionActive(_) {
+      return this.storesPermissionActive.map((store) => store.id);
+    },
+
+    brandsInStorage(state) {
+      return state.currentUser?.brands || [];
     }
   },
 
@@ -36,7 +49,6 @@ export const useGlobalStore = defineStore('global', {
 
     // Reset state khi unmount
     $reset() {
-      this.brandsInStorage = [];
       this.brandUid = null;
       this.currentBrand = {};
       this.currentUser = {};

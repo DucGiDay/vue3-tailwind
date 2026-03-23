@@ -11,7 +11,7 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 
 // Methods
-const getData = async () => {  
+const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,

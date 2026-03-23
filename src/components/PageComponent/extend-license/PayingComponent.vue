@@ -9,10 +9,10 @@
             <!-- CỘT TRÁI: Thông tin đơn hàng -->
             <div class="md:fb-w-5/12 fb-bg-[#fdfdfd] fb-pr-3">
               <div class="fb-p-3 fb-border fb-border-gray-200 fb-rounded-xl fb-shadow-sm">
-                <h5 class="fb-font-semibold fb-text-[18px] fb-mb-0">Thông tin đơn hàng</h5>
+                <!-- <h5 class="fb-font-semibold fb-text-[18px] fb-mb-0">Thông tin đơn hàng</h5> -->
 
                 <!-- Chuyển khoản nhiều đơn -->
-                <template v-if="isExtendMultiple">
+                <template v-if="false">
                   <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
                     <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Ngân hàng</p>
                     <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">
@@ -49,7 +49,7 @@
 
                 <!-- Thanh toán đơn lẻ -->
                 <template v-else>
-                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                  <!-- <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
                     <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Nhà cung cấp</p>
                     <div class="fb-flex fb-items-center fb-mt-2 fb-gap-2">
                       <img
@@ -59,17 +59,91 @@
                       />
                       <p class="fb-font-medium fb-text-base fb-mb-0">Công ty cổ phần IPOS.vn</p>
                     </div>
+                  </div> -->
+                  <div class="fb-pb-3 fb-border-b fb-border-gray-200">
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Ngân hàng</p>
+                    <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">
+                      Techcombank chi nhánh Hoàng Quốc Việt, Hà Nội
+                    </p>
                   </div>
                   <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
-                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Mã hóa đơn</p>
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Số tài khoản</p>
+                    <button
+                      class="fb-mt-2 fb-flex fb-items-center fb-gap-2 fb-bg-[#0560a6] fb-text-white fb-px-3 fb-py-1 fb-rounded-md fb-text-base fb-font-medium fb-cursor-pointer fb-border-0"
+                      @click="handleCopy('11722990944013')"
+                    >
+                      <span>11722990944013</span>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g clip-path="url(#clip0_451_10114)">
+                          <path
+                            d="M8.7513 1.66883C8.18876 1.67646 7.85105 1.70903 7.57798 1.84816C7.26438 2.00795 7.00941 2.26292 6.84962 2.57652C6.71049 2.84959 6.67792 3.1873 6.6703 3.74984M16.2513 1.66883C16.8138 1.67646 17.1516 1.70903 17.4246 1.84816C17.7382 2.00795 17.9932 2.26292 18.153 2.57652C18.2921 2.84958 18.3247 3.18729 18.3323 3.74983M18.3323 11.2498C18.3247 11.8124 18.2921 12.1501 18.153 12.4232C17.9932 12.7368 17.7382 12.9917 17.4246 13.1515C17.1516 13.2906 16.8138 13.3232 16.2513 13.3308M18.3346 6.6665V8.33316M11.668 1.6665H13.3346M4.33464 18.3332H10.668C11.6014 18.3332 12.0681 18.3332 12.4246 18.1515C12.7382 17.9917 12.9932 17.7368 13.153 17.4232C13.3346 17.0666 13.3346 16.5999 13.3346 15.6665V9.33317C13.3346 8.39975 13.3346 7.93304 13.153 7.57652C12.9932 7.26292 12.7382 7.00795 12.4246 6.84816C12.0681 6.6665 11.6014 6.6665 10.668 6.6665H4.33464C3.40121 6.6665 2.9345 6.6665 2.57798 6.84816C2.26438 7.00795 2.00941 7.26292 1.84962 7.57652C1.66797 7.93304 1.66797 8.39975 1.66797 9.33317V15.6665C1.66797 16.5999 1.66797 17.0666 1.84962 17.4232C2.00941 17.7368 2.26438 17.9917 2.57798 18.1515C2.9345 18.3332 3.40121 18.3332 4.33464 18.3332Z"
+                            stroke="white"
+                            stroke-width="1.66667"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_451_10114">
+                            <rect width="20" height="20" fill="white" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Tên chủ tài khoản</p>
+                    <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">
+                      Công ty Cổ phần iPOS.VN
+                    </p>
+                  </div>
+                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Nội dung chuyển khoản</p>
+                    <button
+                      class="fb-mt-2 fb-flex fb-items-center fb-gap-2 fb-bg-[#0560a6] fb-text-white fb-px-3 fb-py-1 fb-rounded-md fb-text-base fb-font-medium fb-cursor-pointer fb-border-0"
+                      @click="handleCopy(`TT${item?.depositCode || ''}`)"
+                    >
+                      <span>TT{{ item?.depositCode || '' }}</span>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g clip-path="url(#clip0_451_10114)">
+                          <path
+                            d="M8.7513 1.66883C8.18876 1.67646 7.85105 1.70903 7.57798 1.84816C7.26438 2.00795 7.00941 2.26292 6.84962 2.57652C6.71049 2.84959 6.67792 3.1873 6.6703 3.74984M16.2513 1.66883C16.8138 1.67646 17.1516 1.70903 17.4246 1.84816C17.7382 2.00795 17.9932 2.26292 18.153 2.57652C18.2921 2.84958 18.3247 3.18729 18.3323 3.74983M18.3323 11.2498C18.3247 11.8124 18.2921 12.1501 18.153 12.4232C17.9932 12.7368 17.7382 12.9917 17.4246 13.1515C17.1516 13.2906 16.8138 13.3232 16.2513 13.3308M18.3346 6.6665V8.33316M11.668 1.6665H13.3346M4.33464 18.3332H10.668C11.6014 18.3332 12.0681 18.3332 12.4246 18.1515C12.7382 17.9917 12.9932 17.7368 13.153 17.4232C13.3346 17.0666 13.3346 16.5999 13.3346 15.6665V9.33317C13.3346 8.39975 13.3346 7.93304 13.153 7.57652C12.9932 7.26292 12.7382 7.00795 12.4246 6.84816C12.0681 6.6665 11.6014 6.6665 10.668 6.6665H4.33464C3.40121 6.6665 2.9345 6.6665 2.57798 6.84816C2.26438 7.00795 2.00941 7.26292 1.84962 7.57652C1.66797 7.93304 1.66797 8.39975 1.66797 9.33317V15.6665C1.66797 16.5999 1.66797 17.0666 1.84962 17.4232C2.00941 17.7368 2.26438 17.9917 2.57798 18.1515C2.9345 18.3332 3.40121 18.3332 4.33464 18.3332Z"
+                            stroke="white"
+                            stroke-width="1.66667"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_451_10114">
+                            <rect width="20" height="20" fill="white" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Mã phiếu thu</p>
                     <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">{{ item.roCode }}</p>
                   </div>
-                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                  <!-- <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
                     <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Dịch vụ</p>
                     <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">
                       {{ subscriptionName }}
                     </p>
-                  </div>
+                  </div> -->
                 </template>
 
                 <!-- Người giới thiệu -->
@@ -118,10 +192,7 @@
               </div>
 
               <!-- Lưu ý chuyển khoản -->
-              <p
-                v-if="isExtendMultiple"
-                class="fb-mt-3 fb-mb-0 fb-text-[#f7941d] fb-text-base fb-font-medium"
-              >
+              <p v-if="true" class="fb-mt-3 fb-mb-0 fb-text-[#f7941d] fb-text-base fb-font-medium">
                 Lưu ý: Vui lòng chuyển khoản đúng nội dung để hệ thống tự động xác nhận đơn hàng
               </p>
 
