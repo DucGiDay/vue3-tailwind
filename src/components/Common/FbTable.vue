@@ -119,7 +119,7 @@
           <Button
             v-else
             type="button"
-            @click="toggleActionMenu($event, data)"
+            @click.stop="toggleActionMenu($event, data)"
             aria-haspopup="true"
             aria-controls="overlay_menu"
             size="small"

@@ -14,9 +14,19 @@ export const invoiceService = {
   // Invoice Manage
   getVatInvoice: (params) => api.get(INVOICE_ENDPOINTS.VAT_INVOCIE, { params }),
   getSaleNotSyncVat: (params) => api.get(INVOICE_ENDPOINTS.SALE_NOT_SYNC_VAT, { params }),
-  getStoreSettingInvoice: (params) => api.get(INVOICE_ENDPOINTS.STORE_SETTING_INVOICE, { params }),
+
+  getStoreSettingInvoice: (params) =>
+    api.get(INVOICE_ENDPOINTS.LIST_STORE_SETTING_INVOICE, { params }),
   updateStoreSettingInvoice: (payload) =>
     api.post(INVOICE_ENDPOINTS.STORE_SETTING_INVOICE, payload),
+
   exportXML: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_XML, { params }),
   exportPDF: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_PDF, { params }),
+
+  getListStoreGroupByTaxCode: (params) =>
+    api.get(INVOICE_ENDPOINTS.LIST_STORE_GROUP_BY_TAXCODE, { params }),
+
+  viewInvoice: (params) => api.get(INVOICE_ENDPOINTS.VIEW_INVOICE, { params }),
+
+  getImageInvoice: (url, config) => api.get(url, { noAuth: true, ...config })
 };

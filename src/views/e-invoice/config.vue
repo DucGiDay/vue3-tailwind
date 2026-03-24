@@ -3,11 +3,10 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Cấu hình</h4>
     </div>
-    <Button @click="openDetail()">Tạo cấu hình mới</Button>
   </div>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <Select
+      <!-- <Select
         v-model="partner"
         :options="partnerOptions"
         placeholder="Chọn đối tác"
@@ -15,8 +14,9 @@
         optionValue="code"
         class="fb-w-full md:fb-w-72"
         @update:modelValue="filter"
-      />
+      /> -->
     </div>
+    <Button @click="openDetail()">Tạo cấu hình mới</Button>
   </div>
 
   <div class="!fb-p-0">

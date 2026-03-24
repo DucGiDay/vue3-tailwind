@@ -10,7 +10,11 @@ export const useEInoiveStore = defineStore('eInoive', {
     dailyStatistics: {},
     vatInvoice: {},
     saleNotSyncVat: {},
-    storeSettingInvoices: {}
+    storeSettingInvoices: {},
+    listTaxStores: {
+      data: [],
+      isLoading: false
+    }
   }),
 
   getters: {
@@ -138,6 +142,18 @@ export const useEInoiveStore = defineStore('eInoive', {
           data: null,
           error: err
         };
+      }
+    },
+    async getListStoreGroupByTaxCode(params) {
+      if (this.listTaxStores.data.length > 0) return;
+      try {
+        this.listTaxStores.isLoading = true;
+        const response = await invoiceService.getListStoreGroupByTaxCode(params);
+        this.listTaxStores.data = response?.data || [];
+      } catch (err) {
+        console.error('Error getListStoreGroupByTaxCode', err);
+      } finally {
+        this.listTaxStores.isLoading = false;
       }
     }
   }

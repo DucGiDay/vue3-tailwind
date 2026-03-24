@@ -10,13 +10,18 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    config.headers = Object.assign({}, config.headers, {
+    const headers = {
       fabi_type: localStorage.getItem('fabi-type') || 'pos-cms',
       access_token: import.meta.env.VITE_ACCESS_TOKEN,
       'x-client-timezone': new Date().getTimezoneOffset() * -60000,
-      Authorization: localStorage.getItem('token') || '',
       'accept-language': 'vi'
-    });
+    };
+
+    if (!config?.noAuth) {
+      headers.Authorization = localStorage.getItem('token') || '';
+    }
+
+    config.headers = Object.assign({}, headers, config.headers);
 
     return config;
   },

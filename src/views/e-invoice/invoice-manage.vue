@@ -9,15 +9,22 @@
       <Select
         v-model="statusField"
         :options="statusOptions"
-        optionLabel="name"
+        optionLabel="label"
+        optionValue="value"
         placeholder="Chọn trạng thái"
         class="fb-w-full md:fb-w-48"
         showClear
+        @change="filter"
       />
 
       <FbDateFilter @update:modelValue="filter" />
-      <FbSelectCityStore
+      <!-- <FbSelectCityStore
         :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        size="normal"
+        @update:modelValue="filter"
+      /> -->
+      <FbSelectTaxStore
+        placeholder="Chọn theo mã số thuế"
         size="normal"
         @update:modelValue="filter"
       />
@@ -44,8 +51,8 @@
         </InputIcon>
         <InputText
           v-model="searchField"
-          placeholder="Tìm kiếm mã hóa đơn hoặc tên khách hàng"
-          class="fb-w-full md:fb-w-96"
+          placeholder="Tìm kiếm mã hóa đơn"
+          class="fb-w-full md:fb-w-72"
           @input="onSearchChange"
         />
       </IconField>
@@ -72,7 +79,7 @@
         <div class="fb-text-sm">{{ `Ký hiệu: ${row?.inv_series}` }}</div>
         <div class="fb-text-sm fb-text-muted-color">
           Mã tra cứu:
-          <span class="fb-text-primary">{{ row.id }}</span>
+          <span class="fb-text-primary">{{ row.tran_id }}</span>
         </div>
       </template>
 
@@ -85,13 +92,30 @@
         <div v-if="row?.tran_id" class="fb-text-primary">({{ row.tran_id }})</div>
       </template>
 
-      <template #vat_publish_status="{ record }">
+      <template #vat_publish_status="{ record, row }">
         <span
-          :class="statusMap(record)?.class"
+          :class="statusMap(row?.vat_publish_status_code)?.class"
           class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
         >
-          {{ statusMap(record)?.label }}
+          {{ record || statusMap('-1')?.label }}
         </span>
+      </template>
+
+      <template #action="{ row }">
+        <Button
+          size="small"
+          text
+          @click="onViewInvoice(row)"
+          :loading="loadingTranId === row.tran_id"
+        >
+          <div
+            v-if="loadingTranId === row.tran_id"
+            class="fb-flex fb-items-center fb-justify-center"
+          >
+            <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
+          </div>
+          <IconEye v-else class="!fb-text-primary" color="currentColor" />
+        </Button>
       </template>
 
       <template #empty>
@@ -106,7 +130,10 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
-import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import {
+  VAT_PUBLISH_STATUS_COLOR,
+  VAT_PUBLISH_STATUS_LIST
+} from '@/common/constant/e-invoice.constant';
 import { useToast } from 'primevue';
 
 import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
@@ -137,18 +164,25 @@ const columns = [
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   { field: 'invoice_type', header: 'Loại hóa đơn', classes: '!fb-text-muted-color' },
   { field: 'vat_publish_status', header: 'Trạng thái' },
-  { field: 'action', header: '' }
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { padding: '0 0 0 0.25rem !important' }
+  }
 ];
 
 // State
 const searchField = ref(null);
 const statusField = ref(null);
-const statusOptions = reactive([{ name: 'Tất cả trạng thái', code: null }]);
+const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
 
 const saleSelecteds = ref([]);
 const vatInvoice = computed(() => invoiceStore.vatInvoice);
 const sales = ref([]);
 const isLoading = ref(false);
+const loadingTranId = ref(null);
 const currentPage = ref(1);
 const pageSize = 50;
 
@@ -164,7 +198,8 @@ const getData = async () => {
     end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
     results_per_page: pageSize,
-    search: searchField.value
+    search: searchField.value,
+    vat_publish_status: statusField.value === '-1' ? '' : statusField.value
   };
 
   isLoading.value = true;
@@ -189,7 +224,7 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return VAT_PUBLISH_STATUS_COLOR[status] || VAT_PUBLISH_STATUS_COLOR[null];
+  return VAT_PUBLISH_STATUS_COLOR[status] || VAT_PUBLISH_STATUS_COLOR['-1'];
 };
 
 const menuItems = (row) => {
@@ -260,7 +295,7 @@ const exportXML = async (item) => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       tran_id: item.tran_id,
-      store_uid: '22c9ae0d-cde5-44f1-bc27-96d1feff20e2'
+      store_uid: item?.store_uid
     };
     const responseData = await invoiceService.exportXML(payload);
 
@@ -295,7 +330,7 @@ const exportPDF = async (item) => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       tran_id: item.tran_id,
-      store_uid: '22c9ae0d-cde5-44f1-bc27-96d1feff20e2'
+      store_uid: item?.store_uid
     };
     const responseData = await invoiceService.exportPDF(payload);
     const base64String = responseData.data;
@@ -319,6 +354,57 @@ const exportPDF = async (item) => {
     URL.revokeObjectURL(url);
   } catch (error) {
     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+  }
+};
+
+const onViewInvoice = async (row) => {
+  try {
+    loadingTranId.value = row.tran_id;
+    const payload = {
+      brand_uid: globalStore?.brandUid,
+      company_uid: globalStore?.currentUser?.company_uid,
+      tran_id: row.tran_id,
+      store_uid: row?.store_uid
+    };
+    const response = await invoiceService.viewInvoice(payload);
+    console.log('View Invoice Result:', response?.data);
+
+    let linkInvoice = null;
+    const { access_token, link_image_invoice, partner_id, tax_code, url } = response?.data;
+    if (link_image_invoice) {
+      linkInvoice = link_image_invoice;
+    } else if (url) {
+      try {
+        const headers = {
+          Authorization: access_token,
+          fabi_type: undefined,
+          timezone: undefined,
+          'x-client-timezone': undefined,
+          access_token: undefined,
+          ...(partner_id === 'MEINVOICE' ? { TaxCode: tax_code } : {})
+        };
+        const responseData = await invoiceService.getImageInvoice(url, {
+          headers,
+          responseType: 'blob'
+        });
+        linkInvoice = window.URL.createObjectURL(responseData);
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Lỗi tải hóa đơn',
+          detail: error?.message,
+          life: 3000
+        });
+      }
+    }
+    if (linkInvoice) {
+      window.open(linkInvoice, '_blank');
+    }
+  } catch (error) {
+    console.error('Error viewInvoice', error);
+    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+  } finally {
+    loadingTranId.value = null;
   }
 };
 

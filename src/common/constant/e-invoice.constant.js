@@ -45,8 +45,11 @@ export const VAT_PUBLISH_STATUS_MAPPING = {
   28003: 'Hóa đơn hợp lệ',
   32000: 'Hóa đơn hợp lệ',
 
-  null: 'Hóa đơn dự thảo'
+  null: 'Hóa đơn dự thảo',
+
+  '-1': 'Không xác định'
 };
+
 export const VAT_PUBLISH_STATUS_COLOR = {
   // # Hóa đơn chưa gửi TCTN
   0: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
@@ -100,6 +103,17 @@ export const VAT_PUBLISH_STATUS_COLOR = {
   null: { label: 'Hóa đơn dự thảo', class: 'fb-text-gray-blue-700 fb-bg-gray-blue-100' },
   '-1': { label: 'Không xác định', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' }
 };
+
+export const VAT_PUBLISH_STATUS_LIST = [
+  { label: 'Hóa đơn chưa gửi TCTN', value: '0,1,2,3' },
+  { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', value: '4000,4001,4002,4003' },
+  { label: 'Hóa đơn bị TCTN từ chối', value: '8000,8001,8002,8003' },
+  { label: 'Hóa đơn đã gửi TCTN', value: '12000,12001,12002,12003' },
+  { label: 'Hóa đơn không hợp lệ', value: '24000,24001,24002,24003' },
+  { label: 'Hóa đơn hợp lệ', value: '28000,28001,28002,28003,32000' },
+  { label: 'Hóa đơn dự thảo', value: 'null' },
+  { label: 'Không xác định', value: '-1' }
+];
 
 // export const INVOICE_PARTNERS = ['iPOS-invoice', 'M-invoice', 'Me-invoice', 'S-invoice', 'VNPT-invoice'];
 export const INVOICE_PARTNERS = [

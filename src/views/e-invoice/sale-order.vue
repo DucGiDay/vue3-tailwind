@@ -7,8 +7,13 @@
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <FbDateFilter @update:modelValue="filter" />
-      <FbSelectCityStore
+      <!-- <FbSelectCityStore
         :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        size="normal"
+        @update:modelValue="filter"
+      /> -->
+      <FbSelectTaxStore
+        placeholder="Chọn theo mã số thuế"
         size="normal"
         @update:modelValue="filter"
       />
@@ -35,8 +40,8 @@
         </InputIcon>
         <InputText
           v-model="searchField"
-          placeholder="Tìm kiếm mã hóa đơn hoặc tên khách hàng"
-          class="fb-w-full md:fb-w-96"
+          placeholder="Tìm kiếm mã hóa đơn"
+          class="fb-w-full md:fb-w-72"
           @input="onSearchChange"
         />
       </IconField>

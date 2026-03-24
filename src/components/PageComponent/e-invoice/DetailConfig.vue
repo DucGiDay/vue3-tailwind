@@ -84,12 +84,20 @@
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
         <div class="fb-col-span-12 md:fb-col-span-9">
-          <InputText
+          <!-- <InputText
             id="inv_password"
-            type="text"
+            type="password"
             v-model="config.inv_password"
             placeholder="Nhập mật khẩu"
-          />
+          /> -->
+          <Password
+            id="inv_password"
+            v-model="config.inv_password"
+            placeholder="Nhập mật khẩu"
+            :toggleMask="true"
+            fluid
+            :feedback="false"
+          ></Password>
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">

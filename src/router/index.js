@@ -3,7 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
 import { extendLicenseComponentMap } from './modules/extend-license.router';
-import { eInvoiceComponentMap, eInvoiceRouter } from './modules/e-invoice.router';
+import { eInvoiceRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
@@ -77,7 +77,6 @@ const createAppRouter = (microRouter) => {
         // {
         //   path: '/e-invoice',
         //   name: 'EInvoicePage',
-    
 
         //   children: [
         //     {
