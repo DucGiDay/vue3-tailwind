@@ -27,22 +27,29 @@ const getData = async () => {
   ]);
 };
 
+// Table Hóa đơn gần nhất
 const getListRecentInvoice = async (payload) => {
   await invoiceStore.getListRecentInvoice(payload);
 };
 
+// Báo cáo thống kê 7 ngày trước
 const getStatisticInvoice = async (payload) => {
   await invoiceStore.getStatisticInvoice(payload);
 };
 
+// Báo cáo tài nguyên sử dụng
 const getTotalQuantityInvoices = async (payload) => {
-  await invoiceStore.getTotalQuantityInvoices(payload);
+  const { list_store_uid, ...restPayload } = payload;
+  const store_uids = list_store_uid.split;
+  await invoiceStore.getTotalQuantityInvoices({ ...restPayload, store_uids });
 };
 
+// Báo cáo trạng thái hóa đơn
 const getStatusInvoices = async (payload) => {
   await invoiceStore.getStatusInvoices(payload);
 };
 
+// Biểu đồ số lượng hóa đơn theo ngày
 const getDailyStatistics = async (payload) => {
   const dateRange = get7Day();
   await invoiceStore.getDailyStatistics({ ...payload, ...dateRange });

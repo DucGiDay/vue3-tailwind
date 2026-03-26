@@ -18,12 +18,12 @@
       />
 
       <FbDateFilter @update:modelValue="filter" />
-      <!-- <FbSelectCityStore
+      <!-- <FbSelectCityStoreFilter
         :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
         size="normal"
         @update:modelValue="filter"
       /> -->
-      <FbSelectTaxStore
+      <FbSelectTaxStoreFilter
         placeholder="Chọn theo mã số thuế"
         size="normal"
         @update:modelValue="filter"
@@ -64,7 +64,6 @@
       v-model:selection="saleSelecteds"
       :columns="columns"
       :items="sales"
-      enableCheckbox
       enableScrollPagination
       :stripedRows="false"
       :isLoading="isLoading"
@@ -102,20 +101,17 @@
       </template>
 
       <template #action="{ row }">
-        <Button
-          size="small"
-          text
-          @click="onViewInvoice(row)"
-          :loading="loadingTranId === row.tran_id"
-        >
-          <div
-            v-if="loadingTranId === row.tran_id"
-            class="fb-flex fb-items-center fb-justify-center"
+        <div class="fb-flex fb-gap-1">
+          <Button
+            size="small"
+            text
+            @click="onPreviewPDF(row)"
+            :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
           >
-            <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
-          </div>
-          <IconEye v-else class="!fb-text-primary" color="currentColor" />
-        </Button>
+            <IconEye class="!fb-text-primary" color="currentColor" />
+          </Button>
+
+        </div>
       </template>
 
       <template #empty>
@@ -123,9 +119,27 @@
       </template>
     </FbTable>
   </div>
+
+  <Dialog
+    v-model:visible="showPreview"
+    header="Xem trước hóa đơn"
+    modal
+    :style="{ width: '70vw' }"
+    :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
+  >
+    <!-- {{ previewUrl }}
+    <iframe
+      v-if="previewUrl"
+      :src="previewUrl"
+      class="fb-w-full fb-h-[75vh]"
+      frameborder="0"
+    ></iframe> -->
+    <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+  </Dialog>
 </template>
 
 <script setup>
+import VuePdfEmbed from 'vue-pdf-embed';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -183,6 +197,10 @@ const vatInvoice = computed(() => invoiceStore.vatInvoice);
 const sales = ref([]);
 const isLoading = ref(false);
 const loadingTranId = ref(null);
+const loadingPdfTranId = ref(null);
+const pdfAction = ref(''); // 'preview' | 'download'
+const showPreview = ref(false);
+const previewUrl = ref(null);
 const currentPage = ref(1);
 const pageSize = 50;
 
@@ -265,13 +283,27 @@ const menuItems = (row) => {
         await exportXML(row);
       }
     },
+    // {
+    //   label: 'Xem trước PDF',
+    //   icon: markRaw(IconEye),
+    //   command: async () => {
+    //     await onPreviewPDF(row);
+    //   }
+    // },
     {
       label: 'Tải PDF',
       icon: markRaw(IconDownload),
       command: async () => {
-        await exportPDF(row);
+        await onDownloadPDF(row);
       }
     },
+    // {
+    //   label: 'Xem hóa đơn (Chi tiết)',
+    //   icon: markRaw(IconEye),
+    //   command: async () => {
+    //     await onViewInvoice(row);
+    //   }
+    // },
     {
       label: 'Xem gửi CQT',
       icon: markRaw(IconEye),
@@ -324,8 +356,11 @@ const exportXML = async (item) => {
   }
 };
 
-const exportPDF = async (item) => {
+const fetchAndCachePDF = async (item) => {
+  if (item.pdfUrl) return item.pdfUrl;
+
   try {
+    loadingPdfTranId.value = item.tran_id;
     const payload = {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
@@ -345,15 +380,36 @@ const exportPDF = async (item) => {
     const blob = new Blob([byteNumbers], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
 
+    // Cache URL vào item
+    item.pdfUrl = url;
+    return url;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+    return null;
+  } finally {
+    loadingPdfTranId.value = null;
+  }
+};
+
+const onPreviewPDF = async (item) => {
+  pdfAction.value = 'preview';
+  const url = await fetchAndCachePDF(item);
+  if (url) {
+    previewUrl.value = url;
+    showPreview.value = true;
+  }
+};
+
+const onDownloadPDF = async (item) => {
+  pdfAction.value = 'download';
+  const url = await fetchAndCachePDF(item);
+  if (url) {
     const a = document.createElement('a');
     a.href = url;
     a.download = `e_invoice_${item.tran_id}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
   }
 };
 
@@ -370,9 +426,28 @@ const onViewInvoice = async (row) => {
     console.log('View Invoice Result:', response?.data);
 
     let linkInvoice = null;
-    const { access_token, link_image_invoice, partner_id, tax_code, url } = response?.data;
+    const { access_token, link_image_invoice, partner_id, tax_code, url, file_content } =
+      response?.data;
     if (link_image_invoice) {
       linkInvoice = link_image_invoice;
+    } else if (file_content) {
+      try {
+        // 1. Chuyển base64 thành byte characters
+        const byteCharacters = atob(file_content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+
+        // 2. Tạo Blob với định dạng PDF
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        // 3. Tạo URL tạm thời từ Blob
+        linkInvoice = URL.createObjectURL(blob);
+      } catch (e) {
+        console.error('Lỗi convert base64:', e);
+      }
     } else if (url) {
       try {
         const headers = {
@@ -387,7 +462,7 @@ const onViewInvoice = async (row) => {
           headers,
           responseType: 'blob'
         });
-        linkInvoice = window.URL.createObjectURL(responseData);
+        linkInvoice = URL.createObjectURL(responseData);
       } catch (error) {
         toast.add({
           severity: 'error',

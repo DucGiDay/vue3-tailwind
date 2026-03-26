@@ -1,3 +1,5 @@
+import { CURRENTCY_OPTIONS, CURRENCY_ALLOW_FLOAT } from '@/common/constant/common.constant';
+
 // Lấy time trong ngày dạng ISO
 export const setTimeISO = (hour, minute = 0) => {
   const date = new Date();
@@ -16,14 +18,36 @@ export const pascalToCamel = (str) => {
   return str[0].toLowerCase() + str.slice(1);
 };
 
-export const formatCurrency = (value) => {
-  if (!value) return '';
-  return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+export const formatCurrency = (value, payload) => {
+  if (value === undefined || value === null || value === '') return '';
+  if (!/^-?[\d.]+(?:e-?\d+)?$/.test(value)) return value;
+
+  const currentBrand = JSON.parse(localStorage.getItem('current_brand') || '{}');
+  const currency = currentBrand?.currency || 'VND';
+
+  const label = CURRENTCY_OPTIONS[currency] || '₫';
+  const allowFloat = CURRENCY_ALLOW_FLOAT.includes(currency);
+
+  const fractionCount =
+    payload?.fractionCount !== undefined ? payload.fractionCount : allowFloat ? 2 : 0;
+  const options = {
+    minimumFractionDigits: fractionCount,
+    maximumFractionDigits: fractionCount
+  };
+
+  const numberValue = +value.toString().replaceAll(',', '');
+
+  if (label === '₫') {
+    return numberValue.toLocaleString('en-US', options) + ' ' + label;
+  }
+  return label + ' ' + numberValue.toLocaleString('en-US', options);
 };
 
 export const formatNumber = (value) => {
-  if (value === null || value === undefined || isNaN(value)) return '';
-  return Number(value).toLocaleString('en-US');
+  if (value === null || value === undefined || value === '') return '';
+  const numberValue = typeof value === 'string' ? +value.replaceAll(',', '') : +value;
+  if (Number.isNaN(numberValue)) return '';
+  return numberValue.toLocaleString('en-US');
 };
 
 export const wait = (miliseconds) => {

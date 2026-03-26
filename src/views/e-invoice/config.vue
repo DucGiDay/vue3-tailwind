@@ -3,6 +3,7 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Cấu hình</h4>
     </div>
+    <Button @click="openDetail()" size="small">Tạo cấu hình mới</Button>
   </div>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
@@ -16,7 +17,6 @@
         @update:modelValue="filter"
       /> -->
     </div>
-    <Button @click="openDetail()">Tạo cấu hình mới</Button>
   </div>
 
   <div class="!fb-p-0">

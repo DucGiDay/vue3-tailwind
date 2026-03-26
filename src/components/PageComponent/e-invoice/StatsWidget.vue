@@ -1,12 +1,12 @@
 <template>
   <section id="summary">
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
-      <!-- Tài nguyên chưa dùng -->
+      <!-- Tổng tài nguyên -->
       <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-              Tài nguyên chưa dùng
+              Tổng tài nguyên
             </span>
             <svg
               width="32"
@@ -30,7 +30,7 @@
           </div>
           <Skeleton v-if="totalQuantityInvoices?.isLoading" width="70%" height="2rem"></Skeleton>
           <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(totalQuantityInvoices?.data?.total_invoices || 0) }}
+            {{ formatNumber(totalQuantityInvoices?.data?.total_purchased || 0) }}
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@
           </div>
           <Skeleton v-if="totalQuantityInvoices?.isLoading" width="70%" height="2rem"></Skeleton>
           <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(totalQuantityInvoices?.data?.used_invoices || 0) }}
+            {{ formatNumber(totalQuantityInvoices?.data?.total_used || 0) }}
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
           </div>
           <Skeleton v-if="totalQuantityInvoices?.isLoading" width="70%" height="2rem"></Skeleton>
           <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(totalQuantityInvoices?.data?.remaining_invoices || 0) }}
+            {{ formatNumber(totalQuantityInvoices?.data?.total || 0) }}
           </div>
         </div>
       </div>

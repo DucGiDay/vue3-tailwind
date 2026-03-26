@@ -25,8 +25,9 @@
         v-if="enableCheckbox"
         selectionMode="multiple"
         headerStyle="width: 3rem"
-        headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3 !fb-px-4"
-        :bodyClass="'!fb-py-4 !fb-px-4'"
+        headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3"
+        bodyClass="!fb-py-4"
+        class="!fb-px-4"
         alignFrozen="left"
         frozen
       ></Column>
@@ -40,7 +41,7 @@
           (!props.enableCheckbox ? 'fb-rounded-ss-lg' : '')
         "
         :bodyClass="`!fb-py-4`"
-        :class="[props.enableCheckbox && '!fb-border-l-0', '!fb-px-6']"
+        :class="[props.enableCheckbox && '!fb-border-l-[transparent]', '!fb-px-6']"
         alignFrozen="left"
         frozen
       >
@@ -54,9 +55,9 @@
         :header="col.header"
         :key="col.field + '_' + index"
         :sortable="col?.sortable"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-6"
-        :bodyClass="'!fb-py-4 !fb-px-6 ' + (col?.classes || '')"
-        :class="['!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap']"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        :bodyClass="'!fb-py-4 ' + (col?.classes || '')"
+        :class="['!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6']"
         :alignFrozen="col?.alignFrozen || 'left'"
         :frozen="col?.frozen"
         :style="col?.style || {}"
@@ -80,9 +81,9 @@
       <!-- Delete column -->
       <Column
         v-if="deleteCallback"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 !fb-px-4"
-        bodyClass="!fb-py-4 !fb-px-4"
-        class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        bodyClass="!fb-py-4"
+        class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-4"
         alignFrozen="right"
         frozen
       >
@@ -104,7 +105,7 @@
         v-if="menuItems"
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
         bodyClass="!fb-py-4"
-        class="!fb-border-l-0 not-last:!fb-border-r-0 fb-whitespace-nowrap !fb-px-2"
+        class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-2"
         alignFrozen="right"
         frozen
       >
@@ -136,13 +137,13 @@
             @hide="selectedItem = {}"
           >
             <template #item="{ item, props }">
-              <a v-ripple class="flex items-center" v-bind="props.action">
+              <a v-ripple class="fb-flex fb-items-center" v-bind="props.action">
                 <component v-if="item.icon" :is="item.icon" />
                 <span :class="item?.class || ''">{{ item.label }}</span>
-                <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
+                <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
                 <span
                   v-if="item.shortcut"
-                  class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1"
+                  class="fb-ml-auto fb-border fb-border-surface fb-rounded fb-bg-emphasis fb-text-muted-color fb-text-xs fb-p-1"
                 >
                   {{ item.shortcut }}
                 </span>
