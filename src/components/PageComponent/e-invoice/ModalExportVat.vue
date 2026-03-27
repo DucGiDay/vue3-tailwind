@@ -282,6 +282,7 @@ import { useToast } from 'primevue/usetoast';
 import { useI18n } from '@/common/i18n';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
+import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 
 const globalStore = useGlobalStore();
 const invoiceStore = useEInoiveStore();
@@ -333,16 +334,29 @@ const debounce = (fn, delay) => {
 
 // Logic tìm kiếm theo mã số thuế (Debounced)
 const searchByTaxCode = async () => {
+  console.log(extraSale.value.inv_buyerTaxCode);
+
   if (!extraSale.value.inv_buyerTaxCode) return;
 
   try {
-    console.log('Searching tax code:', extraSale.value.inv_buyerTaxCode);
-    // TODO: Triển khai gọi API thực tế tại đây
+    const respoonse = await invoiceService.searchByTaxCode({
+      tax_code: extraSale.value.inv_buyerTaxCode
+    });
+    console.log(respoonse);
+
+    if (respoonse?.data) {
+      const { inv_buyerLegalName, inv_buyerAddressLine, inv_buyerDisplayName } =
+        respoonse.data || {};
+
+      extraSale.value.inv_buyerLegalName = inv_buyerLegalName;
+      extraSale.value.inv_buyerAddressLine = inv_buyerAddressLine;
+      extraSale.value.inv_buyerDisplayName = inv_buyerDisplayName;
+    }
   } catch (error) {
     toast.add({
       severity: 'error',
-      summary: t('NOTIFICATION--TITLE_ERROR'),
-      detail: t('SALE_SYNC_VAT--NOT_FOUND_TAX_CODE'),
+      // summary: t('NOTIFICATION--TITLE_ERROR'),
+      detail: error.message || 'Đã có lỗi xảy ra',
       life: 3000
     });
   }

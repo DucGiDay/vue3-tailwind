@@ -1,5 +1,5 @@
 <template>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-8']">
+  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Hóa đơn bán hàng</h4>
     </div>
@@ -20,7 +20,7 @@
   <ModalExportVat v-model:visible="visibleExportVat" :saleData="currentSaleData" />
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <FbDateFilter @update:modelValue="filter" />
+      <FbDateFilter @update:modelValue="filter" size="small" />
       <!-- <FbSelectCityStoreFilter
         :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
         size="normal"
@@ -33,7 +33,7 @@
       /> -->
       <FbSelectSingleStoreFilter
         placeholder="Chọn theo cửa hàng"
-        size="normal"
+        size="small"
         @update:modelValue="filter"
       />
     </div>
@@ -61,6 +61,7 @@
           v-model="searchField"
           placeholder="Tìm kiếm mã hóa đơn"
           class="fb-w-full md:fb-w-72"
+          size="small"
           @input="onSearchChange"
         />
       </IconField>

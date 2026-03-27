@@ -11,6 +11,7 @@
     class="md:fb-w-[300px] fb-w-full"
     display="chip"
     :size="size"
+    showClear
   >
     <template #value="{ value }">
       <div v-if="!value || Object.keys(value).length === 0">

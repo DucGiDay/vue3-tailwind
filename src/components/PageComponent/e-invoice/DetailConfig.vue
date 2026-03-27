@@ -3,8 +3,8 @@
     v-model:visible="visibleDetail"
     modal
     header="Sửa thông tin"
-    :style="{ width: '60vw' }"
-    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+    :style="{ width: '50vw' }"
+    :breakpoints="{ '1199px': '70vw', '575px': '90vw' }"
   >
     <template #header>
       <h6 class="fb-text-center fb-font-semibold fb-text-lg fb-flex-1">Sửa thông tin</h6>
@@ -15,11 +15,14 @@
 
     <Fluid v-else class="fb-space-y-6">
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="partner" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
+        <label
+          for="partner"
+          class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-2 fb-mb-0"
+        >
           Đối tác
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
+        <div class="fb-col-span-12 md:fb-col-span-10">
           <Select
             id="partner"
             v-model="partner"
@@ -29,15 +32,16 @@
             optionValue="code"
             filter
             :disabled="isEdit"
+            @change="onPartnerChange"
           />
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="store" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
+        <label for="store" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-2 fb-mb-0">
           Cửa hàng
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
+        <div class="fb-col-span-12 md:fb-col-span-10">
           <Select
             id="store"
             v-model="store"
@@ -50,11 +54,11 @@
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="posId" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
+        <label for="posId" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-2 fb-mb-0">
           POS ID
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
+        <div class="fb-col-span-12 md:fb-col-span-10">
           <InputText
             id="posId"
             disabled
@@ -64,115 +68,97 @@
           />
         </div>
       </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="inv_user_name" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-          Tài khoản
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <InputText
-            id="inv_user_name"
-            type="text"
-            v-model="config.inv_user_name"
-            placeholder="Nhập tài khoản"
-          />
-        </div>
-      </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="inv_password" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-          Mật khẩu
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <!-- <InputText
-            id="inv_password"
-            type="password"
-            v-model="config.inv_password"
-            placeholder="Nhập mật khẩu"
-          /> -->
-          <Password
-            id="inv_password"
-            v-model="config.inv_password"
-            placeholder="Nhập mật khẩu"
-            :toggleMask="true"
-            fluid
-            :feedback="false"
-          ></Password>
-        </div>
-      </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="inv_tax_code" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-          Mã số thuế
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <InputText
-            id="inv_tax_code"
-            type="text"
-            v-model="config.inv_tax_code"
-            placeholder="Nhập mã số thuế"
-          />
-        </div>
-      </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="inv_series" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-          Ký hiệu
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <InputText
-            id="inv_series"
-            type="text"
-            v-model="config.inv_series"
-            placeholder="Nhập ký hiệu"
-          />
-        </div>
-      </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label
-          for="inv_template_id"
-          class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3"
-        >
-          Mẫu hóa đơn
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <InputText
-            id="inv_template_id"
-            type="text"
-            v-model="config.inv_template_id"
-            placeholder="Nhập mẫu hóa đơn"
-          />
-        </div>
-      </div>
-      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-        <label for="version" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-          Phiên bản
-          <span class="fb-text-error fb-ml-1">*</span>
-        </label>
-        <div class="fb-col-span-12 md:fb-col-span-9">
-          <div class="fb-flex fb-flex-col md:fb-flex-row fb-gap-4">
-            <label for="version1" class="fb-flex fb-items-center">
-              <RadioButton
-                id="version1"
-                name="version"
-                value="invoice_v1"
-                v-model="config.version"
-              />
-              <span class="fb-leading-none fb-ml-2">Version 1</span>
-            </label>
-            <label for="version2" class="fb-flex fb-items-center">
-              <RadioButton
-                id="version2"
-                name="version"
-                value="invoice_v2"
-                v-model="config.version"
-              />
-              <span class="fb-leading-none fb-ml-2">Version 2</span>
-            </label>
+
+      <!-- Dynamic Form Fields -->
+      <template v-for="(field, index) in partnerConfigFields" :key="field.id + index">
+        <div v-show="!field.hide?.(config)" class="fb-grid fb-grid-cols-12 fb-gap-1">
+          <label
+            v-if="field.type !== 'checkbox'"
+            :for="field.id"
+            class="fb-col-span-12 md:fb-col-span-2 fb-mb-0"
+          >
+            <span>{{ typeof field.label === 'string' ? field.label : field.id }}</span>
+            <span
+              v-if="field.type !== 'checkbox' && field.type !== 'radio'"
+              class="fb-text-error fb-ml-1"
+            >
+              *
+            </span>
+            <i
+              v-if="field.tooltip"
+              class="pi pi-info-circle fb-ml-1 fb-text-muted-color"
+              v-tooltip.top="{ value: field.tooltip, escape: false }"
+            ></i>
+          </label>
+          <div
+            :class="[
+              'fb-col-span-12 ',
+              field.type === 'checkbox' ? 'md:fb-col-span-12' : 'md:fb-col-span-10'
+            ]"
+          >
+            <!-- Radio -->
+            <div v-if="field.type === 'radio'" class="fb-flex fb-flex-wrap fb-gap-4 fb-py-2">
+              <div
+                v-for="opt in field.options"
+                :key="opt.value"
+                class="fb-flex fb-items-center fb-gap-2"
+              >
+                <RadioButton
+                  :id="field.id + opt.value"
+                  :name="field.id"
+                  :value="opt.value"
+                  v-model="config[field.id]"
+                />
+                <label :for="field.id + opt.value" class="fb-cursor-pointer fb-text-sm fb-mb-0">
+                  {{ opt.text }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Checkbox -->
+            <div v-else-if="field.type === 'checkbox'" class="fb-py-2">
+              <label
+                :for="field.id"
+                class="fb-cursor-pointer fb-mb-0 fb-flex fb-items-center fb-gap-1"
+              >
+                <Checkbox
+                  :id="field.id"
+                  :name="field.id"
+                  v-model="config[field.id]"
+                  :binary="true"
+                  :trueValue="1"
+                  :falseValue="0"
+                />
+                {{ typeof field.label === 'string' ? field.label : field.id }}
+              </label>
+            </div>
+
+            <!-- Password -->
+            <Password
+              v-else-if="field.id === 'inv_password'"
+              :id="field.id"
+              v-model="config[field.id]"
+              :placeholder="'Nhập ' + (field.label || field.id)"
+              :toggleMask="true"
+              fluid
+              :feedback="false"
+            />
+
+            <!-- Default InputText -->
+            <InputText
+              v-else
+              :id="field.id"
+              v-model="config[field.id]"
+              type="text"
+              :placeholder="'Nhập ' + (field.label || field.id)"
+              @input="
+                field.isReplaceSpace &&
+                (config[field.id] = config[field.id].toString().replace(/\s/g, ''))
+              "
+            />
           </div>
         </div>
-      </div>
+      </template>
     </Fluid>
 
     <template #footer>
@@ -188,7 +174,10 @@
 </template>
 
 <script setup>
-import { INVOICE_PARTNERS } from '@/common/constant/e-invoice.constant';
+import {
+  INVOICE_PARTNERS,
+  STORE_CONNECT_PARTNER_CONFIG_KEYS
+} from '@/common/constant/e-invoice.constant';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useToast } from 'primevue/usetoast';
@@ -217,30 +206,43 @@ const storeOptions = computed(() => {
   return globalStore?.storesAccessibleInCurrentBrand || [];
 });
 const partnerOptions = INVOICE_PARTNERS;
-const defaultConfig = () => ({
-  store_uid: '',
-  inv_user_name: '',
-  inv_password: '',
-  inv_tax_code: '',
-  inv_series: '',
-  inv_template_id: '',
-  version: 'invoice_v1',
-  config_template_v2: 0,
-  accept_zero_vat: 0,
-  enable_savesign: 0,
-  block_export_vat_0d: 0,
-  export_vat_invoice_date_is_tran_date: 0
-});
 
 const partner = ref(props.partnerSelected || INVOICE_PARTNERS[0].code);
 const store = ref();
 const isLoading = ref(false);
-const config = ref(defaultConfig());
+
+// Dynamic Config Helpers
+const partnerConfigFields = computed(() => {
+  return STORE_CONNECT_PARTNER_CONFIG_KEYS[partner.value] || [];
+});
+
+const generateDefaultConfig = (fields) => {
+  const cfg = {
+    store_uid: '',
+    config_template_v2: 0,
+    accept_zero_vat: 0,
+    enable_savesign: 0,
+    block_export_vat_0d: 0,
+    export_vat_invoice_date_is_tran_date: 0
+  };
+  fields.forEach((f) => {
+    if (f.type === 'checkbox') cfg[f.id] = 0;
+    else if (f.type === 'radio') cfg[f.id] = f.options?.[0]?.value || '';
+    else cfg[f.id] = '';
+  });
+  return cfg;
+};
+
+const config = ref(generateDefaultConfig(partnerConfigFields.value));
 
 const resetData = () => {
   partner.value = props.partnerSelected || INVOICE_PARTNERS[0].code;
   store.value = {};
-  config.value = defaultConfig();
+  config.value = generateDefaultConfig(partnerConfigFields.value);
+};
+
+const onPartnerChange = () => {
+  config.value = { ...generateDefaultConfig(partnerConfigFields.value) };
 };
 
 const saveConfig = async () => {
@@ -276,7 +278,8 @@ watch(
       store.value = globalStore?.storesAccessibleInCurrentBrand?.find(
         (item) => item.id === newVal.store_uid
       );
-      config.value = { ...defaultConfig(), ...newVal };
+      config.value = { ...generateDefaultConfig(partnerConfigFields.value), ...newVal };
+      partner.value = newVal.partner_id;
     } else {
       resetData();
     }

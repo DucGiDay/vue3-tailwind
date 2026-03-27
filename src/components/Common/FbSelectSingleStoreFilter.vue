@@ -10,6 +10,7 @@
     v-model:expandedKeys="expandedKeys"
     class="md:fb-w-[300px] fb-w-full"
     :size="size"
+    showClear
   >
     <template #option="{ node }">
       <p class="fb-text-base">

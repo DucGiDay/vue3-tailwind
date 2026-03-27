@@ -26,8 +26,12 @@ export const invoiceService = {
   getListStoreGroupByTaxCode: (params) =>
     api.get(INVOICE_ENDPOINTS.LIST_STORE_GROUP_BY_TAXCODE, { params }),
 
-  viewInvoice: (params) => api.get(INVOICE_ENDPOINTS.VIEW_INVOICE, { params }),
+  viewInvoice: (payload) => api.post(INVOICE_ENDPOINTS.VIEW_BERFORE_SEND_INVOICE, payload),
   syncSaleMinvoice: (payload) => api.post(INVOICE_ENDPOINTS.SYNC_SALE_MINVOICE, payload),
+  sendInvoiceCqt: (payload) => api.post(INVOICE_ENDPOINTS.SEND_INVOICE_CQT, payload),
+
+  getStatus: (params) => api.get(INVOICE_ENDPOINTS.GET_STATUS, { params }),
+  searchByTaxCode: (params) => api.get(INVOICE_ENDPOINTS.SEARCH_BY_TAXCODE, { params }),
 
   getImageInvoice: (url, config) => api.get(url, { noAuth: true, ...config })
 };

@@ -81,7 +81,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-8']">
+  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Tổng quan</h4>
     </div>

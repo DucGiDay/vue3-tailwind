@@ -5,6 +5,7 @@
     selectionMode="range"
     :manualInput="false"
     dateFormat="dd/mm/yy"
+    inputClass="!fb-font-medium"
     @update:modelValue="onDateChange"
   />
 </template>
@@ -40,3 +41,10 @@ const onDateChange = async (value) => {
   }
 };
 </script>
+
+<style scoped lang="scss">
+:deep(.fb-date-filter-input) {
+  font-weight: 600;
+  font-size: 14px;
+}
+</style>

@@ -10,7 +10,7 @@
       :scrollHeight="
         $attrs?.scrollable === false || (props.enablePagination && !props.enableScrollPagination)
           ? null
-          : props.scrollHeight || 'calc(100vh - 20rem)'
+          : props.scrollHeight || 'calc(100vh - 15rem)'
       "
       tableStyle="min-width: 50rem"
       tableClass="fb_table--t_table"
@@ -25,40 +25,43 @@
         v-if="enableCheckbox"
         selectionMode="multiple"
         headerStyle="width: 3rem"
-        headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3"
+        headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
         bodyClass="!fb-py-4"
         class="!fb-px-4"
         alignFrozen="left"
         frozen
       ></Column>
 
+      <!-- Index column -->
       <Column
+        v-if="!$attrs?.hideIndexRow"
         field="no"
         header="#"
         :reorderableColumn="false"
-        :headerClass="
-          '!fb-bg-gray-50 !fb-text-gray !fb-py-3' +
-          (!props.enableCheckbox ? 'fb-rounded-ss-lg' : '')
-        "
+        :headerClass="'!fb-bg-gray-50 !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium first:!fb-rounded-ss-lg'"
         :bodyClass="`!fb-py-4`"
-        :class="[props.enableCheckbox && '!fb-border-l-[transparent]', '!fb-px-6']"
-        alignFrozen="left"
-        frozen
+        :class="['!fb-border-l-[transparent] first:!fb-border-l !fb-px-6']"
       >
         <template #body="{ index }">
           {{ `${index + 1}` }}
         </template>
       </Column>
+
       <Column
         v-for="(col, index) of columns"
         :field="col.field"
         :header="col.header"
         :key="col.field + '_' + index"
         :sortable="col?.sortable"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
         :bodyClass="'!fb-py-4 ' + (col?.classes || '')"
         :class="[
-          '!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6'
+          '!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6',
+          {
+            'p-datatable-column-frozen-left-last':
+              col?.frozen && (col?.alignFrozen === 'left' || !col?.alignFrozen),
+            'p-datatable-column-frozen-right-first': col?.frozen && col?.alignFrozen === 'right'
+          }
         ]"
         :alignFrozen="col?.alignFrozen || 'left'"
         :frozen="col?.frozen"
@@ -83,7 +86,7 @@
       <!-- Delete column -->
       <Column
         v-if="deleteCallback"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
         bodyClass="!fb-py-4"
         class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-4"
         alignFrozen="right"
@@ -105,22 +108,21 @@
       <!-- Action Column -->
       <Column
         v-if="menuItems"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
+        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
         bodyClass="!fb-py-4"
         class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-2"
         alignFrozen="right"
         frozen
       >
         <template #body="{ data }">
-          <div v-if="loadingActionRow === data" class="fb-flex fb-items-center fb-justify-center">
+          <!-- <div v-if="" class="fb-flex fb-items-center fb-justify-center">
             <ProgressSpinner
               class="!fb-m-0"
               strokeWidth="6"
               style="width: 1.5rem; height: 1.5rem"
             />
-          </div>
+          </div> -->
           <Button
-            v-else
             type="button"
             @click.stop="toggleActionMenu($event, data)"
             aria-haspopup="true"
@@ -129,7 +131,10 @@
             text
             :disabled="isLoading && !isLoadmore"
           >
-            <IconOption />
+            <div v-if="loadingActionRow === data" class="fb-flex fb-items-center fb-justify-center">
+              <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
+            </div>
+            <IconOption v-else />
           </Button>
         </template>
       </Column>
@@ -506,18 +511,20 @@ const onColReorder = () => {
 };
 
 const toggleActionMenu = async (event, data) => {
+  const target = event.currentTarget;
   selectedItem.value = data;
   let items = [];
-  // if (typeof props.onToggleMenu === 'function') {
-  //   try {
-  //     loadingActionRow.value = data;
-  //     await props.onToggleMenu(event, data);
-  //   } catch (error) {
-  //     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
-  //   } finally {
-  //     loadingActionRow.value = null;
-  //   }
-  // }
+  if (typeof props.onToggleMenu === 'function') {
+    try {
+      loadingActionRow.value = data;
+      await props.onToggleMenu(event, data);
+    } catch (error) {
+      toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+    } finally {
+      loadingActionRow.value = null;
+    }
+  }
+
   if (typeof props.menuItems === 'function') {
     items = props.menuItems(data);
   } else {
@@ -542,7 +549,7 @@ const toggleActionMenu = async (event, data) => {
     }
   }));
 
-  menu.value.toggle(event);
+  menu.value.toggle({ currentTarget: target });
 };
 
 const formatData = (node, row, format) => {
@@ -621,6 +628,15 @@ onBeforeUnmount(() => {
     td:last-child {
       border-end-end-radius: 0.5rem;
     }
+  }
+
+  // Shadow for frozen columns
+  .p-datatable-column-frozen-left-last {
+    box-shadow: 4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .p-datatable-column-frozen-right-first {
+    box-shadow: -4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
   }
 }
 

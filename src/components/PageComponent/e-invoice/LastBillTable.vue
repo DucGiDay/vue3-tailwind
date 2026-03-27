@@ -22,6 +22,7 @@ const tableColumns = [
         :is-loading="recentInvoice?.isLoading"
         :items="recentInvoice?.data || []"
         :scrollable="false"
+        :stripedRows="false"
       >
         <template #vat_publish_status="{ record }">
           <span

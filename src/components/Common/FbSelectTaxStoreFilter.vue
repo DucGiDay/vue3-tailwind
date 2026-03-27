@@ -9,10 +9,11 @@
     filterPlaceholder="Tìm kiếm"
     v-model:expandedKeys="expandedKeys"
     class="md:fb-w-[300px] fb-w-full"
-    display="chip"
+    :display="props.display"
     :size="size"
+    showClear
   >
-    <template #value="{ value }">
+    <!-- <template #value="{ value }">
       <div v-if="!value || Object.keys(value).length === 0">
         {{ placeholder }}
       </div>
@@ -26,7 +27,7 @@
           }"
         />
       </div>
-    </template>
+    </template> -->
 
     <template #option="{ node }">
       <p class="fb-text-base">
@@ -55,6 +56,10 @@ const props = defineProps({
   size: {
     type: String,
     default: 'small'
+  },
+  display: {
+    type: String,
+    default: 'comma' // comma || chip
   }
 });
 

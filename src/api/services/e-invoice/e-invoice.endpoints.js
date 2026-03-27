@@ -20,6 +20,10 @@ export const INVOICE_ENDPOINTS = {
 
   LIST_STORE_GROUP_BY_TAXCODE: '/api/einvoice/v1/invoice/list-store-group-by-taxcode',
 
-  VIEW_INVOICE: '/api/einvoice/v1/invoice/view',
-  SYNC_SALE_MINVOICE: '/api/v3/pos-client/sync-sale-minvoice'
+  VIEW_BERFORE_SEND_INVOICE: '/api/einvoice/v1/invoice/view-send-invoice-cqt',
+  SEND_INVOICE_CQT: '/api/einvoice/v1/invoice/send-invoice-cqt',
+
+  SYNC_SALE_MINVOICE: '/api/v3/pos-client/sync-sale-minvoice',
+  GET_STATUS: '/api/invoice/v1/status',
+  SEARCH_BY_TAXCODE: '/api/search-by-tax-code'
 };
