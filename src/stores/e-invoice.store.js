@@ -155,6 +155,20 @@ export const useEInoiveStore = defineStore('eInoive', {
       } finally {
         this.listTaxStores.isLoading = false;
       }
+    },
+    async exportVatInvoice(payload) {
+      try {
+        const response = await invoiceService.syncSaleMinvoice(payload);
+        return {
+          data: response?.data || null,
+          error: null
+        };
+      } catch (err) {
+        return {
+          data: null,
+          error: err
+        };
+      }
     }
   }
 });

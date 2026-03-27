@@ -57,7 +57,9 @@
         :sortable="col?.sortable"
         headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3"
         :bodyClass="'!fb-py-4 ' + (col?.classes || '')"
-        :class="['!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6']"
+        :class="[
+          '!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6'
+        ]"
         :alignFrozen="col?.alignFrozen || 'left'"
         :frozen="col?.frozen"
         :style="col?.style || {}"
@@ -129,27 +131,6 @@
           >
             <IconOption />
           </Button>
-          <Menu
-            ref="menu"
-            id="overlay_menu"
-            :model="resolvedMenuItems"
-            :popup="true"
-            @hide="selectedItem = {}"
-          >
-            <template #item="{ item, props }">
-              <a v-ripple class="fb-flex fb-items-center" v-bind="props.action">
-                <component v-if="item.icon" :is="item.icon" />
-                <span :class="item?.class || ''">{{ item.label }}</span>
-                <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
-                <span
-                  v-if="item.shortcut"
-                  class="fb-ml-auto fb-border fb-border-surface fb-rounded fb-bg-emphasis fb-text-muted-color fb-text-xs fb-p-1"
-                >
-                  {{ item.shortcut }}
-                </span>
-              </a>
-            </template>
-          </Menu>
         </template>
       </Column>
 
@@ -263,6 +244,38 @@
     </div>
   </div>
 
+  <Menu
+    ref="menu"
+    id="overlay_menu"
+    :model="resolvedMenuItems"
+    :popup="true"
+    @hide="selectedItem = {}"
+  >
+    <template #item="{ item, props }">
+      <a
+        v-ripple
+        v-bind="props.action"
+        v-tooltip="item.tooltipText ? { value: item.tooltipText, showDelay: 300 } : null"
+        :class="[
+          'fb-flex fb-items-center',
+          {
+            'fb-opacity-50 !fb-cursor-default': item?.disabledd
+          }
+        ]"
+      >
+        <component v-if="item.icon" :is="item.icon" />
+        <span :class="item?.class || ''">{{ item.label }}</span>
+        <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
+        <span
+          v-if="item.shortcut"
+          class="fb-ml-auto fb-border fb-border-surface fb-rounded fb-bg-emphasis fb-text-muted-color fb-text-xs fb-p-1"
+        >
+          {{ item.shortcut }}
+        </span>
+      </a>
+    </template>
+  </Menu>
+
   <Dialog
     header="Xác nhận"
     v-model:visible="displayConfirmation"
@@ -322,6 +335,11 @@ const props = defineProps({
   },
 
   menuItems: {
+    type: Function,
+    default: null
+  },
+
+  onToggleMenu: {
     type: Function,
     default: null
   },
@@ -487,9 +505,19 @@ const onColReorder = () => {
   toast.add({ severity: 'success', summary: 'Column Reordered', life: 3000 });
 };
 
-const toggleActionMenu = (event, data) => {
+const toggleActionMenu = async (event, data) => {
   selectedItem.value = data;
   let items = [];
+  // if (typeof props.onToggleMenu === 'function') {
+  //   try {
+  //     loadingActionRow.value = data;
+  //     await props.onToggleMenu(event, data);
+  //   } catch (error) {
+  //     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+  //   } finally {
+  //     loadingActionRow.value = null;
+  //   }
+  // }
   if (typeof props.menuItems === 'function') {
     items = props.menuItems(data);
   } else {

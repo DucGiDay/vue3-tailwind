@@ -189,7 +189,6 @@ const filter = async () => {
 
 const handleExportVat = (isImmediate = false) => {
   if (!saleSelecteds.value.length) return;
-
   // Chuẩn bị dữ liệu truyền vào Modal
   // Nếu là nhiều sales, API thường nhận object chứa array list_sale
   currentSaleData.value = {

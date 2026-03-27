@@ -72,6 +72,7 @@
       :totalRecords="vatInvoice.data?.num_results || 0"
       :totalPages="vatInvoice.data?.total_pages || 0"
       :menuItems="menuItems"
+      :onToggleMenu="onToggleMenu"
       @page-change="getData"
     >
       <template #tran_info="{ row }">
@@ -108,9 +109,14 @@
             @click="onPreviewPDF(row)"
             :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
           >
-            <IconEye class="!fb-text-primary" color="currentColor" />
+            <ProgressSpinner
+              v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+              class="!fb-m-0"
+              strokeWidth="6"
+              style="width: 1rem; height: 1rem"
+            />
+            <IconEye v-else class="!fb-text-primary" color="currentColor" />
           </Button>
-
         </div>
       </template>
 
@@ -247,9 +253,32 @@ const statusMap = (status) => {
 
 const menuItems = (row) => {
   return [
+    // {
+    //   label: 'Xuất VAT',
+    //   icon: markRaw(IconDownload),
+    //   command: () => {
+    //     console.log(row);
+    //   }
+    // },
     {
-      label: 'Xuất VAT',
-      icon: markRaw(IconDownload),
+      label: 'Thay thế',
+      icon: markRaw(IconReplace),
+      command: () => {
+        console.log(row);
+      }
+    },
+    {
+      label: 'Sửa thông tin VAT',
+      icon: markRaw(IconEdit),
+      disabledd: row?.enable_vat_cms == 0,
+      tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
+      command: () => {
+        console.log(row);
+      }
+    },
+    {
+      label: 'Phát hành lại hóa đơn',
+      icon: markRaw(IconUpload),
       command: () => {
         console.log(row);
       }
@@ -262,16 +291,10 @@ const menuItems = (row) => {
         console.log(row);
       }
     },
+
     {
-      label: 'Thay thế',
-      icon: markRaw(IconReplace),
-      command: () => {
-        console.log(row);
-      }
-    },
-    {
-      label: 'Sửa thông tin VAT',
-      icon: markRaw(IconEdit),
+      label: 'Xem gửi CQT',
+      icon: markRaw(IconEye),
       command: () => {
         console.log(row);
       }
@@ -283,42 +306,19 @@ const menuItems = (row) => {
         await exportXML(row);
       }
     },
-    // {
-    //   label: 'Xem trước PDF',
-    //   icon: markRaw(IconEye),
-    //   command: async () => {
-    //     await onPreviewPDF(row);
-    //   }
-    // },
     {
       label: 'Tải PDF',
       icon: markRaw(IconDownload),
       command: async () => {
         await onDownloadPDF(row);
       }
-    },
-    // {
-    //   label: 'Xem hóa đơn (Chi tiết)',
-    //   icon: markRaw(IconEye),
-    //   command: async () => {
-    //     await onViewInvoice(row);
-    //   }
-    // },
-    {
-      label: 'Xem gửi CQT',
-      icon: markRaw(IconEye),
-      command: () => {
-        console.log(row);
-      }
-    },
-    {
-      label: 'Phát hành lại hóa đơn',
-      icon: markRaw(IconUpload),
-      command: () => {
-        console.log(row);
-      }
     }
   ];
+};
+
+const onToggleMenu = async (event, row) => {
+  console.log(row);
+  await new Promise((resolve) => setTimeout(resolve, 500));
 };
 
 const exportXML = async (item) => {

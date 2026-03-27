@@ -27,6 +27,7 @@ export const invoiceService = {
     api.get(INVOICE_ENDPOINTS.LIST_STORE_GROUP_BY_TAXCODE, { params }),
 
   viewInvoice: (params) => api.get(INVOICE_ENDPOINTS.VIEW_INVOICE, { params }),
+  syncSaleMinvoice: (payload) => api.post(INVOICE_ENDPOINTS.SYNC_SALE_MINVOICE, payload),
 
   getImageInvoice: (url, config) => api.get(url, { noAuth: true, ...config })
 };

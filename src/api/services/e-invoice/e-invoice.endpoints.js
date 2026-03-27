@@ -20,5 +20,6 @@ export const INVOICE_ENDPOINTS = {
 
   LIST_STORE_GROUP_BY_TAXCODE: '/api/einvoice/v1/invoice/list-store-group-by-taxcode',
 
-  VIEW_INVOICE: '/api/einvoice/v1/invoice/view'
+  VIEW_INVOICE: '/api/einvoice/v1/invoice/view',
+  SYNC_SALE_MINVOICE: '/api/v3/pos-client/sync-sale-minvoice'
 };
