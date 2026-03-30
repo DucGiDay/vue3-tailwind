@@ -33,5 +33,6 @@ export const invoiceService = {
   getStatus: (params) => api.get(INVOICE_ENDPOINTS.GET_STATUS, { params }),
   searchByTaxCode: (params) => api.get(INVOICE_ENDPOINTS.SEARCH_BY_TAXCODE, { params }),
 
+  deleteDraftInvoice: (payload) => api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
   getImageInvoice: (url, config) => api.get(url, { noAuth: true, ...config })
 };

@@ -129,9 +129,19 @@
             aria-controls="overlay_menu"
             size="small"
             text
+            :loading="
+              (props.keyLoading && props.loadingActionRowCustom === data[props.keyLoading]) ||
+              loadingActionRow === data
+            "
             :disabled="isLoading && !isLoadmore"
           >
-            <div v-if="loadingActionRow === data" class="fb-flex fb-items-center fb-justify-center">
+            <div
+              v-if="
+                (props.keyLoading && props.loadingActionRowCustom === data[props.keyLoading]) ||
+                loadingActionRow === data
+              "
+              class="fb-flex fb-items-center fb-justify-center"
+            >
               <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
             </div>
             <IconOption v-else />
@@ -311,6 +321,7 @@ const emptyIcon = getAssetUrl(empryIconPath);
 
 // Props
 const props = defineProps({
+  /** Danh sách cấu hình các cột của bảng */
   columns: {
     type: Array,
     default: () => [],
@@ -319,71 +330,98 @@ const props = defineProps({
     }
   },
 
+  /** Danh sách dữ liệu hiển thị trong bảng */
   items: {
     type: Array,
     default: () => []
   },
 
+  /** Trạng thái đang tải dữ liệu */
   isLoading: {
     type: Boolean,
     default: false
   },
 
+  /** Hiển thị cột checkbox để chọn nhiều dòng */
   enableCheckbox: {
     type: Boolean,
     default: false
   },
 
+  /** Hàm callback xử lý khi nhấn xóa dòng */
   deleteCallback: {
     type: Function,
     default: null
   },
 
+  /** Danh sách các hành động trong menu của mỗi dòng */
   menuItems: {
     type: Function,
     default: null
   },
 
+  /** Hàm callback khi mở menu hành động (thường dùng để gọi API cập nhật trạng thái menu) */
   onToggleMenu: {
     type: Function,
     default: null
   },
 
+  /** Giá trị định danh dòng đang tải action (tùy chỉnh) */
+  loadingActionRowCustom: {
+    type: [String, Number],
+    default: null
+  },
+
+  /** Tên trường (key) dùng để so sánh trạng thái loading action */
+  keyLoading: {
+    type: [String, Number],
+    default: null
+  },
+
   // Pagination props
+  /** Bật chế độ phân trang (bao gồm cả phân trang nút và cuộn) */
   enablePagination: {
     // Cho phép phân trang (Cả 2 loại: nút bấm | cuộn chuột)
     type: Boolean,
     default: false
   },
+  /** Bật chế độ phân trang bằng cách cuộn chuột (infinite scroll) */
   enableScrollPagination: {
     // Phân trang bằng cuộn chuột
     type: Boolean,
     default: false
   },
+  /** Chiều cao vùng cuộn của bảng */
   scrollHeight: {
     type: String,
     default: ''
   },
+  /** Khoảng cách (px) từ đáy bảng để kích hoạt tải thêm dữ liệu khi cuộn */
   scrollThreshold: {
     type: Number,
     default: 100 // px từ đáy để trigger load thêm
   },
+  /** Tổng số bản ghi */
   totalRecords: {
     type: Number,
     default: 0
   },
+  /** Tổng số trang */
   totalPages: {
     type: Number,
     default: 0
   },
+  /** Số bản ghi hiển thị trên mỗi trang */
   pageSize: {
     type: Number,
     default: 8
   },
+  /** Trang hiện tại */
   currentPage: {
     type: Number,
     default: 1
   },
+  /** Danh sách các tùy chọn số dòng hiển thị trên một trang */
   rowsPerPageOptions: {
     type: Array,
     default: () => [8, 10, 20, 50, 100, 200]

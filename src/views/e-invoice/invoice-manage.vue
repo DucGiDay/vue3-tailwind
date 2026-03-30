@@ -73,6 +73,8 @@
       :pageSize="pageSize"
       :totalRecords="vatInvoice.data?.num_results || 0"
       :totalPages="vatInvoice.data?.total_pages || 0"
+      :loadingActionRowCustom="loadingActionRowCustom"
+      keyLoading="tran_id"
       :menuItems="menuItems"
       :onToggleMenu="onToggleMenu"
       @page-change="getData"
@@ -147,6 +149,7 @@
 
   <ModalExportVat v-model:visible="visibleExportVat" :saleData="currentSaleData" />
   <ModalViewBeforeSend v-model:visible="visibleViewBeforeSend" :invoiceData="dataViewBeforeSend" />
+  <ConfirmDialog />
 </template>
 
 <script setup>
@@ -162,7 +165,8 @@ import {
   VAT_PUBLISH_STATUS_LIST
 } from '@/common/constant/e-invoice.constant';
 import { BILL_STATUS } from '@/common/constant/common.constant';
-import { useToast } from 'primevue';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 import { useRouter } from 'vue-router';
 
 import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
@@ -179,6 +183,7 @@ const filterStore = useFilterStore();
 
 // constants
 const toast = useToast();
+const confirm = useConfirm();
 const router = useRouter();
 const columns = [
   { field: 'tran_info', header: 'Thông tin hóa đơn' },
@@ -215,8 +220,8 @@ const vatInvoice = computed(() => invoiceStore.vatInvoice); // data from api
 const sales = ref([]); // data display in table
 
 const isLoading = ref(false);
-const loadingTranId = ref(null);
 const loadingPdfTranId = ref(null);
+const loadingActionRowCustom = ref(null);
 
 const pdfAction = ref(''); // 'preview' | 'download'
 const showPreview = ref(false);
@@ -284,29 +289,23 @@ const menuItems = (row) => {
       icon: markRaw(IconReplace),
       visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
       command: () => {
-        router.push({
-          path: '/sale/edit-sale',
-          query: {
-            tranId: row.tran_id,
-            storeUid: row.store_uid,
-            editType: row.statusSale?.edit_type
-          }
-        });
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+        // window.location.assign(url);
+        window.open(url, '_blank'); // mở tab mới
       }
     },
     {
       label: 'Sửa hóa đơn',
       icon: markRaw(IconEdit),
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 0,
+      visible: row?.statusSale?.is_edit && [1, 2].includes(row?.statusSale?.edit_type),
       command: () => {
-        router.push({
-          path: '/sale/edit-sale',
-          query: {
-            tranId: row.tran_id,
-            storeUid: row.store_uid,
-            editType: row.statusSale?.edit_type
-          }
-        });
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+        // window.location.assign(url);
+        window.open(url, '_blank'); // mở tab mới
       }
     },
     {
@@ -328,28 +327,25 @@ const menuItems = (row) => {
       visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
       icon: markRaw(IconUpload),
       command: () => {
-        router.push({
-          path: '/sale/edit-sale',
-          query: {
-            tranId: row.tran_id,
-            storeUid: row.store_uid,
-            editType: row.statusSale?.edit_type
-          }
-        });
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+        // window.location.assign(url);
+        window.open(url, '_blank'); // mở tab mới
       }
     },
-    // {
-    //   label: 'Xóa hóa đơn dự thảo',
-    //   icon: markRaw(IconDeleteDoc),
-    //   class: 'fb-text-error',
-    //   visible: !isSaleExortedVat(row) && isAbleToDeleteBill(row),
-    //   command: () => {
-    //     console.log(row);
-    //   }
-    // },
+    {
+      label: 'Xóa hóa đơn dự thảo',
+      icon: markRaw(IconDeleteDoc),
+      class: 'fb-text-error',
+      command: () => {
+        onDeleteDraft(row);
+      }
+    },
 
     {
       label: 'Xem gửi CQT',
+      visible: row?.partner_id === 'IPOSINVOICE',
       icon: markRaw(IconEye),
       command: async () => {
         await onViewInvoice(row);
@@ -491,9 +487,44 @@ const onDownloadPDF = async (item) => {
   }
 };
 
+const onDeleteDraft = (row) => {
+  confirm.require({
+    message: 'Bạn có chắc chắn muốn xóa hóa đơn dự thảo này?',
+    header: 'Xác nhận xóa',
+    acceptProps: {
+      label: 'Xác nhận',
+      severity: 'danger'
+    },
+    rejectProps: {
+      label: 'Hủy',
+      severity: 'secondary',
+      outlined: true
+    },
+    accept: async () => {
+      loadingActionRowCustom.value = row.tran_id;
+      try {
+        const payload = {
+          merged_tran_id: row.tran_id
+        };
+        await invoiceService.deleteDraftInvoice(payload);
+        toast.add({ severity: 'success', summary: 'Xóa hóa đơn dự thảo thành công', life: 3000 });
+        await filter();
+      } catch (error) {
+        console.error('Error deleteDraftInvoice', error);
+        toast.add({
+          severity: 'error',
+          summary: error?.message || 'Xóa hóa đơn dự thảo thất bại',
+          life: 3000
+        });
+      } finally {
+        loadingActionRowCustom.value = null;
+      }
+    }
+  });
+};
+
 const onViewInvoice = async (row) => {
   try {
-    loadingTranId.value = row.tran_id;
     const payload = {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
@@ -511,8 +542,6 @@ const onViewInvoice = async (row) => {
   } catch (error) {
     console.error('Error viewInvoice', error);
     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
-  } finally {
-    loadingTranId.value = null;
   }
 };
 
