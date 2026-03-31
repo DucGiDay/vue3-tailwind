@@ -78,7 +78,7 @@ export const setCookie = (name, value, minutes) => {
   date.setTime(date.getTime() + minutes * 60 * 1000);
   const expires = '; expires=' + date.toUTCString();
 
-  let cookieString = name + '=' + (value || '') + expires + '; path=/; SameSite=None';
+  let cookieString = name + '=' + (value || '') + expires + '; path=/; SameSite=None; Secure';
 
   document.cookie = cookieString;
 };
