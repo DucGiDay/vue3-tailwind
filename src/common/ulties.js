@@ -73,12 +73,14 @@ export const getAssetUrl = (importedUrl) => {
   return importedUrl;
 };
 
-export const setCookie = (name, value, minutes) => {
+export const setCookie = (name, value, minutes, domain = '') => {
   const date = new Date();
   date.setTime(date.getTime() + minutes * 60 * 1000);
   const expires = '; expires=' + date.toUTCString();
 
   let cookieString = name + '=' + (value || '') + expires + '; path=/; SameSite=None; Secure';
+
+  if (domain) cookieString += '; domain=' + domain;
 
   document.cookie = cookieString;
 };

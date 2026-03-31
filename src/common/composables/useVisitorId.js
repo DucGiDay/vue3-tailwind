@@ -7,6 +7,12 @@ const STORAGE_KEY = 'visitor_id';
 let fpPromise = null;
 let cachedId = null;
 
+const getSharedDomain = () => {
+  const host = window.location.hostname;
+  if (host.includes('ipos.vn')) return '.ipos.vn';
+  return '';
+};
+
 async function getVisitorId() {
   // Ưu tiên cache trong memory
   if (cachedId) return cachedId;
@@ -16,7 +22,7 @@ async function getVisitorId() {
   if (stored) {
     cachedId = stored;
     // Đồng bộ sang Cookie g-x để hỗ trợ API (Shared Domain)
-    setCookie('g-x', cachedId, 365 * 24 * 60);
+    setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
     return cachedId;
   }
 
@@ -28,14 +34,14 @@ async function getVisitorId() {
   cachedId = result.visitorId;
   localStorage.setItem(STORAGE_KEY, cachedId);
   // Đồng bộ sang Cookie g-x để hỗ trợ API (Shared Domain)
-  setCookie('g-x', cachedId, 365 * 24 * 60);
+  setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
   return cachedId;
 }
 
 function resetVisitorId() {
   cachedId = null;
   localStorage.removeItem(STORAGE_KEY);
-  setCookie('g-x', '', -1);
+  setCookie('g-x', '', -1, getSharedDomain());
   // Lần gọi getVisitorId() tiếp theo sẽ sinh ID mới từ FP
 }
 

@@ -41,8 +41,8 @@ instance.interceptors.response.use(
     const { response } = error;
 
     if (response?.status === 401) {
-      const authStore = useAuthStore();
-      await authStore.logout();
+      // const authStore = useAuthStore();
+      // await authStore.logout();
       router.push('/login');
     }
 
