@@ -3,13 +3,7 @@ import { useField } from 'vee-validate';
 import * as globalRules from '../ulties/validate-rules';
 
 export function useValidator(fieldName, rulesArray = [], initialValue = '') {
-  const {
-    value,
-    errorMessage,
-    validate,
-    handleBlur, // Thêm cái này
-    meta
-  } = useField(
+  const { value, errorMessage, validate, handleBlur, meta } = useField(
     fieldName,
     (val) => {
       for (const rule of rulesArray) {

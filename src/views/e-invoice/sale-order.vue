@@ -17,7 +17,6 @@
       </Button>
     </div>
   </div>
-  <ModalExportVat v-model:visible="visibleExportVat" :saleData="currentSaleData" />
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <FbDateFilter @update:modelValue="filter" size="small" />
@@ -107,6 +106,12 @@
       }}
     </template>
   </FbTable>
+
+  <ModalExportVat
+    v-model:visible="visibleExportVat"
+    :saleData="currentSaleData"
+    @success="filter"
+  />
 </template>
 
 <script setup>

@@ -169,6 +169,24 @@ export const useEInoiveStore = defineStore('eInoive', {
           error: err
         };
       }
+    },
+    async fetchGuestVatInfo(params, config) {
+      try {
+        const response = await invoiceService.getGuestVatInfo(params, config);
+        return response?.data || [];
+      } catch (err) {
+        console.error('Error fetchGuestVatInfo', err);
+        return [];
+      }
+    },
+    async fetchGuestSession(params, config) {
+      try {
+        const response = await invoiceService.getGuestSession(params, config);
+        return response?.data || null;
+      } catch (err) {
+        console.error('Error fetchGuestSession', err);
+        return null;
+      }
     }
   }
 });

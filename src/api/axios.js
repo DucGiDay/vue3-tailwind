@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth.store';
 import router from '@/router';
+import { getCookie } from '@/common/ulties';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -19,6 +20,12 @@ instance.interceptors.request.use(
 
     if (!config?.noAuth) {
       headers.Authorization = localStorage.getItem('token') || '';
+    }
+
+    // Đính kèm visitor_id (g-x) cho mọi yêu cầu (Hỗ trợ cross-domain)
+    const visitorId = getCookie('g-x') || localStorage.getItem('visitor_id');
+    if (visitorId) {
+      headers['g-x'] = visitorId;
     }
 
     config.headers = Object.assign({}, headers, config.headers);

@@ -17,9 +17,9 @@ import { storeToRefs } from 'pinia';
 const filterStore = useFilterStore();
 
 const { report } = storeToRefs(filterStore);
-let dates = reactive([
-  report.value.start_date ? new Date(report.value.start_date) : new Date(),
-  report.value.end_date ? new Date(report.value.end_date) : new Date()
+const dates = ref([
+  report.value.start_date ? new Date(report.value.start_date) : new Date().setHours(0, 0, 0, 0),
+  report.value.end_date ? new Date(report.value.end_date) : new Date().setHours(23, 59, 59, 999)
 ]);
 const datePicker = ref();
 
@@ -32,8 +32,8 @@ const onDateChange = async (value) => {
     await filterStore.updateFilter({
       report: {
         ...filterStore.report,
-        start_date: new Date(value[0]).getTime(),
-        end_date: new Date(value[1]).getTime()
+        start_date: new Date(value[0]).setHours(0, 0, 0, 0),
+        end_date: new Date(value[1]).setHours(23, 59, 59, 999)
       }
     });
 

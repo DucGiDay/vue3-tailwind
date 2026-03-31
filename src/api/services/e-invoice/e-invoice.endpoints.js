@@ -26,5 +26,7 @@ export const INVOICE_ENDPOINTS = {
   SYNC_SALE_MINVOICE: '/api/v3/pos-client/sync-sale-minvoice',
   GET_STATUS: '/api/invoice/v1/status',
   SEARCH_BY_TAXCODE: '/api/search-by-tax-code',
-  DELETE_DRAFT_INVOICE: '/api/einvoice/v1/invoice/delete-draft'
+  DELETE_DRAFT_INVOICE: '/api/einvoice/v1/invoice/delete-draft',
+  GUEST_VAT_INFO: '/api/einvoice/v1/guest-vat-info',
+  GUEST_SESSION: '/api/einvoice/v1/guest-session'
 };

@@ -297,6 +297,7 @@ const props = defineProps({
 });
 
 const visible = defineModel('visible', { default: false });
+const emit = defineEmits(['success']);
 const toast = useToast();
 const { t } = useI18n();
 const isLoading = ref(false);
@@ -334,8 +335,6 @@ const debounce = (fn, delay) => {
 
 // Logic tìm kiếm theo mã số thuế (Debounced)
 const searchByTaxCode = async () => {
-  console.log(extraSale.value.inv_buyerTaxCode);
-
   if (!extraSale.value.inv_buyerTaxCode) return;
 
   try {
@@ -422,6 +421,8 @@ const handleExport = async () => {
       detail: 'Dữ liệu đang được đồng bộ sang HĐĐT',
       life: 5000
     });
+
+    emit('success');
 
     visible.value = false;
   } catch (error) {

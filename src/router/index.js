@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import AppLayoutWithoutAuth from '@/layout/AppLayoutWithoutAuth.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
 import { extendLicenseComponentMap } from './modules/extend-license.router';
-import { eInvoiceRouter } from './modules/e-invoice.router';
+import { eInvoiceRouter, exportVatRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
@@ -66,36 +67,32 @@ const createAppRouter = (microRouter) => {
           name: 'Document',
           redirect: '/pages/documentation'
         },
-        // {
-        //   path: '/pages/documentation',
-        //   name: 'Documentation',
-        //   component: () => import('@/views/e-invoice/summary.vue')
-        // },
+
         ...pagesExampleRouter,
         ...uikitRouter,
         ...eInvoiceRouter
-        // {
-        //   path: '/e-invoice',
-        //   name: 'EInvoicePage',
-
-        //   children: [
-        //     {
-        //       path: 'summary',
-        //       name: 'EInvoiceSummary',
-        //       component: () => import('@/views/e-invoice/summary.vue'),
-        //       meta: {
-        //         title: 'Tổng quan - HDDT'
-        //       }
-        //     }
-        //   ]
-        // }
+      ]
+    },
+    ...pagesNotHaveLayoutRouter,
+    ...microRouters,
+    {
+      path: '/export-vat',
+      name: 'ExportVatLayout',
+      component: AppLayoutWithoutAuth,
+      children: [
+        {
+          path: '',
+          name: 'ExportVat',
+          component: () => import('@/views/e-invoice/export-vat.vue'),
+          meta: {
+            isLayoutVue3: true
+          }
+        }
       ]
     },
 
     { path: '/404', name: 'NotFound', component: NotFound },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') },
-    ...pagesNotHaveLayoutRouter,
-    ...microRouters
+    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') }
   ];
 
   const router = createRouter({

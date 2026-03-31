@@ -366,7 +366,7 @@ const props = defineProps({
     default: null
   },
 
-  /** Giá trị định danh dòng đang tải action (tùy chỉnh) */
+  /** Xử lý loading custom của menuItems */
   loadingActionRowCustom: {
     type: [String, Number],
     default: null

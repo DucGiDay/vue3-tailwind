@@ -11,28 +11,52 @@ export const invoiceService = {
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
 
-  // Invoice Manage
+  // Quản lý hóa đơn
   getVatInvoice: (params) => api.get(INVOICE_ENDPOINTS.VAT_INVOCIE, { params }),
+
+  // Hóa đơn bán hàng
   getSaleNotSyncVat: (params) => api.get(INVOICE_ENDPOINTS.SALE_NOT_SYNC_VAT, { params }),
 
+  // Danh sách store được cấu hình
   getStoreSettingInvoice: (params) =>
     api.get(INVOICE_ENDPOINTS.LIST_STORE_SETTING_INVOICE, { params }),
+
+  // Tạo/sửa cấu hình store
   updateStoreSettingInvoice: (payload) =>
     api.post(INVOICE_ENDPOINTS.STORE_SETTING_INVOICE, payload),
 
+  // Export XML/PDF
   exportXML: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_XML, { params }),
   exportPDF: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_PDF, { params }),
 
+  // Danh sách store theo mã số thuế
   getListStoreGroupByTaxCode: (params) =>
     api.get(INVOICE_ENDPOINTS.LIST_STORE_GROUP_BY_TAXCODE, { params }),
 
+  // Xem trước khi gửi CQT
   viewInvoice: (payload) => api.post(INVOICE_ENDPOINTS.VIEW_BERFORE_SEND_INVOICE, payload),
-  syncSaleMinvoice: (payload) => api.post(INVOICE_ENDPOINTS.SYNC_SALE_MINVOICE, payload),
+  // Gửi CQT
   sendInvoiceCqt: (payload) => api.post(INVOICE_ENDPOINTS.SEND_INVOICE_CQT, payload),
 
+  // API xuất vat
+  syncSaleMinvoice: (payload) => api.post(INVOICE_ENDPOINTS.SYNC_SALE_MINVOICE, payload),
+
+  // API kiểm tra trạng thái (handle sửa/xóa/xuất lại hóa đơn)
   getStatus: (params) => api.get(INVOICE_ENDPOINTS.GET_STATUS, { params }),
+
+  // Lấy thông tin khách hàng theo mã số thuế
   searchByTaxCode: (params) => api.get(INVOICE_ENDPOINTS.SEARCH_BY_TAXCODE, { params }),
 
-  deleteDraftInvoice: (payload) => api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
-  getImageInvoice: (url, config) => api.get(url, { noAuth: true, ...config })
+  // Xóa Hóa đơn dự thảo
+  deleteDraftInvoice: (payload) =>
+    api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
+
+  // Danh sách thông tin vat đã lưu
+  getGuestVatInfo: (params, config) => api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO, { params, ...config }),
+
+  // API guest session
+  getGuestSession: (params, config) => api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, ...config }),
+
+  // API tùy chỉnh
+  customService: (url, config) => api.get(url, { noAuth: true, ...config })
 };
