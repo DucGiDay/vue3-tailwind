@@ -323,7 +323,7 @@ import { useVisitorId } from '@/common/composables/useVisitorId';
 const invoiceStore = useEInoiveStore();
 const toast = useToast();
 const confirm = useConfirm();
-const { getVisitorId } = useVisitorId();
+const { getVisitorId, getStableVisitorId } = useVisitorId();
 const { t } = useI18n();
 
 const DEFAULT_EXTRA_SALE = {
@@ -525,7 +525,8 @@ const deleteVatOption = (option) => {
 
 const getData = async () => {
   try {
-    await Promise.all([getVatInfo(), getGuestSession()]);
+    await getGuestSession();
+    await getVatInfo();
   } catch (error) {
     console.error('Error fetching guest data', error);
   }
@@ -533,7 +534,8 @@ const getData = async () => {
 
 const getGuestSession = async () => {
   isLoadingSession.value = true;
-  const visitorId = await getVisitorId();
+  // const visitorId = await getVisitorId();
+  const visitorId = await getStableVisitorId();
   await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
   isLoadingSession.value = false;
 };

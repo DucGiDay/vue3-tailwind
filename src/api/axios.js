@@ -23,7 +23,7 @@ instance.interceptors.request.use(
     }
 
     // Đính kèm visitor_id (g-x) cho mọi yêu cầu (Hỗ trợ cross-domain)
-    const visitorId = getCookie('g-x') || localStorage.getItem('visitor_id');
+    const visitorId = getCookie('g-x') || localStorage.getItem('stable_visitor_id');
     if (visitorId) {
       headers['g-x'] = visitorId;
     }
