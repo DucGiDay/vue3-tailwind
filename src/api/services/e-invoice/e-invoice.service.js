@@ -52,12 +52,24 @@ export const invoiceService = {
     api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
 
   // Danh sách thông tin vat đã lưu
-  getGuestVatInfo: (params, config) =>
-    api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO, { params, ...config }),
+  getGuestVatInfo: (params) =>
+    api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), { params, noAuth: true, withCredentials: true }),
+
+  // Tạo thông tin vat
+  createGuestVatInfo: (payload) =>
+    api.post(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), payload, { noAuth: true, withCredentials: true }),
+
+  // Cập nhật thông tin vat
+  updateGuestVatInfo: (id, payload) =>
+    api.put(INVOICE_ENDPOINTS.GUEST_VAT_INFO(id), payload, { noAuth: true, withCredentials: true }),
+
+  // Xóa thông tin vat
+  deleteGuestVatInfo: (id) =>
+    api.delete(INVOICE_ENDPOINTS.GUEST_VAT_INFO(id), { noAuth: true, withCredentials: true }),
 
   // API guest session
-  getGuestSession: (params, config) =>
-    api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, ...config }),
+  getGuestSession: (params) =>
+    api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, noAuth: true, withCredentials: true }),
 
   // API tùy chỉnh
   customService: (url, config) => api.get(url, { noAuth: true, ...config })

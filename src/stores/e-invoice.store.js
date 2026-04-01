@@ -14,7 +14,8 @@ export const useEInoiveStore = defineStore('eInoive', {
     listTaxStores: {
       data: [],
       isLoading: false
-    }
+    },
+    guestVatOptions: []
   }),
 
   getters: {
@@ -173,10 +174,10 @@ export const useEInoiveStore = defineStore('eInoive', {
     async fetchGuestVatInfo(params, config) {
       try {
         const response = await invoiceService.getGuestVatInfo(params, config);
-        return response?.data || [];
+        this.guestVatOptions = response?.data || [];
       } catch (err) {
         console.error('Error fetchGuestVatInfo', err);
-        return [];
+        this.guestVatOptions = [];
       }
     },
     async fetchGuestSession(params, config) {

@@ -20,7 +20,12 @@
             <!-- Đối tượng: Cá nhân / Tổ chức (Full width) -->
             <div class="fb-flex fb-gap-8 fb-mb-4">
               <div class="fb-flex fb-items-center">
-                <RadioButton v-model="scope" inputId="scope_company" :value="0" />
+                <RadioButton
+                  v-model="scope"
+                  inputId="scope_company"
+                  :value="0"
+                  :disabled="isLoading"
+                />
                 <label
                   for="scope_company"
                   class="fb-ml-2 fb-font-semibold fb-cursor-pointer fb-mb-0"
@@ -29,7 +34,12 @@
                 </label>
               </div>
               <div class="fb-flex fb-items-center">
-                <RadioButton v-model="scope" inputId="scope_individual" :value="1" />
+                <RadioButton
+                  v-model="scope"
+                  inputId="scope_individual"
+                  :value="1"
+                  :disabled="isLoading"
+                />
                 <label
                   for="scope_individual"
                   class="fb-ml-2 fb-font-semibold fb-cursor-pointer fb-mb-0"
@@ -40,20 +50,24 @@
             </div>
             <div>
               <Select
+                v-model="selectedVatInfo"
                 size="small"
                 placeholder="Thông tin đã lưu"
                 class="!fb-border-0 !fb-shadow-none"
-                :options="guestVatOptions"
+                :options="invoiceStore.guestVatOptions"
                 :loading="isLoadingGuestVat"
+                optionLabel="buyer_display_name"
+                optionValue="_id"
                 showClear
                 @show="showSelect = true"
                 @hide="showSelect = false"
+                @value-change="handleSelectVatInfo"
               >
-                <template #value="{ value, placeholder }">
+                <!-- <template #value="{ value, placeholder }">
                   <span class="fb-text-primary">
                     {{ value || placeholder }}
                   </span>
-                </template>
+                </template> -->
                 <template #dropdownicon>
                   <IconChevrondown :class="{ 'fb-rotate-180': showSelect }" />
                 </template>
@@ -66,16 +80,21 @@
                   >
                     <div class="fb-flex-1">
                       <div class="fb-font-medium">
-                        {{ option.name }}
+                        {{ option.buyer_display_name }}
                       </div>
                       <div class="fb-text-gray-500">
-                        {{ option.phone }}
+                        {{ option.sdt_nmua }}
                       </div>
                     </div>
-                    <IconTrash
-                      class="fb-text-error fb-cursor-pointer hover:fb-scale-110 fb-transition-transform"
-                      @click.stop="deleteVatOption(option)"
-                    />
+                    <Button
+                      text
+                      size="small"
+                      class="!fb-p-0 fb-max-w-min"
+                      @click.stop.prevent="deleteVatOption(option)"
+                      @mousedown.stop
+                    >
+                      <IconTrash class="fb-text-error" />
+                    </Button>
                   </div>
                 </template>
               </Select>
@@ -95,6 +114,7 @@
                 v-model="extraSale.inv_buyerTaxCode"
                 class="fb-w-full"
                 size="small"
+                :disabled="isLoading"
                 :invalid="scope === 0 && !extraSale.inv_buyerTaxCode"
                 :placeholder="$t('MINVOICE_ROW--DETAIL_CONFIG--TAX_CODE_INPUT_PLACEHOLDER')"
                 @input="handleSearchTaxCode"
@@ -112,6 +132,7 @@
                 v-model="extraSale.inv_buyerLegalName"
                 class="fb-w-full"
                 size="small"
+                :disabled="isLoading"
                 :invalid="scope === 0 && !extraSale.inv_buyerLegalName"
                 :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_COMPANY_NAME_PLACEHOLDER')"
               />
@@ -121,12 +142,15 @@
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
               <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ $t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
+                <span class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="display_name"
                 v-model="extraSale.inv_buyerDisplayName"
                 class="fb-w-full"
                 size="small"
+                :disabled="isLoading"
+                :invalid="scope === 1 && !extraSale.inv_buyerDisplayName"
                 :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_GUEST_NAME_PLACEHOLDER')"
               />
             </div>
@@ -140,6 +164,7 @@
                 id="email"
                 v-model="extraSale.inv_buyerEmail"
                 size="small"
+                :disabled="isLoading"
                 :placeholder="$t('REGISTER--FORM_EMAIL_PLACEHOLDER')"
               />
             </div>
@@ -148,11 +173,14 @@
             <div class="fb-flex fb-flex-col fb-gap-2">
               <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ $t('BILL_CONTENT--CUSTOMER_PHONE') }}
+                <span class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="phone"
                 v-model="extraSale.sdtnmua"
                 size="small"
+                :disabled="isLoading"
+                :invalid="scope === 1 && !extraSale.sdtnmua"
                 :placeholder="$t('CONNECT_AHAMOVE_MODAL--PHONE_INPUT_PLACEHOLDER')"
               />
             </div>
@@ -167,6 +195,7 @@
                   id="id_card"
                   v-model="extraSale.inv_buyerIdentityCard"
                   size="small"
+                  :disabled="isLoading"
                   :placeholder="$t('SALE_SYNC_VAT--INPUT_CCCD_PLACEHOLDER')"
                   maxlength="12"
                 />
@@ -186,6 +215,7 @@
                   id="passport"
                   v-model="extraSale.passport_number"
                   size="small"
+                  :disabled="isLoading"
                   :placeholder="$t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER_PLACEHOLDER')"
                   maxlength="20"
                 />
@@ -205,11 +235,13 @@
                   id="bank_acc"
                   v-model="extraSale.inv_buyerBankAccount"
                   size="small"
+                  :disabled="isLoading"
                   :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
                 />
                 <InputText
                   v-model="extraSale.inv_buyerBankName"
                   size="small"
+                  :disabled="isLoading"
                   :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL')"
                 />
               </div>
@@ -225,6 +257,7 @@
                 v-model="extraSale.note"
                 class="fb-w-full"
                 size="small"
+                :disabled="isLoading"
                 :placeholder="$t('SALE_SYNC_VAT--INPUT_NOTE_PLACEHOLDER')"
                 rows="2"
               />
@@ -242,6 +275,7 @@
                 class="fb-w-full"
                 size="small"
                 rows="2"
+                :disabled="isLoading"
                 :invalid="scope === 0 && !extraSale.inv_buyerAddressLine"
                 :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_ADDRESS_PLACEHOLDER')"
               />
@@ -249,7 +283,7 @@
           </div>
 
           <label for="checkOption1" class="fb-cursor-pointer fb-mb-0 fb-flex fb-gap-3">
-            <Checkbox id="checkOption1" name="checkOption1" v-model="saveVatInfo" binary />
+            <Checkbox inputId="checkOption1" name="checkOption1" v-model="isSaveVatInfo" binary />
             <div>
               <p class="fb-text-gray-700 fb-font-medium fb-text-sm">Lưu thông tin xuất hóa đơn</p>
               <p class="fb-text-gray-700 fb-font-normal fb-text-base">
@@ -268,7 +302,7 @@
           <Button
             :label="$t('SALE_SYNC_VAT--EXPORT_VAT')"
             raised
-            :loading="isLoading"
+            :loading="isLoadingSave"
             @click="handleExport"
           />
         </div>
@@ -278,34 +312,19 @@
   <ConfirmDialog />
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import { useI18n } from '@/common/i18n';
-import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useVisitorId } from '@/common/composables/useVisitorId';
 
-const globalStore = useGlobalStore();
 const invoiceStore = useEInoiveStore();
 const toast = useToast();
 const confirm = useConfirm();
 const { getVisitorId } = useVisitorId();
 const { t } = useI18n();
-
-const isLoading = ref(false);
-const isLoadingGuestVat = ref(false);
-const scope = ref(1); // 0: Tổ chức, 1: Cá nhân
-const showSelect = ref(false);
-const saveVatInfo = ref(false);
-const guestVatOptions = ref([
-  {
-    name: 'Nguyễn Văn long',
-    phone: '0919175144',
-    id: 1
-  }
-]);
 
 const DEFAULT_EXTRA_SALE = {
   source: 'CMS',
@@ -321,10 +340,23 @@ const DEFAULT_EXTRA_SALE = {
   inv_buyerIdentityCard: '',
   note: '',
   budget_unit_code: '',
-  passport_number: ''
+  passport_number: '',
+  _id: ''
 };
 
+const isLoadingSave = ref(false);
+const isLoadingGuestVat = ref(false);
+const isLoadingSession = ref(false);
+const selectedVatInfo = ref(null);
+const scope = ref(1); // 0: Tổ chức, 1: Cá nhân
+const showSelect = ref(false);
+const isSaveVatInfo = ref(false);
+
 const extraSale = ref({ ...DEFAULT_EXTRA_SALE });
+
+const isLoading = computed(() => {
+  return isLoadingSession.value;
+});
 
 // Simple debounce implementation
 const debounce = (fn, delay) => {
@@ -379,22 +411,39 @@ const validateForm = () => {
       });
       return false;
     }
+  } else if (scope.value === 1) {
+    if (
+      !extraSale.value.sdtnmua ||
+      !extraSale.value.inv_buyerDisplayName ||
+      !extraSale.value.inv_buyerAddressLine
+    ) {
+      toast.add({
+        severity: 'warn',
+        summary: t('NOTIFICATION--TITLE_WARNING'),
+        detail: t('VALIDATE--REQUIRED'),
+        life: 3000
+      });
+      return false;
+    }
   }
   return true;
 };
 
 const handleExport = async () => {
-  isLoading.value = true;
+  isLoadingSave.value = true;
   try {
     if (!validateForm()) {
       return;
     }
-    // Simulate export
+    if (isSaveVatInfo.value) {
+      await saveVatInfo();
+    }
     toast.add({
       severity: 'success',
       detail: 'Dữ liệu đang được đồng bộ sang HĐĐT',
       life: 5000
     });
+    await getVatInfo();
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -402,7 +451,39 @@ const handleExport = async () => {
       life: 3000
     });
   } finally {
-    isLoading.value = false;
+    isLoadingSave.value = false;
+  }
+};
+
+const saveVatInfo = async () => {
+  try {
+    const payload = {
+      buyer_display_name: extraSale.value.inv_buyerDisplayName,
+      buyer_legal_name: extraSale.value.inv_buyerLegalName,
+      buyer_tax_code: extraSale.value.inv_buyerTaxCode,
+      buyer_address_line: extraSale.value.inv_buyerAddressLine,
+      buyer_email: extraSale.value.inv_buyerEmail,
+      buyer_bank_account: extraSale.value.inv_buyerBankAccount,
+      buyer_bank_name: extraSale.value.inv_buyerBankName,
+      sdt_nmua: extraSale.value.sdtnmua,
+      ma_dt: extraSale.value.ma_dt,
+      note: extraSale.value.note,
+      inv_buyerIdentityCard: extraSale.value.inv_buyerIdentityCard,
+      budget_unit_code: extraSale.value.budget_unit_code,
+      passport_number: extraSale.value.passport_number
+    };
+    if (extraSale.value._id) {
+      await invoiceService.updateGuestVatInfo(extraSale.value._id, payload);
+    } else {
+      await invoiceService.createGuestVatInfo(payload);
+    }
+  } catch (error) {
+    console.error('Error saving guest VAT info', error);
+    // toast.add({
+    //   severity: 'error',
+    //   detail: 'Không thể lưu thông tin đã xuất hóa đơn',
+    //   life: 3000
+    // });
   }
 };
 
@@ -421,10 +502,11 @@ const deleteVatOption = (option) => {
     },
     accept: async () => {
       try {
-        // Logic to delete the option
-        // For now, just filter the local array. If there is an API, it should be called here.
-        guestVatOptions.value = guestVatOptions.value.filter((item) => item !== option);
-
+        await invoiceService.deleteGuestVatInfo(option._id);
+        await getVatInfo();
+        if (selectedVatInfo.value === option._id) {
+          selectedVatInfo.value = null;
+        }
         toast.add({
           severity: 'success',
           detail: 'Đã xóa thông tin đã lưu',
@@ -443,23 +525,56 @@ const deleteVatOption = (option) => {
 
 const getData = async () => {
   try {
-    isLoadingGuestVat.value = true;
-    const visitorId = await getVisitorId();
-    console.log(visitorId);
-
-    const config = {
-      withCredentials: true
-    };
-
-    const [guestVat] = await Promise.all([
-      invoiceStore.fetchGuestVatInfo({}, config),
-      invoiceStore.fetchGuestSession({ visitor_id: visitorId }, config)
-    ]);
-    guestVatOptions.value = guestVat;
+    await Promise.all([getVatInfo(), getGuestSession()]);
   } catch (error) {
     console.error('Error fetching guest data', error);
-  } finally {
-    isLoadingGuestVat.value = false;
+  }
+};
+
+const getGuestSession = async () => {
+  isLoadingSession.value = true;
+  const visitorId = await getVisitorId();
+  await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
+  isLoadingSession.value = false;
+};
+
+const getVatInfo = async () => {
+  isLoadingGuestVat.value = true;
+  await invoiceStore.fetchGuestVatInfo();
+  isLoadingGuestVat.value = false;
+};
+
+const handleSelectVatInfo = (event) => {
+  const value = invoiceStore.guestVatOptions.find((option) => option._id === event);
+
+  if (!value) {
+    extraSale.value = { ...DEFAULT_EXTRA_SALE };
+    return;
+  }
+
+  extraSale.value = {
+    ...extraSale.value,
+    _id: value._id || '',
+    inv_buyerDisplayName: value.buyer_display_name || '',
+    inv_buyerLegalName: value.buyer_legal_name || '',
+    inv_buyerTaxCode: value.buyer_tax_code || '',
+    inv_buyerAddressLine: value.buyer_address_line || '',
+    inv_buyerEmail: value.buyer_email || '',
+    inv_buyerBankAccount: value.buyer_bank_account || '',
+    inv_buyerBankName: value.buyer_bank_name || '',
+    sdtnmua: value.sdt_nmua || '',
+    ma_dt: value.ma_dt || '',
+    note: value.note || '',
+    inv_buyerIdentityCard: value.inv_buyerIdentityCard || '',
+    budget_unit_code: value.budget_unit_code || '',
+    passport_number: value.passport_number || ''
+  };
+
+  // Tự động chuyển đổi scope dựa trên thông tin
+  if (value.buyer_tax_code) {
+    scope.value = 0;
+  } else {
+    scope.value = 1;
   }
 };
 

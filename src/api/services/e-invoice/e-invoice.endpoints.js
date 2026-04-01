@@ -27,6 +27,7 @@ export const INVOICE_ENDPOINTS = {
   GET_STATUS: '/api/invoice/v1/status',
   SEARCH_BY_TAXCODE: '/api/search-by-tax-code',
   DELETE_DRAFT_INVOICE: '/api/einvoice/v1/invoice/delete-draft',
-  GUEST_VAT_INFO: '/api/einvoice/v1/guest-vat-info',
+
+  GUEST_VAT_INFO: (id = '') => `/api/einvoice/v1/guest-vat-info${id ? `/${id}` : ''}`, // get, post, put, delete
   GUEST_SESSION: '/api/einvoice/v1/guest-session'
 };
