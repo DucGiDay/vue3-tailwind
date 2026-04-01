@@ -58,6 +58,8 @@
                   <IconChevrondown :class="{ 'fb-rotate-180': showSelect }" />
                 </template>
 
+                <template #empty>Chưa có thông tin đã lưu nào.</template>
+
                 <template #option="{ option }">
                   <div
                     class="fb-flex fb-items-center fb-justify-between fb-gap-4 fb-w-full !fb-min-w-[15rem]"
@@ -246,8 +248,8 @@
             </div>
           </div>
 
-          <label for="checkOption2" class="fb-cursor-pointer fb-mb-0 fb-flex fb-gap-3">
-            <Checkbox id="checkOption2" name="checkOption2" />
+          <label for="checkOption1" class="fb-cursor-pointer fb-mb-0 fb-flex fb-gap-3">
+            <Checkbox id="checkOption1" name="checkOption1" v-model="saveVatInfo" binary />
             <div>
               <p class="fb-text-gray-700 fb-font-medium fb-text-sm">Lưu thông tin xuất hóa đơn</p>
               <p class="fb-text-gray-700 fb-font-normal fb-text-base">
@@ -296,6 +298,7 @@ const isLoading = ref(false);
 const isLoadingGuestVat = ref(false);
 const scope = ref(1); // 0: Tổ chức, 1: Cá nhân
 const showSelect = ref(false);
+const saveVatInfo = ref(false);
 const guestVatOptions = ref([
   {
     name: 'Nguyễn Văn long',

@@ -24,8 +24,13 @@
         size="normal"
         @update:modelValue="filter"
       /> -->
-      <FbSelectTaxStoreFilter
+      <!-- <FbSelectTaxStoreFilter
         placeholder="Chọn theo mã số thuế"
+        size="small"
+        @update:modelValue="filter"
+      /> -->
+      <FbSelectSingleStoreFilter
+        placeholder="Chọn theo cửa hàng"
         size="small"
         @update:modelValue="filter"
       />
@@ -235,12 +240,12 @@ const dataViewBeforeSend = ref([]);
 
 // Methods
 const getData = async () => {
+  if (!filterStore?.report?.store_uid) return;
+
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.report?.stores_uid?.length
-      ? filterStore?.report?.stores_uid.join(',')
-      : (globalStore?.storesIdAccessibleInCurrentBrand || []).join(','),
+    list_store_uid: filterStore?.report?.store_uid,
     start_date: new Date(filterStore?.report?.start_date).getTime(),
     end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
