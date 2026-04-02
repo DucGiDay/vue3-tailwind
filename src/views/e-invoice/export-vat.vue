@@ -458,21 +458,17 @@ const validateForm = () => {
     ) {
       toast.add({
         severity: 'warn',
-        summary: t('NOTIFICATION--TITLE_WARNING'),
+        // summary: t('NOTIFICATION--TITLE_WARNING'),
         detail: t('VALIDATE--REQUIRED'),
         life: 3000
       });
       return false;
     }
   } else if (scope.value === 1) {
-    if (
-      !extraSale.value.sdtnmua ||
-      !extraSale.value.inv_buyerDisplayName ||
-      !extraSale.value.inv_buyerAddressLine
-    ) {
+    if (!extraSale.value.sdtnmua || !extraSale.value.inv_buyerDisplayName) {
       toast.add({
         severity: 'warn',
-        summary: t('NOTIFICATION--TITLE_WARNING'),
+        // summary: t('NOTIFICATION--TITLE_WARNING'),
         detail: t('VALIDATE--REQUIRED'),
         life: 3000
       });
