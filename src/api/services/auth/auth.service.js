@@ -3,5 +3,5 @@ import api from '@/api/axios';
 import { AUTH_ENDPOINTS } from './auth.endpoints';
 
 export const authService = {
-  logout: () => api.post(AUTH_ENDPOINTS.LOGOUT)
+  logout: () => api.post(AUTH_ENDPOINTS.LOGOUT, {}, { noAuth: true })
 };

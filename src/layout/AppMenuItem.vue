@@ -29,11 +29,14 @@ const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
 onBeforeMount(() => {
-  itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
+  itemKey.value = props.parentItemKey
+    ? props.parentItemKey + '-' + props.index
+    : String(props.index);
 
   const activeItem = layoutState.activeMenuItem;
 
-  isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
+  isActiveMenu.value =
+    activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
 });
 
 watch(
@@ -49,7 +52,10 @@ function itemClick(event, item) {
     return;
   }
 
-  if ((item.to || item.url) && (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)) {
+  if (
+    (item.to || item.url) &&
+    (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)
+  ) {
     toggleMenu();
   }
 
@@ -57,7 +63,11 @@ function itemClick(event, item) {
     item.command({ originalEvent: event, item: item });
   }
 
-  const foundItemKey = item.items ? (isActiveMenu.value ? props.parentItemKey : itemKey) : itemKey.value;
+  const foundItemKey = item.items
+    ? isActiveMenu.value
+      ? props.parentItemKey
+      : itemKey
+    : itemKey.value;
 
   setActiveMenuItem(foundItemKey);
 }
@@ -69,7 +79,9 @@ function checkActiveRoute(item) {
 
 <template>
   <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
-    <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
+    <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
+      {{ item.label }}
+    </div>
     <a
       v-if="(!item.to || item.items) && item.visible !== false"
       :href="item.url"
@@ -85,7 +97,11 @@ function checkActiveRoute(item) {
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
       @click="itemClick($event, item, index)"
-      :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
+      :class="[
+        'fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md',
+        item.class,
+        { 'active-route fb-border-l-primary': checkActiveRoute(item) }
+      ]"
       tabindex="0"
       :to="item.to"
     >
@@ -95,7 +111,14 @@ function checkActiveRoute(item) {
     </router-link>
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
       <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
-        <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
+        <app-menu-item
+          v-for="(child, i) in item.items"
+          :key="child"
+          :index="i"
+          :item="child"
+          :parentItemKey="itemKey"
+          :root="false"
+        ></app-menu-item>
       </ul>
     </Transition>
   </li>

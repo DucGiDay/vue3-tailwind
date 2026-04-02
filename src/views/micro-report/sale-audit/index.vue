@@ -11,7 +11,7 @@
     >
       <div class="fb-flex fb-items-center fb-space-x-3">
         <DatePicker v-model="dates" selectionMode="range" :manualInput="false" />
-        <FbSelectCityStore
+        <FbSelectCityStoreFilter
           :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
         />
         <MultiSelect

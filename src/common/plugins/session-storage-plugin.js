@@ -13,6 +13,7 @@ export function sessionStoragePlugin({ store }) {
       }
     }
 
+    // Cập nhật vào session storage khi store thay đổi
     const unsubscribe = store.$subscribe((mutation, state) => {
       const currentKey = getSessionKey();
       if (currentKey) {

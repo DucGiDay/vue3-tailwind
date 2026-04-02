@@ -37,7 +37,7 @@ const MyDesignPreset = definePreset(Aura, {
         },
         text: {
           color: '#181D27', // text-primary
-          mutedColor: '#535862' // text-secondary
+          mutedColor: '#535862' // text-secondary/text-muted
         }
       },
       dark: {

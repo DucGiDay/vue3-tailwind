@@ -35,7 +35,7 @@
     <template #footer>
       <div class="fb-flex fb-justify-between fb-gap-2 fb-flex-grow">
         <Button type="button" variant="text" severity="danger" @click="onDeleteItem" size="small">
-          <img :src="trashIcon" alt="" />
+          <IconTrash />
           Hủy đơn
         </Button>
         <div class="fb-flex fb-justify-end fb-gap-2">
@@ -53,10 +53,7 @@
   </Dialog>
 </template>
 <script setup>
-import { formatCurrency, getAssetUrl } from '@/common/ulties';
-import trashIconPath from '@/assets/img/icon/trash.svg';
-
-const trashIcon = getAssetUrl(trashIconPath);
+import { formatCurrency } from '@/common/ulties';
 
 // Props
 const props = defineProps({

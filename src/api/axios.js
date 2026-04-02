@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth.store';
 import router from '@/router';
+import { getCookie } from '@/common/ulties';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -10,13 +11,21 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    config.headers = Object.assign({}, config.headers, {
+    const headers = {
       fabi_type: localStorage.getItem('fabi-type') || 'pos-cms',
       access_token: import.meta.env.VITE_ACCESS_TOKEN,
       'x-client-timezone': new Date().getTimezoneOffset() * -60000,
-      Authorization: localStorage.getItem('token') || '',
-      'accept-language': 'vi'
-    });
+      'accept-language': 'vi',
+      Authorization: !config?.noAuth ? localStorage.getItem('token') || '' : ''
+    };
+
+    // Đính kèm visitor_id (g-x) cho mọi yêu cầu (Hỗ trợ cross-domain)
+    // const visitorId = getCookie('g-x') || localStorage.getItem('stable_visitor_id');
+    // if (visitorId) {
+    //   headers['g-x'] = visitorId;
+    // }
+
+    config.headers = Object.assign({}, headers, config.headers);
 
     return config;
   },
@@ -29,8 +38,8 @@ instance.interceptors.response.use(
     const { response } = error;
 
     if (response?.status === 401) {
-      const authStore = useAuthStore();
-      await authStore.logout();
+      // const authStore = useAuthStore();
+      // await authStore.logout();
       router.push('/login');
     }
 
@@ -41,8 +50,8 @@ instance.interceptors.response.use(
     // Normalize error để service/component xử lý thống nhất
     return Promise.reject({
       status: response?.status,
-      message: response?.data?.message || 'Có lỗi xảy ra',
-      errors: response?.data?.errors || null
+      message: response?.data?.message || response?.data?.error?.message || 'Có lỗi xảy ra',
+      error: response || null
     });
   }
 );
