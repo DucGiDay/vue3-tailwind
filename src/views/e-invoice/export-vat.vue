@@ -233,7 +233,7 @@
               </InputGroup>
             </div>
 
-            <!-- Thông tin ngân hàng -->
+            <!-- Số tai khoản -->
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="bank_acc" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
@@ -246,11 +246,13 @@
                 :placeholder="t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
               />
             </div>
+            <!-- Tên ngân hàng -->
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
-              <label for="bank_acc" class="fb-font-medium fb-text-sm fb-mb-0">
-                {{ t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
+              <label for="bank_name" class="fb-font-medium fb-text-sm fb-mb-0">
+                {{ t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL') }}
               </label>
               <InputText
+                id="bank_name"
                 v-model="extraSale.inv_buyerBankName"
                 size="small"
                 :disabled="isLoading"
