@@ -72,5 +72,8 @@ export const invoiceService = {
     api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, noAuth: true, withCredentials: true }),
 
   // API tùy chỉnh
-  customService: (url, config) => api.get(url, { noAuth: true, ...config })
+  customService: (url, config) => api.get(url, { noAuth: true, ...config }),
+
+  updateInvoiceByQr: (payload, headers) =>
+    api.post('/api/invoice/v1/update-invoice/by-qr', payload, { headers, noAuth: true })
 };
