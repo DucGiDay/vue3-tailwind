@@ -76,14 +76,16 @@
 
                 <template #option="{ option }">
                   <div
-                    class="fb-flex fb-items-center fb-justify-between fb-gap-4 fb-w-full !fb-min-w-[15rem]"
+                    class="fb-flex fb-items-center fb-justify-between fb-gap-4 fb-w-full !fb-min-w-[15rem] fb-max-w-[25rem]"
                   >
-                    <div class="fb-flex-1">
+                    <div class="fb-truncate">
                       <div class="fb-font-medium">
-                        {{ option.buyer_display_name }}
+                        {{ option?.buyer_legal_name }}
+                        {{ option?.buyer_legal_name && option?.buyer_display_name ? ' - ' : '' }}
+                        {{ option?.buyer_display_name }}
                       </div>
                       <div class="fb-text-gray-500">
-                        {{ option.sdt_nmua }}
+                        {{ option?.buyer_tax_code || option?.sdt_nmua }}
                       </div>
                     </div>
                     <Button
@@ -341,6 +343,7 @@
             :label="t('SALE_SYNC_VAT--EXPORT_VAT')"
             raised
             :loading="isLoadingSave"
+            class="fb-w-full md:fb-w-auto"
             @click="handleExport"
           />
           <Button
@@ -574,8 +577,6 @@ const handleExport = async () => {
         });
       }
     }
-
-    await getVatInfo();
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -584,6 +585,7 @@ const handleExport = async () => {
     });
   } finally {
     isLoadingSave.value = false;
+    await getVatInfo();
   }
 };
 
