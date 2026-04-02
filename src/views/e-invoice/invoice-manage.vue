@@ -298,7 +298,7 @@ const menuItems = (row) => {
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
         // window.location.assign(url);
-        window.open(url, '_self'); // mở tab mới
+        window.open(url, '_self');
       }
     },
     // {
@@ -310,7 +310,7 @@ const menuItems = (row) => {
     //       window.location.origin +
     //       `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
     //     // window.location.assign(url);
-    //     window.open(url, '_self'); // mở tab mới
+    //     window.open(url, '_self');
     //   }
     // },
     {
@@ -322,7 +322,7 @@ const menuItems = (row) => {
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
         // window.location.assign(url);
-        window.open(url, '_self'); // mở tab mới
+        window.open(url, '_self');
       }
     },
     {
@@ -342,6 +342,7 @@ const menuItems = (row) => {
 
     {
       label: 'Xóa hóa đơn dự thảo',
+      visible: !!row?.vat_invoice_number,
       icon: markRaw(IconDeleteDoc),
       class: 'fb-text-error',
       command: () => {
