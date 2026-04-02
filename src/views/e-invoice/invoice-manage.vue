@@ -298,19 +298,31 @@ const menuItems = (row) => {
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
         // window.location.assign(url);
-        window.open(url, '_blank'); // mở tab mới
+        window.open(url, '_self'); // mở tab mới
       }
     },
+    // {
+    //   label: 'Sửa hóa đơn',
+    //   icon: markRaw(IconEdit),
+    //   visible: row?.statusSale?.is_edit && [1, 2].includes(row?.statusSale?.edit_type),
+    //   command: () => {
+    //     const url =
+    //       window.location.origin +
+    //       `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+    //     // window.location.assign(url);
+    //     window.open(url, '_self'); // mở tab mới
+    //   }
+    // },
     {
-      label: 'Sửa hóa đơn',
-      icon: markRaw(IconEdit),
-      visible: row?.statusSale?.is_edit && [1, 2].includes(row?.statusSale?.edit_type),
+      label: 'Phát hành lại hóa đơn',
+      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
+      icon: markRaw(IconUpload),
       command: () => {
         const url =
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
         // window.location.assign(url);
-        window.open(url, '_blank'); // mở tab mới
+        window.open(url, '_self'); // mở tab mới
       }
     },
     {
@@ -327,18 +339,7 @@ const menuItems = (row) => {
         visibleExportVat.value = true;
       }
     },
-    {
-      label: 'Phát hành lại hóa đơn',
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
-      icon: markRaw(IconUpload),
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        // window.location.assign(url);
-        window.open(url, '_blank'); // mở tab mới
-      }
-    },
+
     {
       label: 'Xóa hóa đơn dự thảo',
       icon: markRaw(IconDeleteDoc),
@@ -350,7 +351,7 @@ const menuItems = (row) => {
 
     {
       label: 'Xem gửi CQT',
-      visible: row?.partner_id === 'IPOSINVOICE',
+      visible: row?.partner_id === 'IPOSINVOICE' && !!row?.vat_invoice_number,
       icon: markRaw(IconEye),
       command: async () => {
         await onViewInvoice(row);

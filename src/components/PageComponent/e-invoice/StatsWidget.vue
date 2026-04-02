@@ -1,12 +1,12 @@
 <template>
   <section id="summary">
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
-      <!-- Tổng tài nguyên -->
+      <!-- Số lượng hóa đơn đã mua -->
       <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-              Tổng tài nguyên
+              Số lượng hóa đơn đã mua
             </span>
             <svg
               width="32"
@@ -35,12 +35,12 @@
         </div>
       </div>
 
-      <!-- Tài nguyên đã dùng -->
+      <!-- Số lượng hóa đơn đã sử dụng -->
       <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-              Tài nguyên đã dùng
+              Số lượng hóa đơn đã sử dụng
             </span>
             <svg
               width="32"
@@ -69,12 +69,12 @@
         </div>
       </div>
 
-      <!-- Tài nguyên còn lại -->
+      <!-- Số lượng hóa đơn còn lại -->
       <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-              Tài nguyên còn lại
+              Số lượng hóa đơn còn lại
             </span>
             <svg
               width="32"
