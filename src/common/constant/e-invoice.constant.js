@@ -131,14 +131,12 @@ export const INVOICE_PARTNERS = [
 const acceptZeroVatObj = {
   label: 'Cho phép xuất vat 0%',
   id: 'accept_zero_vat',
-  configResult: (c) => (c.accept_zero_vat ? 'Cho phép' : 'Không cho phép'),
   type: 'checkbox'
 };
 
 const blockExportVat0d = {
   label: 'Chặn xuất VAT với hóa đơn 0đ',
   id: 'block_export_vat_0d',
-  configResult: (c) => (c.block_export_vat_0d ? 'Chặn' : 'Không chặn'),
   type: 'checkbox'
 };
 
@@ -147,14 +145,12 @@ const invTaxCode = { label: 'Mã số thuế', id: 'inv_tax_code', isReplaceSpac
 const exportVatInvoiceDateIsTranDate = {
   label: 'Cho phép xuất VAT ngày xuất là thời gian in bill',
   id: 'export_vat_invoice_date_is_tran_date',
-  configResult: (c) => (c.export_vat_invoice_date_is_tran_date ? 'Cho phép' : 'Không cho phép'),
   type: 'checkbox'
 };
 
 const version = {
   label: 'Phiên bản',
   id: 'version',
-  configResult: (c) => (c.version == 'invoice_v1' ? 'Version 1' : 'Version 2'),
   type: 'radio',
   options: [
     { text: 'Version 1', value: 'invoice_v1' },
@@ -165,14 +161,12 @@ const version = {
 const showDiscountByItem = {
   label: 'Mẫu HDDT hiển thị chiết khấu theo từng mặt hàng',
   id: 'config_template_v2',
-  configResult: (c) => (c.config_template_v2 ? 'Hiển thị' : 'Không hiển thị'),
   type: 'checkbox'
 };
 
 const moneyConfigMeinvoice = {
   label: 'Cho phép thập phân đơn giá, thành tiền',
   id: 'money_config_meinvoice',
-  configResult: (c) => (c.money_config_meinvoice ? 'Cho phép' : 'Không cho phép'),
   type: 'checkbox'
 };
 
@@ -184,8 +178,9 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     {
       label: 'Thông tư',
       id: 'inv_circulars',
-      configResult: (c) => (c.inv_circulars == 'circulars_32' ? 'Thông tư 32' : 'Thông tư 78'),
       type: 'radio',
+      defaultValue: 'circulars_78',
+      hide: () => true,
       options: [
         { text: 'Thông tư 32', value: 'circulars_32' },
         { text: 'Thông tư 78', value: 'circulars_78' }
@@ -197,7 +192,6 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     {
       label: 'Cho phép Ký tự động',
       id: 'enable_savesign',
-      configResult: (c) => (c.enable_savesign ? 'Cho phép' : 'Không cho phép'),
       type: 'checkbox'
     },
     blockExportVat0d,
@@ -217,7 +211,6 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       tooltip:
         '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Khách hàng muốn tự động gửi HĐ lên CQT, vui lòng liên hệ kinh doanh Misa để hỗ trợ cấu hình trên Me-Invoice</li></ul>',
       id: 'enable_savesign',
-      configResult: (c) => (c.enable_savesign ? 'Cho phép' : 'Không cho phép'),
       type: 'checkbox',
       hide: (c) => c.version == 'invoice_v1'
     },
@@ -226,13 +219,11 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     {
       label: 'Cho phép thập phân đơn giá, thành tiền',
       id: 'money_config_meinvoice',
-      type: 'checkbox',
-      configResult: (c) => (c.money_config_meinvoice ? 'Cho phép' : 'Không cho phép')
+      type: 'checkbox'
     },
     {
       label: 'Cho phép gửi mail sau khi xuất vat',
       id: 'is_send_email',
-      configResult: (c) => (c.is_send_email ? 'Cho phép' : 'Không cho phép'),
       type: 'checkbox'
     }
   ],
@@ -258,7 +249,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     { label: 'Ký hiệu', id: 'inv_series' },
     {
       ...version,
-      label: 'Phiên bản *',
+      label: 'Phiên bản',
       tooltip:
         '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>'
     },
@@ -274,7 +265,6 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     {
       label: 'Phiên bản',
       id: 'version',
-      configResult: (c) => (c.version == 'invoice_v1' ? 'Tạo hóa đơn' : 'Xuất hóa đơn'),
       type: 'radio',
       options: [
         { text: 'Tạo hóa đơn', value: 'invoice_v1' },
@@ -288,7 +278,6 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       tooltip:
         '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Vui lòng liên hệ kinh doanh iPOS để được hỗ trợ cấu hình</li></ul>',
       id: 'enable_savesign',
-      configResult: (c) => (c.enable_savesign ? 'Cho phép' : 'Không cho phép'),
       type: 'checkbox',
       hide: (c) => c.version == 'invoice_v2'
     },
