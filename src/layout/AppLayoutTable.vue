@@ -1,8 +1,8 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { getAssetUrl } from '@/common/ulties';
-import backgroundImage from '@/assets/img/background/bg-1.png';
-const imgUrl = getAssetUrl(backgroundImage);
+import AppFooter from './AppFooter.vue';
+import AppSidebar from './AppSidebar.vue';
+import AppTopbar from './AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -61,17 +61,11 @@ function isOutsideClicked(event) {
 </script>
 
 <template>
-  <div
-    class="layout-wrapper !fb-min-h-screen"
-    :class="containerClass"
-    :style="{
-      backgroundImage: `url(${imgUrl})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    }"
-  >
-    <router-view></router-view>
+  <div class="layout-wrapper" :class="containerClass">
+    <app-sidebar></app-sidebar>
+    <div class="layout-table-container">
+      <router-view></router-view>
+    </div>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>
 </template>

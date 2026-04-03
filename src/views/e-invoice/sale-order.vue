@@ -30,7 +30,7 @@
         size="normal"
         @update:modelValue="filter"
       /> -->
-      <FbSelectSingleStoreFilter
+      <FbSelectSingleTaxStoreFilter
         placeholder="Chọn theo cửa hàng"
         size="small"
         @update:modelValue="filter"
