@@ -8,7 +8,7 @@
     scrollable
     :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
     tableStyle="min-width: 50rem;"
-    tableClass="fb_table--t_table fb-text-sm"
+    tableClass="fb_table--t_table fb-text-[0.8125rem]"
     class="fb_table--wrapper"
     v-bind="$attrs"
     @columnReorder="onColReorder"
@@ -20,8 +20,8 @@
       v-if="enableCheckbox"
       selectionMode="multiple"
       headerStyle="width: 3rem"
-      headerClass=""
-      bodyClass=""
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
       class="!fb-px-4"
       alignFrozen="left"
       frozen
@@ -33,8 +33,8 @@
       field="no"
       header="#"
       :reorderableColumn="false"
-      headerClass=""
-      bodyClass=""
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
       class=""
     >
       <template #body="{ index }">
@@ -48,8 +48,8 @@
       :header="col.header"
       :key="col.field + '_' + index"
       :sortable="col?.sortable"
-      headerClass=""
-      :bodyClass="col?.classes || ''"
+      headerClass="fb-font-medium"
+      :bodyClass="['fb-font-normal', 'fb-text-gray-700', col?.classes || '']"
       :class="[
         'fb-whitespace-nowrap',
         {
@@ -81,8 +81,8 @@
     <!-- Delete column -->
     <Column
       v-if="deleteCallback"
-      headerClass=""
-      bodyClass=""
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
       class="fb-whitespace-nowrap !fb-px-2"
       alignFrozen="right"
       frozen
@@ -104,8 +104,8 @@
     <!-- Action Column -->
     <Column
       v-if="menuItems"
-      headerClass=""
-      bodyClass=""
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
       class="fb-whitespace-nowrap !fb-px-1"
       alignFrozen="right"
       frozen
@@ -165,7 +165,7 @@
 
     <!-- Footer -->
     <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
-      <nav class="fb-flex fb-items-center">
+      <nav class="fb-flex fb-items-center fb-pr-10">
         <slot name="footer" />
         <div
           class="fb-paginator fb-ml-auto"

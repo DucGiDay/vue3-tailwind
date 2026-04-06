@@ -42,7 +42,7 @@ function bindOutsideClickListener() {
 
 function unbindOutsideClickListener() {
   if (outsideClickListener.value) {
-    document.removeEventListener('click', outsideClickListener);
+    document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
 }
@@ -65,10 +65,8 @@ function isOutsideClicked(event) {
     <!-- <app-topbar></app-topbar> -->
     <app-sidebar></app-sidebar>
     <div class="layout-main-container">
-      <div class="layout-main">
-        <router-view></router-view>
-      </div>
-      <!-- <app-footer></app-footer> -->
+      <router-view></router-view>
+
     </div>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>

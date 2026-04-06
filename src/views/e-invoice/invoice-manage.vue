@@ -1,68 +1,66 @@
 <template>
   <div class="fb-flex fb-flex-col fb-h-full fb-w-full">
-    <div class="fb-flex fb-justify-between fb-items-center fb-mb-6 fb-shrink-0">
-      <div class="fb-flex fb-items-center fb-space-x-3">
-        <h4 class="!fb-m-0">Quản lý hóa đơn</h4>
+    <div class="fb-shrink-0 fb-mb-4">
+      <div class="fb-flex fb-justify-between fb-items-center fb-mb-6">
+        <div class="fb-flex fb-items-center fb-space-x-3">
+          <h4 class="!fb-m-0">Quản lý hóa đơn</h4>
+        </div>
       </div>
-    </div>
-    <div
-      :class="[
-        'fb-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center fb-mb-4 '
-      ]"
-    >
-      <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
-        <Select
-          v-model="statusField"
-          :options="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Chọn trạng thái"
-          class="fb-w-auto md:fb-w-48"
-          showClear
-          size="small"
-          @change="filter"
-        />
-
-        <FbDateFilter @update:modelValue="filter" size="small" />
-
-        <FbSelectSingleTaxStoreFilter
-          placeholder="Chọn theo cửa hàng"
-          size="small"
-          @update:modelValue="filter"
-        />
-      </div>
-      <div>
-        <IconField>
-          <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="fb-h-[1rem]"
-            >
-              <path
-                d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-                stroke="#A4A7AE"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </InputIcon>
-          <InputText
-            v-model="searchField"
-            placeholder="Tìm kiếm mã hóa đơn"
-            class="fb-w-auto md:fb-w-72"
+      <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center">
+        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+          <Select
+            v-model="statusField"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn trạng thái"
+            class="fb-w-auto md:fb-w-48"
+            showClear
             size="small"
-            @input="onSearchChange"
+            @change="filter"
           />
-        </IconField>
+
+          <FbDateFilter @update:modelValue="filter" size="small" />
+
+          <FbSelectSingleTaxStoreFilter
+            placeholder="Chọn theo cửa hàng"
+            size="small"
+            @update:modelValue="filter"
+          />
+        </div>
+        <div>
+          <IconField>
+            <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="fb-h-[1rem]"
+              >
+                <path
+                  d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
+                  stroke="#A4A7AE"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </InputIcon>
+            <InputText
+              v-model="searchField"
+              placeholder="Tìm kiếm mã hóa đơn"
+              class="fb-w-auto md:fb-w-72"
+              size="small"
+              @input="onSearchChange"
+            />
+          </IconField>
+        </div>
       </div>
     </div>
 
-    <div class="fb-w-full fb-flex fb-flex-col fb-min-h-[450px]">
+    <div class="fb-w-full fb-flex-1 fb-flex fb-flex-col fb-min-h-[28rem]">
       <FbTable
         v-model:selection="saleSelecteds"
         :columns="columns"
@@ -276,18 +274,6 @@ const menuItems = (row) => {
     //     console.log(row);
     //   }
     // },
-    {
-      label: 'Thay thế',
-      icon: markRaw(IconReplace),
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        // window.location.assign(url);
-        window.open(url, '_self');
-      }
-    },
     // {
     //   label: 'Sửa hóa đơn',
     //   icon: markRaw(IconEdit),
@@ -300,6 +286,18 @@ const menuItems = (row) => {
     //     window.open(url, '_self');
     //   }
     // },
+    {
+      label: 'Thay thế',
+      icon: markRaw(IconReplace),
+      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+      command: () => {
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+        // window.location.assign(url);
+        window.open(url, '_self');
+      }
+    },
     {
       label: 'Phát hành lại hóa đơn',
       visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
@@ -319,7 +317,7 @@ const menuItems = (row) => {
       tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
       command: () => {
         currentSaleData.value = {
-          extra_sale: row?.extra_sale || null,
+          extra_sale: row || null,
           sales: [row],
           is_immediate: false
         };

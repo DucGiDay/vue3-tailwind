@@ -14,6 +14,23 @@
     </div>
 
     <Fluid v-else class="fb-space-y-6">
+      <!-- Dummy inputs to "trap" browser autofill -->
+      <div
+        style="
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 0;
+          width: 0;
+          overflow: hidden;
+          pointer-events: none;
+        "
+      >
+        <input type="text" name="fake_user_name_to_prevent_autofill" tabindex="-1" />
+        <input type="password" name="fake_password_to_prevent_autofill" tabindex="-1" />
+      </div>
+
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
         <label
           for="partner"
@@ -175,6 +192,7 @@
               :toggleMask="true"
               fluid
               :feedback="false"
+              autocomplete="new-password"
             />
 
             <!-- Default InputText -->
@@ -188,6 +206,7 @@
                 field.isReplaceSpace &&
                 (config[field.id] = config[field.id].toString().replace(/\s/g, ''))
               "
+              autocomplete="chrome-off"
             />
           </div>
         </div>

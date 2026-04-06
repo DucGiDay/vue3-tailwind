@@ -341,7 +341,6 @@ const searchByTaxCode = async () => {
     const respoonse = await invoiceService.searchByTaxCode({
       tax_code: extraSale.value.inv_buyerTaxCode
     });
-    console.log(respoonse);
 
     if (respoonse?.data) {
       const { inv_buyerLegalName, inv_buyerAddressLine, inv_buyerDisplayName } =
@@ -455,6 +454,8 @@ watch(visible, (newVal) => {
       scope.value =
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
+    console.log(props.saleData);
+    
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };
