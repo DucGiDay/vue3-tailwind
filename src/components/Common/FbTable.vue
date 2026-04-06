@@ -7,7 +7,7 @@
     :showGridlines="false"
     scrollable
     :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
-    tableStyle="min-width: 50rem; "
+    tableStyle="min-width: 50rem;"
     tableClass="fb_table--t_table fb-text-sm"
     class="fb_table--wrapper"
     v-bind="$attrs"

@@ -75,6 +75,7 @@
         :totalRecords="vatInvoice.data?.num_results || 0"
         :totalPages="vatInvoice.data?.total_pages || 0"
         :loadingActionRowCustom="loadingActionRowCustom"
+        scrollHeight="flex"
         keyLoading="tran_id"
         :menuItems="menuItems"
         :onToggleMenu="onToggleMenu"
@@ -328,7 +329,7 @@ const menuItems = (row) => {
 
     {
       label: 'Xóa hóa đơn dự thảo',
-      visible: !!row?.vat_invoice_number,
+      visible: !row?.vat_invoice_number,
       icon: markRaw(IconDeleteDoc),
       class: 'fb-text-error',
       command: () => {

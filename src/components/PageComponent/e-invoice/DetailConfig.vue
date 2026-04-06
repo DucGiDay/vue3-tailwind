@@ -31,7 +31,6 @@
             optionLabel="name"
             optionValue="code"
             filter
-            :disabled="isEdit"
             @change="onPartnerChange"
           />
         </div>
@@ -241,7 +240,7 @@ const storeOptions = computed(() => {
 });
 const partnerOptions = INVOICE_PARTNERS;
 
-const partner = ref(props.partnerSelected || INVOICE_PARTNERS[0].code);
+const partner = ref(props.partnerSelected || null);
 const store = ref();
 const isLoading = ref(false);
 
@@ -272,7 +271,7 @@ const generateDefaultConfig = (fields) => {
 const config = ref(generateDefaultConfig(partnerConfigFields.value));
 
 const resetData = () => {
-  partner.value = props.partnerSelected || INVOICE_PARTNERS[0].code;
+  partner.value = props.partnerSelected || null;
   store.value = {};
   config.value = generateDefaultConfig(partnerConfigFields.value);
 };

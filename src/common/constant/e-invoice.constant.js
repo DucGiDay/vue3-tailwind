@@ -187,17 +187,17 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       ]
     },
     version,
-    showDiscountByItem,
-    acceptZeroVatObj,
-    {
-      label: 'Cho phép Ký tự động',
-      id: 'enable_savesign',
-      type: 'checkbox'
-    },
-    blockExportVat0d,
+    // showDiscountByItem,
+    // acceptZeroVatObj,
+    // {
+    //   label: 'Cho phép Ký tự động',
+    //   id: 'enable_savesign',
+    //   type: 'checkbox'
+    // },
+    // blockExportVat0d,
 
-    exportVatInvoiceDateIsTranDate,
-    moneyConfigMeinvoice
+    // exportVatInvoiceDateIsTranDate,
+    // moneyConfigMeinvoice
   ],
   MEINVOICE: [
     { label: 'Tài khoản', id: 'inv_user_name' },
@@ -205,38 +205,38 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     invTaxCode,
     { label: 'Ký hiệu', id: 'inv_series' },
     version,
-    acceptZeroVatObj,
-    {
-      label: 'Cho phép Ký tự động',
-      tooltip:
-        '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Khách hàng muốn tự động gửi HĐ lên CQT, vui lòng liên hệ kinh doanh Misa để hỗ trợ cấu hình trên Me-Invoice</li></ul>',
-      id: 'enable_savesign',
-      type: 'checkbox',
-      hide: (c) => c.version == 'invoice_v1'
-    },
-    blockExportVat0d,
-    exportVatInvoiceDateIsTranDate,
-    {
-      label: 'Cho phép thập phân đơn giá, thành tiền',
-      id: 'money_config_meinvoice',
-      type: 'checkbox'
-    },
-    {
-      label: 'Cho phép gửi mail sau khi xuất vat',
-      id: 'is_send_email',
-      type: 'checkbox'
-    }
+    // acceptZeroVatObj,
+    // {
+    //   label: 'Cho phép Ký tự động',
+    //   tooltip:
+    //     '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Khách hàng muốn tự động gửi HĐ lên CQT, vui lòng liên hệ kinh doanh Misa để hỗ trợ cấu hình trên Me-Invoice</li></ul>',
+    //   id: 'enable_savesign',
+    //   type: 'checkbox',
+    //   hide: (c) => c.version == 'invoice_v1'
+    // },
+    // blockExportVat0d,
+    // exportVatInvoiceDateIsTranDate,
+    // {
+    //   label: 'Cho phép thập phân đơn giá, thành tiền',
+    //   id: 'money_config_meinvoice',
+    //   type: 'checkbox'
+    // },
+    // {
+    //   label: 'Cho phép gửi mail sau khi xuất vat',
+    //   id: 'is_send_email',
+    //   type: 'checkbox'
+    // }
   ],
   SINVOICE: [
     { label: 'Tài khoản', id: 'inv_user_name' },
     { label: 'Mật khẩu', id: 'inv_password' },
     invTaxCode,
     { label: 'Ký hiệu', id: 'inv_series' },
-    acceptZeroVatObj,
-    blockExportVat0d,
-    exportVatInvoiceDateIsTranDate,
-    moneyConfigMeinvoice,
-    version
+    // acceptZeroVatObj,
+    // blockExportVat0d,
+    // exportVatInvoiceDateIsTranDate,
+    // moneyConfigMeinvoice,
+    // version
   ],
   VNPTINVOICE: [
     { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt' },
@@ -253,8 +253,8 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       tooltip:
         '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>'
     },
-    acceptZeroVatObj,
-    blockExportVat0d
+    // acceptZeroVatObj,
+    // blockExportVat0d
   ],
   IPOSINVOICE: [
     { label: 'Tài khoản', id: 'inv_user_name' },
@@ -271,17 +271,17 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
         { text: 'Xuất hóa đơn', value: 'invoice_v2' }
       ]
     },
-    showDiscountByItem,
-    acceptZeroVatObj,
-    {
-      label: 'Cho phép Ký tự động',
-      tooltip:
-        '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Vui lòng liên hệ kinh doanh iPOS để được hỗ trợ cấu hình</li></ul>',
-      id: 'enable_savesign',
-      type: 'checkbox',
-      hide: (c) => c.version == 'invoice_v2'
-    },
-    blockExportVat0d,
-    exportVatInvoiceDateIsTranDate
+    // showDiscountByItem,
+    // acceptZeroVatObj,
+    // {
+    //   label: 'Cho phép Ký tự động',
+    //   tooltip:
+    //     '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Vui lòng liên hệ kinh doanh iPOS để được hỗ trợ cấu hình</li></ul>',
+    //   id: 'enable_savesign',
+    //   type: 'checkbox',
+    //   hide: (c) => c.version == 'invoice_v2'
+    // },
+    // blockExportVat0d,
+    // exportVatInvoiceDateIsTranDate
   ]
 };
