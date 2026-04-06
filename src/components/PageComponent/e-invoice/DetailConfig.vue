@@ -39,7 +39,7 @@
           Đối tác
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <Select
             id="partner"
             v-model="partner"
@@ -54,6 +54,9 @@
               onPartnerChange;
             "
           />
+          <Message v-if="error.partner" severity="error" size="small" variant="simple">
+            {{ error.partner }}
+          </Message>
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
@@ -61,7 +64,7 @@
           Cửa hàng
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <Select
             id="store"
             v-model="store"
@@ -73,6 +76,9 @@
             :disabled="isEdit"
             @change="delete error.store"
           />
+          <Message v-if="error.store" severity="error" size="small" variant="simple">
+            {{ error.store }}
+          </Message>
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
@@ -80,7 +86,7 @@
           POS ID
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <InputText
             id="posId"
             disabled
@@ -89,6 +95,9 @@
             :value="store?.fb_store_id"
             placeholder="POS ID"
           />
+          <Message v-if="error.store" severity="error" size="small" variant="simple">
+            {{ error.store }}
+          </Message>
         </div>
       </div>
 
@@ -129,7 +138,7 @@
           </label>
           <div
             :class="[
-              'fb-col-span-12 ',
+              'fb-col-span-12 fb-flex fb-flex-col fb-gap-1',
               field.type === 'checkbox' ? 'md:fb-col-span-12' : 'md:fb-col-span-10'
             ]"
           >
@@ -333,9 +342,9 @@ const saveConfig = async () => {
   if (!partner.value) {
     validationErrors.partner = 'Vui lòng chọn đối tác';
   }
-  
+
   error.value = validationErrors;
-  
+
   if (Object.keys(validationErrors).length > 0) {
     toast.add({
       severity: 'warn',
