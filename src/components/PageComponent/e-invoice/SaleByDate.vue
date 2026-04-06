@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import moment from 'moment';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 
 // Image
 import empryIconPath from '@/assets/img/dashboard/empty-daily.png'

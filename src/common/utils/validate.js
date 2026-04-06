@@ -50,8 +50,25 @@ export const rules = {
 
   number: (val) => {
     if (!val && val !== 0) return true;
-    return !isNaN(parseFloat(val)) && isFinite(val) || 'Vui lòng nhập định dạng số';
+    return (!isNaN(parseFloat(val)) && isFinite(val)) || 'Vui lòng nhập định dạng số';
   }
+};
+
+/**
+ * @description Hàm lõi thực hiện validate dữ liệu của 1 trường dựa trên danh sách quy tắc
+ * @private
+ */
+const runValidation = (value, fieldRules) => {
+  const rulesArray = Array.isArray(fieldRules) ? fieldRules : [fieldRules];
+
+  for (const rule of rulesArray) {
+    const ruleFn = typeof rule === 'string' ? rules[rule] : rule;
+    if (typeof ruleFn !== 'function') continue;
+
+    const result = ruleFn(value);
+    if (result !== true) return result;
+  }
+  return true;
 };
 
 /**
@@ -61,21 +78,25 @@ export const rules = {
  * @returns {Object} - Object chứa message lỗi { fieldName: 'Error Message' }
  */
 export const validateForm = (data, schema) => {
-  const errors = {};
+  return Object.keys(schema).reduce((errors, field) => {
+    const result = runValidation(data[field], schema[field]);
+    if (result !== true) errors[field] = result;
+    return errors;
+  }, {});
+};
 
-  Object.keys(schema).forEach((field) => {
-    const fieldRules = Array.isArray(schema[field]) ? schema[field] : [schema[field]];
-
-    for (const rule of fieldRules) {
-      if (typeof rule !== 'function') continue;
-      
-      const result = rule(data[field]);
-      if (result !== true) {
-        errors[field] = result;
-        break;
-      }
+/**
+ * @description Validate một object data dựa trên danh sách fields chứa thuộc tính rules
+ * @param {Object} data - Dữ liệu cần validate
+ * @param {Array} fields - Danh sách các field (vd: [{ id: 'email', rules: ['required', 'email' }])
+ * @returns {Object} - Object chứa message lỗi
+ */
+export const validateByFields = (data, fields) => {
+  return fields.reduce((errors, field) => {
+    if (field.rules) {
+      const result = runValidation(data[field.id], field.rules);
+      if (result !== true) errors[field.id] = result;
     }
-  });
-
-  return errors;
+    return errors;
+  }, {});
 };

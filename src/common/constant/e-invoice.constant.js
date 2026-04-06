@@ -140,7 +140,7 @@ const blockExportVat0d = {
   type: 'checkbox'
 };
 
-const invTaxCode = { label: 'Mã số thuế', id: 'inv_tax_code', isReplaceSpace: true };
+const invTaxCode = { label: 'Mã số thuế', id: 'inv_tax_code', rules: ['required'], isReplaceSpace: true };
 
 const exportVatInvoiceDateIsTranDate = {
   label: 'Cho phép xuất VAT ngày xuất là thời gian in bill',
@@ -173,8 +173,8 @@ const moneyConfigMeinvoice = {
 export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
   MINVOICE: [
     invTaxCode,
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id' },
-    { label: 'Ký hiệu', id: 'inv_series' },
+    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
+    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
     {
       label: 'Thông tư',
       id: 'inv_circulars',
@@ -200,10 +200,10 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // moneyConfigMeinvoice
   ],
   MEINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name' },
-    { label: 'Mật khẩu', id: 'inv_password' },
+    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
+    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
     invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series' },
+    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
     version
     // acceptZeroVatObj,
     // {
@@ -228,10 +228,10 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // }
   ],
   SINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name' },
-    { label: 'Mật khẩu', id: 'inv_password' },
+    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
+    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
     invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series' },
+    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
     // acceptZeroVatObj,
     // blockExportVat0d,
     // exportVatInvoiceDateIsTranDate,
@@ -239,14 +239,14 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     version
   ],
   VNPTINVOICE: [
-    { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt' },
+    { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt', rules: ['required'] },
     invTaxCode,
-    { label: 'Tài khoản admin', id: 'inv_user_name' },
-    { label: 'Mật khẩu admin', id: 'inv_password' },
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id' },
-    { label: 'Tài khoản service', id: 'inv_user_name_service' },
-    { label: 'Mật khẩu service', id: 'inv_password_service' },
-    { label: 'Ký hiệu', id: 'inv_series' },
+    { label: 'Tài khoản admin', id: 'inv_user_name', rules: ['required'] },
+    { label: 'Mật khẩu admin', id: 'inv_password', rules: ['required'] },
+    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
+    { label: 'Tài khoản service', id: 'inv_user_name_service', rules: ['required'] },
+    { label: 'Mật khẩu service', id: 'inv_password_service', rules: ['required'] },
+    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
     {
       ...version,
       label: 'Phiên bản',
@@ -257,11 +257,11 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // blockExportVat0d
   ],
   IPOSINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name' },
-    { label: 'Mật khẩu', id: 'inv_password' },
+    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
+    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
     invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series' },
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id' },
+    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
+    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
     {
       label: 'Phiên bản',
       id: 'version',

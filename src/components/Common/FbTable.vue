@@ -49,7 +49,7 @@
       :key="col.field + '_' + index"
       :sortable="col?.sortable"
       headerClass="fb-font-medium"
-      :bodyClass="['fb-font-normal', 'fb-text-gray-700', col?.classes || '']"
+      :bodyClass="['fb-font-normal', 'fb-text-gray-700', col?.classes || ''].join(' ')"
       :class="[
         'fb-whitespace-nowrap',
         {
@@ -302,9 +302,9 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, computed, watch, nextTick } from 'vue';
 import moment from 'moment';
-import { formatCurrency } from '@/common/ulties';
+import { formatCurrency } from '@/common/utils/common';
 import { useToast } from 'primevue/usetoast';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 const toast = useToast();
 
 // Image

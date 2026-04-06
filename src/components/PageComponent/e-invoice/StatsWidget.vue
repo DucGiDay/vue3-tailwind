@@ -151,7 +151,7 @@
 
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import { formatNumber } from '@/common/ulties';
+import { formatNumber } from '@/common/utils/common';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

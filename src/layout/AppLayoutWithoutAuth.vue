@@ -1,6 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 import backgroundImage from '@/assets/img/background/bg-1.png';
 const imgUrl = getAssetUrl(backgroundImage);
 

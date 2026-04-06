@@ -370,7 +370,7 @@ import { useI18n } from '@/common/i18n';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useVisitorId } from '@/common/composables/useVisitorId';
-import md5Enscrypt from '@/common/ulties/md5';
+import md5Enscrypt from '@/common/utils/md5';
 
 const invoiceStore = useEInoiveStore();
 const toast = useToast();

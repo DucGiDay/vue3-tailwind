@@ -48,7 +48,8 @@
             optionLabel="name"
             optionValue="code"
             filter
-            :invalid="error.partner"
+            filterPlaceholder="Tìm kiếm đối tác..."
+            :invalid="!!error.partner"
             @change="
               delete error.partner;
               onPartnerChange;
@@ -72,7 +73,8 @@
             placeholder="Chọn cửa hàng"
             optionLabel="store_name"
             filter
-            :invalid="error.store"
+            filterPlaceholder="Tìm kiếm cửa hàng..."
+            :invalid="!!error.store"
             :disabled="isEdit"
             @change="delete error.store"
           />
@@ -91,7 +93,7 @@
             id="posId"
             disabled
             type="text"
-            :invalid="error.store"
+            :invalid="!!error.store"
             :value="store?.fb_store_id"
             placeholder="POS ID"
           />
@@ -209,7 +211,7 @@
               fluid
               :feedback="false"
               autocomplete="new-password"
-              :invalid="error[field.id]"
+              :invalid="!!error[field.id]"
               @input="delete error[field.id]"
             />
 
@@ -220,7 +222,7 @@
               v-model="config[field.id]"
               type="text"
               :placeholder="'Nhập ' + (field.label || field.id)"
-              :invalid="error[field.id]"
+              :invalid="!!error[field.id]"
               @input="
                 delete error[field.id];
                 field.isReplaceSpace &&
@@ -256,13 +258,11 @@ import {
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useToast } from 'primevue/usetoast';
-import { rules, validateForm } from '@/common/ulties/validate';
-import { useI18n } from '@/common/i18n';
+import { validateByFields } from '@/common/utils/validate';
 
 const toast = useToast();
 const globalStore = useGlobalStore();
 const invoiceStore = useEInoiveStore();
-const { t } = useI18n();
 
 const props = defineProps({
   partnerSelected: {
@@ -327,29 +327,26 @@ const onPartnerChange = () => {
 };
 
 const saveConfig = async () => {
-  const schema = {};
-  partnerConfigFields.value.forEach((field) => {
-    if (field.type !== 'radio' && field.type !== 'checkbox') {
-      schema[field.id] = [rules.required];
-    }
-  });
+  // 1. Tự động validate dựa trên các trường cấu hình động trong Constant
+  error.value = validateByFields(
+    { ...config.value, partner: partner.value, store: store.value?.id },
+    [
+      ...partnerConfigFields.value,
+      {
+        id: 'partner',
+        rules: ['required']
+      },
+      {
+        id: 'store',
+        rules: ['required']
+      }
+    ]
+  );
 
-  const validationErrors = validateForm(config.value, schema);
-
-  if (!store.value?.id) {
-    validationErrors.store = 'Vui lòng chọn cửa hàng';
-  }
-  if (!partner.value) {
-    validationErrors.partner = 'Vui lòng chọn đối tác';
-  }
-
-  error.value = validationErrors;
-
-  if (Object.keys(validationErrors).length > 0) {
+  if (Object.keys(error.value).length > 0) {
     toast.add({
       severity: 'warn',
       summary: 'Vui lòng kiểm tra lại các trường thông tin',
-      // detail: 'Vui lòng kiểm tra lại thông tin',
       life: 3000
     });
     return;

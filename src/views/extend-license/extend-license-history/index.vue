@@ -120,7 +120,7 @@ import {
 import { useExtendLicenseStore } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { storeToRefs } from 'pinia';
-import { formatCurrency } from '@/common/ulties';
+import { formatCurrency } from '@/common/utils/common';
 import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.vue';
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
