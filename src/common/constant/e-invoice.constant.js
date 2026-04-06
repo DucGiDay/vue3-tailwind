@@ -186,7 +186,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
         { text: 'Thông tư 78', value: 'circulars_78' }
       ]
     },
-    version,
+    version
     // showDiscountByItem,
     // acceptZeroVatObj,
     // {
@@ -204,7 +204,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     { label: 'Mật khẩu', id: 'inv_password' },
     invTaxCode,
     { label: 'Ký hiệu', id: 'inv_series' },
-    version,
+    version
     // acceptZeroVatObj,
     // {
     //   label: 'Cho phép Ký tự động',
@@ -236,7 +236,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // blockExportVat0d,
     // exportVatInvoiceDateIsTranDate,
     // moneyConfigMeinvoice,
-    // version
+    version
   ],
   VNPTINVOICE: [
     { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt' },
@@ -252,7 +252,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       label: 'Phiên bản',
       tooltip:
         '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>'
-    },
+    }
     // acceptZeroVatObj,
     // blockExportVat0d
   ],
@@ -270,7 +270,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
         { text: 'Tạo hóa đơn', value: 'invoice_v1' },
         { text: 'Xuất hóa đơn', value: 'invoice_v2' }
       ]
-    },
+    }
     // showDiscountByItem,
     // acceptZeroVatObj,
     // {

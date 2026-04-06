@@ -48,7 +48,11 @@
             optionLabel="name"
             optionValue="code"
             filter
-            @change="onPartnerChange"
+            :invalid="error.partner"
+            @change="
+              delete error.partner;
+              onPartnerChange;
+            "
           />
         </div>
       </div>
@@ -65,7 +69,9 @@
             placeholder="Chọn cửa hàng"
             optionLabel="store_name"
             filter
+            :invalid="error.store"
             :disabled="isEdit"
+            @change="delete error.store"
           />
         </div>
       </div>
@@ -79,6 +85,7 @@
             id="posId"
             disabled
             type="text"
+            :invalid="error.store"
             :value="store?.fb_store_id"
             placeholder="POS ID"
           />
@@ -193,6 +200,8 @@
               fluid
               :feedback="false"
               autocomplete="new-password"
+              :invalid="error[field.id]"
+              @input="delete error[field.id]"
             />
 
             <!-- Default InputText -->
@@ -202,12 +211,17 @@
               v-model="config[field.id]"
               type="text"
               :placeholder="'Nhập ' + (field.label || field.id)"
+              :invalid="error[field.id]"
               @input="
+                delete error[field.id];
                 field.isReplaceSpace &&
-                (config[field.id] = config[field.id].toString().replace(/\s/g, ''))
+                  (config[field.id] = config[field.id].toString().replace(/\s/g, ''));
               "
               autocomplete="chrome-off"
             />
+            <Message v-if="error[field.id]" severity="error" size="small" variant="simple">
+              {{ error[field.id] }}
+            </Message>
           </div>
         </div>
       </template>
@@ -233,10 +247,13 @@ import {
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useToast } from 'primevue/usetoast';
+import { rules, validateForm } from '@/common/ulties/validate';
+import { useI18n } from '@/common/i18n';
 
 const toast = useToast();
 const globalStore = useGlobalStore();
 const invoiceStore = useEInoiveStore();
+const { t } = useI18n();
 
 const props = defineProps({
   partnerSelected: {
@@ -262,6 +279,7 @@ const partnerOptions = INVOICE_PARTNERS;
 const partner = ref(props.partnerSelected || null);
 const store = ref();
 const isLoading = ref(false);
+const error = ref({});
 
 // Dynamic Config Helpers
 const partnerConfigFields = computed(() => {
@@ -300,6 +318,34 @@ const onPartnerChange = () => {
 };
 
 const saveConfig = async () => {
+  const schema = {};
+  partnerConfigFields.value.forEach((field) => {
+    if (field.type !== 'radio' && field.type !== 'checkbox') {
+      schema[field.id] = [rules.required];
+    }
+  });
+
+  const validationErrors = validateForm(config.value, schema);
+
+  if (!store.value?.id) {
+    validationErrors.store = 'Vui lòng chọn cửa hàng';
+  }
+  if (!partner.value) {
+    validationErrors.partner = 'Vui lòng chọn đối tác';
+  }
+  
+  error.value = validationErrors;
+  
+  if (Object.keys(validationErrors).length > 0) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Vui lòng kiểm tra lại các trường thông tin',
+      // detail: 'Vui lòng kiểm tra lại thông tin',
+      life: 3000
+    });
+    return;
+  }
+
   isLoading.value = true;
   const res = await invoiceStore.updateStoreSettingInvoice({
     ...config.value,
