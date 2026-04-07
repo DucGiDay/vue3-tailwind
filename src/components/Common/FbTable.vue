@@ -9,7 +9,7 @@
     :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
     tableStyle="min-width: 50rem;"
     tableClass="fb_table--t_table fb-text-[0.8125rem]"
-    class="fb_table--wrapper "
+    class="fb_table--wrapper"
     v-bind="$attrs"
     @columnReorder="onColReorder"
   >
@@ -298,6 +298,10 @@ import moment from 'moment';
 import { formatCurrency } from '@/common/utils/common';
 import { useToast } from 'primevue/usetoast';
 import { getAssetUrl } from '@/common/utils/common';
+import IconChevronRightVue from './Icon/IconChevronRight.vue';
+import IconChevronLeftVue from './Icon/IconChevronLeft.vue';
+import IconChevronRightDoubleVue from './Icon/IconChevronRightDouble.vue';
+import IconChevronLeftDoubleVue from './Icon/IconChevronLeftDouble.vue';
 const toast = useToast();
 
 // Image
@@ -649,7 +653,7 @@ onBeforeUnmount(() => {
     border-radius: 0.5rem;
     overflow: hidden;
   }
-  
+
   table:has(.p-datatable-empty-message) {
     height: 100%;
   }

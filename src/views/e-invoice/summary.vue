@@ -40,7 +40,7 @@ const getStatisticInvoice = async (payload) => {
 // Báo cáo tài nguyên sử dụng
 const getTotalQuantityInvoices = async (payload) => {
   const { list_store_uid, ...restPayload } = payload;
-  const store_uids = list_store_uid.split;
+  const store_uids = list_store_uid;
   await invoiceStore.getTotalQuantityInvoices({ ...restPayload, store_uids });
 };
 
