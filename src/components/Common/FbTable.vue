@@ -298,10 +298,10 @@ import moment from 'moment';
 import { formatCurrency } from '@/common/utils/common';
 import { useToast } from 'primevue/usetoast';
 import { getAssetUrl } from '@/common/utils/common';
-import IconChevronRightVue from './Icon/IconChevronRight.vue';
-import IconChevronLeftVue from './Icon/IconChevronLeft.vue';
-import IconChevronRightDoubleVue from './Icon/IconChevronRightDouble.vue';
-import IconChevronLeftDoubleVue from './Icon/IconChevronLeftDouble.vue';
+import IconChevronRight from '@/components/Common/Icon/IconChevronRight.vue';
+import IconChevronLeft from '@/components/Common/Icon/IconChevronLeft.vue';
+import IconChevronRightDouble from '@/components/Common/Icon/IconChevronRightDouble.vue';
+import IconChevronLeftDouble from '@/components/Common/Icon/IconChevronLeftDouble.vue';
 const toast = useToast();
 
 // Image
