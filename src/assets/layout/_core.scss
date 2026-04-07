@@ -124,10 +124,6 @@ body #sub-app {
     text-decoration: none;
   }
 
-  .layout-wrapper {
-    min-height: 100vh;
-  }
-
   .p-button:focus-visible {
     outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
   }

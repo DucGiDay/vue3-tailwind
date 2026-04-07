@@ -1,5 +1,8 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import AppFooter from './AppFooter.vue';
+import AppSidebar from './AppSidebar.vue';
+import AppTopbar from './AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -59,8 +62,10 @@ function isOutsideClicked(event) {
 
 <template>
   <div class="layout-wrapper" :class="containerClass">
-    <router-view></router-view>
+    <app-sidebar></app-sidebar>
+    <div class="layout-table-container">
+      <router-view></router-view>
+    </div>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>
-  <!-- <Toast /> -->
 </template>

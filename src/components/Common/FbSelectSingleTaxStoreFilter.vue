@@ -84,6 +84,16 @@ const itemSelected = computed({
 
 onMounted(async () => {
   await fetchStores();
+
+  const currentStoreUid = filterStore?.report?.store_uid;
+  const allStoreUids = filteredItems.value.flatMap((item) => item.children.map((child) => child.key));
+
+  if (!currentStoreUid || !allStoreUids.includes(currentStoreUid)) {
+    if (allStoreUids.length > 0) {
+      await setStoreSelected(allStoreUids[0]);
+    }
+  }
+
   expandAll();
 });
 

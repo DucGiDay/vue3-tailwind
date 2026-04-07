@@ -14,6 +14,23 @@
     </div>
 
     <Fluid v-else class="fb-space-y-6">
+      <!-- Dummy inputs to "trap" browser autofill -->
+      <div
+        style="
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 0;
+          width: 0;
+          overflow: hidden;
+          pointer-events: none;
+        "
+      >
+        <input type="text" name="fake_user_name_to_prevent_autofill" tabindex="-1" />
+        <input type="password" name="fake_password_to_prevent_autofill" tabindex="-1" />
+      </div>
+
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
         <label
           for="partner"
@@ -22,7 +39,7 @@
           Đối tác
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <Select
             id="partner"
             v-model="partner"
@@ -31,9 +48,16 @@
             optionLabel="name"
             optionValue="code"
             filter
-            :disabled="isEdit"
-            @change="onPartnerChange"
+            filterPlaceholder="Tìm kiếm đối tác..."
+            :invalid="!!error.partner"
+            @change="
+              delete error.partner;
+              onPartnerChange;
+            "
           />
+          <Message v-if="error.partner" severity="error" size="small" variant="simple">
+            {{ error.partner }}
+          </Message>
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
@@ -41,7 +65,7 @@
           Cửa hàng
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <Select
             id="store"
             v-model="store"
@@ -49,8 +73,14 @@
             placeholder="Chọn cửa hàng"
             optionLabel="store_name"
             filter
+            filterPlaceholder="Tìm kiếm cửa hàng..."
+            :invalid="!!error.store"
             :disabled="isEdit"
+            @change="delete error.store"
           />
+          <Message v-if="error.store" severity="error" size="small" variant="simple">
+            {{ error.store }}
+          </Message>
         </div>
       </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
@@ -58,14 +88,18 @@
           POS ID
           <span class="fb-text-error fb-ml-1">*</span>
         </label>
-        <div class="fb-col-span-12 md:fb-col-span-10">
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
           <InputText
             id="posId"
             disabled
             type="text"
+            :invalid="!!error.store"
             :value="store?.fb_store_id"
             placeholder="POS ID"
           />
+          <Message v-if="error.store" severity="error" size="small" variant="simple">
+            {{ error.store }}
+          </Message>
         </div>
       </div>
 
@@ -106,7 +140,7 @@
           </label>
           <div
             :class="[
-              'fb-col-span-12 ',
+              'fb-col-span-12 fb-flex fb-flex-col fb-gap-1',
               field.type === 'checkbox' ? 'md:fb-col-span-12' : 'md:fb-col-span-10'
             ]"
           >
@@ -176,6 +210,9 @@
               :toggleMask="true"
               fluid
               :feedback="false"
+              autocomplete="new-password"
+              :invalid="!!error[field.id]"
+              @input="delete error[field.id]"
             />
 
             <!-- Default InputText -->
@@ -185,11 +222,17 @@
               v-model="config[field.id]"
               type="text"
               :placeholder="'Nhập ' + (field.label || field.id)"
+              :invalid="!!error[field.id]"
               @input="
+                delete error[field.id];
                 field.isReplaceSpace &&
-                (config[field.id] = config[field.id].toString().replace(/\s/g, ''))
+                  (config[field.id] = config[field.id].toString().replace(/\s/g, ''));
               "
+              autocomplete="chrome-off"
             />
+            <Message v-if="error[field.id]" severity="error" size="small" variant="simple">
+              {{ error[field.id] }}
+            </Message>
           </div>
         </div>
       </template>
@@ -215,6 +258,7 @@ import {
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useToast } from 'primevue/usetoast';
+import { validateByFields } from '@/common/utils/validate';
 
 const toast = useToast();
 const globalStore = useGlobalStore();
@@ -241,9 +285,10 @@ const storeOptions = computed(() => {
 });
 const partnerOptions = INVOICE_PARTNERS;
 
-const partner = ref(props.partnerSelected || INVOICE_PARTNERS[0].code);
+const partner = ref(props.partnerSelected || null);
 const store = ref();
 const isLoading = ref(false);
+const error = ref({});
 
 // Dynamic Config Helpers
 const partnerConfigFields = computed(() => {
@@ -272,7 +317,7 @@ const generateDefaultConfig = (fields) => {
 const config = ref(generateDefaultConfig(partnerConfigFields.value));
 
 const resetData = () => {
-  partner.value = props.partnerSelected || INVOICE_PARTNERS[0].code;
+  partner.value = props.partnerSelected || null;
   store.value = {};
   config.value = generateDefaultConfig(partnerConfigFields.value);
 };
@@ -282,6 +327,31 @@ const onPartnerChange = () => {
 };
 
 const saveConfig = async () => {
+  // 1. Tự động validate dựa trên các trường cấu hình động trong Constant
+  error.value = validateByFields(
+    { ...config.value, partner: partner.value, store: store.value?.id },
+    [
+      ...partnerConfigFields.value,
+      {
+        id: 'partner',
+        rules: ['required']
+      },
+      {
+        id: 'store',
+        rules: ['required']
+      }
+    ]
+  );
+
+  if (Object.keys(error.value).length > 0) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Vui lòng kiểm tra lại các trường thông tin',
+      life: 3000
+    });
+    return;
+  }
+
   isLoading.value = true;
   const res = await invoiceStore.updateStoreSettingInvoice({
     ...config.value,

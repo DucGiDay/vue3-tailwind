@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth.store';
 import router from '@/router';
-import { getCookie } from '@/common/ulties';
+import { getCookie } from '@/common/utils/common';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,

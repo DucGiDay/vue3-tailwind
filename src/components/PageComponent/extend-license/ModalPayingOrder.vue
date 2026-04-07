@@ -26,7 +26,7 @@
 <script setup>
 import PayingComponent from '@/components/PageComponent/extend-license/PayingComponent.vue';
 import { useExtendLicenseStore } from '@/stores/extend-license.store';
-import { setCookie, getCookie } from '@/common/ulties';
+import { setCookie, getCookie } from '@/common/utils/common';
 
 // Props
 const props = defineProps({

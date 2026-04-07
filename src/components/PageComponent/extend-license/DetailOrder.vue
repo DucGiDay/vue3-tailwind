@@ -53,7 +53,7 @@
   </Dialog>
 </template>
 <script setup>
-import { formatCurrency } from '@/common/ulties';
+import { formatCurrency } from '@/common/utils/common';
 
 // Props
 const props = defineProps({

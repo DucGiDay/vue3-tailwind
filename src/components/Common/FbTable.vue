@@ -1,263 +1,255 @@
 <template>
-  <div class="fb_table--relative">
-    <DataTable
-      ref="dataTableRef"
-      :value="paginatedData"
-      columnResizeMode="expand"
-      stripedRows
-      showGridlines
-      scrollable
-      :scrollHeight="
-        $attrs?.scrollable === false || (props.enablePagination && !props.enableScrollPagination)
-          ? null
-          : props.scrollHeight || 'calc(100vh - 15rem)'
-      "
-      tableStyle="min-width: 50rem"
-      tableClass="fb_table--t_table"
-      class="fb_table--wrapper"
-      v-bind="$attrs"
-      @columnReorder="onColReorder"
+  <DataTable
+    ref="dataTableRef"
+    :value="paginatedData"
+    columnResizeMode="expand"
+    stripedRows
+    :showGridlines="false"
+    scrollable
+    :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
+    tableStyle="min-width: 50rem;"
+    tableClass="fb_table--t_table fb-text-[0.8125rem]"
+    class="fb_table--wrapper"
+    v-bind="$attrs"
+    @columnReorder="onColReorder"
+  >
+    <slot />
+
+    <!-- Checkbox column-->
+    <Column
+      v-if="enableCheckbox"
+      selectionMode="multiple"
+      headerStyle="width: 3rem"
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
+      class="!fb-px-4"
+      alignFrozen="left"
+      frozen
+    ></Column>
+
+    <!-- Index column -->
+    <Column
+      v-if="!$attrs?.hideIndexRow"
+      field="no"
+      header="#"
+      :reorderableColumn="false"
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
+      class=""
     >
-      <slot />
+      <template #body="{ index }">
+        {{ `${index + 1}` }}
+      </template>
+    </Column>
 
-      <!-- Checkbox column-->
-      <Column
-        v-if="enableCheckbox"
-        selectionMode="multiple"
-        headerStyle="width: 3rem"
-        headerClass="!fb-bg-gray-50 fb-rounded-ss-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
-        bodyClass="!fb-py-4"
-        class="!fb-px-4"
-        alignFrozen="left"
-        frozen
-      ></Column>
+    <Column
+      v-for="(col, index) of columns"
+      :field="col.field"
+      :header="col.header"
+      :key="col.field + '_' + index"
+      :sortable="col?.sortable"
+      headerClass="fb-font-medium"
+      :bodyClass="['fb-font-normal', 'fb-text-gray-700', col?.classes || ''].join(' ')"
+      :class="[
+        'fb-whitespace-nowrap',
+        {
+          'p-datatable-column-frozen-left-last':
+            col?.frozen && (col?.alignFrozen === 'left' || !col?.alignFrozen),
+          'p-datatable-column-frozen-right-first': col?.frozen && col?.alignFrozen === 'right'
+        }
+      ]"
+      :alignFrozen="col?.alignFrozen || 'left'"
+      :frozen="col?.frozen"
+      :style="col?.style || {}"
+    >
+      <template #body="{ data }">
+        <Skeleton v-if="props.isLoading && !isLoadmore" />
+        <span v-else-if="!$slots?.[col.field]">
+          {{ formatData(data[col.field], data, col?.format) }}
+        </span>
+        <slot
+          v-else
+          :name="col.field"
+          v-bind="{
+            row: data,
+            record: data[col.field]
+          }"
+        ></slot>
+      </template>
+    </Column>
 
-      <!-- Index column -->
-      <Column
-        v-if="!$attrs?.hideIndexRow"
-        field="no"
-        header="#"
-        :reorderableColumn="false"
-        :headerClass="'!fb-bg-gray-50 !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium first:!fb-rounded-ss-lg'"
-        :bodyClass="`!fb-py-4`"
-        :class="['!fb-border-l-[transparent] first:!fb-border-l !fb-px-6']"
-      >
-        <template #body="{ index }">
-          {{ `${index + 1}` }}
-        </template>
-      </Column>
+    <!-- Delete column -->
+    <Column
+      v-if="deleteCallback"
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
+      class="fb-whitespace-nowrap !fb-px-2"
+      alignFrozen="right"
+      frozen
+      style="width: 4rem; min-width: 4rem"
+    >
+      <template #body="{ data }">
+        <Button
+          class="fb-flex fb-items-center fb-justify-center"
+          size="small"
+          variant="text"
+          severity="contrast"
+          @click="toggleConfirmDialog(data)"
+        >
+          <IconTrash />
+        </Button>
+      </template>
+    </Column>
 
-      <Column
-        v-for="(col, index) of columns"
-        :field="col.field"
-        :header="col.header"
-        :key="col.field + '_' + index"
-        :sortable="col?.sortable"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
-        :bodyClass="'!fb-py-4 ' + (col?.classes || '')"
-        :class="[
-          '!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-6',
-          {
-            'p-datatable-column-frozen-left-last':
-              col?.frozen && (col?.alignFrozen === 'left' || !col?.alignFrozen),
-            'p-datatable-column-frozen-right-first': col?.frozen && col?.alignFrozen === 'right'
-          }
-        ]"
-        :alignFrozen="col?.alignFrozen || 'left'"
-        :frozen="col?.frozen"
-        :style="col?.style || {}"
-      >
-        <template #body="{ data }">
-          <Skeleton v-if="props.isLoading && !isLoadmore" />
-          <span v-else-if="!$slots?.[col.field]">
-            {{ formatData(data[col.field], data, col?.format) }}
-          </span>
-          <slot
-            v-else
-            :name="col.field"
-            v-bind="{
-              row: data,
-              record: data[col.field]
-            }"
-          ></slot>
-        </template>
-      </Column>
-
-      <!-- Delete column -->
-      <Column
-        v-if="deleteCallback"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
-        bodyClass="!fb-py-4"
-        class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-4"
-        alignFrozen="right"
-        frozen
-      >
-        <template #body="{ data }">
-          <Button
-            class="fb-flex fb-items-center fb-justify-center"
-            size="small"
-            variant="text"
-            severity="contrast"
-            @click="toggleConfirmDialog(data)"
-          >
-            <IconTrash />
-          </Button>
-        </template>
-      </Column>
-
-      <!-- Action Column -->
-      <Column
-        v-if="menuItems"
-        headerClass="!fb-bg-gray-50 last:fb-rounded-se-lg !fb-text-gray !fb-py-3 fb-text-sm fb-font-medium"
-        bodyClass="!fb-py-4"
-        class="!fb-border-l-[transparent] not-last:!fb-border-r-[transparent] fb-whitespace-nowrap !fb-px-2"
-        alignFrozen="right"
-        frozen
-      >
-        <template #body="{ data }">
-          <!-- <div v-if="" class="fb-flex fb-items-center fb-justify-center">
-            <ProgressSpinner
-              class="!fb-m-0"
-              strokeWidth="6"
-              style="width: 1.5rem; height: 1.5rem"
-            />
-          </div> -->
-          <Button
-            type="button"
-            @click.stop="toggleActionMenu($event, data)"
-            aria-haspopup="true"
-            aria-controls="overlay_menu"
-            size="small"
-            text
-            :loading="
+    <!-- Action Column -->
+    <Column
+      v-if="menuItems"
+      headerClass="fb-font-medium"
+      bodyClass="fb-font-normal fb-text-gray-700"
+      class="fb-whitespace-nowrap !fb-px-1"
+      alignFrozen="right"
+      frozen
+    >
+      <template #body="{ data }">
+        <!-- <div v-if="" class="fb-flex fb-items-center fb-justify-center">
+          <ProgressSpinner
+            class="!fb-m-0"
+            strokeWidth="6"
+            style="width: 1.5rem; height: 1.5rem"
+          />
+        </div> -->
+        <Button
+          type="button"
+          @click.stop="toggleActionMenu($event, data)"
+          aria-haspopup="true"
+          aria-controls="overlay_menu"
+          size="small"
+          text
+          :loading="
+            (props.keyLoading && props.loadingActionRowCustom === data[props.keyLoading]) ||
+            loadingActionRow === data
+          "
+          :disabled="isLoading && !isLoadmore"
+        >
+          <div
+            v-if="
               (props.keyLoading && props.loadingActionRowCustom === data[props.keyLoading]) ||
               loadingActionRow === data
             "
-            :disabled="isLoading && !isLoadmore"
+            class="fb-flex fb-items-center fb-justify-center"
           >
-            <div
-              v-if="
-                (props.keyLoading && props.loadingActionRowCustom === data[props.keyLoading]) ||
-                loadingActionRow === data
-              "
-              class="fb-flex fb-items-center fb-justify-center"
-            >
-              <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
-            </div>
-            <IconOption v-else />
-          </Button>
-        </template>
-      </Column>
-
-      <!-- Empty slot -->
-      <template #empty>
-        <div
-          class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color fb-font-medium"
-        >
-          <div>
-            <img :src="emptyIcon" alt="Empty image" loading="lazy" />
+            <ProgressSpinner class="!fb-m-0" strokeWidth="6" style="width: 1rem; height: 1rem" />
           </div>
-          <slot name="empty">No data found!</slot>
+          <IconOption v-else />
+        </Button>
+      </template>
+    </Column>
+
+    <!-- Empty slot -->
+    <template #empty>
+      <div
+        class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color fb-font-medium"
+      >
+        <div>
+          <img :src="emptyIcon" alt="Empty image" loading="lazy" />
         </div>
-      </template>
+        <slot name="empty">No data found!</slot>
+      </div>
+    </template>
 
-      <!-- Footer -->
-      <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
-        <nav class="fb-flex fb-items-center">
-          <slot name="footer" />
-          <div
-            class="fb-paginator fb-ml-auto"
-            v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
-          >
-            <!-- Rows per page -->
-            <Select
-              v-model="internalRows"
-              :options="computedRowsPerPageOptions"
-              size="small"
-              @change="onRowsChange"
-            />
-
-            <!-- Page info -->
-            <div class="fb-paginator__info">
-              Hiển thị {{ rangeStart }} - {{ rangeEnd }} trên tổng số {{ totalRecordsCount }}
-            </div>
-
-            <!-- Page navigation -->
-            <ButtonGroup>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage <= 1"
-                @click="goToPage(1)"
-                title="Trang đầu"
-              >
-                <IconChevronLeftDouble />
-              </Button>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage <= 1"
-                @click="goToPage(internalPage - 1)"
-                title="Trang trước"
-              >
-                <IconChevronLeft />
-              </Button>
-              <template v-for="page in visiblePages" :key="page">
-                <Button
-                  v-if="page === '...'"
-                  size="small"
-                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
-                  severity="secondary"
-                  variant="outlined"
-                  disabled
-                >
-                  …
-                </Button>
-                <Button
-                  v-else
-                  size="small"
-                  class="fb-w-9 fb-flex fb-items-center fb-justify-center"
-                  :severity="page !== internalPage ? 'secondary' : null"
-                  :variant="page !== internalPage ? 'outlined' : null"
-                  @click="goToPage(page)"
-                >
-                  {{ page }}
-                </Button>
-              </template>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage >= totalPageCount"
-                @click="goToPage(internalPage + 1)"
-                title="Trang sau"
-              >
-                <IconChevronRight />
-              </Button>
-              <Button
-                size="small"
-                severity="secondary"
-                variant="outlined"
-                :disabled="internalPage >= totalPageCount"
-                @click="goToPage(totalPageCount)"
-                title="Trang cuối"
-              >
-                <IconChevronRightDouble />
-              </Button>
-            </ButtonGroup>
-          </div>
-        </nav>
-      </template>
-    </DataTable>
-
-    <!-- Scroll pagination loading indicator (absolute) -->
+    <!-- Loadmore -->
     <div v-if="isLoadmore" class="fb-scroll-loading">
       <ProgressSpinner class="!fb-m-0 !fb-inline" style="width: 2rem; height: 2rem" />
       <span class="fb-ml-2">Loading...</span>
     </div>
-  </div>
+
+    <!-- Footer -->
+    <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
+      <nav class="fb-flex fb-items-center fb-pr-10">
+        <slot name="footer" />
+        <div
+          class="fb-paginator fb-ml-auto"
+          v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
+        >
+          <Select
+            v-model="internalRows"
+            :options="computedRowsPerPageOptions"
+            size="small"
+            @change="onRowsChange"
+          />
+
+          <div class="fb-paginator__info">
+            Hiển thị {{ rangeStart }} - {{ rangeEnd }} trên tổng số {{ totalRecordsCount }}
+          </div>
+
+          <ButtonGroup>
+            <Button
+              size="small"
+              severity="secondary"
+              variant="outlined"
+              :disabled="internalPage <= 1"
+              @click="goToPage(1)"
+              title="Trang đầu"
+            >
+              <IconChevronLeftDouble />
+            </Button>
+            <Button
+              size="small"
+              severity="secondary"
+              variant="outlined"
+              :disabled="internalPage <= 1"
+              @click="goToPage(internalPage - 1)"
+              title="Trang trước"
+            >
+              <IconChevronLeft />
+            </Button>
+            <template v-for="page in visiblePages" :key="page">
+              <Button
+                v-if="page === '...'"
+                size="small"
+                class="fb-w-9 fb-flex fb-items-center fb-justify-center"
+                severity="secondary"
+                variant="outlined"
+                disabled
+              >
+                …
+              </Button>
+              <Button
+                v-else
+                size="small"
+                class="fb-w-9 fb-flex fb-items-center fb-justify-center"
+                :severity="page !== internalPage ? 'secondary' : null"
+                :variant="page !== internalPage ? 'outlined' : null"
+                @click="goToPage(page)"
+              >
+                {{ page }}
+              </Button>
+            </template>
+            <Button
+              size="small"
+              severity="secondary"
+              variant="outlined"
+              :disabled="internalPage >= totalPageCount"
+              @click="goToPage(internalPage + 1)"
+              title="Trang sau"
+            >
+              <IconChevronRight />
+            </Button>
+            <Button
+              size="small"
+              severity="secondary"
+              variant="outlined"
+              :disabled="internalPage >= totalPageCount"
+              @click="goToPage(totalPageCount)"
+              title="Trang cuối"
+            >
+              <IconChevronRightDouble />
+            </Button>
+          </ButtonGroup>
+        </div>
+      </nav>
+    </template>
+  </DataTable>
 
   <Menu
     ref="menu"
@@ -283,7 +275,7 @@
         <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
         <span
           v-if="item.shortcut"
-          class="fb-ml-auto fb-border fb-border-surface fb-rounded fb-bg-emphasis fb-text-muted-color fb-text-xs fb-p-1"
+          class="fb-ml-auto fb-bg-emphasis fb-text-muted-color fb-text-xs fb-p-1"
         >
           {{ item.shortcut }}
         </span>
@@ -310,9 +302,9 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, computed, watch, nextTick } from 'vue';
 import moment from 'moment';
-import { formatCurrency } from '@/common/ulties';
+import { formatCurrency } from '@/common/utils/common';
 import { useToast } from 'primevue/usetoast';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 const toast = useToast();
 
 // Image
@@ -657,24 +649,37 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
-.fb_table--t_table {
-  tr:last-child {
-    td:first-child {
-      border-end-start-radius: 0.5rem;
-    }
-
-    td:last-child {
-      border-end-end-radius: 0.5rem;
-    }
+.fb_table--wrapper {
+  .p-datatable-table-container,
+  .p-datatable-wrapper {
+    border: 1px solid var(--surface-border, #e5e7eb);
+    border-radius: 0.5rem;
+    overflow: hidden;
   }
 
-  // Shadow for frozen columns
-  .p-datatable-column-frozen-left-last {
-    box-shadow: 4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
-  }
+  .fb_table--t_table {
+    // Shadow for frozen columns
+    .p-datatable-column-frozen-left-last {
+      box-shadow: 4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
+    }
 
-  .p-datatable-column-frozen-right-first {
-    box-shadow: -4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
+    .p-datatable-column-frozen-right-first {
+      box-shadow: -4px 0 4px -4px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    thead.p-datatable-thead > tr > th {
+      padding: 0.75rem 1.5rem;
+      background-color: #fafafa;
+      color: #85888e;
+      font-weight: 500;
+    }
+    tbody.p-datatable-tbody > tr > td {
+      padding: 0.75rem 1.5rem;
+      &.action-cell {
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+      }
+    }
   }
 }
 
@@ -699,11 +704,6 @@ onBeforeUnmount(() => {
   color: var(--text-color-secondary);
   font-size: 0.875rem;
   user-select: none;
-}
-
-/* Scroll pagination loading */
-.fb_table--relative {
-  position: relative;
 }
 
 .fb-scroll-loading {

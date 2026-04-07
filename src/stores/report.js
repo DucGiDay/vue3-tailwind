@@ -1,8 +1,8 @@
 // stores/report.js
 import { defineStore } from 'pinia';
 import { reportService } from '@/api/services/report/report.service';
-import { handleReportResponse } from '@/common/response.handler';
-import { wait } from '@/common/ulties';
+import { handleReportResponse } from '@/common/utils/response.handler';
+import { wait } from '@/common/utils/common';
 
 export const useReportStore = defineStore('report', {
   state: () => ({

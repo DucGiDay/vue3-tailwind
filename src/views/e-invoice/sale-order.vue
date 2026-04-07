@@ -30,7 +30,7 @@
         size="normal"
         @update:modelValue="filter"
       /> -->
-      <FbSelectSingleStoreFilter
+      <FbSelectSingleTaxStoreFilter
         placeholder="Chọn theo cửa hàng"
         size="small"
         @update:modelValue="filter"
@@ -66,46 +66,47 @@
       </IconField>
     </div>
   </div>
+  <div class="fb-w-full fb-flex-1 fb-flex fb-flex-col fb-min-h-[28rem]">
+    <FbTable
+      v-model:selection="saleSelecteds"
+      :columns="columns"
+      :items="sales"
+      enableCheckbox
+      enablePagination
+      :stripedRows="false"
+      :isLoading="isLoading"
+      :currentPage="currentPage"
+      :pageSize="pageSize"
+      :totalRecords="saleNotSyncVat.data?.num_results || 0"
+      :totalPages="saleNotSyncVat.data?.total_pages || 0"
+      @page-change="getData"
+    >
+      <template #tran_info="{ row }">
+        <div class="fb-text-sm">{{ `Ký hiệu: ${row.tran_info}` }}</div>
+        <div class="fb-text-sm fb-text-muted-color">
+          Mã tra cứu:
+          <span class="fb-text-primary">{{ row.search_code }}</span>
+        </div>
+      </template>
 
-  <FbTable
-    v-model:selection="saleSelecteds"
-    :columns="columns"
-    :items="sales"
-    enableCheckbox
-    enableScrollPagination
-    :stripedRows="false"
-    :isLoading="isLoading"
-    :currentPage="currentPage"
-    :pageSize="pageSize"
-    :totalRecords="saleNotSyncVat.data?.num_results || 0"
-    :totalPages="saleNotSyncVat.data?.total_pages || 0"
-    @page-change="getData"
-  >
-    <template #tran_info="{ row }">
-      <div class="fb-text-sm">{{ `Ký hiệu: ${row.tran_info}` }}</div>
-      <div class="fb-text-sm fb-text-muted-color">
-        Mã tra cứu:
-        <span class="fb-text-primary">{{ row.search_code }}</span>
-      </div>
-    </template>
+      <template #inv_buyerLegalName="{ record, row }">
+        <div>{{ `Tên: ${record}` }}</div>
+        <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.inv_buyerTaxCode}` }}</div>
+      </template>
 
-    <template #inv_buyerLegalName="{ record, row }">
-      <div>{{ `Tên: ${record}` }}</div>
-      <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.inv_buyerTaxCode}` }}</div>
-    </template>
+      <template #type="{ record, row }">
+        <div>{{ record }}</div>
+        <div v-if="row?.tran_id_origin" class="fb-text-primary">({{ row.tran_id_origin }})</div>
+      </template>
 
-    <template #type="{ record, row }">
-      <div>{{ record }}</div>
-      <div v-if="row?.tran_id_origin" class="fb-text-primary">({{ row.tran_id_origin }})</div>
-    </template>
-
-    <template #empty>
-      {{
-        saleNotSyncVat?.error ||
-        (!filterStore?.report?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
-      }}
-    </template>
-  </FbTable>
+      <template #empty>
+        {{
+          saleNotSyncVat?.error ||
+          (!filterStore?.report?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+        }}
+      </template>
+    </FbTable>
+  </div>
 
   <ModalExportVat
     v-model:visible="visibleExportVat"
@@ -161,14 +162,18 @@ const saleNotSyncVat = computed(() => invoiceStore.saleNotSyncVat);
 const sales = ref([]);
 const isLoading = ref(false);
 const currentPage = ref(1);
-const pageSize = 50;
+const pageSize = ref(50);
 
 const visibleExportVat = ref(false);
 const currentSaleData = ref({});
 
 // Methods
-const getData = async () => {
+const getData = async ({ page, rows } = {}) => {
   if (!filterStore?.report?.store_uid) return;
+
+  currentPage.value = page || 1;
+  pageSize.value = rows || 50;
+
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
@@ -176,14 +181,13 @@ const getData = async () => {
     start_date: new Date(filterStore?.report?.start_date).getTime(),
     end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
-    results_per_page: pageSize,
+    results_per_page: pageSize.value,
     search: searchField.value
   };
 
   isLoading.value = true;
   await invoiceStore.getSaleNotSyncVat(payload);
-  sales.value = [...sales.value, ...(saleNotSyncVat.value?.data?.data || [])];
-  currentPage.value++;
+  sales.value = saleNotSyncVat.value?.data?.data || [];
   isLoading.value = false;
 };
 

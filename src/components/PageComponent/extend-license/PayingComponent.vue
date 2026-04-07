@@ -474,7 +474,7 @@
 import QrcodeVue from 'qrcode.vue';
 import { useToast } from 'primevue/usetoast';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
-import { formatCurrency, getAssetUrl } from '@/common/ulties';
+import { formatCurrency, getAssetUrl } from '@/common/utils/common';
 import logoIposTextPath from '@/assets/img/logo/logo-ipos-text.png';
 import logoMomoTextPath from '@/assets/img/logo/logo-momo-text.png';
 import logoVietqrTextPath from '@/assets/img/logo/logo-vietqr-text.png';

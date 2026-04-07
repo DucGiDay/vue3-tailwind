@@ -1,7 +1,7 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 
 // Image
 import empryIconPath from '@/assets/img/dashboard/empty-status.png';
