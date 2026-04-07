@@ -9,7 +9,7 @@
     :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
     tableStyle="min-width: 50rem;"
     tableClass="fb_table--t_table fb-text-[0.8125rem]"
-    class="fb_table--wrapper"
+    class="fb_table--wrapper fb-flex-1 fb-flex fb-flex-col fb-h-full"
     v-bind="$attrs"
     @columnReorder="onColReorder"
   >
@@ -111,13 +111,6 @@
       frozen
     >
       <template #body="{ data }">
-        <!-- <div v-if="" class="fb-flex fb-items-center fb-justify-center">
-          <ProgressSpinner
-            class="!fb-m-0"
-            strokeWidth="6"
-            style="width: 1.5rem; height: 1.5rem"
-          />
-        </div> -->
         <Button
           type="button"
           @click.stop="toggleActionMenu($event, data)"
@@ -148,7 +141,7 @@
     <!-- Empty slot -->
     <template #empty>
       <div
-        class="fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color fb-font-medium"
+        class="fb-h-full fb-w-full fb-flex fb-flex-col fb-items-center fb-justify-center fb-text-muted-color fb-font-medium"
       >
         <div>
           <img :src="emptyIcon" alt="Empty image" loading="lazy" />
@@ -655,6 +648,10 @@ onBeforeUnmount(() => {
     border: 1px solid var(--surface-border, #e5e7eb);
     border-radius: 0.5rem;
     overflow: hidden;
+  }
+  
+  table {
+    height: 100%;
   }
 
   .fb_table--t_table {
