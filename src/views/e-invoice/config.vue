@@ -8,14 +8,14 @@
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <!-- <Select
-        v-model="partner"
-        :options="partnerOptions"
-        placeholder="Chọn đối tác"
-        optionLabel="name"
-        optionValue="code"
-        class="fb-w-full md:fb-w-72"
-        @update:modelValue="filter"
-      /> -->
+          v-model="partner"
+          :options="partnerOptions"
+          placeholder="Chọn đối tác"
+          optionLabel="name"
+          optionValue="code"
+          class="fb-w-full md:fb-w-72"
+          @update:modelValue="filter"
+        /> -->
     </div>
   </div>
 
