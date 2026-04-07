@@ -75,7 +75,7 @@ const createAppRouter = (microRouter) => {
     ...pagesNotHaveLayoutRouter,
     ...microRouters,
     ...exportVatRouter,
-    ...eInvoiceTableRouter,
+    // ...eInvoiceTableRouter,
     { path: '/404', name: 'NotFound', component: NotFound },
     { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') }
   ];

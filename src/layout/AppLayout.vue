@@ -64,7 +64,7 @@ function isOutsideClicked(event) {
   <div class="layout-wrapper" :class="containerClass">
     <!-- <app-topbar></app-topbar> -->
     <app-sidebar></app-sidebar>
-    <div class="layout-main-container">
+    <div class="layout-main-container" :class="{ 'is-table-layout': $route.meta.isTableLayout }">
       <router-view></router-view>
     </div>
     <div class="layout-mask fb-animate-fadein"></div>

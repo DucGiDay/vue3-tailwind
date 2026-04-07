@@ -9,7 +9,7 @@
     :scrollHeight="$attrs?.scrollable === false ? null : props.scrollHeight || 'flex'"
     tableStyle="min-width: 50rem;"
     tableClass="fb_table--t_table fb-text-[0.8125rem]"
-    class="fb_table--wrapper fb-flex-1 fb-flex fb-flex-col fb-h-full"
+    class="fb_table--wrapper "
     v-bind="$attrs"
     @columnReorder="onColReorder"
   >
@@ -650,7 +650,7 @@ onBeforeUnmount(() => {
     overflow: hidden;
   }
   
-  table {
+  table:has(.p-datatable-empty-message) {
     height: 100%;
   }
 
