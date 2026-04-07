@@ -66,7 +66,6 @@ function isOutsideClicked(event) {
     <app-sidebar></app-sidebar>
     <div class="layout-main-container">
       <router-view></router-view>
-
     </div>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>

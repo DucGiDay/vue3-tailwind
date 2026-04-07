@@ -70,8 +70,8 @@ export const eInvoiceTableRouter = [
   {
     path: '/e-invoice',
     name: 'EInvoicePage',
-    // component: AppLayoutTable,
-    component: AppLayout,
+    component: AppLayoutTable,
+    // component: AppLayout,
     meta: {},
     children: [
       {
