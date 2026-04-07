@@ -1,6 +1,6 @@
 // composables/useVisitorId.js
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
-import { setCookie } from '@/common/ulties';
+import { setCookie } from '@/common/utils/common';
 
 const STORAGE_KEY = 'visitor_id';
 

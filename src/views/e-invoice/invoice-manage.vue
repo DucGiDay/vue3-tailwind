@@ -1,138 +1,126 @@
 <template>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
-    <div class="fb-flex fb-items-center fb-space-x-3">
-      <h4 class="!fb-m-0">Quản lý hóa đơn</h4>
-    </div>
-  </div>
-  <div :class="['fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center fb-mb-4']">
-    <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn trạng thái"
-        class="fb-w-full md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
-
-      <FbDateFilter @update:modelValue="filter" size="small" />
-      <!-- <FbSelectCityStoreFilter
-        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
-        size="normal"
-        @update:modelValue="filter"
-      /> -->
-      <!-- <FbSelectTaxStoreFilter
-        placeholder="Chọn theo mã số thuế"
-        size="small"
-        @update:modelValue="filter"
-      /> -->
-      <FbSelectSingleStoreFilter
-        placeholder="Chọn theo cửa hàng"
-        size="small"
-        @update:modelValue="filter"
-      />
-    </div>
-    <div>
-      <IconField>
-        <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="fb-h-[1rem]"
-          >
-            <path
-              d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-              stroke="#A4A7AE"
-              stroke-width="1.66667"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </InputIcon>
-        <InputText
-          v-model="searchField"
-          placeholder="Tìm kiếm mã hóa đơn"
-          class="fb-w-full md:fb-w-72"
-          size="small"
-          @input="onSearchChange"
-        />
-      </IconField>
-    </div>
-  </div>
-
-  <div class="!fb-p-0 invoice_manage--table">
-    <FbTable
-      v-model:selection="saleSelecteds"
-      :columns="columns"
-      :items="sales"
-      enableScrollPagination
-      :stripedRows="false"
-      :isLoading="isLoading"
-      :currentPage="currentPage"
-      :pageSize="pageSize"
-      :totalRecords="vatInvoice.data?.num_results || 0"
-      :totalPages="vatInvoice.data?.total_pages || 0"
-      :loadingActionRowCustom="loadingActionRowCustom"
-      keyLoading="tran_id"
-      :menuItems="menuItems"
-      :onToggleMenu="onToggleMenu"
-      @page-change="getData"
-    >
-      <template #tran_info="{ row }">
-        <div class="fb-text-sm">{{ `Ký hiệu: ${row?.inv_series}` }}</div>
-        <div class="fb-text-sm fb-text-muted-color">
-          Mã tra cứu:
-          <span class="fb-text-primary">{{ row.tran_id }}</span>
+  <div class="fb-flex fb-flex-col fb-h-full fb-w-full">
+    <div class="fb-shrink-0 fb-mb-4">
+      <div class="fb-flex fb-justify-between fb-items-center fb-mb-6">
+        <div class="fb-flex fb-items-center fb-space-x-3">
+          <h4 class="!fb-m-0">Quản lý hóa đơn</h4>
         </div>
-      </template>
-
-      <template #inv_buyerLegalName="{ record, row }">
-        <div>{{ `Tên: ${record}` }}</div>
-        <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
-      </template>
-      <template #invoice_type="{ record, row }">
-        <div>{{ record }}</div>
-        <div v-if="row?.tran_id" class="fb-text-primary">({{ row.tran_id }})</div>
-      </template>
-
-      <template #vat_publish_status="{ record, row }">
-        <span
-          :class="statusMap(row?.vat_publish_status_code)?.class"
-          class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-        >
-          {{ record || statusMap('-1')?.label }}
-        </span>
-      </template>
-
-      <template #action="{ row }">
-        <div class="fb-flex fb-gap-1">
-          <Button
+      </div>
+      <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center">
+        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+          <Select
+            v-model="statusField"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn trạng thái"
+            class="fb-w-auto md:fb-w-48"
+            showClear
             size="small"
-            text
-            @click="onPreviewPDF(row)"
-            :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
-          >
-            <ProgressSpinner
-              v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
-              class="!fb-m-0"
-              strokeWidth="6"
-              style="width: 1rem; height: 1rem"
-            />
-            <IconEye v-else class="!fb-text-primary" color="currentColor" />
-          </Button>
-        </div>
-      </template>
+            @change="filter"
+          />
 
-      <template #empty>
-        {{ vatInvoice?.error ? 'Error: ' + vatInvoice?.error : 'Chưa có hóa đơn' }}
-      </template>
-    </FbTable>
+          <FbDateFilter @update:modelValue="filter" size="small" />
+
+          <FbSelectSingleTaxStoreFilter
+            placeholder="Chọn theo cửa hàng"
+            size="small"
+            @update:modelValue="filter"
+          />
+        </div>
+        <div>
+          <IconField>
+            <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="fb-h-[1rem]"
+              >
+                <path
+                  d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
+                  stroke="#A4A7AE"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </InputIcon>
+            <InputText
+              v-model="searchField"
+              placeholder="Tìm kiếm mã hóa đơn"
+              class="fb-w-auto md:fb-w-72"
+              size="small"
+              @input="onSearchChange"
+            />
+          </IconField>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-w-full fb-flex-1 fb-flex fb-flex-col fb-min-h-[28rem]">
+      <FbTable
+        v-model:selection="saleSelecteds"
+        :columns="columns"
+        :items="sales"
+        enablePagination
+        :stripedRows="false"
+        :isLoading="isLoading"
+        :currentPage="currentPage"
+        :pageSize="pageSize"
+        :totalRecords="vatInvoice.data?.num_results || 0"
+        :totalPages="vatInvoice.data?.total_pages || 0"
+        :loadingActionRowCustom="loadingActionRowCustom"
+        scrollHeight="flex"
+        keyLoading="tran_id"
+        :menuItems="menuItems"
+        :onToggleMenu="onToggleMenu"
+        @page-change="getData"
+      >
+        <template #inv_buyerLegalName="{ record, row }">
+          <div>{{ `Tên: ${record}` }}</div>
+          <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
+        </template>
+        <template #invoice_type="{ record, row }">
+          <div>{{ record }}</div>
+          <div v-if="row?.tran_id" class="fb-text-primary">({{ row.tran_id }})</div>
+        </template>
+
+        <template #vat_publish_status="{ record, row }">
+          <span
+            :class="statusMap(row?.vat_publish_status_code)?.class"
+            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
+          >
+            {{ record || statusMap('-1')?.label }}
+          </span>
+        </template>
+
+        <template #action="{ row }">
+          <div class="fb-flex fb-justify-center">
+            <Button
+              size="small"
+              text
+              @click="onPreviewPDF(row)"
+              :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+            >
+              <ProgressSpinner
+                v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconEye v-else class="!fb-text-primary" color="currentColor" />
+            </Button>
+          </div>
+        </template>
+
+        <template #empty>
+          {{ vatInvoice?.error ? 'Error: ' + vatInvoice?.error : 'Chưa có hóa đơn' }}
+        </template>
+      </FbTable>
+    </div>
   </div>
 
   <Dialog
@@ -142,13 +130,6 @@
     :style="{ width: '70vw' }"
     :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
   >
-    <!-- {{ previewUrl }}
-    <iframe
-      v-if="previewUrl"
-      :src="previewUrl"
-      class="fb-w-full fb-h-[75vh]"
-      frameborder="0"
-    ></iframe> -->
     <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
   </Dialog>
 
@@ -172,7 +153,6 @@ import {
 import { BILL_STATUS } from '@/common/constant/common.constant';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
-import { useRouter } from 'vue-router';
 
 import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
 import IconReplace from '@/components/Common/Icon/IconReplace.vue';
@@ -189,9 +169,9 @@ const filterStore = useFilterStore();
 // constants
 const toast = useToast();
 const confirm = useConfirm();
-const router = useRouter();
 const columns = [
-  { field: 'tran_info', header: 'Thông tin hóa đơn' },
+  { field: 'inv_series', header: 'Ký hiệu' },
+  { field: 'tran_id', header: 'Mã tra cứu' },
   { field: 'vat_publish_status', header: 'Trạng thái' },
   { field: 'vat_invoice_number', header: 'Số hóa đơn', classes: '!fb-text-muted-color' },
   { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
@@ -203,13 +183,17 @@ const columns = [
     format: 'date'
   },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
-  { field: 'invoice_type', header: 'Loại hóa đơn', classes: '!fb-text-muted-color' },
+  {
+    field: 'invoice_type',
+    header: 'Loại hóa đơn',
+    classes: '!fb-text-muted-color'
+  },
   {
     field: 'action',
     header: '',
     frozen: true,
     alignFrozen: 'right',
-    style: { padding: '0 0 0 0.25rem !important' }
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
   }
 ];
 
@@ -218,7 +202,7 @@ const searchField = ref(null);
 const statusField = ref(null);
 const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
 const currentPage = ref(1);
-const pageSize = 50;
+const pageSize = ref(50);
 
 const saleSelecteds = ref([]); // item selected in table
 const vatInvoice = computed(() => invoiceStore.vatInvoice); // data from api
@@ -239,8 +223,11 @@ const visibleViewBeforeSend = ref(false);
 const dataViewBeforeSend = ref([]);
 
 // Methods
-const getData = async () => {
+const getData = async ({ page, rows } = {}) => {
   if (!filterStore?.report?.store_uid) return;
+
+  currentPage.value = page || 1;
+  pageSize.value = rows || 50;
 
   const payload = {
     brand_uid: globalStore?.brandUid,
@@ -249,16 +236,14 @@ const getData = async () => {
     start_date: new Date(filterStore?.report?.start_date).getTime(),
     end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
-    results_per_page: pageSize,
+    results_per_page: pageSize.value,
     search: searchField.value,
-    // vat_publish_status: statusField.value === '-1' ? '' : statusField.value
     status: statusField.value
   };
 
   isLoading.value = true;
   await invoiceStore.getVatInvoice(payload);
-  sales.value = [...sales.value, ...(vatInvoice.value?.data?.data || [])];
-  currentPage.value++;
+  sales.value = vatInvoice.value?.data?.data || [];
   isLoading.value = false;
 };
 
@@ -289,18 +274,6 @@ const menuItems = (row) => {
     //     console.log(row);
     //   }
     // },
-    {
-      label: 'Thay thế',
-      icon: markRaw(IconReplace),
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        // window.location.assign(url);
-        window.open(url, '_self');
-      }
-    },
     // {
     //   label: 'Sửa hóa đơn',
     //   icon: markRaw(IconEdit),
@@ -313,6 +286,18 @@ const menuItems = (row) => {
     //     window.open(url, '_self');
     //   }
     // },
+    {
+      label: 'Thay thế',
+      icon: markRaw(IconReplace),
+      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+      command: () => {
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+        // window.location.assign(url);
+        window.open(url, '_self');
+      }
+    },
     {
       label: 'Phát hành lại hóa đơn',
       visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
@@ -332,7 +317,7 @@ const menuItems = (row) => {
       tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
       command: () => {
         currentSaleData.value = {
-          extra_sale: row?.extra_sale || null,
+          extra_sale: row || null,
           sales: [row],
           is_immediate: false
         };
@@ -342,7 +327,7 @@ const menuItems = (row) => {
 
     {
       label: 'Xóa hóa đơn dự thảo',
-      visible: !!row?.vat_invoice_number,
+      visible: !row?.vat_invoice_number,
       icon: markRaw(IconDeleteDoc),
       class: 'fb-text-error',
       command: () => {

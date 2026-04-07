@@ -7,14 +7,14 @@
     dateFormat="dd/mm/yy"
     inputClass="!fb-font-medium"
     selectOtherMonths
+    panelClass="fb-custom-date-panel"
     :responsiveOptions="responsiveOptions"
-    :numberOfMonths="2"
     @update:modelValue="onDateChange"
   >
     <template #weekheaderlabel>W</template>
     <template #footer>
       <div class="fb-p-4 fb-border-t fb-border-gray-200">
-        <div class="fb-flex fb-flex-wrap fb-gap-2">
+        <div class="fb-flex fb-flex-wrap fb-justify-around fb-gap-2">
           <Button
             v-for="item in PRESET_OPTIONS"
             :key="item.label"
@@ -116,3 +116,12 @@ const onDateChange = async (value) => {
   }
 };
 </script>
+
+<style lang="scss">
+.fb-custom-date-panel .p-datepicker-other-month .p-datepicker-day {
+  &:not(.p-datepicker-day-selected):not(.p-datepicker-day-selected-range) {
+    color: #A4A7AE !important;
+    opacity: 0.7;
+  }
+}
+</style>

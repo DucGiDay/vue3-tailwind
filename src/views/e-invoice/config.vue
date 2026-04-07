@@ -79,7 +79,7 @@ const columns = [
 ];
 
 // State
-const partner = ref(INVOICE_PARTNERS[0].code);
+const partner = ref(null);
 const storeSettings = computed(() => invoiceStore.storeSettingInvoices);
 const items = ref([]);
 const isLoading = ref(false);

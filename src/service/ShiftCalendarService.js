@@ -1,4 +1,4 @@
-import { setTimeISO } from '@/common/ulties';
+import { setTimeISO } from '@/common/utils/common';
 export default {
   listShiftCalendars({ type = 0, date = new Date() }) {
     // type: 0 - lấy data theo tuần || 1 - lấy data theo tháng
@@ -60,13 +60,23 @@ const data = {
         id: 1,
         date: '2025-06-30',
         store: 1,
-        shift_config: { name: 'Sáng', code: 'S', start: new Date(setTimeISO(7)), end: new Date(setTimeISO(12)) }
+        shift_config: {
+          name: 'Sáng',
+          code: 'S',
+          start: new Date(setTimeISO(7)),
+          end: new Date(setTimeISO(12))
+        }
       },
       Tuesday: {
         id: 2,
         date: '2025-07-01',
         store: 1,
-        shift_config: { name: 'Sáng', code: 'S', start: new Date(setTimeISO(7)), end: new Date(setTimeISO(12)) }
+        shift_config: {
+          name: 'Sáng',
+          code: 'S',
+          start: new Date(setTimeISO(7)),
+          end: new Date(setTimeISO(12))
+        }
       }
     },
     C: {
@@ -74,13 +84,23 @@ const data = {
         id: 3,
         date: '2025-06-30',
         store: 1,
-        shift_config: { name: 'Chiều', code: 'C', start: new Date(setTimeISO(12)), end: new Date(setTimeISO(17)) }
+        shift_config: {
+          name: 'Chiều',
+          code: 'C',
+          start: new Date(setTimeISO(12)),
+          end: new Date(setTimeISO(17))
+        }
       },
       Tuesday: {
         id: 4,
         date: '2025-07-01',
         store: 1,
-        shift_config: { name: 'Chiều', code: 'C', start: new Date(setTimeISO(12)), end: new Date(setTimeISO(17)) }
+        shift_config: {
+          name: 'Chiều',
+          code: 'C',
+          start: new Date(setTimeISO(12)),
+          end: new Date(setTimeISO(17))
+        }
       }
     }
   },
@@ -90,14 +110,24 @@ const data = {
         id: 5,
         date: '2025-07-07',
         store: 1,
-        shift_config: { name: 'Sáng', code: 'S', start: new Date(setTimeISO(7)), end: new Date(setTimeISO(12)) },
+        shift_config: {
+          name: 'Sáng',
+          code: 'S',
+          start: new Date(setTimeISO(7)),
+          end: new Date(setTimeISO(12))
+        },
         staff: [{ fullName: 'Hoàng Trung Đức', position: 'Thu ngân' }]
       },
       Tuesday: {
         id: 6,
         date: '2025-07-08',
         store: 1,
-        shift_config: { name: 'Sáng', code: 'S', start: new Date(setTimeISO(7)), end: new Date(setTimeISO(12)) },
+        shift_config: {
+          name: 'Sáng',
+          code: 'S',
+          start: new Date(setTimeISO(7)),
+          end: new Date(setTimeISO(12))
+        },
         staff: [{ fullName: 'Hoàng Trung Đức', position: 'Thu ngân' }]
       }
     },
@@ -106,14 +136,24 @@ const data = {
         id: 7,
         date: '2025-07-07',
         store: 1,
-        shift_config: { name: 'Chiều', code: 'C', start: new Date(setTimeISO(12)), end: new Date(setTimeISO(17)) },
+        shift_config: {
+          name: 'Chiều',
+          code: 'C',
+          start: new Date(setTimeISO(12)),
+          end: new Date(setTimeISO(17))
+        },
         staff: [{ fullName: 'Hoàng Trung Đức', position: 'Thu ngân' }]
       },
       Tuesday: {
         id: 8,
         date: '2025-07-08',
         store: 1,
-        shift_config: { name: 'Chiều', code: 'C', start: new Date(setTimeISO(12)), end: new Date(setTimeISO(17)) }
+        shift_config: {
+          name: 'Chiều',
+          code: 'C',
+          start: new Date(setTimeISO(12)),
+          end: new Date(setTimeISO(17))
+        }
       }
     }
   }

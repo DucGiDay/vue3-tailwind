@@ -341,7 +341,6 @@ const searchByTaxCode = async () => {
     const respoonse = await invoiceService.searchByTaxCode({
       tax_code: extraSale.value.inv_buyerTaxCode
     });
-    console.log(respoonse);
 
     if (respoonse?.data) {
       const { inv_buyerLegalName, inv_buyerAddressLine, inv_buyerDisplayName } =
@@ -399,16 +398,14 @@ const handleExport = async () => {
       return;
     }
 
+    const salesList = props.saleData?.sales || [];
     const payload = {
       extra_sale: { ...extraSale.value },
-      is_not_merge: 1,
+      ...(salesList.length > 1 && { is_not_merge: 1 }),
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
-      store_uid:
-        props.saleData?.sales && props.saleData.sales?.length
-          ? props.saleData.sales[0]?.store_uid
-          : '',
-      list_tran_id: (props.saleData?.sales || []).map((e) => e.tran_id)
+      store_uid: salesList.length ? salesList[0]?.store_uid : '',
+      list_tran_id: salesList.map((e) => e.tran_id)
     };
 
     const { error } = await invoiceStore.exportVatInvoice(payload);
@@ -457,6 +454,8 @@ watch(visible, (newVal) => {
       scope.value =
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
+    console.log(props.saleData);
+    
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };

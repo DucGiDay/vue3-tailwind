@@ -1,6 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { getAssetUrl } from '@/common/ulties';
+import { getAssetUrl } from '@/common/utils/common';
 import backgroundImage from '@/assets/img/background/bg-1.png';
 const imgUrl = getAssetUrl(backgroundImage);
 
@@ -42,7 +42,7 @@ function bindOutsideClickListener() {
 
 function unbindOutsideClickListener() {
   if (outsideClickListener.value) {
-    document.removeEventListener('click', outsideClickListener);
+    document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
 }
@@ -74,5 +74,4 @@ function isOutsideClicked(event) {
     <router-view></router-view>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>
-  <!-- <Toast /> -->
 </template>
