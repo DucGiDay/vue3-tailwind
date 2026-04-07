@@ -1,5 +1,4 @@
 import AppLayoutWithoutAuth from '@/layout/AppLayoutWithoutAuth.vue';
-import AppLayoutTable from '@/layout/AppLayoutTable.vue';
 import AppLayout from '@/layout/AppLayout.vue';
 
 export const eInvoiceRouter = [
@@ -54,7 +53,6 @@ export const eInvoiceTableRouter = [
   {
     path: '/e-invoice',
     name: 'EInvoicePage',
-    // component: AppLayoutTable,
     component: AppLayout,
     meta: {},
     children: [

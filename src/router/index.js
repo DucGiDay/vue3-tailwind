@@ -3,7 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
 import { extendLicenseComponentMap } from './modules/extend-license.router';
-import { eInvoiceRouter, eInvoiceTableRouter, exportVatRouter } from './modules/e-invoice.router';
+import { eInvoiceRouter, exportVatRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
@@ -75,7 +75,6 @@ const createAppRouter = (microRouter) => {
     ...pagesNotHaveLayoutRouter,
     ...microRouters,
     ...exportVatRouter,
-    // ...eInvoiceTableRouter,
     { path: '/404', name: 'NotFound', component: NotFound },
     { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') }
   ];
