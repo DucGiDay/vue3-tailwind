@@ -4,7 +4,7 @@ import router from '@/router';
 import { getCookie } from '@/common/utils/common';
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL, // https://posapi.ipos.vn/
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' }
 });

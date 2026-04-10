@@ -521,8 +521,8 @@ const handleExport = async () => {
     };
 
     const response = await invoiceService.updateInvoiceByQr(payload, headers);
-
-    if (!response.success) {
+    
+    if (!response.data) {
       throw new Error(response.message?.debug_message || response.message?.message);
     }
 
