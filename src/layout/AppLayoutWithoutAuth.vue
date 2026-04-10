@@ -62,7 +62,7 @@ function isOutsideClicked(event) {
 
 <template>
   <div
-    class="layout-wrapper !fb-min-h-screen"
+    class="layout-wrapper !fb-min-h-screen !fb-h-full"
     :class="containerClass"
     :style="{
       backgroundImage: `url(${imgUrl})`,
