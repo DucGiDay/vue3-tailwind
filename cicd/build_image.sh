@@ -19,12 +19,5 @@ fi
 sudo docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} --build-arg WORKSPACE=${WORKSPACE} .
 sudo docker tag ${IMAGE_NAME}:${IMAGE_VERSION} ${REPO_URL}/${IMAGE_NAME}:${IMAGE_VERSION}
 sudo docker push ${REPO_URL}/${IMAGE_NAME}:${IMAGE_VERSION}
-
-if [ $WORKSPACE == "site-product" ]
-then
-sudo docker tag ${IMAGE_NAME}:${IMAGE_VERSION} dockerhub.ipos.vn:5000/${IMAGE_NAME}:${IMAGE_VERSION}
-sudo docker tag ${IMAGE_NAME}:${IMAGE_VERSION} dockerhub.ipos.vn:5000/${IMAGE_NAME}:${COMMIT_HASH}
-sudo docker push dockerhub.ipos.vn:5000/${IMAGE_NAME}:${IMAGE_VERSION}
-sudo docker rmi -f dockerhub.ipos.vn:5000/${IMAGE_NAME}:${IMAGE_VERSION}
-sudo docker rmi -f dockerhub.ipos.vn:5000/${IMAGE_NAME}:${COMMIT_HASH}
-fi
+sudo docker rmi ${IMAGE_NAME}:${IMAGE_VERSION}
+sudo docker rmi ${REPO_URL}/${IMAGE_NAME}:${IMAGE_VERSION}

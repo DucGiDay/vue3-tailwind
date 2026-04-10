@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        // Gán IMAGE_VERSION bằng BUILD_NUMBER của Jenkins
+        IMAGE_VERSION = "${env.BUILD_NUMBER}"
+    }
 
     stages {
         stage('Git checkout stie, build and upload image to Registry') {
@@ -86,7 +90,7 @@ pipeline {
                     if (params.WORKSPACE=="site-product"){
                     // Telegram bot info
                     def telegramToken_2 = "5963974462:AAH4drQ2VL2BCvytrG0qAfPWoYZSH-nK0uE"       // Thay bằng token bot của bạn
-                    def chatId_2 = "-553492641"              // Thay bằng chat ID group hoặc user
+                    def chatId_2 = "-1003806660301"              // Thay bằng chat ID group hoặc user
                     // Lấy tên người trigger build
                     // def logPath = "${env.JENKINS_HOME}/jobs/${env.JOB_NAME}/builds/${env.BUILD_NUMBER}/log"
                     // def startedBy = sh(
