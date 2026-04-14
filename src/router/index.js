@@ -12,7 +12,6 @@ import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 const componentMap = {
   MicroReport: reportComponentMap,
   ExtendLicense: extendLicenseComponentMap
-  // EInvoice: eInvoiceComponentMap
 };
 
 const mapMicroRouters = (routes, inheritedAbstractName = '') => {

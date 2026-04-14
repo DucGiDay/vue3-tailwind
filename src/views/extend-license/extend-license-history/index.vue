@@ -1,115 +1,98 @@
 <template>
-  <FbTableView
-    :columns="tableColumns"
-    :show-export="false"
-    :is-loading="isLoading"
-    :items="orderHistory.data"
-    enablePagination
-    :currentPage="currentPage"
-    :rows="numPerPage"
-    :totalRecords="totalRecords"
-    rowHover
-    :rowClass="() => 'fb-cursor-pointer'"
-    @row-click="toggleDetail"
-    @page-change="getData"
-  >
-    <template #filter>
-      <IconField>
-        <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="fb-h-[14px]"
-          >
-            <path
-              d="M17.5 17.5L14.5834 14.5833M16.6667 9.58333C16.6667 13.4954 13.4954 16.6667 9.58333 16.6667C5.67132 16.6667 2.5 13.4954 2.5 9.58333C2.5 5.67132 5.67132 2.5 9.58333 2.5C13.4954 2.5 16.6667 5.67132 16.6667 9.58333Z"
-              stroke="#A4A7AE"
-              stroke-width="1.66667"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </InputIcon>
-        <InputText
-          v-model="searchField"
-          placeholder="Tìm kiếm mã hóa đơn"
-          size="small"
-          @input="onSearchChange"
-        />
-      </IconField>
-
-      <!-- <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="name"
-        placeholder="Chọn trạng thái"
-        class="fb-w-full md:fb-w-56"
-        size="small"
-      /> -->
-    </template>
-    <template #guide-text>
-      <div></div>
-    </template>
-    <template #deliveryInfo="{ record }">
-      {{ record?.receiverName }}
-    </template>
-    <template #amount="{ record }">
-      {{ formatCurrency(record) }}
-    </template>
-    <template #status="{ record }">
-      <span
-        :class="statusMap(record)?.class"
-        class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
+  <div class="layout-wrapper">
+    <div class="layout-main-container is-table-layout !fb-px-4">
+      <FbTableView
+        v-model:searchValue="searchField"
+        searchPlaceholder="Tìm kiếm mã hóa đơn"
+        @search="onSearchChange"
       >
-        {{ statusMap(record)?.label }}
-      </span>
-    </template>
-    <template #action="{ row }">
-      <div v-if="row?.status === 'PENDING' && row.amount > 0" class="fb-flex fb-items-center">
-        <Button size="small" variant="text" @click="togglePayingDialog(row)">Thanh toán lại</Button>
-        <Button size="small" variant="text" severity="contrast" @click="toggleConfirmDialog(row)">
-          <IconTrash />
-        </Button>
-      </div>
-    </template>
-  </FbTableView>
+        <template #table>
+          <FbTable
+            :columns="tableColumns"
+            :is-loading="isLoading"
+            :items="orderHistory.data"
+            enablePagination
+            :currentPage="currentPage"
+            :pageSize="numPerPage"
+            :totalRecords="totalRecords"
+            rowHover
+            :rowClass="() => 'fb-cursor-pointer'"
+            @row-click="toggleDetail"
+            @page-change="getData"
+          >
+            <template #deliveryInfo="{ record }">
+              {{ record?.receiverName }}
+            </template>
+            <template #amount="{ record }">
+              {{ formatCurrency(record) }}
+            </template>
+            <template #status="{ record }">
+              <span
+                :class="statusMap(record)?.class"
+                class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
+              >
+                {{ statusMap(record)?.label }}
+              </span>
+            </template>
+            <template #action="{ row }">
+              <div
+                v-if="row?.status === 'PENDING' && row.amount > 0"
+                class="fb-flex fb-items-center"
+              >
+                <Button size="small" variant="text" @click="togglePayingDialog(row)">
+                  Thanh toán lại
+                </Button>
+                <Button
+                  size="small"
+                  variant="text"
+                  severity="contrast"
+                  @click="toggleConfirmDialog(row)"
+                >
+                  <IconTrash />
+                </Button>
+              </div>
+            </template>
+          </FbTable>
+        </template>
 
-  <Dialog
-    header="Xác nhận"
-    v-model:visible="displayConfirmation"
-    :style="{ width: '30rem' }"
-    :modal="true"
-  >
-    <div class="fb-flex fb-items-center fb-justify-center">
-      <span>
-        Nhập lý do hủy đơn #
-        <span class="fb-font-semibold fb-text-primary">{{ selectedItem?.roCode }}</span>
-        :
-      </span>
+        <template #extra>
+          <Dialog
+            header="Xác nhận"
+            v-model:visible="displayConfirmation"
+            :style="{ width: '30rem' }"
+            :modal="true"
+          >
+            <div class="fb-flex fb-items-center fb-justify-center">
+              <span>
+                Nhập lý do hủy đơn #
+                <span class="fb-font-semibold fb-text-primary">{{ selectedItem?.roCode }}</span>
+                :
+              </span>
+            </div>
+            <Fluid>
+              <Textarea v-model="reason" rows="3" placeholder="Nhập lý do" />
+            </Fluid>
+            <template #footer>
+              <Button label="Đóng" @click="toggleConfirmDialog" text severity="secondary" />
+              <Button label="Xác nhận" @click="onDeleteItem" severity="danger" autofocus />
+            </template>
+          </Dialog>
+          <DetailOrder
+            v-model:visible="displayDetail"
+            :item="selectedItem"
+            @delete-item="toggleConfirmDialog"
+            @repaid-item="togglePayingDialog"
+          />
+          <ModalPayingOrder
+            v-model:visible="displayPaying"
+            :item="selectedItem"
+            @success="reloadTable"
+            @hide="onHidePaying"
+          />
+        </template>
+      </FbTableView>
     </div>
-    <Fluid>
-      <Textarea v-model="reason" rows="3" placeholder="Nhập lý do" />
-    </Fluid>
-    <template #footer>
-      <Button label="Đóng" @click="toggleConfirmDialog" text severity="secondary" />
-      <Button label="Xác nhận" @click="onDeleteItem" severity="danger" autofocus />
-    </template>
-  </Dialog>
-  <DetailOrder
-    v-model:visible="displayDetail"
-    :item="selectedItem"
-    @delete-item="toggleConfirmDialog"
-    @repaid-item="togglePayingDialog"
-  />
-  <ModalPayingOrder
-    v-model:visible="displayPaying"
-    :item="selectedItem"
-    @success="reloadTable"
-    @hide="onHidePaying"
-  />
+  </div>
 </template>
 
 <script setup>
@@ -147,7 +130,7 @@ const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }, ...
 const statusMap = (status) => {
   return ORDER_STATUS_COLOR[status];
 };
-const numPerPage = ref(8);
+const numPerPage = ref(20);
 const totalRecords = ref(0);
 const currentPage = ref(1);
 const displayConfirmation = ref(false);
