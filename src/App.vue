@@ -1,5 +1,5 @@
 <template>
-  <div :style="contentStyle">
+  <div>
     <router-view />
     <Toast />
   </div>

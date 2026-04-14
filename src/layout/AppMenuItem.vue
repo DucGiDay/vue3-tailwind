@@ -78,7 +78,12 @@ function checkActiveRoute(item) {
 </script>
 
 <template>
-  <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
+  <li
+    :class="[
+      { 'fb-border-l fb-ml-5': item.heno },
+      { 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }
+    ]"
+  >
     <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
       {{ item.label }}
     </div>
@@ -89,10 +94,9 @@ function checkActiveRoute(item) {
       :class="item.class"
       :target="item.target"
       tabindex="0"
+      class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
     </a>
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
@@ -105,9 +109,7 @@ function checkActiveRoute(item) {
       tabindex="0"
       :to="item.to"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
     </router-link>
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
       <ul v-show="root ? true : isActiveMenu" class="layout-submenu">

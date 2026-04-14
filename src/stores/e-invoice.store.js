@@ -9,6 +9,8 @@ export const useEInoiveStore = defineStore('eInoive', {
     statusInvoices: {},
     dailyStatistics: {},
     vatInvoice: {},
+    errorTypeList: {},
+    agreementProtocolList: {},
     saleNotSyncVat: {},
     storeSettingInvoices: {},
     listTaxStores: {
@@ -123,6 +125,22 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.saleNotSyncVat.error = err?.message;
       }
     },
+    async getErrorType(params) {
+      try {
+        const response = await invoiceService.getVatInvoice(params);
+        this.errorTypeList.data = response;
+      } catch (err) {
+        this.errorTypeList.error = err?.message;
+      }
+    },
+    async getAgreementProtocolList(params) {
+      try {
+        const response = await invoiceService.getVatInvoice(params);
+        this.agreementProtocolList.data = response;
+      } catch (err) {
+        this.agreementProtocolList.error = err?.message;
+      }
+    },
     async getStoreSettingInvoice(params) {
       try {
         const response = await invoiceService.getStoreSettingInvoice(params);
@@ -145,6 +163,7 @@ export const useEInoiveStore = defineStore('eInoive', {
         };
       }
     },
+
     async getListStoreGroupByTaxCode(params) {
       if (this.listTaxStores.data.length > 0) return;
       try {

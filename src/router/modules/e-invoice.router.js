@@ -1,5 +1,4 @@
 import AppLayoutWithoutAuth from '@/layout/AppLayoutWithoutAuth.vue';
-import AppLayout from '@/layout/AppLayout.vue';
 
 export const eInvoiceRouter = [
   {
@@ -13,8 +12,7 @@ export const eInvoiceRouter = [
         name: 'EInvoiceSummary',
         component: () => import('@/views/e-invoice/summary.vue'),
         meta: {
-          title: 'Tổng quan - HDDT',
-          isLayoutVue3: true
+          title: 'Tổng quan - HDDT'
         }
       },
       {
@@ -23,7 +21,6 @@ export const eInvoiceRouter = [
         component: () => import('@/views/e-invoice/invoice-manage.vue'),
         meta: {
           title: 'Quản lý hóa đơn - HDDT',
-          isLayoutVue3: true,
           isTableLayout: true
         }
       },
@@ -33,7 +30,6 @@ export const eInvoiceRouter = [
         component: () => import('@/views/e-invoice/sale-order.vue'),
         meta: {
           title: 'Hóa đơn bán hàng - HDDT',
-          isLayoutVue3: true,
           isTableLayout: true
         }
       },
@@ -42,36 +38,41 @@ export const eInvoiceRouter = [
         name: 'Config',
         component: () => import('@/views/e-invoice/config.vue'),
         meta: {
-          title: 'Cấu hình - HDDT',
-          isLayoutVue3: true
-        }
-      }
-    ]
-  }
-];
-export const eInvoiceTableRouter = [
-  {
-    path: '/e-invoice',
-    name: 'EInvoicePage',
-    component: AppLayout,
-    meta: {},
-    children: [
-      {
-        path: 'invoice-manage',
-        name: 'InvoiceManage',
-        component: () => import('@/views/e-invoice/invoice-manage.vue'),
-        meta: {
-          title: 'Quản lý hóa đơn - HDDT',
-          isLayoutVue3: true
+          title: 'Cấu hình - HDDT'
         }
       },
       {
-        path: 'sale-order',
-        name: 'SaleOrder',
-        component: () => import('@/views/e-invoice/sale-order.vue'),
+        path: 'error-type',
+        name: 'ErrorTypeList',
+        component: () => import('@/views/e-invoice/error-type/list.vue'),
         meta: {
-          title: 'Hóa đơn bán hàng - HDDT',
-          isLayoutVue3: true
+          title: 'Danh sách loại sai sót - HDDT',
+          isTableLayout: true
+        }
+      },
+      {
+        path: 'error-type/detail/:id?',
+        name: 'ErrorTypeDetail',
+        component: () => import('@/views/e-invoice/error-type/detail.vue'),
+        meta: {
+          title: 'Chi tiết loại sai sót - HDDT'
+        }
+      },
+      {
+        path: 'agreement-protocol',
+        name: 'AgreementProtocol',
+        component: () => import('@/views/e-invoice/agreement-protocol/list.vue'),
+        meta: {
+          title: 'Biên bản thỏa thuận - HDDT',
+          isTableLayout: true
+        }
+      },
+      {
+        path: 'agreement-protocol/detail/:id?',
+        name: 'AgreementProtocolDetail',
+        component: () => import('@/views/e-invoice/agreement-protocol/detail.vue'),
+        meta: {
+          title: 'Chi tiết biên bản thỏa thuận - HDDT'
         }
       }
     ]
@@ -88,9 +89,7 @@ export const exportVatRouter = [
         path: '',
         name: 'ExportVat',
         component: () => import('@/views/e-invoice/export-vat.vue'),
-        meta: {
-          isLayoutVue3: true
-        }
+        meta: {}
       }
     ]
   }

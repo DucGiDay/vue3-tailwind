@@ -129,7 +129,7 @@ body #sub-app {
   }
 
   .p-button:focus {
-    outline-color: transparent !important;
+    outline: none !important;
     // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
   }
 }

@@ -58,9 +58,8 @@ function isOutsideClicked(event) {
 </script>
 
 <template>
-  <div class="layout-wrapper" :class="containerClass">
+  <div class="layout-wrapper !fb-min-h-screen !fb-h-screen !fb-w-screen fb-fixed fb-z-10" :class="containerClass">
     <router-view></router-view>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>
-  <!-- <Toast /> -->
 </template>

@@ -14,7 +14,9 @@
     @columnReorder="onColReorder"
   >
     <slot />
-
+    <template #header v-if="$slots.header">
+      <slot name="header" />
+    </template>
     <!-- Checkbox column-->
     <Column
       v-if="enableCheckbox"
@@ -647,11 +649,35 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .fb_table--wrapper {
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 0.75rem;
+  overflow: hidden;
+
+  .p-datatable-header {
+    border: none;
+    border-bottom: 1px solid var(--surface-border, #e5e7eb);
+  }
+
   .p-datatable-table-container,
   .p-datatable-wrapper {
-    border: 1px solid var(--surface-border, #e5e7eb);
-    border-radius: 0.5rem;
-    overflow: hidden;
+    border: none !important;
+    border-radius: 0 !important;
+
+    /* Custom scrollbar to avoid clipping with outer border-radius */
+    // &::-webkit-scrollbar {
+    //   width: 8px;
+    //   height: 8px;
+    // }
+    // &::-webkit-scrollbar-track {
+    //   background: transparent;
+    // }
+    // &::-webkit-scrollbar-thumb {
+    //   border-radius: 4px;
+    //   background: rgba(156, 163, 175, 0.5); /* gray-400 */
+    // }
+    // &::-webkit-scrollbar-thumb:hover {
+    //   background: rgba(107, 114, 128, 0.8); /* gray-500 */
+    // }
   }
 
   table:has(.p-datatable-empty-message) {
@@ -684,7 +710,9 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Custom Paginator */
+/*
+ Custom Paginator 
+*/
 .fb-paginator {
   display: flex;
   align-items: center;
