@@ -2,52 +2,110 @@
   <FbTableView
     title="Biên bản thỏa thuận"
     v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm mã biên bản"
+    searchPlaceholder="Tìm kiếm mã tra cứu"
+    :handleBack="handleBack"
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToDetail">Thêm mới</Button>
+      <Button size="small" raised @click="directToDetail()">Thêm mới</Button>
     </template>
 
     <template #filters>
-      <FbDateFilter @update:modelValue="filter" size="small" />
-      <FbSelectSingleTaxStoreFilter
-        placeholder="Chọn theo cửa hàng"
+      <Select
+        v-model="statusField"
+        :options="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn trạng thái"
+        class="fb-w-auto md:fb-w-48"
+        showClear
         size="small"
-        @update:modelValue="filter"
+        @change="filter"
       />
+      <FbDateFilter @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>
       <FbTable
-        v-model:selection="saleSelecteds"
         :columns="columns"
-        :items="sales"
-        enableCheckbox
+        :items="items"
         enablePagination
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
         :pageSize="pageSize"
-        :totalRecords="agreementProtocolList.data?.num_results || 0"
-        :totalPages="agreementProtocolList.data?.total_pages || 0"
+        :totalRecords="agreementProtocolList.data?.total || 0"
+        rowHover
         @page-change="getData"
+        @row-click="directToDetail"
       >
+        <template #customer="{ row }">
+          <div>MÃ/MST: {{ row?.extra_data?.cus_tax_code }}</div>
+          <div>Mã tra cứu:{{ row?.fkey_record }}</div>
+          <div>Ký hiệu: {{ row?.extra_data?.InvSeries }}</div>
+        </template>
+
+        <template #origin_invoice="{ row }">
+          <div>Mẫu số: {{ row?.origin_pattern }}</div>
+          <div>Ký hiệu: {{ row?.merged_tran_id_origin }}</div>
+          <div>Số: {{ row?.invoice_number_origin }}</div>
+        </template>
+        <template #replace_invoice="{ row }">
+          <div>
+            Mẫu số:
+            <span :class="{ 'fb-text-gray-300': !row?.replace_pattern }">
+              {{ row?.replace_pattern || 'Chưa có dữ liệu' }}
+            </span>
+          </div>
+          <div>
+            Ký hiệu:
+            <span :class="{ 'fb-text-gray-300': !row?.merged_tran_id_replace }">
+              {{ row?.merged_tran_id_replace || 'Chưa có dữ liệu' }}
+            </span>
+          </div>
+          <div>
+            Số:
+            <span :class="{ 'fb-text-gray-300': !row?.invoice_number_replace }">
+              {{ row?.invoice_number_replace || 'Chưa có dữ liệu' }}
+            </span>
+          </div>
+        </template>
+
+        <template #record_invoice="{ row }">
+          <div>Loại: {{ row?.type }}</div>
+          <div>Ngày lập: {{ formatDate(row?.record_invoice_date) }}</div>
+          <div>Trạng thái : {{ row?.status }}</div>
+        </template>
+
         <template #action="{ row }">
           <div class="fb-flex fb-justify-center">
             <Button
               size="small"
-              text
+              variant="text"
               @click="onPreviewPDF(row)"
-              :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+              :loading="loadingPdfId === row.id && pdfAction === 'preview'"
             >
               <ProgressSpinner
-                v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+                v-if="loadingPdfId === row.id && pdfAction === 'preview'"
                 class="!fb-m-0"
                 strokeWidth="6"
                 style="width: 1rem; height: 1rem"
               />
               <IconEye v-else class="!fb-text-primary" color="currentColor" />
+            </Button>
+            <Button
+              size="small"
+              text
+              @click="onDownloadPDF(row)"
+              :loading="loadingPdfId === row.id && pdfAction === 'download'"
+            >
+              <ProgressSpinner
+                v-if="loadingPdfId === row.id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else />
             </Button>
           </div>
         </template>
@@ -64,7 +122,7 @@
     <template #extra>
       <ModalExportVat
         v-model:visible="visibleExportVat"
-        :saleData="currentSaleData"
+        :itemData="currentSaleData"
         @success="filter"
       />
       <Dialog
@@ -75,6 +133,24 @@
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
         <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-pt-2">
+            <Button
+              @click="onDownloadPDF(itemPreview)"
+              :loading="loadingPdfId === itemPreview.id && pdfAction === 'download'"
+              raised
+            >
+              Tải xuống
+              <ProgressSpinner
+                v-if="loadingPdfId === itemPreview.id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
       </Dialog>
     </template>
   </FbTableView>
@@ -91,6 +167,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import FbTableView from '@/components/Common/FbTableView.vue';
 import { useRouter } from 'vue-router';
+import { formatDate } from '@/common/utils/common';
 
 const router = useRouter();
 
@@ -102,13 +179,12 @@ const filterStore = useFilterStore();
 // Constants
 const toast = useToast();
 const columns = [
-  { field: 'inv_buyerLegalName', header: 'Khách hàng' },
-  { field: 'inv_number_error', header: 'Hóa đơn sai' },
-  { field: 'vat_invoice_number', header: 'Hóa đơn xử lý' },
+  { field: 'customer', header: 'Khách hàng' },
+  { field: 'origin_invoice', header: 'Hóa đơn sai' },
+  { field: 'replace_invoice', header: 'Hóa đơn xử lý' },
   {
-    field: 'tran_id',
-    header: 'Biên bản',
-    format: 'truncate'
+    field: 'record_invoice',
+    header: 'Biên bản'
   },
   {
     field: 'action',
@@ -121,21 +197,22 @@ const columns = [
 
 // State
 const searchField = ref(null);
-const saleSelecteds = ref([]);
 const agreementProtocolList = computed(() => invoiceStore.agreementProtocolList);
-const sales = ref([]);
+const items = ref([]);
 const isLoading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
+const statusField = ref(null);
+const statusOptions = reactive([]);
 
 const visibleExportVat = ref(false);
 const currentSaleData = ref({});
 
-const isLoadingPdf = ref(false);
-const loadingPdfTranId = ref(null);
+const loadingPdfId = ref(null);
 const pdfAction = ref(''); // 'preview' | 'download'
 const showPreview = ref(false);
 const previewUrl = ref(null);
+const itemPreview = ref(null);
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
@@ -147,9 +224,6 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.report?.store_uid,
-    start_date: new Date(filterStore?.report?.start_date).getTime(),
-    end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value
@@ -157,18 +231,27 @@ const getData = async ({ page, rows } = {}) => {
 
   isLoading.value = true;
   await invoiceStore.getAgreementProtocolList(payload);
-  sales.value = agreementProtocolList.value?.data?.data || [];
+
+  items.value = agreementProtocolList.value?.data?.records || [];
   isLoading.value = false;
 };
 
 const filter = async () => {
   currentPage.value = 1;
-  sales.value = [];
+  items.value = [];
   await getData();
 };
 
-const directToDetail = () => {
-  router.push({ path: '/e-invoice/agreement-protocol/detail' });
+const directToDetail = (data = null) => {
+  if (data) {
+    router.push({ path: `/e-invoice/agreement-protocol/detail/${data?.data?.id}` });
+  } else {
+    router.push({ path: '/e-invoice/agreement-protocol/detail' });
+  }
+};
+
+const handleBack = () => {
+  router.push({ path: '/e-invoice/agreement-protocol' });
 };
 
 let searchTimeout = null;
@@ -183,15 +266,10 @@ const fetchAndCachePDF = async (item) => {
   if (item.pdfUrl) return item.pdfUrl;
 
   try {
-    loadingPdfTranId.value = item.tran_id;
-    const payload = {
-      brand_uid: globalStore?.brandUid,
-      company_uid: globalStore?.currentUser?.company_uid,
-      tran_id: item.tran_id,
-      store_uid: item?.store_uid
-    };
-    const responseData = await invoiceService.exportPDF(payload);
-    const base64String = responseData.data;
+    loadingPdfId.value = item.id;
+    const responseData = await invoiceService.getAgreementProtocolPdf(item.id);
+
+    const base64String = responseData.data?.Data;
 
     // Decode base64 → binary
     const byteCharacters = atob(base64String);
@@ -210,7 +288,7 @@ const fetchAndCachePDF = async (item) => {
     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
     return null;
   } finally {
-    loadingPdfTranId.value = null;
+    loadingPdfId.value = null;
   }
 };
 
@@ -219,7 +297,21 @@ const onPreviewPDF = async (item) => {
   const url = await fetchAndCachePDF(item);
   if (url) {
     previewUrl.value = url;
+    itemPreview.value = item;
     showPreview.value = true;
+  }
+};
+
+const onDownloadPDF = async (item) => {
+  pdfAction.value = 'download';
+  const url = await fetchAndCachePDF(item);
+  if (url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `e_invoice_${item.id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 };
 

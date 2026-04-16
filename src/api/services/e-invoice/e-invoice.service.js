@@ -71,6 +71,17 @@ export const invoiceService = {
   getGuestSession: (params) =>
     api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, noAuth: true, withCredentials: true }),
 
+  // Danh sách biên bản thỏa thuận
+  getAgreementProtocolList: (params) =>
+    api.get(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_LIST, { params }),
+
+  // Tạo biên bản thỏa thuận
+  createAgreementProtocol: (payload) =>
+    api.post(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_CREATE, payload),
+
+  // View/Download PDF biên bản thỏa thuận
+  getAgreementProtocolPdf: (id) => api.get(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_PDF(id)),
+
   // API tùy chỉnh
   customService: (url, config) => api.get(url, { noAuth: true, ...config }),
 

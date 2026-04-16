@@ -27,6 +27,9 @@ export const INVOICE_ENDPOINTS = {
   GET_STATUS: '/api/invoice/v1/status',
   SEARCH_BY_TAXCODE: '/api/search-by-tax-code',
   DELETE_DRAFT_INVOICE: '/api/einvoice/v1/invoice/delete-draft',
+  AGREEMENT_PROTOCOL_LIST: '/api/einvoice/v1/electronic_invoice_minutes/list',
+  AGREEMENT_PROTOCOL_CREATE: '/api/einvoice/v1/electronic_invoice_minutes/create',
+  AGREEMENT_PROTOCOL_PDF: (id = '') => `/api/einvoice/v1/electronic_invoice_minutes/${id}/pdf`,
 
   GUEST_VAT_INFO: (id = '') => `/api/einvoice/v1/guest-vat-info${id ? `/${id}` : ''}`, // get, post, put, delete
   GUEST_SESSION: '/api/einvoice/v1/guest-session'

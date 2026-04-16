@@ -3,6 +3,7 @@
     title="Thông báo sai sót"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã tra cứu"
+    :handleBack="handleBack"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -252,6 +253,10 @@ const onPreviewPDF = async (item) => {
 
 const directToDetail = () => {
   router.push({ path: '/e-invoice/error-type/detail' });
+};
+
+const handleBack = () => {
+  router.push({ path: '/e-invoice/error-type' });
 };
 
 // life cycle

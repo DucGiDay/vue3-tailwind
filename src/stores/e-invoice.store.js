@@ -135,8 +135,8 @@ export const useEInoiveStore = defineStore('eInoive', {
     },
     async getAgreementProtocolList(params) {
       try {
-        const response = await invoiceService.getVatInvoice(params);
-        this.agreementProtocolList.data = response;
+        const response = await invoiceService.getAgreementProtocolList(params);
+        this.agreementProtocolList.data = response?.data || {};
       } catch (err) {
         this.agreementProtocolList.error = err?.message;
       }

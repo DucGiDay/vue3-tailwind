@@ -1,4 +1,5 @@
 import { CURRENTCY_OPTIONS, CURRENCY_ALLOW_FLOAT } from '@/common/constant/common.constant';
+import moment from 'moment';
 
 // Lấy time trong ngày dạng ISO
 export const setTimeISO = (hour, minute = 0) => {
@@ -48,6 +49,11 @@ export const formatNumber = (value) => {
   const numberValue = typeof value === 'string' ? +value.replaceAll(',', '') : +value;
   if (Number.isNaN(numberValue)) return '';
   return numberValue.toLocaleString('en-US');
+};
+
+export const formatDate = (value, format = 'DD/MM/YYYY') => {
+  if (value === null || value === undefined || value === '') return '';
+  return moment(value).format(format);
 };
 
 export const wait = (miliseconds) => {

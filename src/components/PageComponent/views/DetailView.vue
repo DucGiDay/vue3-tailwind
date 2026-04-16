@@ -1,16 +1,13 @@
 <template>
-  <div class="fb-fixed fb-left-0 fb-top-0 !fb-h-screen !fb-w-screen fb-z-10 fb-bg-surface-200">
+  <div
+    class="fb-fixed fb-left-0 fb-top-0 !fb-h-screen !fb-w-screen fb-z-10 fb-bg-surface-100 fb-overflow-auto"
+  >
     <div class="fb-w-full fb-flex fb-flex-col">
       <!-- Header -->
       <div
-        class="fb-flex fb-items-center fb-justify-between fb-px-8 fb-py-[0.625rem] fb-border-b fb-border-gray-200 fb-bg-white"
+        class="fb-fixed fb-z-10 fb-w-full fb-flex fb-items-center fb-justify-between fb-px-8 fb-py-[0.625rem] fb-border-b fb-border-gray-200 fb-bg-white"
       >
-        <Button
-          variant="text"
-          severity="secondary"
-          aria-label="Back"
-          @click="$router.push({ name: 'ErrorTypeList' })"
-        >
+        <Button variant="text" severity="secondary" aria-label="Back" @click="handleBackFunc()">
           <svg
             width="24"
             height="24"
@@ -34,15 +31,31 @@
       </div>
 
       <!-- Content -->
-      <div class="fb-p-8 fb-overflow-auto">
+      <div class="fb-p-8 fb-mt-12">
         <slot />
       </div>
+
+      <!-- Footer -->
     </div>
   </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const props = defineProps({
-  title: { type: String }
+  title: { type: String },
+  handleBack: {
+    type: Function,
+    default: null
+  }
 });
+
+const handleBackFunc = () => {
+  if (props.handleBack) {
+    props.handleBack();
+  } else {
+    router.go(-1);
+  }
+};
 </script>
