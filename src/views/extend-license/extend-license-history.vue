@@ -110,6 +110,9 @@ import FbTableView from '@/components/Common/FbTableView.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 // Constants
 const tableColumns = [
@@ -153,7 +156,8 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     numPerPage: numPerPage.value,
     list_store_uid: globalStore.storesIdPermissionActive.join(','),
-    search: searchField.value
+    search: searchField.value,
+    ...(route.query?.product_code ? { productCode: route.query?.product_code } : {})
   });
 
   totalRecords.value = orderHistory.value?.meta?.count;
