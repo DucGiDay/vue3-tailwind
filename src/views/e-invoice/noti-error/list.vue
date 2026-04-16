@@ -3,7 +3,6 @@
     title="Thông báo sai sót"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã tra cứu"
-    :handleBack="handleBack"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -12,73 +11,88 @@
 
     <template #filters>
       <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn trạng thái"
+        v-model="typeErrorField"
+        :options="errorTypeList"
+        optionLabel="name"
+        optionValue="type_error"
+        placeholder="Chọn loại sai sót"
         class="fb-w-auto md:fb-w-48"
         showClear
         size="small"
+        :loading="isLoadingErrorType"
         @change="filter"
       />
 
       <FbDateFilter @update:modelValue="filter" size="small" />
-
-      <FbSelectSingleTaxStoreFilter
-        placeholder="Chọn theo cửa hàng"
-        size="small"
-        @update:modelValue="filter"
-      />
     </template>
 
     <template #table>
       <FbTable
         :columns="columns"
-        :items="sales"
+        :items="items"
         enablePagination
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
         :pageSize="pageSize"
-        :totalRecords="errorTypeList.data?.num_results || 0"
-        :totalPages="errorTypeList.data?.total_pages || 0"
-        :loadingActionRowCustom="loadingActionRowCustom"
+        :totalRecords="notiErrorList.data?.total || 0"
         scrollHeight="flex"
         keyLoading="tran_id"
         @page-change="getData"
       >
-        <template #vat_publish_status="{ record, row }">
+        <template #status="{ record }">
           <span
-            :class="statusMap(row?.vat_publish_status_code)?.class"
+            :class="statusMap(record)?.class"
             class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
           >
-            {{ record || statusMap('-1')?.label }}
+            {{ statusMap(record)?.label }}
           </span>
+        </template>
+
+        <template #extra_data="{ record }">
+          {{ record.reason }}
+        </template>
+
+        <template #type_error="{ record }">
+          {{ errorTypeMap?.[record] }}
         </template>
 
         <template #action="{ row }">
           <div class="fb-flex fb-justify-center">
             <Button
               size="small"
-              text
+              variant="text"
               @click="onPreviewPDF(row)"
-              :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+              :loading="loadingPdfId === row.id && pdfAction === 'preview'"
             >
               <ProgressSpinner
-                v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+                v-if="loadingPdfId === row.id && pdfAction === 'preview'"
                 class="!fb-m-0"
                 strokeWidth="6"
                 style="width: 1rem; height: 1rem"
               />
               <IconEye v-else class="!fb-text-primary" color="currentColor" />
             </Button>
+            <Button
+              size="small"
+              text
+              @click="onDownloadPDF(row)"
+              :loading="loadingPdfId === row.id && pdfAction === 'download'"
+            >
+              <ProgressSpinner
+                v-if="loadingPdfId === row.id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else />
+            </Button>
           </div>
         </template>
 
         <template #empty>
           {{
-            errorTypeList?.error ? 'Error: ' + errorTypeList?.error : 'Chưa có thông báo sai sót'
+            notiErrorList?.error ? 'Error: ' + notiErrorList?.error : 'Chưa có thông báo sai sót'
           }}
         </template>
       </FbTable>
@@ -93,6 +107,24 @@
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
         <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-pt-2">
+            <Button
+              @click="onDownloadPDF(itemPreview)"
+              :loading="loadingPdfId === itemPreview?.id && pdfAction === 'download'"
+              raised
+            >
+              Tải xuống
+              <ProgressSpinner
+                v-if="loadingPdfId === itemPreview?.id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
       </Dialog>
     </template>
   </FbTableView>
@@ -105,14 +137,12 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import FbTableView from '@/components/Common/FbTableView.vue';
-import {
-  VAT_PUBLISH_STATUS_COLOR,
-  VAT_PUBLISH_STATUS_LIST
-} from '@/common/constant/e-invoice.constant';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 
 import IconEye from '@/components/Common/Icon/IconEye.vue';
+import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 
 const router = useRouter();
 
@@ -124,13 +154,13 @@ const filterStore = useFilterStore();
 // constants
 const toast = useToast();
 const columns = [
-  { field: 'inv_series', header: 'Ký hiệu' },
-  { field: 'tran_id', header: 'Mã tra cứu' },
-  { field: 'vat_invoice_number', header: 'Số hóa đơn' },
-  { field: 'inv_template', header: 'Mẫu số' },
-  { field: 'vat_publish_status', header: 'Trạng thái' },
-  { field: 'error_type', header: 'Loại sai sót' },
-  { field: 'reason', header: 'Lý do' },
+  { field: 'serial', header: 'Ký hiệu' },
+  { field: 'reference_key', header: 'Mã tra cứu' },
+  { field: 'invoice_number_error', header: 'Số hóa đơn' },
+  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'status', header: 'Trạng thái' },
+  { field: 'type_error', header: 'Loại sai sót' },
+  { field: 'extra_data', header: 'Lý do' },
   {
     field: 'created_at',
     header: 'Ngày tạo',
@@ -142,27 +172,29 @@ const columns = [
     header: '',
     frozen: true,
     alignFrozen: 'right',
-    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
+    style: { width: '5rem', minWidth: '5rem', padding: '0 0 0 0.25rem !important' }
   }
 ];
 
 // State
 const searchField = ref(null);
-const statusField = ref(null);
-const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
+const typeErrorField = ref(null);
 const currentPage = ref(1);
 const pageSize = ref(50);
 
-const errorTypeList = computed(() => invoiceStore.errorTypeList); // data from api
-const sales = ref([]); // data display in table
+const notiErrorList = computed(() => invoiceStore.notiErrorList); // data from api
+const errorTypeList = computed(() => invoiceStore.errorTypeList);
+const errorTypeMap = computed(() => invoiceStore.errorTypeMap);
+const items = ref([]); // data display in table
 
 const isLoading = ref(false);
-const loadingPdfTranId = ref(null);
-const loadingActionRowCustom = ref(null);
+const loadingPdfId = ref(null);
+const isLoadingErrorType = ref(null);
 
 const pdfAction = ref(''); // 'preview' | 'download'
 const showPreview = ref(false);
 const previewUrl = ref(null);
+const itemPreview = ref(null);
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
@@ -174,24 +206,34 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.report?.store_uid,
     start_date: new Date(filterStore?.report?.start_date).getTime(),
     end_date: new Date(filterStore?.report?.end_date).getTime(),
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,
-    status: statusField.value
+    type_error: typeErrorField.value
   };
 
   isLoading.value = true;
-  await invoiceStore.getErrorType(payload);
-  sales.value = errorTypeList.value?.data?.data || [];
+  await invoiceStore.getNotiError(payload);
+  items.value = notiErrorList.value?.data?.items || [];
   isLoading.value = false;
+};
+
+const getErrorType = async () => {
+  if (errorTypeList.value && errorTypeList.value.length) return;
+  isLoadingErrorType.value = true;
+  const payload = {
+    brand_uid: globalStore?.brandUid,
+    company_uid: globalStore?.currentUser?.company_uid
+  };
+  await invoiceStore.getErrorType(payload);
+  isLoadingErrorType.value = false;
 };
 
 const filter = async () => {
   currentPage.value = 1;
-  sales.value = [];
+  items.value = [];
   await getData();
 };
 
@@ -211,15 +253,9 @@ const fetchAndCachePDF = async (item) => {
   if (item.pdfUrl) return item.pdfUrl;
 
   try {
-    loadingPdfTranId.value = item.tran_id;
-    const payload = {
-      brand_uid: globalStore?.brandUid,
-      company_uid: globalStore?.currentUser?.company_uid,
-      tran_id: item.tran_id,
-      store_uid: item?.store_uid
-    };
-    const responseData = await invoiceService.exportPDF(payload);
-    const base64String = responseData.data;
+    loadingPdfId.value = item.id;
+    const responseData = await invoiceService.getNotiErrorPdf(item.id);
+    const base64String = responseData.data?.pdf_base64;
 
     // Decode base64 → binary
     const byteCharacters = atob(base64String);
@@ -238,29 +274,42 @@ const fetchAndCachePDF = async (item) => {
     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
     return null;
   } finally {
-    loadingPdfTranId.value = null;
+    loadingPdfId.value = null;
   }
 };
 
 const onPreviewPDF = async (item) => {
   pdfAction.value = 'preview';
+  itemPreview.value = null;
   const url = await fetchAndCachePDF(item);
   if (url) {
     previewUrl.value = url;
+    itemPreview.value = item;
     showPreview.value = true;
   }
 };
 
-const directToDetail = () => {
-  router.push({ path: '/e-invoice/error-type/detail' });
+const onDownloadPDF = async (item) => {
+  if (!item) return;
+  pdfAction.value = 'download';
+  const url = await fetchAndCachePDF(item);
+  if (url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `thong_bao_sai_sot_${item.id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 };
 
-const handleBack = () => {
-  router.push({ path: '/e-invoice/error-type' });
+const directToDetail = () => {
+  router.push({ path: '/e-invoice/noti-error/detail' });
 };
 
 // life cycle
-onMounted(() => {
-  getData();
+onMounted(async () => {
+  getErrorType();
+  await getData();
 });
 </script>

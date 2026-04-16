@@ -12,8 +12,8 @@ const models = ref([
       {
         label: 'Quản lý sai sót',
         items: [
-          { label: 'Thông báo sai sót', to: '/e-invoice/notification-error', heno: true },
-          { label: 'Biên bản thỏa thuận', to: '/e-invoice/agreement-protocol', heno: true }
+          { label: 'Thông báo sai sót', to: '/e-invoice/noti-error', grandchild: true },
+          { label: 'Biên bản thỏa thuận', to: '/e-invoice/agreement-protocol', grandchild: true }
         ]
       }
     ]

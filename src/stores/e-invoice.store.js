@@ -9,7 +9,9 @@ export const useEInoiveStore = defineStore('eInoive', {
     statusInvoices: {},
     dailyStatistics: {},
     vatInvoice: {},
-    errorTypeList: {},
+    notiErrorList: {},
+    errorTypeList: [],
+    invoiceTypeList: [],
     agreementProtocolList: {},
     saleNotSyncVat: {},
     storeSettingInvoices: {},
@@ -27,6 +29,13 @@ export const useEInoiveStore = defineStore('eInoive', {
     },
     dailyStatisticsInvoice() {
       return this.dailyStatisticsData.map((e) => e.total_invoices);
+    },
+
+    errorTypeMap(state) {
+      return state.errorTypeList.reduce((acc, item) => {
+        acc[item.type_error.toString()] = item.name;
+        return acc;
+      }, {});
     }
   },
 
@@ -125,12 +134,28 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.saleNotSyncVat.error = err?.message;
       }
     },
+    async getNotiError(params) {
+      try {
+        const response = await invoiceService.getNotiErrorList(params);
+        this.notiErrorList.data = response?.data || {};
+      } catch (err) {
+        this.notiErrorList.error = err?.message;
+      }
+    },
     async getErrorType(params) {
       try {
-        const response = await invoiceService.getVatInvoice(params);
-        this.errorTypeList.data = response;
+        const response = await invoiceService.getErrorTypeList(params);
+        this.errorTypeList = response?.data || [];
       } catch (err) {
-        this.errorTypeList.error = err?.message;
+        this.errorTypeList = [];
+      }
+    },
+    async getInvoiceType(params) {
+      try {
+        const response = await invoiceService.getInvoiceTypeList(params);
+        this.invoiceTypeList = response?.data || [];
+      } catch (err) {
+        this.invoiceTypeList = [];
       }
     },
     async getAgreementProtocolList(params) {

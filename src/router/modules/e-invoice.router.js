@@ -42,20 +42,20 @@ export const eInvoiceRouter = [
         }
       },
       {
-        path: 'error-type',
-        name: 'ErrorTypeList',
-        component: () => import('@/views/e-invoice/error-type/list.vue'),
+        path: 'noti-error',
+        name: 'NotiErrorList',
+        component: () => import('@/views/e-invoice/noti-error/list.vue'),
         meta: {
-          title: 'Danh sách loại sai sót - HDDT',
+          title: 'Danh sách thông báo sai sót - HDDT',
           isTableLayout: true
         }
       },
       {
-        path: 'error-type/detail/:id?',
-        name: 'ErrorTypeDetail',
-        component: () => import('@/views/e-invoice/error-type/detail.vue'),
+        path: 'noti-error/detail/:id?',
+        name: 'NotiErrorDetail',
+        component: () => import('@/views/e-invoice/noti-error/detail.vue'),
         meta: {
-          title: 'Chi tiết loại sai sót - HDDT'
+          title: 'Chi tiết thông báo sai sót - HDDT'
         }
       },
       {

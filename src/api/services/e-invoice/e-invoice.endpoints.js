@@ -30,6 +30,12 @@ export const INVOICE_ENDPOINTS = {
   AGREEMENT_PROTOCOL_LIST: '/api/einvoice/v1/electronic_invoice_minutes/list',
   AGREEMENT_PROTOCOL_CREATE: '/api/einvoice/v1/electronic_invoice_minutes/create',
   AGREEMENT_PROTOCOL_PDF: (id = '') => `/api/einvoice/v1/electronic_invoice_minutes/${id}/pdf`,
+  NOTI_ERROR_LIST: '/api/einvoice/v1/error-notify/list',
+  NOTI_ERROR_CREATE: '/api/einvoice/v1/error-notify/create',
+  NOTI_ERROR_PDF: (id = '') => `/api/einvoice/v1/error-notify/pdf/${id}`,
+  ERROR_TYPE_LIST: '/api/einvoice/v1/error-notify/type',
+  INVOICE_TYPE_LIST: '/api/einvoice/v1/error-notify/type-invoice',
+  FILTER_INVOICE_BY_NUMBERS: '/api/einvoice/v1/invoice/filter-by-numbers',
 
   GUEST_VAT_INFO: (id = '') => `/api/einvoice/v1/guest-vat-info${id ? `/${id}` : ''}`, // get, post, put, delete
   GUEST_SESSION: '/api/einvoice/v1/guest-session'

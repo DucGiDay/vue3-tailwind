@@ -3,7 +3,6 @@
     title="Biên bản thỏa thuận"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã tra cứu"
-    :handleBack="handleBack"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -250,10 +249,6 @@ const directToDetail = (data = null) => {
   }
 };
 
-const handleBack = () => {
-  router.push({ path: '/e-invoice/agreement-protocol' });
-};
-
 let searchTimeout = null;
 const onSearchChange = async () => {
   if (searchTimeout) clearTimeout(searchTimeout);
@@ -294,6 +289,7 @@ const fetchAndCachePDF = async (item) => {
 
 const onPreviewPDF = async (item) => {
   pdfAction.value = 'preview';
+  itemPreview.value = null;
   const url = await fetchAndCachePDF(item);
   if (url) {
     previewUrl.value = url;

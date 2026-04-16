@@ -54,19 +54,15 @@ export const invoiceService = {
   // Danh sách thông tin vat đã lưu
   getGuestVatInfo: (params) =>
     api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), { params, noAuth: true, withCredentials: true }),
-
   // Tạo thông tin vat
   createGuestVatInfo: (payload) =>
     api.post(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), payload, { noAuth: true, withCredentials: true }),
-
   // Cập nhật thông tin vat
   updateGuestVatInfo: (id, payload) =>
     api.put(INVOICE_ENDPOINTS.GUEST_VAT_INFO(id), payload, { noAuth: true, withCredentials: true }),
-
   // Xóa thông tin vat
   deleteGuestVatInfo: (id) =>
     api.delete(INVOICE_ENDPOINTS.GUEST_VAT_INFO(id), { noAuth: true, withCredentials: true }),
-
   // API guest session
   getGuestSession: (params) =>
     api.get(INVOICE_ENDPOINTS.GUEST_SESSION, { params, noAuth: true, withCredentials: true }),
@@ -74,13 +70,27 @@ export const invoiceService = {
   // Danh sách biên bản thỏa thuận
   getAgreementProtocolList: (params) =>
     api.get(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_LIST, { params }),
-
   // Tạo biên bản thỏa thuận
   createAgreementProtocol: (payload) =>
     api.post(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_CREATE, payload),
-
   // View/Download PDF biên bản thỏa thuận
   getAgreementProtocolPdf: (id) => api.get(INVOICE_ENDPOINTS.AGREEMENT_PROTOCOL_PDF(id)),
+
+  // Danh sách thông báo sai sót
+  getNotiErrorList: (params) => api.get(INVOICE_ENDPOINTS.NOTI_ERROR_LIST, { params }),
+  // Tạo thông báo sai sót
+  createNotiError: (payload) => api.post(INVOICE_ENDPOINTS.NOTI_ERROR_CREATE, payload),
+  // View/Download PDF thông báo sai sót
+  getNotiErrorPdf: (id) => api.get(INVOICE_ENDPOINTS.NOTI_ERROR_PDF(id)),
+  // Danh sách loại sai sót
+  getErrorTypeList: (params) => api.get(INVOICE_ENDPOINTS.ERROR_TYPE_LIST, { params }),
+
+  // Danh sách loại hóa đơn
+  getInvoiceTypeList: (params) => api.get(INVOICE_ENDPOINTS.INVOICE_TYPE_LIST, { params }),
+
+  // Lấy thông tin khi người dùng nhập form tạo sai sót
+  filterInvoiceByNumbers: (payload) =>
+    api.post(INVOICE_ENDPOINTS.FILTER_INVOICE_BY_NUMBERS, payload),
 
   // API tùy chỉnh
   customService: (url, config) => api.get(url, { noAuth: true, ...config }),

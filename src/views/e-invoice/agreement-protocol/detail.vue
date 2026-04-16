@@ -1,15 +1,15 @@
 <template>
-  <DetailView title="Tạo biên bản thỏa thuận">
+  <DetailView title="Tạo biên bản thỏa thuận" :handleBack="handleBack">
     <template #header-actions>
       <div class="fb-flex fb-items-center">
-        <Button
+        <!-- <Button
           label="Test nhanh"
           raised
           size="small"
           severity="secondary"
           class="fb-mr-2"
           @click="fillTestData"
-        />
+        /> -->
         <Button label="Lưu lại" :loading="loading" raised size="small" @click="handleSave" />
       </div>
     </template>
@@ -393,7 +393,7 @@ const agreement = reactive({
 });
 const error = ref({});
 
-const handleSave = () => {
+const handleSave = async () => {
   error.value = validateByFields(agreement, [
     {
       id: 'origin_serial',
@@ -443,38 +443,33 @@ const handleSave = () => {
   };
 
   loading.value = true;
-  invoiceService
+  await invoiceService
     .createAgreementProtocol(payload)
     .then((res) => {
-      if (res.data?.success) {
-        toast.add({
-          severity: 'success',
-          summary: 'Thành công',
-          detail: 'Tạo biên bản thỏa thuận thành công',
-          life: 3000
-        });
-        router.back();
-      } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Lỗi',
-          detail: res.data?.message || 'Có lỗi xảy ra khi tạo biên bản',
-          life: 3000
-        });
-      }
+      toast.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: 'Tạo biên bản thỏa thuận thành công',
+        life: 3000
+      });
+      router.back();
     })
     .catch((err) => {
-      console.error(err);
+      console.error('Error:', err?.message);
       toast.add({
         severity: 'error',
         summary: 'Lỗi hệ thống',
-        detail: 'Không thể kết nối đến máy chủ',
+        detail: err?.message || 'Không thể kết nối đến máy chủ',
         life: 3000
       });
     })
     .finally(() => {
       loading.value = false;
     });
+};
+
+const handleBack = () => {
+  router.push({ path: '/e-invoice/agreement-protocol' });
 };
 
 const fillTestData = () => {

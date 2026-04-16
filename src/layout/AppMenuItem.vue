@@ -28,6 +28,14 @@ const props = defineProps({
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
+onMounted(() => {
+  console.log('props.item', props.item);
+  console.log('route', route);
+  // if (props.item.label === 'Quản lý sai sót') {
+  //   onActiveMenu(props.item);
+  // }
+});
+
 onBeforeMount(() => {
   itemKey.value = props.parentItemKey
     ? props.parentItemKey + '-' + props.index
@@ -63,6 +71,10 @@ function itemClick(event, item) {
     item.command({ originalEvent: event, item: item });
   }
 
+  onActiveMenu(item);
+}
+
+const onActiveMenu = (item) => {
   const foundItemKey = item.items
     ? isActiveMenu.value
       ? props.parentItemKey
@@ -70,7 +82,7 @@ function itemClick(event, item) {
     : itemKey.value;
 
   setActiveMenuItem(foundItemKey);
-}
+};
 
 function checkActiveRoute(item) {
   return route.path === item.to || route.fullPath.startsWith(item?.startWith);
@@ -80,7 +92,7 @@ function checkActiveRoute(item) {
 <template>
   <li
     :class="[
-      { 'fb-border-l fb-ml-5': item.heno },
+      { 'fb-border-l fb-ml-5': item.grandchild },
       { 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }
     ]"
   >
@@ -94,9 +106,10 @@ function checkActiveRoute(item) {
       :class="item.class"
       :target="item.target"
       tabindex="0"
-      class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md"
+      class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md fb-flex fb-items-center fb-justify-between"
     >
       <span class="layout-menuitem-text">{{ item.label }}</span>
+      <IconChevronRight :class="isActiveMenu ? 'fb-rotate-[270deg]' : 'fb-rotate-[90deg]'" />
     </a>
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
