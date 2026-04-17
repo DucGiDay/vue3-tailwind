@@ -28,6 +28,7 @@ export const invoiceService = {
   // Export XML/PDF
   exportXML: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_XML, { params }),
   exportPDF: (params) => api.get(INVOICE_ENDPOINTS.EXPORT_PDF, { params }),
+  sendEmail: (payload) => api.post(INVOICE_ENDPOINTS.RESEND_EMAIL, payload),
 
   // Danh sách store theo mã số thuế
   getListStoreGroupByTaxCode: (params) =>

@@ -91,7 +91,10 @@
 
     <template #extra>
       <ModalExportVat v-model:visible="visibleExportVat" :saleData="currentSaleData" />
-      <ModalViewBeforeSend v-model:visible="visibleViewBeforeSend" :invoiceData="dataViewBeforeSend" />
+      <ModalViewBeforeSend
+        v-model:visible="visibleViewBeforeSend"
+        :invoiceData="dataViewBeforeSend"
+      />
       <ConfirmDialog />
       <Dialog
         v-model:visible="showPreview"
@@ -102,6 +105,8 @@
       >
         <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
       </Dialog>
+
+      <ModalResendMail v-model:visible="showResendEmail" @send="onSendEmail" />
     </template>
   </FbTableView>
 </template>
@@ -114,6 +119,7 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
+import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMail.vue';
 import FbTableView from '@/components/Common/FbTableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
@@ -129,6 +135,7 @@ import IconEdit from '@/components/Common/Icon/IconEdit.vue';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 import IconEye from '@/components/Common/Icon/IconEye.vue';
 import IconUpload from '@/components/Common/Icon/IconUpload.vue';
+import IconMail from '@/components/Common/Icon/IconMail.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -183,6 +190,7 @@ const loadingActionRowCustom = ref(null);
 
 const pdfAction = ref(''); // 'preview' | 'download'
 const showPreview = ref(false);
+const showResendEmail = ref(null);
 const previewUrl = ref(null);
 
 const visibleExportVat = ref(false);
@@ -325,23 +333,15 @@ const menuItems = (row) => {
       command: async () => {
         await onDownloadPDF(row);
       }
+    },
+    {
+      label: 'Gửi lại email',
+      icon: markRaw(IconMail),
+      command: async () => {
+        await openResendEmail(row);
+      }
     }
   ];
-};
-
-const isSaleExortedVat = (row) => {
-  const { is_sync_vat, extra_sale = {} } = row;
-  if (is_sync_vat === 0) return false;
-  if (is_sync_vat === 3 && extra_sale?.partner_id === 'FABI') return false;
-  return true;
-};
-
-const isAbleToDeleteBill = (row) => {
-  return (
-    row.state_action_bill !== BILL_STATUS.STATE_BILL_ACTION_DELETE
-    //  &&
-    // !this.rejectPermission.includes("REPORT.DELETE_SALE")
-  );
 };
 
 const onToggleMenu = async (_, row) => {
@@ -503,6 +503,35 @@ const onViewInvoice = async (row) => {
   } catch (error) {
     console.error('Error viewInvoice', error);
     toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+  }
+};
+
+const openResendEmail = async (row) => {
+  showResendEmail.value = row;
+};
+
+const onSendEmail = async (row) => {
+  try {
+    loadingActionRowCustom.value = row.tran_id;
+    const payload = {
+      brand_uid: globalStore?.brandUid,
+      company_uid: globalStore?.currentUser?.company_uid,
+      merged_tran_id: row?.tran_id_sync_vat,
+      store_uid: row?.store_uid,
+      email: row?.email
+    };
+    if (row?.cc) {
+      payload.cc = row?.cc;
+    }
+    const response = await invoiceService.sendEmail(payload);
+    if (response?.data) {
+      toast.add({ severity: 'success', summary: 'Gửi email thành công', life: 3000 });
+    } else throw new Error('Không tìm thấy dữ liệu hóa đơn');
+  } catch (error) {
+    console.error('Error sendEmail', error);
+    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+  } finally {
+    loadingActionRowCustom.value = null;
   }
 };
 

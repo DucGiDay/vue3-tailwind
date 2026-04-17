@@ -17,6 +17,7 @@ export const INVOICE_ENDPOINTS = {
   // Export
   EXPORT_XML: '/api/einvoice/v1/invoice/get-xml',
   EXPORT_PDF: '/api/einvoice/v1/invoice/get-pdf',
+  RESEND_EMAIL: '/api/einvoice/v1/invoice/resend-email',
 
   LIST_STORE_GROUP_BY_TAXCODE: '/api/einvoice/v1/invoice/list-store-group-by-taxcode',
 
