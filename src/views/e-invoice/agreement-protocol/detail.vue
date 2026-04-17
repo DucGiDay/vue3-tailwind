@@ -27,40 +27,40 @@
             </label>
             <div class="fb-flex-1">
               <InputText
-                v-model="agreement.origin_serial"
+                v-model="agreement.origin_pattern"
                 class="fb-w-full"
                 placeholder="Nhập mẫu số hóa đơn gốc"
                 size="small"
-                :invalid="!!error['origin_serial']"
-                @input="delete error['origin_serial']"
+                :invalid="!!error['origin_pattern']"
+                @input="delete error['origin_pattern']"
               />
-              <Message v-if="error['origin_serial']" severity="error" size="small" variant="simple">
-                {{ error['origin_serial'] }}
+              <Message v-if="error['origin_pattern']" severity="error" size="small" variant="simple">
+                {{ error['origin_pattern'] }}
               </Message>
             </div>
           </div>
 
           <div class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-0 md:fb-gap-4">
             <label class="fb-w-full md:fb-w-52 fb-text-sm fb-font-medium fb-text-gray-700">
-              Ký hiệu hóa đơn gốc
+              Ký hiệu
               <span class="fb-text-error">*</span>
             </label>
             <div class="fb-flex-1">
               <InputText
-                v-model="agreement.origin_pattern"
+                v-model="agreement.origin_serial"
                 class="fb-w-full"
-                placeholder="Nhập ký hiệu hóa đơn gốc"
+                placeholder="Nhập ký hiệu"
                 size="small"
-                :invalid="!!error['origin_pattern']"
-                @input="delete error['origin_pattern']"
+                :invalid="!!error['origin_serial']"
+                @input="delete error['origin_serial']"
               />
               <Message
-                v-if="error['origin_pattern']"
+                v-if="error['origin_serial']"
                 severity="error"
                 size="small"
                 variant="simple"
               >
-                {{ error['origin_pattern'] }}
+                {{ error['origin_serial'] }}
               </Message>
             </div>
           </div>
@@ -255,9 +255,9 @@
           (Thay thế cho hóa đơn điện tử số
           <span class="fb-font-semibold">{{ agreement.invoice_number_origin }}</span>
           , mẫu số
-          <span class="fb-font-semibold">{{ agreement.origin_serial }}</span>
-          , ký hiệu
           <span class="fb-font-semibold">{{ agreement.origin_pattern }}</span>
+          , ký hiệu
+          <span class="fb-font-semibold">{{ agreement.origin_serial }}</span>
           )
         </p>
 
@@ -362,8 +362,8 @@ const loading = ref(false);
 const agreement = reactive({
   merged_tran_id_origin: '',
   merged_tran_id_replace: '',
-  origin_serial: '', // Mẫu hóa đơn gốc
-  origin_pattern: '', // Ký hiệu HĐ gốc
+  origin_pattern: '', // Mẫu hóa đơn gốc
+  origin_serial: '', // Ký hiệu HĐ gốc
   replace_pattern: '', // Ký hiệu HĐ thay thế
   status: 0,
   invoice_number_origin: '', // Số HĐ gốc
@@ -477,8 +477,8 @@ const fillTestData = () => {
   Object.assign(agreement, {
     merged_tran_id_origin: `ORIGIN-${randomId}`,
     merged_tran_id_replace: `REPLACE-${randomId}`,
-    origin_serial: '1',
-    origin_pattern: '1C23MAA',
+    origin_pattern: '1',
+    origin_serial: '1C23MAA',
     replace_pattern: '1C24TBB',
     status: 0,
     invoice_number_origin: `000${randomId}`.slice(-7),

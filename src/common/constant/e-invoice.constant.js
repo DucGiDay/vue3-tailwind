@@ -7,6 +7,7 @@ export const INVOICE_STATUS = {
   invalid_invoices: 'Hóa đơn hợp lệ'
 };
 
+// Mapping text cho trạng thái hóa đơn
 export const VAT_PUBLISH_STATUS_MAPPING = {
   // # Hóa đơn chưa gửi TCTN
   0: 'Hóa đơn chưa gửi TCTN',
@@ -50,6 +51,7 @@ export const VAT_PUBLISH_STATUS_MAPPING = {
   '-1': 'Không xác định'
 };
 
+// Mapping màu cho trạng thái hóa đơn
 export const VAT_PUBLISH_STATUS_COLOR = {
   // # Hóa đơn chưa gửi TCTN
   0: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
@@ -104,22 +106,14 @@ export const VAT_PUBLISH_STATUS_COLOR = {
   '-1': { label: 'Không xác định', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' }
 };
 
+// Fiter trang thái trang Quản lý hóa đơn
 export const VAT_PUBLISH_STATUS_LIST = [
-  // { label: 'Hóa đơn chưa gửi TCTN', value: '0,1,2,3' },
-  // { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', value: '4000,4001,4002,4003' },
-  // { label: 'Hóa đơn bị TCTN từ chối', value: '8000,8001,8002,8003' },
-  // { label: 'Hóa đơn đã gửi TCTN', value: '12000,12001,12002,12003' },
-  // { label: 'Hóa đơn không hợp lệ', value: '24000,24001,24002,24003' },
-  // { label: 'Hóa đơn hợp lệ', value: '28000,28001,28002,28003,32000' },
-  // { label: 'Hóa đơn dự thảo', value: 'null' },
-  // { label: 'Không xác định', value: '-1' }
   { label: 'Hóa đơn nháp', value: '1' },
   { label: 'Đã phát hành', value: '2' },
   { label: 'Chưa đồng bộ', value: '3' },
   { label: 'Phát hành lỗi', value: '4' }
 ];
 
-// export const INVOICE_PARTNERS = ['iPOS-invoice', 'M-invoice', 'Me-invoice', 'S-invoice', 'VNPT-invoice'];
 export const INVOICE_PARTNERS = [
   { name: 'IPOS-INVOICE', code: 'IPOSINVOICE' },
   { name: 'M-INVOICE', code: 'MINVOICE' },
@@ -140,7 +134,12 @@ const blockExportVat0d = {
   type: 'checkbox'
 };
 
-const invTaxCode = { label: 'Mã số thuế', id: 'inv_tax_code', rules: ['required'], isReplaceSpace: true };
+const invTaxCode = {
+  label: 'Mã số thuế',
+  id: 'inv_tax_code',
+  rules: ['required'],
+  isReplaceSpace: true
+};
 
 const exportVatInvoiceDateIsTranDate = {
   label: 'Cho phép xuất VAT ngày xuất là thời gian in bill',

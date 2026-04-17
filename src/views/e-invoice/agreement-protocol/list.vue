@@ -10,17 +10,6 @@
     </template>
 
     <template #filters>
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn trạng thái"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
       <FbDateFilter @update:modelValue="filter" size="small" />
     </template>
 
@@ -201,8 +190,6 @@ const items = ref([]);
 const isLoading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
-const statusField = ref(null);
-const statusOptions = reactive([]);
 
 const visibleExportVat = ref(false);
 const currentSaleData = ref({});
@@ -215,8 +202,6 @@ const itemPreview = ref(null);
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
-  if (!filterStore?.report?.store_uid) return;
-
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
 

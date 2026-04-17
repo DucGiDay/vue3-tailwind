@@ -198,8 +198,6 @@ const itemPreview = ref(null);
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
-  if (!filterStore?.report?.store_uid) return;
-
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
 

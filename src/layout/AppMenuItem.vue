@@ -29,11 +29,9 @@ const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
 onMounted(() => {
-  console.log('props.item', props.item);
-  console.log('route', route);
-  // if (props.item.label === 'Quản lý sai sót') {
-  //   onActiveMenu(props.item);
-  // }
+  if (props.item.to && checkActiveRoute(props.item)) {
+    setActiveMenuItem(itemKey.value);
+  }
 });
 
 onBeforeMount(() => {
@@ -50,7 +48,8 @@ onBeforeMount(() => {
 watch(
   () => layoutState.activeMenuItem,
   (newVal) => {
-    isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
+    isActiveMenu.value =
+      newVal === itemKey.value || (newVal && newVal.startsWith(itemKey.value + '-'));
   }
 );
 
@@ -85,7 +84,7 @@ const onActiveMenu = (item) => {
 };
 
 function checkActiveRoute(item) {
-  return route.path === item.to || route.fullPath.startsWith(item?.startWith);
+  return route.path === item.to || (item?.startWith && route.fullPath.startsWith(item.startWith));
 }
 </script>
 
@@ -109,7 +108,12 @@ function checkActiveRoute(item) {
       class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md fb-flex fb-items-center fb-justify-between"
     >
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <IconChevronRight :class="isActiveMenu ? 'fb-rotate-[270deg]' : 'fb-rotate-[90deg]'" />
+      <IconChevronRight
+        :class="[
+          isActiveMenu ? 'fb-rotate-[270deg]' : 'fb-rotate-[90deg]',
+          'fb-transition-transform'
+        ]"
+      />
     </a>
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
