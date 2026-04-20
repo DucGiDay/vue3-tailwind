@@ -107,9 +107,9 @@
                     <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Nội dung chuyển khoản</p>
                     <button
                       class="fb-mt-2 fb-flex fb-items-center fb-gap-2 fb-bg-[#0560a6] fb-text-white fb-px-3 fb-py-1 fb-rounded-md fb-text-base fb-font-medium fb-cursor-pointer fb-border-0"
-                      @click="handleCopy(`TT${item?.depositCode || ''}`)"
+                      @click="handleCopy(`TT${item?.roCode || ''}`)"
                     >
-                      <span>TT{{ item?.depositCode || '' }}</span>
+                      <span>TT{{ item?.roCode || '' }}</span>
                       <svg
                         width="20"
                         height="20"
