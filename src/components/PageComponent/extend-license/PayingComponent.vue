@@ -134,8 +134,12 @@
                       </svg>
                     </button>
                   </div>
-                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                  <!-- <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
                     <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Mã phiếu thu</p>
+                    <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">{{ item.roCode }}</p>
+                  </div> -->
+                  <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
+                    <p class="fb-text-gray-500 fb-mb-0 fb-text-sm">Mã phiếu yêu cầu</p>
                     <p class="fb-font-medium fb-text-base fb-mt-2 fb-mb-0">{{ item.roCode }}</p>
                   </div>
                   <!-- <div class="fb-mt-3 fb-pb-3 fb-border-b fb-border-gray-200">
