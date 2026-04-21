@@ -156,7 +156,7 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     numPerPage: numPerPage.value,
     list_store_uid: globalStore.storesIdPermissionActive.join(','),
-    search: searchField.value,
+    textSearch: searchField.value,
     ...(route.query?.product_code ? { productCode: route.query?.product_code } : {})
   });
 

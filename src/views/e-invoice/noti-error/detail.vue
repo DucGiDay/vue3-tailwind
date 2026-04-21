@@ -189,6 +189,98 @@
       </FbTable>
     </div>
   </DetailView>
+  <Dialog
+    v-model:visible="showResponseDialog"
+    header="Thông báo"
+    modal
+    :style="{ width: '25rem' }"
+    :breakpoints="{ '1199px': '70vw', '575px': '90vw' }"
+  >
+    <div class="fb-flex fb-flex-col fb-gap-5">
+      <!-- Tóm tắt số lượng -->
+      <!-- <div class="fb-grid fb-grid-cols-2 fb-gap-3">
+        <div
+          class="fb-flex fb-flex-col fb-items-center fb-bg-success-50 fb-border fb-border-success-100 fb-p-3 fb-rounded-xl"
+        >
+          <span class="fb-text-success-600 fb-text-2xl fb-font-bold">
+            {{ responseCreate.success?.length || 0 }}
+          </span>
+          <span class="fb-text-success-700 fb-text-xs fb-font-medium">Thành công</span>
+        </div>
+        <div
+          class="fb-flex fb-flex-col fb-items-center fb-bg-error-50 fb-border fb-border-error-100 fb-p-3 fb-rounded-xl"
+        >
+          <span class="fb-text-error-600 fb-text-2xl fb-font-bold">
+            {{ responseCreate.failed?.length || 0 }}
+          </span>
+          <span class="fb-text-error-700 fb-text-xs fb-font-medium">Thất bại</span>
+        </div>
+      </div> -->
+
+      <!-- Chi tiết thành công -->
+      <!-- <div v-if="responseCreate.success?.length" class="fb-flex fb-flex-col fb-gap-2">
+        <div class="fb-flex fb-items-center fb-gap-2 fb-text-green-700 fb-font-semibold fb-text-sm">
+          <i class="fal fa-check-circle"></i>
+          <span>Danh sách thành công</span>
+        </div>
+        <div
+          class="fb-max-h-40 fb-overflow-y-auto fb-bg-gray-50 fb-border fb-border-gray-200 fb-rounded-lg fb-p-3"
+        >
+          <div
+            v-for="item in responseCreate.success"
+            :key="item.merged_tran_id"
+            class="fb-text-[0.8125rem] fb-mb-2 last:fb-mb-0 fb-text-gray-600 fb-flex fb-gap-2"
+          >
+            <span class="fb-font-semibold fb-text-green-600">{{ item.merged_tran_id }}</span>
+            <span class="fb-text-gray-400">|</span>
+            <span>{{ item.error || 'Xử lý thành công' }}</span>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Chi tiết thất bại -->
+      <div v-if="responseCreate.failed?.length" class="fb-flex fb-flex-col fb-gap-2">
+        <div class="fb-flex fb-items-center fb-gap-2 fb-text-error-700 fb-font-semibold fb-text-sm">
+          <i class="fal fa-exclamation-circle"></i>
+          <!-- <span>Danh sách thất bại</span> -->
+          <span>Có lỗi xảy ra vui lòng kiểm tra lại</span>
+        </div>
+        <div
+          class="fb-max-h-40 fb-overflow-y-auto fb-bg-gray-50 fb-border fb-border-gray-200 fb-rounded-lg fb-p-3"
+        >
+          <div
+            v-for="item in responseCreate.failed"
+            :key="item.merged_tran_id"
+            class="fb-text-[0.8125rem] fb-mb-2 last:fb-mb-0 fb-text-gray-600 fb-flex fb-gap-2"
+          >
+            <span class="fb-font-semibold fb-text-green-600">{{ item.merged_tran_id }}</span>
+            <span class="fb-text-gray-400">|</span>
+            <span>{{ item.error || 'Xử lý thành công' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template #footer>
+      <div class="fb-flex fb-justify-end fb-gap-2 fb-w-full">
+        <Button
+          label="Đóng"
+          @click="showResponseDialog = false"
+          variant="text"
+          raised
+          severity="secondary"
+          size="small"
+        />
+        <!-- <Button
+          label="Về trang danh sách"
+          @click="router.back()"
+          raised
+          severity="primary"
+          size="small"
+        /> -->
+      </div>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
@@ -226,6 +318,11 @@ const filterField = ref({
 const items = ref([]);
 const invoiceTypeList = computed(() => invoiceStore.invoiceTypeList || []);
 const errorTypeList = computed(() => invoiceStore.errorTypeList) || [];
+const showResponseDialog = ref(false);
+const responseCreate = ref({
+  success: [],
+  failed: []
+});
 
 const handleBack = () => {
   router.push({ path: '/e-invoice/noti-error' });
@@ -285,9 +382,12 @@ const handleSave = async () => {
     ...notiError.value,
     list_merged_tran_id: notiError.value.list_merged_tran_id.split(',').map((item) => item.trim())
   };
-  await invoiceService
-    .createNotiError(payload)
-    .then(() => {
+  try {
+    const res = await invoiceService.createNotiError(payload);
+    responseCreate.value = res.data;
+    if ((res?.data?.failed || []).length > 0) {
+      showResponseDialog.value = true;
+    } else {
       toast.add({
         severity: 'success',
         summary: 'Thành công',
@@ -295,19 +395,18 @@ const handleSave = async () => {
         life: 3000
       });
       router.back();
-    })
-    .catch((err) => {
-      console.error('Error:', err?.message);
-      toast.add({
-        severity: 'error',
-        summary: 'Lỗi hệ thống',
-        detail: err?.message || 'Không thể kết nối đến máy chủ',
-        life: 3000
-      });
-    })
-    .finally(() => {
-      loading.value = false;
+    }
+  } catch (err) {
+    console.error('Error:', err?.message);
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi hệ thống',
+      detail: err?.message || 'Không thể kết nối đến máy chủ',
+      life: 3000
     });
+  } finally {
+    loading.value = false;
+  }
 };
 
 let searchTimeout = null;
@@ -333,16 +432,10 @@ const filter = async () => {
     const res = await invoiceService.filterInvoiceByNumbers(payload);
     console.log(res);
 
-    if (res.data?.success) {
+    if (res?.data) {
       items.value = res.data || [];
     } else {
       console.error('Error:', res?.message);
-      // toast.add({
-      //   severity: 'error',
-      //   summary: 'Lỗi',
-      //   detail: res.data?.message || 'Có lỗi xảy ra khi lọc hóa đơn',
-      //   life: 3000
-      // });
     }
   } catch (err) {
     console.error('Error:', err?.message);
