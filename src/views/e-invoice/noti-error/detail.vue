@@ -45,23 +45,23 @@
               </label>
               <div class="fb-w-full md:fb-w-2/3">
                 <InputText
-                  v-model="notiError.merged_tran_id"
+                  v-model="notiError.list_merged_tran_id"
                   class="fb-w-full"
-                  :invalid="!!error['merged_tran_id']"
+                  :invalid="!!error['list_merged_tran_id']"
                   placeholder="Nhập mã đơn gộp"
                   size="small"
                   @input="
-                    delete error['merged_tran_id'];
+                    delete error['list_merged_tran_id'];
                     onFormChange();
                   "
                 />
                 <Message
-                  v-if="error['merged_tran_id']"
+                  v-if="error['list_merged_tran_id']"
                   severity="error"
                   size="small"
                   variant="simple"
                 >
-                  {{ error['merged_tran_id'] }}
+                  {{ error['list_merged_tran_id'] }}
                 </Message>
               </div>
             </div>
@@ -213,7 +213,7 @@ const loadingTable = ref(false);
 const error = ref({});
 
 const notiError = ref({
-  merged_tran_id: '',
+  list_merged_tran_id: '',
   reason: '',
   type_error: null,
   type_invoice: null
@@ -258,7 +258,7 @@ const handleSave = async () => {
       rules: ['required']
     },
     {
-      id: 'merged_tran_id',
+      id: 'list_merged_tran_id',
       rules: ['required']
     },
     {
@@ -281,8 +281,12 @@ const handleSave = async () => {
   }
 
   loading.value = true;
+  const payload = {
+    ...notiError.value,
+    list_merged_tran_id: notiError.value.list_merged_tran_id.split(',').map((item) => item.trim())
+  };
   await invoiceService
-    .createNotiError(notiError.value)
+    .createNotiError(payload)
     .then(() => {
       toast.add({
         severity: 'success',
