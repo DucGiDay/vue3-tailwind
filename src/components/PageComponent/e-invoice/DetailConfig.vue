@@ -251,10 +251,8 @@
 </template>
 
 <script setup>
-import {
-  INVOICE_PARTNERS,
-  STORE_CONNECT_PARTNER_CONFIG_KEYS
-} from '@/common/constant/e-invoice.constant';
+import { INVOICE_PARTNERS } from '@/common/constant/e-invoice.constant';
+import { STORE_CONNECT_PARTNER_CONFIG_KEYS } from '@/common/constant/e-invoice-config.constant';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useToast } from 'primevue/usetoast';

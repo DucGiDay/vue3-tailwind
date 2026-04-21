@@ -122,165 +122,130 @@ export const INVOICE_PARTNERS = [
   { name: 'VNPT-INVOICE', code: 'VNPTINVOICE' }
 ];
 
-const acceptZeroVatObj = {
-  label: 'Cho phép xuất vat 0%',
-  id: 'accept_zero_vat',
-  type: 'checkbox'
-};
+// Columns Tổng quan - Hóa đơn gần nhất
+export const LAST_BILL_TABLE_COLUMNS = [
+  { field: 'vat_invoice_series', header: 'Ký hiệu' },
+  { field: 'vat_invoice_number', header: 'Số hóa đơn điện tử' },
+  { field: 'merged_tran_id', header: 'Mã tra cứu' },
+  { field: 'vat_invoice_code', header: 'Mã CQT' },
+  { field: 'extra_data', header: 'Người mua' },
+  { field: 'vat_publish_status', header: 'Trạng thái' },
+  { field: 'vat_invoice_date', header: 'Ngày hóa đơn' }
+];
 
-const blockExportVat0d = {
-  label: 'Chặn xuất VAT với hóa đơn 0đ',
-  id: 'block_export_vat_0d',
-  type: 'checkbox'
-};
+// Columns Cấu hình - Danh sách cấu hình
+export const STORE_CONFIG_TABLE_COLUMNS = [
+  { field: 'store_name', header: 'Cửa hàng', frozen: true },
+  { field: 'partner_id', header: 'Đối tác' },
+  { field: 'fb_store_id', header: 'POS ID' },
+  { field: 'inv_user_name', header: 'Tài khoản' },
+  { field: 'inv_tax_code', header: 'Mã số thuế' },
+  { field: 'inv_series', header: 'Ký hiệu' },
+  { field: 'mau_hd', header: 'Mẫu hóa đơn' },
+  { field: 'version', header: 'Phiên bản' },
+  {
+    field: 'action',
+    header: '',
+    style: { padding: '0 0.5rem !important' },
+    frozen: true,
+    alignFrozen: 'right'
+  }
+];
 
-const invTaxCode = {
-  label: 'Mã số thuế',
-  id: 'inv_tax_code',
-  rules: ['required'],
-  isReplaceSpace: true
-};
+// Columns Quản lý hóa đơn
+export const INVOICE_MANAGE_TABLE_COLUMNS = [
+  { field: 'inv_series', header: 'Ký hiệu' },
+  { field: 'tran_id', header: 'Mã tra cứu' },
+  { field: 'vat_publish_status', header: 'Trạng thái' },
+  { field: 'vat_invoice_number', header: 'Số hóa đơn', classes: '!fb-text-muted-color' },
+  { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
+  { field: 'inv_buyerLegalName', header: 'Thông tin khách hàng' },
+  {
+    field: 'vat_invoice_date',
+    header: 'Ngày hóa đơn',
+    classes: '!fb-text-muted-color',
+    format: 'date'
+  },
+  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
+  {
+    field: 'invoice_type',
+    header: 'Loại hóa đơn',
+    classes: '!fb-text-muted-color'
+  },
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
+  }
+];
 
-const exportVatInvoiceDateIsTranDate = {
-  label: 'Cho phép xuất VAT ngày xuất là thời gian in bill',
-  id: 'export_vat_invoice_date_is_tran_date',
-  type: 'checkbox'
-};
+// Columns Hóa đơn bán hàng
+export const SALE_ORDER_TABLE_COLUMNS = [
+  {
+    field: 'tran_id',
+    header: 'Mã hóa đơn',
+    format: 'truncate',
+    frozen: true,
+    alignFrozen: 'left'
+  },
+  { field: 'vat_invoice_number', header: 'Số hóa đơn điện tử' },
+  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
+  { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
+  { field: 'staff', header: 'Nhân viên' },
+  { field: 'table_name', header: 'Bàn' },
+  { field: 'area_name', header: 'Khu vực' },
+  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
+  {
+    field: 'start_date',
+    header: 'Thời gian vào',
+    format: 'datetime'
+  },
+  {
+    field: 'end_date',
+    header: 'Thời gian ra'
+  }
+];
 
-const version = {
-  label: 'Phiên bản',
-  id: 'version',
-  type: 'radio',
-  options: [
-    { text: 'Version 1', value: 'invoice_v1' },
-    { text: 'Version 2', value: 'invoice_v2' }
-  ]
-};
+// Columns Biên bản thỏa thuận - Danh sách
+export const AGREEMENT_PROTOCOL_TABLE_COLUMNS = [
+  { field: 'customer', header: 'Khách hàng' },
+  { field: 'origin_invoice', header: 'Hóa đơn sai' },
+  { field: 'replace_invoice', header: 'Hóa đơn xử lý' },
+  {
+    field: 'record_invoice',
+    header: 'Biên bản'
+  },
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
+  }
+];
 
-const showDiscountByItem = {
-  label: 'Mẫu HDDT hiển thị chiết khấu theo từng mặt hàng',
-  id: 'config_template_v2',
-  type: 'checkbox'
-};
-
-const moneyConfigMeinvoice = {
-  label: 'Cho phép thập phân đơn giá, thành tiền',
-  id: 'money_config_meinvoice',
-  type: 'checkbox'
-};
-
-export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
-  MINVOICE: [
-    invTaxCode,
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
-    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    {
-      label: 'Thông tư',
-      id: 'inv_circulars',
-      type: 'radio',
-      defaultValue: 'circulars_78',
-      hide: () => true,
-      options: [
-        { text: 'Thông tư 32', value: 'circulars_32' },
-        { text: 'Thông tư 78', value: 'circulars_78' }
-      ]
-    },
-    version
-    // showDiscountByItem,
-    // acceptZeroVatObj,
-    // {
-    //   label: 'Cho phép Ký tự động',
-    //   id: 'enable_savesign',
-    //   type: 'checkbox'
-    // },
-    // blockExportVat0d,
-
-    // exportVatInvoiceDateIsTranDate,
-    // moneyConfigMeinvoice
-  ],
-  MEINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
-    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
-    invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    version
-    // acceptZeroVatObj,
-    // {
-    //   label: 'Cho phép Ký tự động',
-    //   tooltip:
-    //     '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Khách hàng muốn tự động gửi HĐ lên CQT, vui lòng liên hệ kinh doanh Misa để hỗ trợ cấu hình trên Me-Invoice</li></ul>',
-    //   id: 'enable_savesign',
-    //   type: 'checkbox',
-    //   hide: (c) => c.version == 'invoice_v1'
-    // },
-    // blockExportVat0d,
-    // exportVatInvoiceDateIsTranDate,
-    // {
-    //   label: 'Cho phép thập phân đơn giá, thành tiền',
-    //   id: 'money_config_meinvoice',
-    //   type: 'checkbox'
-    // },
-    // {
-    //   label: 'Cho phép gửi mail sau khi xuất vat',
-    //   id: 'is_send_email',
-    //   type: 'checkbox'
-    // }
-  ],
-  SINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
-    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
-    invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    // acceptZeroVatObj,
-    // blockExportVat0d,
-    // exportVatInvoiceDateIsTranDate,
-    // moneyConfigMeinvoice,
-    version
-  ],
-  VNPTINVOICE: [
-    { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt', rules: ['required'] },
-    invTaxCode,
-    { label: 'Tài khoản admin', id: 'inv_user_name', rules: ['required'] },
-    { label: 'Mật khẩu admin', id: 'inv_password', rules: ['required'] },
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
-    { label: 'Tài khoản service', id: 'inv_user_name_service', rules: ['required'] },
-    { label: 'Mật khẩu service', id: 'inv_password_service', rules: ['required'] },
-    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    {
-      ...version,
-      label: 'Phiên bản',
-      tooltip:
-        '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>'
-    }
-    // acceptZeroVatObj,
-    // blockExportVat0d
-  ],
-  IPOSINVOICE: [
-    { label: 'Tài khoản', id: 'inv_user_name', rules: ['required'] },
-    { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
-    invTaxCode,
-    { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    { label: 'Mẫu hoá đơn', id: 'inv_template_id', rules: ['required'] },
-    {
-      label: 'Phiên bản',
-      id: 'version',
-      type: 'radio',
-      options: [
-        { text: 'Tạo hóa đơn', value: 'invoice_v1' },
-        { text: 'Xuất hóa đơn', value: 'invoice_v2' }
-      ]
-    }
-    // showDiscountByItem,
-    // acceptZeroVatObj,
-    // {
-    //   label: 'Cho phép Ký tự động',
-    //   tooltip:
-    //     '<ul><li>+ Điều kiện áp dụng: Khách hàng cần sử dụng chữ ký HSM</li><li>+ Vui lòng liên hệ kinh doanh iPOS để được hỗ trợ cấu hình</li></ul>',
-    //   id: 'enable_savesign',
-    //   type: 'checkbox',
-    //   hide: (c) => c.version == 'invoice_v2'
-    // },
-    // blockExportVat0d,
-    // exportVatInvoiceDateIsTranDate
-  ]
-};
+// Columns Thông báo sai sót - Danh sách
+export const NOTI_ERROR_TABLE_COLUMNS = [
+  { field: 'serial', header: 'Ký hiệu' },
+  { field: 'reference_key', header: 'Mã tra cứu' },
+  { field: 'invoice_number_error', header: 'Số hóa đơn' },
+  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'status', header: 'Trạng thái' },
+  { field: 'type_error', header: 'Loại sai sót' },
+  { field: 'extra_data', header: 'Lý do' },
+  {
+    field: 'created_at',
+    header: 'Ngày tạo',
+    classes: '!fb-text-muted-color',
+    format: 'date'
+  },
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '5rem', minWidth: '5rem', padding: '0 0 0 0.25rem !important' }
+  }
+];

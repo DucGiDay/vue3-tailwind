@@ -9,7 +9,7 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <!-- <Select
           v-model="partner"
-          :options="partnerOptions"
+          :options="INVOICE_PARTNERS"
           placeholder="Chọn đối tác"
           optionLabel="name"
           optionValue="code"
@@ -21,7 +21,7 @@
 
   <div class="!fb-p-0">
     <FbTable
-      :columns="columns"
+      :columns="STORE_CONFIG_TABLE_COLUMNS"
       :items="items"
       :stripedRows="false"
       :isLoading="isLoading"
@@ -51,32 +51,12 @@
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { ref, computed, onMounted } from 'vue';
-import { INVOICE_PARTNERS } from '@/common/constant/e-invoice.constant';
+import { INVOICE_PARTNERS, STORE_CONFIG_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
 import DetailConfig from '@/components/PageComponent/e-invoice/DetailConfig.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
-
-// Constants
-const partnerOptions = INVOICE_PARTNERS;
-const columns = [
-  { field: 'store_name', header: 'Cửa hàng', frozen: true },
-  { field: 'partner_id', header: 'Đối tác' },
-  { field: 'fb_store_id', header: 'POS ID' },
-  { field: 'inv_user_name', header: 'Tài khoản' },
-  { field: 'inv_tax_code', header: 'Mã số thuế' },
-  { field: 'inv_series', header: 'Ký hiệu' },
-  { field: 'mau_hd', header: 'Mẫu hóa đơn' },
-  { field: 'version', header: 'Phiên bản' },
-  {
-    field: 'action',
-    header: '',
-    style: { padding: '0 0.5rem !important' },
-    frozen: true,
-    alignFrozen: 'right'
-  }
-];
 
 // State
 const partner = ref(null);

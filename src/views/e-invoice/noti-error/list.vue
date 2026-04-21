@@ -28,7 +28,7 @@
 
     <template #table>
       <FbTable
-        :columns="columns"
+        :columns="NOTI_ERROR_TABLE_COLUMNS"
         :items="items"
         enablePagination
         :stripedRows="false"
@@ -137,7 +137,10 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import FbTableView from '@/components/Common/FbTableView.vue';
-import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import {
+  VAT_PUBLISH_STATUS_COLOR,
+  NOTI_ERROR_TABLE_COLUMNS
+} from '@/common/constant/e-invoice.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 
@@ -151,30 +154,7 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
-// constants
 const toast = useToast();
-const columns = [
-  { field: 'serial', header: 'Ký hiệu' },
-  { field: 'reference_key', header: 'Mã tra cứu' },
-  { field: 'invoice_number_error', header: 'Số hóa đơn' },
-  { field: 'pattern', header: 'Mẫu số' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'type_error', header: 'Loại sai sót' },
-  { field: 'extra_data', header: 'Lý do' },
-  {
-    field: 'created_at',
-    header: 'Ngày tạo',
-    classes: '!fb-text-muted-color',
-    format: 'date'
-  },
-  {
-    field: 'action',
-    header: '',
-    frozen: true,
-    alignFrozen: 'right',
-    style: { width: '5rem', minWidth: '5rem', padding: '0 0 0 0.25rem !important' }
-  }
-];
 
 // State
 const searchField = ref(null);

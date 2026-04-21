@@ -15,7 +15,7 @@
 
     <template #table>
       <FbTable
-        :columns="columns"
+        :columns="AGREEMENT_PROTOCOL_TABLE_COLUMNS"
         :items="items"
         enablePagination
         :stripedRows="false"
@@ -153,9 +153,9 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
-import FbTableView from '@/components/Common/FbTableView.vue';
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/common/utils/common';
+import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
 
 const router = useRouter();
 
@@ -164,24 +164,7 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
-// Constants
 const toast = useToast();
-const columns = [
-  { field: 'customer', header: 'Khách hàng' },
-  { field: 'origin_invoice', header: 'Hóa đơn sai' },
-  { field: 'replace_invoice', header: 'Hóa đơn xử lý' },
-  {
-    field: 'record_invoice',
-    header: 'Biên bản'
-  },
-  {
-    field: 'action',
-    header: '',
-    frozen: true,
-    alignFrozen: 'right',
-    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
-  }
-];
 
 // State
 const searchField = ref(null);

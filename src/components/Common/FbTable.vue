@@ -281,7 +281,7 @@
   <Dialog
     header="Xác nhận"
     v-model:visible="displayConfirmation"
-    :style="{ width: '350px' }"
+    :style="{ width: '21.875rem' }"
     :modal="true"
   >
     <div class="fb-flex fb-items-center fb-justify-center">

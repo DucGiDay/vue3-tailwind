@@ -80,3 +80,13 @@ export const ORDER_STATUS_FILTER_LIST = [
     code: ORDER_STATUS.WAIT_QUALIFY
   }
 ];
+
+export const EXTEND_LICENSE_TABLE_COLUMNS = [
+  { field: 'roCode', header: 'Mã hóa đơn' },
+  { field: 'contactName', header: 'Người liên hệ' },
+  { field: 'contactPhone', header: 'Số điện thoại' },
+  { field: 'companyTaxEmail', header: 'Email' },
+  { field: 'amount', header: 'Tổng tiền' },
+  { field: 'status', header: 'Trạng thái' },
+  { field: 'action', header: '', style: { padding: '0 !important' } }
+];

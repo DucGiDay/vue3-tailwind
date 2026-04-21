@@ -41,7 +41,7 @@
     <template #table>
       <FbTable
         v-model:selection="saleSelecteds"
-        :columns="columns"
+        :columns="SALE_ORDER_TABLE_COLUMNS"
         :items="sales"
         enableCheckbox
         enablePagination
@@ -114,33 +114,6 @@ import FbTableView from '@/components/Common/FbTableView.vue';
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
-
-// Constants
-const columns = [
-  {
-    field: 'tran_id',
-    header: 'Mã hóa đơn',
-    format: 'truncate',
-    frozen: true,
-    alignFrozen: 'left'
-  },
-  { field: 'vat_invoice_number', header: 'Số hóa đơn điện tử' },
-  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
-  { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
-  { field: 'staff', header: 'Nhân viên' },
-  { field: 'table_name', header: 'Bàn' },
-  { field: 'area_name', header: 'Khu vực' },
-  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
-  {
-    field: 'start_date',
-    header: 'Thời gian vào',
-    format: 'datetime'
-  },
-  {
-    field: 'end_date',
-    header: 'Thời gian ra'
-  }
-];
 
 // State
 const searchField = ref(null);

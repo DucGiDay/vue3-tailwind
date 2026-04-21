@@ -30,7 +30,7 @@
     <template #table>
       <FbTable
         v-model:selection="saleSelecteds"
-        :columns="columns"
+        :columns="INVOICE_MANAGE_TABLE_COLUMNS"
         :items="sales"
         enablePagination
         :stripedRows="false"
@@ -104,6 +104,24 @@
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
         <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-pt-2">
+            <Button
+              @click="onDownloadPDF(itemPreview)"
+              :loading="loadingPdfTranId === itemPreview.tran_id && pdfAction === 'download'"
+              raised
+            >
+              Tải xuống
+              <ProgressSpinner
+                v-if="loadingPdfTranId === itemPreview.tran_id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
       </Dialog>
 
       <ModalResendMail v-model:visible="showResendEmail" @send="onSendEmail" />
@@ -123,9 +141,9 @@ import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMai
 import FbTableView from '@/components/Common/FbTableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
-  VAT_PUBLISH_STATUS_LIST
+  VAT_PUBLISH_STATUS_LIST,
+  INVOICE_MANAGE_TABLE_COLUMNS
 } from '@/common/constant/e-invoice.constant';
-import { BILL_STATUS } from '@/common/constant/common.constant';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
@@ -142,36 +160,8 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
-// constants
 const toast = useToast();
 const confirm = useConfirm();
-const columns = [
-  { field: 'inv_series', header: 'Ký hiệu' },
-  { field: 'tran_id', header: 'Mã tra cứu' },
-  { field: 'vat_publish_status', header: 'Trạng thái' },
-  { field: 'vat_invoice_number', header: 'Số hóa đơn', classes: '!fb-text-muted-color' },
-  { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
-  { field: 'inv_buyerLegalName', header: 'Thông tin khách hàng' },
-  {
-    field: 'vat_invoice_date',
-    header: 'Ngày hóa đơn',
-    classes: '!fb-text-muted-color',
-    format: 'date'
-  },
-  { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
-  {
-    field: 'invoice_type',
-    header: 'Loại hóa đơn',
-    classes: '!fb-text-muted-color'
-  },
-  {
-    field: 'action',
-    header: '',
-    frozen: true,
-    alignFrozen: 'right',
-    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' }
-  }
-];
 
 // State
 const searchField = ref(null);
@@ -192,6 +182,7 @@ const pdfAction = ref(''); // 'preview' | 'download'
 const showPreview = ref(false);
 const showResendEmail = ref(null);
 const previewUrl = ref(null);
+const itemPreview = ref(null);
 
 const visibleExportVat = ref(false);
 const currentSaleData = ref({});
@@ -428,9 +419,12 @@ const fetchAndCachePDF = async (item) => {
 
 const onPreviewPDF = async (item) => {
   pdfAction.value = 'preview';
+  itemPreview.value = null;
+
   const url = await fetchAndCachePDF(item);
   if (url) {
     previewUrl.value = url;
+    itemPreview.value = item;
     showPreview.value = true;
   }
 };

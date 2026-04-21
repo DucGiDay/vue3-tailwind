@@ -134,6 +134,14 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.saleNotSyncVat.error = err?.message;
       }
     },
+    async getSaleByListTranId(params) {
+      try {
+        const response = await invoiceService.getSaleByListTranId(params);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
     async getNotiError(params) {
       try {
         const response = await invoiceService.getNotiErrorList(params);

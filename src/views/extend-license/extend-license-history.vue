@@ -8,7 +8,7 @@
       >
         <template #table>
           <FbTable
-            :columns="tableColumns"
+            :columns="EXTEND_LICENSE_TABLE_COLUMNS"
             :is-loading="isLoading"
             :items="orderHistory.data"
             enablePagination
@@ -98,7 +98,8 @@
 <script setup>
 import {
   ORDER_STATUS_FILTER_LIST,
-  ORDER_STATUS_COLOR
+  ORDER_STATUS_COLOR,
+  EXTEND_LICENSE_TABLE_COLUMNS
 } from '@/common/constant/extend-license.constant';
 import { useExtendLicenseStore } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -113,23 +114,10 @@ import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-
-// Constants
-const tableColumns = [
-  { field: 'roCode', header: 'Mã hóa đơn' },
-  { field: 'contactName', header: 'Người liên hệ' },
-  { field: 'contactPhone', header: 'Số điện thoại' },
-  { field: 'companyTaxEmail', header: 'Email' },
-  { field: 'amount', header: 'Tổng tiền' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '', style: { padding: '0 !important' } }
-];
 const toast = useToast();
 
 // States
 const searchField = ref('');
-const statusField = ref(null);
-const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }, ...ORDER_STATUS_FILTER_LIST]);
 const statusMap = (status) => {
   return ORDER_STATUS_COLOR[status];
 };

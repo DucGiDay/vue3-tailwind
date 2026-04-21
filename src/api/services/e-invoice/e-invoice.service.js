@@ -10,6 +10,7 @@ export const invoiceService = {
     api.get(INVOICE_ENDPOINTS.TOTAL_QUANTITY_INVOICES, { params }),
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
+  getSaleByListTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_LIST_TRAN_ID, { params }),
 
   // Quản lý hóa đơn
   getVatInvoice: (params) => api.get(INVOICE_ENDPOINTS.VAT_INVOCIE, { params }),

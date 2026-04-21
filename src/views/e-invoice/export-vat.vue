@@ -69,7 +69,7 @@
                   </span>
                 </template> -->
                 <template #dropdownicon>
-                  <IconChevrondown :class="{ 'fb-rotate-180': showSelect }" />
+                  <IconChevronDown :class="{ 'fb-rotate-180': showSelect }" />
                 </template>
 
                 <template #empty>Chưa có thông tin đã lưu nào.</template>
