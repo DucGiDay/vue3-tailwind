@@ -138,6 +138,7 @@
       <div class="fb-w-full fb-flex fb-justify-end">
         <Button
           class="fb-bg-white fb-text-blue-600 fb-border fb-border-blue-600 hover:fb-bg-blue-50"
+          @click="exportSale"
         >
           <IconDownload color="#fff" />
           Xuất hoá đơn
@@ -163,6 +164,9 @@ import { formatDate, formatCurrency } from '@/common/utils/common';
 import ModalSaleChangeLog from '@/components/PageComponent/shared/ModalSaleChangeLog.vue';
 import BillContent from '@/components/PageComponent/shared/BillContent.vue';
 import { useToast } from 'primevue';
+import ExcelJS from 'exceljs';
+import saveAs from 'file-saver';
+
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const toast = useToast();
@@ -265,6 +269,216 @@ const getData = async () => {
     console.error(res.error);
   }
   isLoading.value = false;
+};
+
+const exportSale = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Báo cáo bán hàng');
+
+  // 1. Định nghĩa Row 1: Những ô không gộp thì để tên luôn, những ô gộp ngang thì để tên ở ô đầu tiên
+  const row1Values = [
+    'STT',
+    'Cửa hàng',
+    'Mã ca',
+    'Mã hoá đơn',
+    'Số hoá đơn',
+    'Số hoá đơn điện tử',
+    'Ngày vào',
+    'Giờ vào',
+    'Ngày ra',
+    'Giờ ra',
+    'Thời gian xuất hóa đơn VAT',
+    'Bàn',
+    'Trạng thái',
+    'Mã hoá đơn gốc',
+    'Tên hàng',
+    'Số lượng',
+    'Đơn vị',
+    'Đơn giá',
+    'Thành tiền',
+    'Tổng tiền',
+    'Giảm giá',
+    'Phí dịch vụ',
+    'VAT',
+    'Thuế khấu trừ',
+    'Chiết khấu thanh toán',
+    'Hoa hồng',
+    'Phí vận chuyển',
+    'Số khách',
+    'Loại thành viên',
+    'Tên khách',
+    'SĐT',
+    'Địa chỉ',
+    'Ghi chú',
+    'Tổng hóa đơn',
+    'Mã giảm giá',
+    '', // Cột 35, 36
+    'Phương thức thanh toán',
+    '',
+    '',
+    '' // Cột 37, 38, 39, 40
+  ];
+
+  // 2. Định nghĩa Row 2: Chỉ điền tên cho các cột con của phần gộp
+  const row2Values = Array(34).fill(''); // 34 cột đầu để trống để gộp dọc
+  row2Values[34] = 'Tên voucher'; // Cột 35
+  row2Values[35] = 'Thành tiền voucher'; // Cột 36
+  row2Values[36] = 'Tên PTTT'; // Cột 37
+  row2Values[37] = 'Mã thanh toán đối tác';
+  row2Values[38] = 'Thành tiền';
+  row2Values[39] = 'Số hoá đơn đối tác';
+
+  const headerRow1 = worksheet.addRow(row1Values);
+  const headerRow2 = worksheet.addRow(row2Values);
+
+  // 3. Thực hiện Merge Cells (Gộp ô)
+  // Gộp dọc cho 34 cột đầu (từ Row 1 đến Row 2)
+  for (let i = 1; i <= 34; i++) {
+    worksheet.mergeCells(1, i, 2, i);
+  }
+  // Gộp ngang cho "Mã giảm giá" (Cột 35-36)
+  worksheet.mergeCells(1, 35, 1, 36);
+  // Gộp ngang cho "Phương thức thanh toán" (Cột 37-40)
+  worksheet.mergeCells(1, 37, 1, 40);
+
+  // 4. Styling cho Header
+  [headerRow1, headerRow2].forEach((row) => {
+    row.eachCell((cell) => {
+      cell.font = { bold: true };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '79abe3' }
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+  });
+
+  // 5. Thêm dữ liệu từ sales.value
+  sales.value.forEach((item, index) => {
+    const details = item.sale_detail || [];
+    const payments = item.sale_payment_method || [];
+    const maxCount = Math.max(details.length, payments.length);
+    const rowCount = maxCount === details.length ? maxCount + 1 : maxCount;
+    // const rowCount = maxCount;
+
+    for (let dIndex = 0; dIndex < rowCount; dIndex++) {
+      const detailItem = details[dIndex-1];
+      // const detailItem = details[dIndex];
+      const salePaymentMethod = payments[dIndex];
+      // Chỉ hiển thị thông tin chung ở dòng đầu tiên (dIndex === 0)
+      const isFirstDetail = dIndex === 0;
+
+      // Hiển thị detail từ dòng thứ 2 trở đi
+      const isShowSaleDetail = dIndex > 0;
+      // const isShowSaleDetail = true;
+
+      const rowData = [
+        isFirstDetail ? index + 1 : '', // STT
+        isFirstDetail ? globalStore.storesById?.[item.store_uid]?.store_name || '' : '', // Cửa hàng
+        isFirstDetail ? item.shift_id : '', // Mã ca
+        isFirstDetail ? item.tran_id : '', // Mã hoá đơn
+        isFirstDetail ? item.tran_no : '', // Số hoá đơn
+        isFirstDetail ? item.vat_invoice_number : '', // Số hoá đơn điện tử
+        isFirstDetail ? formatDate(item.start_date) : '', // Ngày vào
+        isFirstDetail ? formatDate(item.start_date, 'HH:mm') : '', // Giờ vào
+        isFirstDetail ? formatDate(item.tran_date) : '', // Ngày ra
+        isFirstDetail ? formatDate(item.tran_date, 'HH:mm') : '', // Giờ ra
+        isFirstDetail ? formatDate(item.vat_invoice_date) : '', // Thời gian VAT
+        isFirstDetail ? item.table_name : '', // Bàn
+        isFirstDetail ? item.state_action_bill : '', // Trạng thái
+        isFirstDetail ? item.origin_tran_id : '', // Mã hoá đơn gốc
+
+        // --- DATA CHI TIẾT ---
+        isShowSaleDetail ? detailItem?.item_name || '' : '',
+        isShowSaleDetail ? detailItem?.quantity || '' : '',
+        isShowSaleDetail ? detailItem?.unit_id || '' : '',
+        isShowSaleDetail ? detailItem?.price || '' : '',
+        isShowSaleDetail ? detailItem?.amount_all_topping || '' : '',
+        // ----------------------
+
+        isFirstDetail ? calTotalItemPrice(details) : '', // Tổng tiền hàng
+        isFirstDetail ? (item.amount_discount_detail || 0) + (item.amount_discount_price || 0) : '', // Giảm giá
+        isFirstDetail ? item.service_charge_amount || 0 : '',
+        isFirstDetail ? item.vat_amount || 0 : '',
+        isFirstDetail ? item.deduct_tax_amount || 0 : '',
+        isFirstDetail
+          ? isDiscountPaymentTovoucher(item)
+            ? 0 - (item?.voucher_amount || 0)
+            : 0 - (item?.discount_extra_amount || 0)
+          : '',
+        isFirstDetail ? item.commission_amount || 0 : '',
+        isFirstDetail ? item.ship_fee_amount || 0 : '',
+        isFirstDetail ? item?.extra_data?.peo_count || '' : '',
+        isFirstDetail ? item?.extra_data?.Membership_Type_Name || '' : '',
+        isFirstDetail ? item?.extra_data?.customer_name || '' : '',
+        isFirstDetail ? item?.extra_data?.customer_phone || '' : '',
+        isFirstDetail ? item?.extra_data?.customer_address || '' : '',
+        isFirstDetail ? item.sale_note || '' : '',
+        isFirstDetail ? item.total_amount || 0 : '',
+
+        // Mã giảm giá
+        isFirstDetail ? item.voucher_name || '' : '',
+        isFirstDetail
+          ? item.voucher_name
+            ? isDiscountPaymentTovoucher(item)
+              ? 0
+              : 0 - (item.voucher_amount || 0)
+            : ''
+          : '',
+
+        // Phương thức thanh toán
+        salePaymentMethod?.payment_method_name || '',
+        salePaymentMethod?.tran_id_of_partner || salePaymentMethod?.trace_no || '',
+        salePaymentMethod?.payment_method_name ? salePaymentMethod?.payment_amount || 0 : '',
+        isFirstDetail ? item?.extra_data?.tran_no_partner || '' : ''
+      ];
+
+      const row = worksheet.addRow(rowData);
+
+      // --- LOGIC BORDER ---
+      const isLastRowOfItem = dIndex === rowCount - 1;
+
+      row.eachCell((cell, colNumber) => {
+        cell.border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+
+        if (isLastRowOfItem) {
+          cell.border.bottom = { style: 'thin' };
+        }
+
+        // Format số tiền
+        if ([16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 34, 36, 38, 39].includes(colNumber)) {
+          cell.numFmt = '#,##0';
+        }
+      });
+    }
+  });
+
+  // 6. Xuất file (Sử dụng code thuần, không cần file-saver nếu bạn muốn bỏ)
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buffer]), 'data.xlsx');
+};
+
+const isDiscountPaymentTovoucher = (sale) => {
+  return (
+    !(sale && sale.voucher_code && (sale.voucher_amount > 0 || sale.voucher_extra > 0)) ||
+    (sale && sale.voucher_code && sale.voucher_amount_paid > 0)
+  );
+};
+
+const calTotalItemPrice = (items) => {
+  return items?.length > 0
+    ? items.map((item) => item.amount_all_topping || 0).reduce((prev, next) => prev + next, 0)
+    : 0;
 };
 
 /**
