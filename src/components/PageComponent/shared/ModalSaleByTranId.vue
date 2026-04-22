@@ -275,7 +275,6 @@ const exportSale = async () => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Báo cáo bán hàng');
 
-  // 1. Định nghĩa Row 1: Những ô không gộp thì để tên luôn, những ô gộp ngang thì để tên ở ô đầu tiên
   const row1Values = [
     'STT',
     'Cửa hàng',
@@ -312,18 +311,17 @@ const exportSale = async () => {
     'Ghi chú',
     'Tổng hóa đơn',
     'Mã giảm giá',
-    '', // Cột 35, 36
+    '',
     'Phương thức thanh toán',
     '',
     '',
-    '' // Cột 37, 38, 39, 40
+    ''
   ];
 
-  // 2. Định nghĩa Row 2: Chỉ điền tên cho các cột con của phần gộp
-  const row2Values = Array(34).fill(''); // 34 cột đầu để trống để gộp dọc
-  row2Values[34] = 'Tên voucher'; // Cột 35
-  row2Values[35] = 'Thành tiền voucher'; // Cột 36
-  row2Values[36] = 'Tên PTTT'; // Cột 37
+  const row2Values = Array(34).fill('');
+  row2Values[34] = 'Tên voucher';
+  row2Values[35] = 'Thành tiền voucher';
+  row2Values[36] = 'Tên PTTT';
   row2Values[37] = 'Mã thanh toán đối tác';
   row2Values[38] = 'Thành tiền';
   row2Values[39] = 'Số hoá đơn đối tác';
@@ -331,25 +329,15 @@ const exportSale = async () => {
   const headerRow1 = worksheet.addRow(row1Values);
   const headerRow2 = worksheet.addRow(row2Values);
 
-  // 3. Thực hiện Merge Cells (Gộp ô)
-  // Gộp dọc cho 34 cột đầu (từ Row 1 đến Row 2)
-  for (let i = 1; i <= 34; i++) {
-    worksheet.mergeCells(1, i, 2, i);
-  }
-  // Gộp ngang cho "Mã giảm giá" (Cột 35-36)
+  // Merge, format cho header
+  for (let i = 1; i <= 34; i++) worksheet.mergeCells(1, i, 2, i);
   worksheet.mergeCells(1, 35, 1, 36);
-  // Gộp ngang cho "Phương thức thanh toán" (Cột 37-40)
   worksheet.mergeCells(1, 37, 1, 40);
 
-  // 4. Styling cho Header
   [headerRow1, headerRow2].forEach((row) => {
     row.eachCell((cell) => {
       cell.font = { bold: true };
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '79abe3' }
-      };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '79abe3' } };
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       cell.border = {
         top: { style: 'thin' },
@@ -360,51 +348,41 @@ const exportSale = async () => {
     });
   });
 
-  // 5. Thêm dữ liệu từ sales.value
+  let currentRow = 3;
   sales.value.forEach((item, index) => {
     const details = item.sale_detail || [];
     const payments = item.sale_payment_method || [];
-    const maxCount = Math.max(details.length, payments.length);
-    const rowCount = maxCount === details.length ? maxCount + 1 : maxCount;
-    // const rowCount = maxCount;
+    const rowCount = Math.max(details.length, payments.length);
 
     for (let dIndex = 0; dIndex < rowCount; dIndex++) {
-      const detailItem = details[dIndex-1];
-      // const detailItem = details[dIndex];
+      const detailItem = details[dIndex];
       const salePaymentMethod = payments[dIndex];
-      // Chỉ hiển thị thông tin chung ở dòng đầu tiên (dIndex === 0)
       const isFirstDetail = dIndex === 0;
 
-      // Hiển thị detail từ dòng thứ 2 trở đi
-      const isShowSaleDetail = dIndex > 0;
-      // const isShowSaleDetail = true;
-
       const rowData = [
-        isFirstDetail ? index + 1 : '', // STT
-        isFirstDetail ? globalStore.storesById?.[item.store_uid]?.store_name || '' : '', // Cửa hàng
-        isFirstDetail ? item.shift_id : '', // Mã ca
-        isFirstDetail ? item.tran_id : '', // Mã hoá đơn
-        isFirstDetail ? item.tran_no : '', // Số hoá đơn
-        isFirstDetail ? item.vat_invoice_number : '', // Số hoá đơn điện tử
-        isFirstDetail ? formatDate(item.start_date) : '', // Ngày vào
-        isFirstDetail ? formatDate(item.start_date, 'HH:mm') : '', // Giờ vào
-        isFirstDetail ? formatDate(item.tran_date) : '', // Ngày ra
-        isFirstDetail ? formatDate(item.tran_date, 'HH:mm') : '', // Giờ ra
-        isFirstDetail ? formatDate(item.vat_invoice_date) : '', // Thời gian VAT
-        isFirstDetail ? item.table_name : '', // Bàn
-        isFirstDetail ? item.state_action_bill : '', // Trạng thái
-        isFirstDetail ? item.origin_tran_id : '', // Mã hoá đơn gốc
+        isFirstDetail ? index + 1 : '',
+        isFirstDetail ? globalStore.storesById?.[item.store_uid]?.store_name || '' : '',
+        isFirstDetail ? item.shift_id : '',
+        isFirstDetail ? item.tran_id : '',
+        isFirstDetail ? item.tran_no : '',
+        isFirstDetail ? item.vat_invoice_number : '',
+        isFirstDetail ? formatDate(item.start_date) : '',
+        isFirstDetail ? formatDate(item.start_date, 'HH:mm') : '',
+        isFirstDetail ? formatDate(item.tran_date) : '',
+        isFirstDetail ? formatDate(item.tran_date, 'HH:mm') : '',
+        isFirstDetail ? formatDate(item.vat_invoice_date) : '',
+        isFirstDetail ? item.table_name : '',
+        isFirstDetail ? item.state_action_bill : '',
+        isFirstDetail ? item.origin_tran_id : '',
 
-        // --- DATA CHI TIẾT ---
-        isShowSaleDetail ? detailItem?.item_name || '' : '',
-        isShowSaleDetail ? detailItem?.quantity || '' : '',
-        isShowSaleDetail ? detailItem?.unit_id || '' : '',
-        isShowSaleDetail ? detailItem?.price || '' : '',
-        isShowSaleDetail ? detailItem?.amount_all_topping || '' : '',
-        // ----------------------
+        detailItem?.item_name || '',
+        detailItem?.quantity || '',
+        detailItem?.unit_id || '',
+        detailItem?.price || '',
+        detailItem?.amount_all_topping || '',
 
-        isFirstDetail ? calTotalItemPrice(details) : '', // Tổng tiền hàng
-        isFirstDetail ? (item.amount_discount_detail || 0) + (item.amount_discount_price || 0) : '', // Giảm giá
+        isFirstDetail ? calTotalItemPrice(details) : '',
+        isFirstDetail ? (item.amount_discount_detail || 0) + (item.amount_discount_price || 0) : '',
         isFirstDetail ? item.service_charge_amount || 0 : '',
         isFirstDetail ? item.vat_amount || 0 : '',
         isFirstDetail ? item.deduct_tax_amount || 0 : '',
@@ -423,7 +401,6 @@ const exportSale = async () => {
         isFirstDetail ? item.sale_note || '' : '',
         isFirstDetail ? item.total_amount || 0 : '',
 
-        // Mã giảm giá
         isFirstDetail ? item.voucher_name || '' : '',
         isFirstDetail
           ? item.voucher_name
@@ -433,7 +410,6 @@ const exportSale = async () => {
             : ''
           : '',
 
-        // Phương thức thanh toán
         salePaymentMethod?.payment_method_name || '',
         salePaymentMethod?.tran_id_of_partner || salePaymentMethod?.trace_no || '',
         salePaymentMethod?.payment_method_name ? salePaymentMethod?.payment_amount || 0 : '',
@@ -441,29 +417,35 @@ const exportSale = async () => {
       ];
 
       const row = worksheet.addRow(rowData);
-
-      // --- LOGIC BORDER ---
-      const isLastRowOfItem = dIndex === rowCount - 1;
-
       row.eachCell((cell, colNumber) => {
+        // --- BORDER   ---
         cell.border = {
           left: { style: 'thin' },
-          right: { style: 'thin' }
+          right: { style: 'thin' },
+          bottom: { style: 'thin' }
         };
+        cell.alignment = { vertical: 'middle', wrapText: false };
 
-        if (isLastRowOfItem) {
-          cell.border.bottom = { style: 'thin' };
-        }
-
-        // Format số tiền
+        // Format currency
         if ([16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 34, 36, 38, 39].includes(colNumber)) {
           cell.numFmt = '#,##0';
         }
       });
     }
+
+    // Merge các ô dữ liệu
+    if (rowCount > 1) {
+      for (let col = 1; col <= 14; col++)
+        worksheet.mergeCells(currentRow, col, currentRow + rowCount - 1, col);
+      for (let col = 20; col <= 34; col++)
+        worksheet.mergeCells(currentRow, col, currentRow + rowCount - 1, col);
+      for (let col = 35; col <= 36; col++)
+        worksheet.mergeCells(currentRow, col, currentRow + rowCount - 1, col);
+      worksheet.mergeCells(currentRow, 40, currentRow + rowCount - 1, 40);
+    }
+    currentRow += rowCount;
   });
 
-  // 6. Xuất file (Sử dụng code thuần, không cần file-saver nếu bạn muốn bỏ)
   const buffer = await workbook.xlsx.writeBuffer();
   saveAs(new Blob([buffer]), 'data.xlsx');
 };
