@@ -51,6 +51,20 @@ export const formatNumber = (value) => {
   return numberValue.toLocaleString('en-US');
 };
 
+/**
+ * Làm tròn số với độ chính xác cao tránh sai số dấu phẩy động
+ * @param {number|string} val Giá trị cần làm tròn
+ * @param {number} decimals Số chữ số thập phân (mặc định 2)
+ * @returns {number}
+ */
+export const roundNumber = (val, decimals = 4) => {
+  if (val === null || val === undefined || val === '') return 0;
+  const num = +val;
+  if (isNaN(num)) return 0;
+  const multiplier = Math.pow(10, decimals);
+  return Math.round((num + Number.EPSILON) * multiplier) / multiplier;
+};
+
 export const formatDate = (value, format = 'DD/MM/YYYY') => {
   if (value === null || value === undefined || value === '') return '';
   return moment(value).format(format);

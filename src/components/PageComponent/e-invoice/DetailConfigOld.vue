@@ -214,7 +214,7 @@ const props = defineProps({
 
 const visibleDetail = defineModel('visible');
 const storeOptions = computed(() => {
-  return globalStore?.storesAccessibleInCurrentBrand || [];
+  return globalStore?.currentBrandStores || [];
 });
 const partnerOptions = INVOICE_PARTNERS;
 const defaultConfig = () => ({
@@ -273,7 +273,7 @@ watch(
   () => props.storeSelected,
   (newVal) => {
     if (newVal?.store_uid) {
-      store.value = globalStore?.storesAccessibleInCurrentBrand?.find(
+      store.value = globalStore?.currentBrandStores?.find(
         (item) => item.id === newVal.store_uid
       );
       config.value = { ...defaultConfig(), ...newVal };

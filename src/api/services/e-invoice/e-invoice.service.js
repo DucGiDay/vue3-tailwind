@@ -11,6 +11,7 @@ export const invoiceService = {
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
   getSaleByListTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_LIST_TRAN_ID, { params }),
+  getSaleChangeLog: (params) => api.get(INVOICE_ENDPOINTS.SALE_CHANGE_LOG, { params }),
 
   // Quản lý hóa đơn
   getVatInvoice: (params) => api.get(INVOICE_ENDPOINTS.VAT_INVOCIE, { params }),

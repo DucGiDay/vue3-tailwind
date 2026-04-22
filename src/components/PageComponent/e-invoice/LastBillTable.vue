@@ -28,13 +28,13 @@
         </template>
       </FbTable>
     </div>
-    <ModalSaleDetail v-model:visible="visibleDetail" :dataDetail="dataDetail" />
+    <ModalSaleByTranId v-model:visible="visibleDetail" :dataDetail="dataDetail" />
   </div>
 </template>
 
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import ModalSaleDetail from '@/components/PageComponent/ModalSaleDetail.vue';
+import ModalSaleByTranId from '@/components/PageComponent/shared/ModalSaleByTranId.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
   LAST_BILL_TABLE_COLUMNS

@@ -142,6 +142,14 @@ export const useEInoiveStore = defineStore('eInoive', {
         return { data: null, error: err };
       }
     },
+    async getSaleChangeLog(params) {
+      try {
+        const response = await invoiceService.getSaleChangeLog(params);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
     async getNotiError(params) {
       try {
         const response = await invoiceService.getNotiErrorList(params);

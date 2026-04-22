@@ -436,7 +436,7 @@ const handleExport = async () => {
 };
 
 const mapStoreData = () => {
-  return globalStore.storesAccessibleInCurrentBrand.find(
+  return globalStore.currentBrandStores.find(
     (store) => store.id === props.saleData.sales[0].store_uid
   );
 };

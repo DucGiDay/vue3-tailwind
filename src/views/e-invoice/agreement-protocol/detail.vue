@@ -2,14 +2,14 @@
   <DetailView title="Tạo biên bản thỏa thuận" :handleBack="handleBack">
     <template #header-actions>
       <div class="fb-flex fb-items-center">
-        <!-- <Button
+        <Button
           label="Test nhanh"
           raised
           size="small"
           severity="secondary"
           class="fb-mr-2"
           @click="fillTestData"
-        /> -->
+        />
         <Button label="Lưu lại" :loading="loading" raised size="small" @click="handleSave" />
       </div>
     </template>

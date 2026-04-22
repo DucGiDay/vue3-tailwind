@@ -15,7 +15,7 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.storesIdAccessibleInCurrentBrand || []).join(',')
+    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(',')
   };
 
   await Promise.all([
