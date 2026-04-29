@@ -249,3 +249,15 @@ export const NOTI_ERROR_TABLE_COLUMNS = [
     style: { width: '5rem', minWidth: '5rem', padding: '0 0 0 0.25rem !important' }
   }
 ];
+
+// Columns Ký hiệu hóa đơn
+export const SERIAL_INVOICE_TABLE_COLUMNS = [
+  { field: 'inv_pattern_name', header: 'Mẫu hóa đơn' },
+  { field: 'inv_pattern', header: 'Mẫu số' },
+  { field: 'inv_series', header: 'Ký hiệu' },
+  { field: 'status', header: 'Trạng thái' },
+  { field: 'mtt_range', header: 'Dải số MTT' },
+  { field: 'current_number', header: 'Số hiện tại' },
+  { field: 'start_date', header: 'Ngày bắt đầu', format: 'date' },
+  { field: 'note', header: 'Ghi chú' }
+];

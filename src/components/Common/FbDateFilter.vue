@@ -67,8 +67,8 @@ const PRESET_OPTIONS = [
   {
     label: '7 ngày trước',
     getValue: () => [
-      moment().subtract(6, 'days').startOf('day').toDate(),
-      moment().endOf('day').toDate()
+      moment().subtract(7, 'days').startOf('day').toDate(),
+      moment().subtract(1, 'days').endOf('day').toDate()
     ]
   },
   {

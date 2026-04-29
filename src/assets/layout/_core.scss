@@ -123,13 +123,14 @@ body #sub-app {
   a {
     text-decoration: none;
   }
+}
 
-  .p-button:focus-visible {
-    outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
-  }
+// Phải để ngoài #sub-app để ghi đè style của PrimeVue
+.p-button:focus-visible {
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+}
 
-  .p-button:focus {
-    outline: none !important;
-    // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
-  }
+.p-button:focus {
+  outline: none !important;
+  // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
 }

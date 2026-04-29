@@ -55,7 +55,7 @@ const handleBackFunc = () => {
   if (props.handleBack) {
     props.handleBack();
   } else {
-    router.go(-1);
+    router.back();
   }
 };
 </script>

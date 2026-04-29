@@ -98,6 +98,15 @@ export const invoiceService = {
   // API tùy chỉnh
   customService: (url, config) => api.get(url, { noAuth: true, ...config }),
 
+  // Danh sách ký hiệu
+  getSerialInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_SERIAL_INVOICE, { params }),
+  // Tạo ký hiệu
+  createSerialInvoice: (payload) => api.post(INVOICE_ENDPOINTS.CREATE_SERIAL_INVOICE, payload),
+  // Danh sách mẫu hóa đơn theo mst
+  getSerialInvoiceTemplate: (params) =>
+    api.get(INVOICE_ENDPOINTS.SERIAL_INVOICE_TEMPLATE, { params }),
+
+  // Cập nhật thông tin vat bằng QR
   updateInvoiceByQr: (payload, headers) =>
     api.post('/api/invoice/v1/update-invoice/by-qr', payload, { headers, noAuth: true })
 };

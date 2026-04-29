@@ -1,7 +1,7 @@
 <template>
   <div class="layout-wrapper">
     <div class="layout-main-container is-table-layout !fb-px-4">
-      <FbTableView
+      <TableView
         v-model:searchValue="searchField"
         searchPlaceholder="Tìm kiếm mã hóa đơn"
         @search="onSearchChange"
@@ -90,7 +90,7 @@
             @hide="onHidePaying"
           />
         </template>
-      </FbTableView>
+      </TableView>
     </div>
   </div>
 </template>
@@ -107,7 +107,7 @@ import { storeToRefs } from 'pinia';
 import { formatCurrency } from '@/common/utils/common';
 import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.vue';
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
-import FbTableView from '@/components/Common/FbTableView.vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
 import { onMounted } from 'vue';

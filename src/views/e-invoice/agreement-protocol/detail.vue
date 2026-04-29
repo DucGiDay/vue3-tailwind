@@ -345,7 +345,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
-import DetailView from '@/components/PageComponent/views/DetailView.vue';
+import DetailView from '@/components/SharedComponent/views/DetailView.vue';
 import { validateByFields } from '@/common/utils/validate';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';

@@ -1,5 +1,5 @@
 <template>
-  <FbTableView
+  <TableView
     title="Quản lý hóa đơn"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã hóa đơn"
@@ -100,10 +100,13 @@
         v-model:visible="showPreview"
         header="Xem trước hóa đơn"
         modal
+        maximizable
         :style="{ width: '70vw' }"
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
-        <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <div class="fb-flex fb-justify-center">
+          <vue-pdf-embed v-if="previewUrl" :source="previewUrl" :width="800" />
+        </div>
         <template #footer>
           <div class="fb-flex fb-justify-end fb-pt-2">
             <Button
@@ -126,7 +129,7 @@
 
       <ModalResendMail v-model:visible="showResendEmail" @send="onSendEmail" />
     </template>
-  </FbTableView>
+  </TableView>
 </template>
 
 <script setup>
@@ -138,7 +141,7 @@ import { useFilterStore } from '@/stores/filter.store';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
 import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMail.vue';
-import FbTableView from '@/components/Common/FbTableView.vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
   VAT_PUBLISH_STATUS_LIST,
@@ -201,8 +204,8 @@ const getData = async ({ page, rows } = {}) => {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
     list_store_uid: filterStore?.report?.store_uid,
-    start_date: new Date(filterStore?.report?.start_date).getTime(),
-    end_date: new Date(filterStore?.report?.end_date).getTime(),
+    start_date: filterStore?.report?.start_date,
+    end_date: filterStore?.report?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,

@@ -1,5 +1,5 @@
 <template>
-  <FbTableView
+  <TableView
     title="Thông báo sai sót"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã tra cứu"
@@ -103,10 +103,13 @@
         v-model:visible="showPreview"
         header="Xem trước"
         modal
+        maximizable
         :style="{ width: '70vw' }"
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
-        <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <div class="fb-flex fb-justify-center">
+          <vue-pdf-embed v-if="previewUrl" :source="previewUrl" :width="800" />
+        </div>
         <template #footer>
           <div class="fb-flex fb-justify-end fb-pt-2">
             <Button
@@ -127,7 +130,7 @@
         </template>
       </Dialog>
     </template>
-  </FbTableView>
+  </TableView>
 </template>
 
 <script setup>
@@ -136,7 +139,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
-import FbTableView from '@/components/Common/FbTableView.vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
   NOTI_ERROR_TABLE_COLUMNS
@@ -184,8 +187,8 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: new Date(filterStore?.report?.start_date).getTime(),
-    end_date: new Date(filterStore?.report?.end_date).getTime(),
+    start_date: filterStore?.report?.start_date,
+    end_date: filterStore?.report?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,

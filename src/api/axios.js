@@ -50,7 +50,11 @@ instance.interceptors.response.use(
     // Normalize error để service/component xử lý thống nhất
     return Promise.reject({
       status: response?.status,
-      message: response?.data?.message || response?.data?.error?.message || 'Có lỗi xảy ra',
+      message:
+        response?.data?.message ||
+        response?.data?.error?.debug_message ||
+        response?.data?.error?.message ||
+        'Có lỗi xảy ra',
       error: response || null
     });
   }

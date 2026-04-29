@@ -61,19 +61,48 @@ export const eInvoiceRouter = [
       {
         path: 'agreement-protocol',
         name: 'AgreementProtocol',
-        component: () => import('@/views/e-invoice/agreement-protocol/list.vue'),
-        meta: {
-          title: 'Biên bản thỏa thuận - HDDT',
-          isTableLayout: true
-        }
+        children: [
+          {
+            path: '',
+            name: 'AgreementProtocolList',
+            component: () => import('@/views/e-invoice/agreement-protocol/list.vue'),
+            meta: {
+              title: 'Biên bản thỏa thuận - HDDT',
+              isTableLayout: true
+            }
+          },
+          {
+            path: 'detail/:id?',
+            name: 'AgreementProtocolDetail',
+            component: () => import('@/views/e-invoice/agreement-protocol/detail.vue'),
+            meta: {
+              title: 'Biên bản thỏa thuận - HDDT'
+            }
+          }
+        ]
       },
       {
-        path: 'agreement-protocol/detail/:id?',
-        name: 'AgreementProtocolDetail',
-        component: () => import('@/views/e-invoice/agreement-protocol/detail.vue'),
-        meta: {
-          title: 'Chi tiết biên bản thỏa thuận - HDDT'
-        }
+        path: 'serial-invoice',
+        name: 'SerialInvoice',
+        children: [
+          {
+            path: '',
+            name: 'SerialInvoiceList',
+            component: () => import('@/views/e-invoice/serial-invoice/list.vue'),
+            meta: {
+              title: 'Ký hiệu hóa đơn - HDDT',
+              isTableLayout: true
+            }
+          },
+          {
+            path: 'detail/:id?',
+            name: 'SerialInvoiceDetail',
+            component: () => import('@/views/e-invoice/serial-invoice/detail.vue'),
+            meta: {
+              title: 'Ký hiệu hóa đơn - HDDT'
+            }
+          }
+        ]
       }
     ]
   }

@@ -1,5 +1,5 @@
 <template>
-  <FbTableView
+  <TableView
     title="Hóa đơn bán hàng"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã hóa đơn"
@@ -99,7 +99,7 @@
         @success="filter"
       />
     </template>
-  </FbTableView>
+  </TableView>
 </template>
 
 <script setup>
@@ -108,7 +108,8 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { onMounted, ref, computed } from 'vue';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
-import FbTableView from '@/components/Common/FbTableView.vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
+import { SALE_ORDER_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -139,8 +140,8 @@ const getData = async ({ page, rows } = {}) => {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
     list_store_uid: filterStore?.report?.store_uid,
-    start_date: new Date(filterStore?.report?.start_date).getTime(),
-    end_date: new Date(filterStore?.report?.end_date).getTime(),
+    start_date: filterStore?.report?.start_date,
+    end_date: filterStore?.report?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value

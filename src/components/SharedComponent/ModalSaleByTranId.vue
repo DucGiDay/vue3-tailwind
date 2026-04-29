@@ -137,7 +137,7 @@
     <template #footer>
       <div class="fb-w-full fb-flex fb-justify-end">
         <Button
-          class="fb-bg-white fb-text-blue-600 fb-border fb-border-blue-600 hover:fb-bg-blue-50"
+          class="fb-text-blue-600 fb-border fb-border-blue-600 hover:fb-bg-blue-50"
           @click="exportSale"
         >
           <IconDownload color="#fff" />
@@ -161,8 +161,8 @@ import { computed, watch, ref } from 'vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { formatDate, formatCurrency } from '@/common/utils/common';
-import ModalSaleChangeLog from '@/components/PageComponent/shared/ModalSaleChangeLog.vue';
-import BillContent from '@/components/PageComponent/shared/BillContent.vue';
+import ModalSaleChangeLog from '@/components/SharedComponent/ModalSaleChangeLog.vue';
+import BillContent from '@/components/SharedComponent/BillContent.vue';
 import { useToast } from 'primevue';
 import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';

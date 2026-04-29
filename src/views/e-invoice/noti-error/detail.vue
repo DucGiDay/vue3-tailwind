@@ -285,7 +285,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import DetailView from '@/components/PageComponent/views/DetailView.vue';
+import DetailView from '@/components/SharedComponent/views/DetailView.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useGlobalStore } from '@/stores/global.store';

@@ -1,5 +1,5 @@
 <template>
-  <FbTableView
+  <TableView
     title="Biên bản thỏa thuận"
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã tra cứu"
@@ -23,9 +23,7 @@
         :currentPage="currentPage"
         :pageSize="pageSize"
         :totalRecords="agreementProtocolList.data?.total || 0"
-        rowHover
         @page-change="getData"
-        @row-click="directToDetail"
       >
         <template #customer="{ row }">
           <div>MÃ/MST: {{ row?.extra_data?.cus_tax_code }}</div>
@@ -35,20 +33,20 @@
 
         <template #origin_invoice="{ row }">
           <div>Mẫu số: {{ row?.origin_pattern }}</div>
-          <div>Ký hiệu: {{ row?.merged_tran_id_origin }}</div>
-          <div>Số: {{ row?.invoice_number_origin }}</div>
+          <div>Ký hiệu: {{ row?.origin_serial }}</div>
+          <div>Số hóa đơn: {{ row?.invoice_number_origin }}</div>
         </template>
         <template #replace_invoice="{ row }">
           <div>
             Mẫu số:
-            <span :class="{ 'fb-text-gray-300': !row?.replace_pattern }">
-              {{ row?.replace_pattern || 'Chưa có dữ liệu' }}
+            <span :class="{ 'fb-text-gray-300': !row?.origin_pattern }">
+              {{ row?.origin_pattern || 'Chưa có dữ liệu' }}
             </span>
           </div>
           <div>
             Ký hiệu:
-            <span :class="{ 'fb-text-gray-300': !row?.merged_tran_id_replace }">
-              {{ row?.merged_tran_id_replace || 'Chưa có dữ liệu' }}
+            <span :class="{ 'fb-text-gray-300': !row?.extra_data?.origin_serial }">
+              {{ row?.extra_data?.origin_serial || 'Chưa có dữ liệu' }}
             </span>
           </div>
           <div>
@@ -60,9 +58,9 @@
         </template>
 
         <template #record_invoice="{ row }">
-          <div>Loại: {{ row?.type }}</div>
+          <div>Loại: {{ AGREEMENT_TYPE_MAP[row?.type] || row?.type }}</div>
           <div>Ngày lập: {{ formatDate(row?.record_invoice_date) }}</div>
-          <div>Trạng thái : {{ row?.status }}</div>
+          <div>Trạng thái : {{ AGREEMENT_STATUS_MAP[row?.status] || row?.status }}</div>
         </template>
 
         <template #action="{ row }">
@@ -117,10 +115,14 @@
         v-model:visible="showPreview"
         header="Xem trước"
         modal
+        maximizable
         :style="{ width: '70vw' }"
         :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
-        <vue-pdf-embed v-if="previewUrl" :source="previewUrl" />
+        <div class="fb-flex fb-justify-center">
+          <vue-pdf-embed v-if="previewUrl" :source="previewUrl" :width="800" />
+        </div>
+
         <template #footer>
           <div class="fb-flex fb-justify-end fb-pt-2">
             <Button
@@ -141,7 +143,7 @@
         </template>
       </Dialog>
     </template>
-  </FbTableView>
+  </TableView>
 </template>
 
 <script setup>
@@ -156,6 +158,20 @@ import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/common/utils/common';
 import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
+
+const AGREEMENT_TYPE_MAP = {
+  1: 'Biên bản thay thế hóa đơn',
+  2: 'Biên bản điều chỉnh tăng',
+  3: 'Biên bản điều chỉnh giảm',
+  4: 'Biên bản điều chỉnh thông tin hóa đơn'
+};
+
+const AGREEMENT_STATUS_MAP = {
+  0: 'Chưa có chữ ký số',
+  1: 'Người bán đã ký',
+  2: 'Người bán và người mua đã ký'
+};
 
 const router = useRouter();
 
@@ -193,7 +209,9 @@ const getData = async ({ page, rows } = {}) => {
     company_uid: globalStore?.currentUser?.company_uid,
     page: currentPage.value,
     results_per_page: pageSize.value,
-    search: searchField.value
+    search: searchField.value,
+    start_date: filterStore?.report?.start_date,
+    end_date: filterStore?.report?.end_date
   };
 
   isLoading.value = true;

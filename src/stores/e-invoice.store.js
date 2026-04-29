@@ -19,7 +19,9 @@ export const useEInoiveStore = defineStore('eInoive', {
       data: [],
       isLoading: false
     },
-    guestVatOptions: []
+    guestVatOptions: [],
+    serialInvoiceList: {},
+    serialInvoiceTemplate: []
   }),
 
   getters: {
@@ -247,6 +249,23 @@ export const useEInoiveStore = defineStore('eInoive', {
       } catch (err) {
         console.error('Error fetchGuestSession', err);
         return null;
+      }
+    },
+
+    async getSerialInvoice(params) {
+      try {
+        const response = await invoiceService.getSerialInvoice(params);
+        this.serialInvoiceList.data = response?.data || {};
+      } catch (err) {
+        this.serialInvoiceList.error = err?.message;
+      }
+    },
+    async getSerialInvoiceTemplate(params) {
+      try {
+        const response = await invoiceService.getSerialInvoiceTemplate(params);
+        this.serialInvoiceTemplate = response?.data || [];
+      } catch (err) {
+        throw new Error(err?.message || '');
       }
     }
   }

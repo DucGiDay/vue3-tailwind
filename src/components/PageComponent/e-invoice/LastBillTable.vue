@@ -34,7 +34,7 @@
 
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
-import ModalSaleByTranId from '@/components/PageComponent/shared/ModalSaleByTranId.vue';
+import ModalSaleByTranId from '@/components/SharedComponent/ModalSaleByTranId.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
   LAST_BILL_TABLE_COLUMNS
