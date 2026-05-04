@@ -140,10 +140,8 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import {
-  VAT_PUBLISH_STATUS_COLOR,
-  NOTI_ERROR_TABLE_COLUMNS
-} from '@/common/constant/e-invoice.constant';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import { NOTI_ERROR_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 

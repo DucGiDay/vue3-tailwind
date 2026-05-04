@@ -35,10 +35,8 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import ModalSaleByTranId from '@/components/SharedComponent/ModalSaleByTranId.vue';
-import {
-  VAT_PUBLISH_STATUS_COLOR,
-  LAST_BILL_TABLE_COLUMNS
-} from '@/common/constant/e-invoice.constant';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import { LAST_BILL_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

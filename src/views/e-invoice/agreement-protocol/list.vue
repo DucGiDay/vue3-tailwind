@@ -157,7 +157,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/common/utils/common';
-import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
+import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 
 const AGREEMENT_TYPE_MAP = {

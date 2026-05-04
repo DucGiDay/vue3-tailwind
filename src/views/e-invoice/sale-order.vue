@@ -109,7 +109,7 @@ import { useFilterStore } from '@/stores/filter.store';
 import { onMounted, ref, computed } from 'vue';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import { SALE_ORDER_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
+import { SALE_ORDER_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

@@ -43,7 +43,8 @@
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { ref, computed, onMounted } from 'vue';
-import { INVOICE_PARTNERS, STORE_CONFIG_TABLE_COLUMNS } from '@/common/constant/e-invoice.constant';
+import { INVOICE_PARTNERS } from '@/common/constant/e-invoice.constant';
+import { STORE_CONFIG_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import DetailConfig from '@/components/PageComponent/e-invoice/DetailConfig.vue';
 
 // Store/Getter

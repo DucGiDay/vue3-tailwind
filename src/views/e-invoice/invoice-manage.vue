@@ -144,9 +144,9 @@ import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMai
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
-  VAT_PUBLISH_STATUS_LIST,
-  INVOICE_MANAGE_TABLE_COLUMNS
+  VAT_PUBLISH_STATUS_LIST
 } from '@/common/constant/e-invoice.constant';
+import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
