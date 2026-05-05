@@ -439,11 +439,7 @@ const filter = async () => {
       pattern: filterField.value.pattern,
       serial: filterField.value.serial
     };
-    console.log(payload);
-
     const res = await invoiceService.filterInvoiceByNumbers(payload);
-    console.log(res);
-
     if (res?.data) {
       items.value = res.data || [];
     } else {
