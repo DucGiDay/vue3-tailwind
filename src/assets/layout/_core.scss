@@ -134,3 +134,11 @@ body #sub-app {
   outline: none !important;
   // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
 }
+
+.p-dialog-header {
+  border-bottom: 1px solid var(--surface-border) !important;
+}
+
+.p-dialog-footer {
+  border-top: 1px solid var(--surface-border) !important;
+}
