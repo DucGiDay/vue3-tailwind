@@ -2,6 +2,7 @@
   <Dialog
     v-model:visible="visible"
     modal
+    maximizable
     header="Thanh toán đơn hàng"
     :style="{ width: '75vw' }"
     :breakpoints="{ '1199px': '85vw', '575px': '90vw' }"
@@ -57,11 +58,19 @@ watch(
 );
 
 // Methods
+const QR_TTL_MINUTES = 100; // 100 phút = 1 giờ 40 phút
+
 const getQRCode = async () => {
   // 1. Kiểm tra cookie trước (key là roCode)
-  const cachedQRCode = getCookie(props.item?.roCode);
-  if (cachedQRCode) {
-    qrCode.value = { data: { qrCodeUrl: cachedQRCode } };
+  const cached = getCookie(props.item?.roCode);
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      qrCode.value = { data: { qrCodeUrl: parsed.qrCodeUrl, createdAt: parsed.createdAt } };
+    } catch {
+      // fallback nếu cookie cũ chỉ lưu plain string
+      qrCode.value = { data: { qrCodeUrl: cached } };
+    }
     return;
   }
   const payload = {
@@ -75,11 +84,17 @@ const getQRCode = async () => {
   const response = await extendLicenseStore.getQRPayment(payload);
   qrCode.value = response;
 
-  // Nếu thành công thì lưu vào cookie (100 phút = 1 giờ 40 phút)
+  // Nếu thành công thì lưu vào cookie kèm thời điểm bắt đầu
   if (!response.error && response.data?.qrCodeUrl) {
-    setCookie(props.item?.roCode, response.data.qrCodeUrl, 100);
+    const payload = JSON.stringify({
+      qrCodeUrl: response.data.qrCodeUrl,
+      createdAt: Date.now() // timestamp ms
+    });
+    setCookie(props.item?.roCode, payload, QR_TTL_MINUTES);
+    // Gắn createdAt vào qrCode để PayingComponent tính countdown
+    qrCode.value = { ...response, data: { ...response.data, createdAt: Date.now() } };
   }
-  
+
   isLoading.value = false;
 };
 

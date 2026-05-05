@@ -2,7 +2,7 @@
   <TableView
     title="Biên bản thỏa thuận"
     v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm mã tra cứu"
+    searchPlaceholder="Tìm kiếm số hóa đơn"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -45,12 +45,12 @@
           </div>
           <div>
             Ký hiệu:
-            <span :class="{ 'fb-text-gray-300': !row?.extra_data?.origin_serial }">
-              {{ row?.extra_data?.origin_serial || 'Chưa có dữ liệu' }}
+            <span :class="{ 'fb-text-gray-300': !row?.origin_serial }">
+              {{ row?.origin_serial || 'Chưa có dữ liệu' }}
             </span>
           </div>
           <div>
-            Số:
+            Số hóa đơn:
             <span :class="{ 'fb-text-gray-300': !row?.invoice_number_replace }">
               {{ row?.invoice_number_replace || 'Chưa có dữ liệu' }}
             </span>
@@ -158,20 +158,8 @@ import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/common/utils/common';
 import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import { AGREEMENT_TYPE_MAP, AGREEMENT_STATUS_MAP } from '@/common/constant/e-invoice.constant';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-
-const AGREEMENT_TYPE_MAP = {
-  1: 'Biên bản thay thế hóa đơn',
-  2: 'Biên bản điều chỉnh tăng',
-  3: 'Biên bản điều chỉnh giảm',
-  4: 'Biên bản điều chỉnh thông tin hóa đơn'
-};
-
-const AGREEMENT_STATUS_MAP = {
-  0: 'Chưa có chữ ký số',
-  1: 'Người bán đã ký',
-  2: 'Người bán và người mua đã ký'
-};
 
 const router = useRouter();
 

@@ -127,3 +127,16 @@ export const SERIAL_INVOICE_COLOR = {
   0: { label: 'Không hoạt động', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
   1: { label: 'Hoạt động', class: 'fb-text-success-700 fb-bg-success-100' }
 };
+
+export const AGREEMENT_TYPE_MAP = {
+  1: 'Biên bản thay thế hóa đơn',
+  2: 'Biên bản điều chỉnh tăng',
+  3: 'Biên bản điều chỉnh giảm',
+  4: 'Biên bản điều chỉnh thông tin hóa đơn'
+};
+
+export const AGREEMENT_STATUS_MAP = {
+  0: 'Chưa có chữ ký số',
+  1: 'Người bán đã ký',
+  2: 'Người bán và người mua đã ký'
+};
