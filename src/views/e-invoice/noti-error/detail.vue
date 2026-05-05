@@ -145,16 +145,17 @@
             header: 'STT'
           },
           {
-            field: 'code',
+            field: 'vat_invoice_series',
             header: 'Ký hiệu số'
           },
           {
-            field: 'type',
-            header: 'Ngày lập'
+            field: 'created_at',
+            header: 'Ngày lập',
+            format: 'date'
           },
           {
-            field: 'description',
-            header: 'Lý do'
+            field: 'vat_invoice_code',
+            header: 'Mã CQT'
           }
         ]"
         :showGridlines="true"
@@ -185,6 +186,15 @@
               />
             </IconField>
           </div>
+        </template>
+
+        <template #vat_invoice_series="{ row }">
+          <div>Bộ ký hiệu: {{ row?.vat_invoice_series }}</div>
+          <div>Số: {{ row?.vat_invoice_number }}</div>
+        </template>
+
+        <template #no="{ index }">
+          {{ index + 1 }}
         </template>
       </FbTable>
     </div>
@@ -429,6 +439,8 @@ const filter = async () => {
       pattern: filterField.value.pattern,
       serial: filterField.value.serial
     };
+    console.log(payload);
+
     const res = await invoiceService.filterInvoiceByNumbers(payload);
     console.log(res);
 

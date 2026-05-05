@@ -64,7 +64,7 @@
       :frozen="col?.frozen"
       :style="col?.style || {}"
     >
-      <template #body="{ data }">
+      <template #body="{ data, index: i }">
         <Skeleton v-if="props.isLoading && !isLoadmore" />
         <span v-else-if="!$slots?.[col.field]">
           {{ formatData(data[col.field], data, col?.format) }}
@@ -74,7 +74,8 @@
           :name="col.field"
           v-bind="{
             row: data,
-            record: data[col.field]
+            record: data[col.field],
+            index: i
           }"
         ></slot>
       </template>
