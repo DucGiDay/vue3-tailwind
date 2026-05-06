@@ -17,6 +17,10 @@
       <Button v-if="saleSelecteds.length" size="small" @click="handleExportVat(false)">
         Xuất chi tiết
       </Button>
+      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
+        <IconCart />
+        Mua hóa đơn
+      </Button>
     </template>
 
     <template #filters>
@@ -181,6 +185,10 @@ const onSearchChange = async () => {
 
 const truncate = (value) => {
   return value ? `#${value.toString().slice(-5)}` : '';
+};
+
+const onBuyInvoice = () => {
+  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 onMounted(() => {

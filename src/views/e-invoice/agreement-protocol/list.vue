@@ -7,6 +7,10 @@
   >
     <template #header-actions>
       <Button size="small" raised @click="directToDetail()">Thêm mới</Button>
+      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
+        <IconCart />
+        Mua hóa đơn
+      </Button>
     </template>
 
     <template #filters>
@@ -283,6 +287,10 @@ const onDownloadPDF = async (item) => {
     a.click();
     document.body.removeChild(a);
   }
+};
+
+const onBuyInvoice = () => {
+  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 onMounted(() => {

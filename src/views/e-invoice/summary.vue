@@ -74,6 +74,10 @@ const get7Day = () => {
   };
 };
 
+const onBuyInvoice = () => {
+  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
+};
+
 // life cycle
 onMounted(() => {
   getData();
@@ -85,6 +89,10 @@ onMounted(() => {
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Tổng quan</h4>
     </div>
+    <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
+      <IconCart />
+      Mua hóa đơn
+    </Button>
   </div>
   <div class="fb-grid fb-grid-cols-12 fb-gap-6">
     <StatsWidget class="fb-col-span-12" />

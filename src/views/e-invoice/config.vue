@@ -3,7 +3,13 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h4 class="!fb-m-0">Cấu hình</h4>
     </div>
-    <Button @click="openDetail()" size="small" raised>Tạo cấu hình mới</Button>
+    <div class="fb-flex fb-items-center fb-space-x-3">
+      <Button @click="openDetail()" size="small" raised>Tạo cấu hình mới</Button>
+      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
+        <IconCart />
+        Mua hóa đơn
+      </Button>
+    </div>
   </div>
   <!-- <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
     <div class="fb-flex fb-items-center fb-space-x-3">
@@ -83,6 +89,10 @@ const openDetail = (store = null) => {
   visibleDetail.value = true;
   storeSelected.value = store ? store.data : null;
   isEditConfig.value = !!store;
+};
+
+const onBuyInvoice = () => {
+  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 onMounted(() => {

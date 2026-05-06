@@ -5,6 +5,12 @@
     searchPlaceholder="Tìm kiếm mã hóa đơn"
     @search="onSearchChange"
   >
+    <template #header-actions>
+      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
+        <IconCart />
+        Mua hóa đơn
+      </Button>
+    </template>
     <template #filters>
       <Select
         v-model="statusField"
@@ -530,6 +536,10 @@ const onSendEmail = async (row) => {
   } finally {
     loadingActionRowCustom.value = null;
   }
+};
+
+const onBuyInvoice = () => {
+  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 // life cycle
