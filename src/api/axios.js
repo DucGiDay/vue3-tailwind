@@ -16,8 +16,10 @@ instance.interceptors.request.use(
       access_token: import.meta.env.VITE_ACCESS_TOKEN,
       'x-client-timezone': new Date().getTimezoneOffset() * -60000,
       'accept-language': 'vi',
-      Authorization: !config?.noAuth ? localStorage.getItem('token') || '' : ''
     };
+    if (!config?.noAuth) {
+      headers['Authorization'] = localStorage.getItem('token') || '';
+    }
 
     // Đính kèm visitor_id (g-x) cho mọi yêu cầu (Hỗ trợ cross-domain)
     // const visitorId = getCookie('g-x') || localStorage.getItem('stable_visitor_id');

@@ -40,28 +40,23 @@
             </div>
             <div class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-2 md:fb-gap-4">
               <label class="fb-w-full md:fb-w-1/3 fb-text-sm fb-font-medium fb-text-gray-700">
-                Mã đơn gộp
+                Mẫu số
                 <span class="fb-text-error">*</span>
               </label>
               <div class="fb-w-full md:fb-w-2/3">
                 <InputText
-                  v-model="notiError.list_merged_tran_id"
+                  v-model="filterField.pattern"
                   class="fb-w-full"
-                  :invalid="!!error['list_merged_tran_id']"
-                  placeholder="Nhập mã đơn gộp"
+                  :invalid="!!error['pattern']"
+                  placeholder="Nhập mẫu hóa đơn"
                   size="small"
                   @input="
-                    delete error['list_merged_tran_id'];
+                    delete error['pattern'];
                     onFormChange();
                   "
                 />
-                <Message
-                  v-if="error['list_merged_tran_id']"
-                  severity="error"
-                  size="small"
-                  variant="simple"
-                >
-                  {{ error['list_merged_tran_id'] }}
+                <Message v-if="error['pattern']" severity="error" size="small" variant="simple">
+                  {{ error['pattern'] }}
                 </Message>
               </div>
             </div>
@@ -164,6 +159,14 @@
       >
         <template #header>
           <div class="fb-flex fb-gap-4">
+            <!-- <InputText
+              v-model="filterField.pattern"
+              class="fb-w-full md:fb-w-auto"
+              placeholder="Nhập ký hiệu"
+              size="small"
+              showClear
+              @input="onFormChange"
+            /> -->
             <InputText
               v-model="filterField.serial"
               class="fb-w-full md:fb-w-auto"
@@ -174,7 +177,10 @@
             />
 
             <IconField>
-              <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
+              <InputIcon
+                class="!fb-mt-0 !-fb-translate-y-1/2 fb-cursor-pointer hover:fb-scale-125 fb-transition-all"
+                @click="filter"
+              >
                 <IconSearch />
               </InputIcon>
               <InputText
@@ -315,7 +321,6 @@ const loadingTable = ref(false);
 const error = ref({});
 
 const notiError = ref({
-  list_merged_tran_id: '',
   reason: '',
   type_error: null,
   type_invoice: null
@@ -327,7 +332,8 @@ const filterField = ref({
 });
 const items = ref([]);
 const invoiceTypeList = computed(() => invoiceStore.invoiceTypeList || []);
-const errorTypeList = computed(() => invoiceStore.errorTypeList) || [];
+const errorTypeList = computed(() => invoiceStore.errorTypeList || []);
+const listMergedTranIds = computed(() => (items.value || []).map((item) => item.merged_tran_id));
 const showResponseDialog = ref(false);
 const responseCreate = ref({
   success: [],
@@ -365,10 +371,6 @@ const handleSave = async () => {
       rules: ['required']
     },
     {
-      id: 'list_merged_tran_id',
-      rules: ['required']
-    },
-    {
       id: 'reason',
       rules: ['required']
     },
@@ -377,6 +379,16 @@ const handleSave = async () => {
       rules: ['required']
     }
   ]);
+
+  Object.assign(
+    error.value,
+    validateByFields(filterField.value, [
+      {
+        id: 'pattern',
+        rules: ['required']
+      }
+    ])
+  );
 
   if (Object.keys(error.value).length > 0) {
     toast.add({
@@ -390,7 +402,7 @@ const handleSave = async () => {
   loading.value = true;
   const payload = {
     ...notiError.value,
-    list_merged_tran_id: notiError.value.list_merged_tran_id.split(',').map((item) => item.trim())
+    list_merged_tran_id: listMergedTranIds.value
   };
   try {
     const res = await invoiceService.createNotiError(payload);
