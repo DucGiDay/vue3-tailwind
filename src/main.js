@@ -1,4 +1,5 @@
 // main.js
+import { createApp, h } from 'vue';
 import App from './App.vue';
 import createAppRouter from './router';
 import { createPinia } from 'pinia';
@@ -9,11 +10,13 @@ import ToastService from 'primevue/toastservice';
 import { useGlobalStore } from './stores/global.store';
 import { sessionStoragePlugin } from './common/plugins/session-storage-plugin';
 import { setupI18n } from './common/i18n';
+import MarkdownItPlugin from './common/plugins/markdown-it';
 
 import MyDesignPreset from './theme/my-design-preset';
 import MyLocaleTheme from './theme/my-locale-theme';
 import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
+import SmartReport from '@/components/PageComponent/smart-report/SmartReport.vue';
 
 let app = null;
 let offGlobalStateChange = null;
@@ -22,7 +25,21 @@ let router = null;
 
 function render(props = {}) {
   const { container, i18n } = props;
-  app = createApp(App);
+  const rootComponent = props?.componentName === 'smart-report' ? SmartReport : App;
+  // Nếu là chế độ nhúng lẻ Smart Report
+  if (props?.componentName === 'smart-report') {
+    // h(Component, Props, Children)
+    // Cách này "ép" props onClose vào thẳng component SmartReport
+    app = createApp({
+      render: () =>
+        h(SmartReport, {
+          onClose: props?.onClose || (() => {}) // Truyền function từ host vào prop 'onClose'
+        })
+    });
+  } else {
+    app = createApp(App);
+  }
+  // app = createApp(rootComponent);
 
   if (i18n) {
     setupI18n(i18n);
@@ -35,7 +52,7 @@ function render(props = {}) {
   pinia.use(sessionStoragePlugin);
   app.use(pinia);
 
-  router = createAppRouter(props?.microRouters || {});
+  router = createAppRouter(props?.microRouters || {}, props?.componentName);
   app.use(router);
 
   app.use(PrimeVue, {
@@ -49,6 +66,7 @@ function render(props = {}) {
   });
   app.use(ToastService);
   app.use(ConfirmationService);
+  app.use(MarkdownItPlugin);
 
   // Nếu chạy dưới Qiankun thì mount vào container con
   app.mount(container ? container.querySelector('#sub-app') : '#sub-app');
@@ -70,7 +88,7 @@ renderWithQiankun({
   },
   mount(props) {
     console.log('[sub-vue3] - sub nhận', props?.messageFromHost);
-    props.actions.setGlobalState({
+    props?.actions?.setGlobalState?.({
       messageFromSub: 'pong'
     });
     return Promise.resolve(render(props));
