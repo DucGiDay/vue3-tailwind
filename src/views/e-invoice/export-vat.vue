@@ -150,7 +150,7 @@
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
               <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
-                <span class="fb-text-error fb-ml-1">*</span>
+                <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="display_name"
@@ -181,7 +181,7 @@
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('BILL_CONTENT--CUSTOMER_PHONE') }}
-                <span class="fb-text-error fb-ml-1">*</span>
+                <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="phone"
@@ -280,7 +280,6 @@
             <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="address" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_SYNC_VAT--BUYER_ADDRESS') }}
-                <span v-if="scope === 0" class="fb-text-error fb-ml-1">*</span>
               </label>
               <Textarea
                 id="address"
@@ -289,7 +288,6 @@
                 size="small"
                 rows="2"
                 :disabled="isLoading"
-                :invalid="scope === 0 && !extraSale.inv_buyerAddressLine"
                 :placeholder="t('CREATE_EDIT_LOCATION--INPUT_ADDRESS_PLACEHOLDER')"
               />
             </div>
@@ -453,11 +451,7 @@ const handleSearchTaxCode = debounce(searchByTaxCode, 500);
 
 const validateForm = () => {
   if (scope.value === 0) {
-    if (
-      !extraSale.value.inv_buyerTaxCode ||
-      !extraSale.value.inv_buyerLegalName ||
-      !extraSale.value.inv_buyerAddressLine
-    ) {
+    if (!extraSale.value.inv_buyerTaxCode || !extraSale.value.inv_buyerLegalName) {
       toast.add({
         severity: 'warn',
         // summary: t('NOTIFICATION--TITLE_WARNING'),
@@ -521,7 +515,7 @@ const handleExport = async () => {
     };
 
     const response = await invoiceService.updateInvoiceByQr(payload, headers);
-    
+
     if (!response.data) {
       throw new Error(response.message?.debug_message || response.message?.message);
     }
