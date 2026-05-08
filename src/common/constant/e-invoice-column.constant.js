@@ -106,6 +106,7 @@ export const AGREEMENT_PROTOCOL_TABLE_COLUMNS = [
 export const NOTI_ERROR_TABLE_COLUMNS = [
   { field: 'serial', header: 'Ký hiệu' },
   { field: 'reference_key', header: 'Mã tra cứu' },
+  { field: 'merged_tran_id', header: 'Mã hóa đơn' },
   { field: 'invoice_number_error', header: 'Số hóa đơn' },
   { field: 'pattern', header: 'Mẫu số' },
   { field: 'status', header: 'Trạng thái' },

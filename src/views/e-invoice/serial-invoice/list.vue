@@ -2,7 +2,7 @@
   <TableView
     title="Ký hiệu hóa đơn"
     v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm mẫu hóa đơn"
+    searchPlaceholder="Tìm kiếm ký hiệu"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -117,7 +117,7 @@ const getData = async ({ page, rows } = {}) => {
     end_date: filterStore?.report?.end_date,
     page: currentPage.value,
     perpage: pageSize.value,
-    search: searchField.value
+    serial: searchField.value
   };
 
   isLoading.value = true;

@@ -2,7 +2,7 @@
   <TableView
     title="Thông báo sai sót"
     v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm mã tra cứu"
+    searchPlaceholder="Tìm kiếm mã hóa đơn"
     @search="onSearchChange"
   >
     <template #header-actions>
@@ -144,7 +144,7 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
+import { NOTI_ERROR_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 import { NOTI_ERROR_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
@@ -229,7 +229,7 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return VAT_PUBLISH_STATUS_COLOR[status] || VAT_PUBLISH_STATUS_COLOR['-1'];
+  return NOTI_ERROR_STATUS_COLOR[status] || NOTI_ERROR_STATUS_COLOR['-1'];
 };
 
 const fetchAndCachePDF = async (item) => {

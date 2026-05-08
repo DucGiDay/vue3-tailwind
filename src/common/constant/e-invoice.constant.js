@@ -127,6 +127,11 @@ export const SERIAL_INVOICE_COLOR = {
   0: { label: 'Không hoạt động', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
   1: { label: 'Hoạt động', class: 'fb-text-success-700 fb-bg-success-100' }
 };
+// Mapping màu Thông báo sai sót
+export const NOTI_ERROR_STATUS_COLOR = {
+  0: { label: 'Chưa gửi TCTN', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
+  1: { label: 'Đã gửi TCTN', class: 'fb-text-success-700 fb-bg-success-100' }
+};
 
 export const AGREEMENT_TYPE_MAP = {
   1: 'Biên bản thay thế hóa đơn',
