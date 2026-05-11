@@ -108,5 +108,40 @@ export const invoiceService = {
 
   // Cập nhật thông tin vat bằng QR
   updateInvoiceByQr: (payload, headers) =>
-    api.post('/api/invoice/v1/update-invoice/by-qr', payload, { headers, noAuth: true })
+    api.post('/api/invoice/v1/update-invoice/by-qr', payload, { headers, noAuth: true }),
+
+  // POS Invoice Management (Mock APIs)
+  getListPosInvoice: (params) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            total: 15,
+            items: Array.from({ length: 15 }).map((_, i) => ({
+              id: i + 1,
+              invoice_number: `INV-2026-${String(i + 1).padStart(4, '0')}`,
+              creator: 'Nguyễn Văn A',
+              created_at: new Date(Date.now() - i * 86400000).toISOString(),
+              updater: 'Trần Thị B',
+              updated_at: new Date(Date.now() - i * 43200000).toISOString(),
+              status: i % 3 === 0 ? 'sent' : (i % 2 === 0 ? 'draft' : 'error'),
+              symbol: `K${i + 1}26T`
+            }))
+          }
+        });
+      }, 500);
+    });
+  },
+  createPosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  deletePosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  sendPosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  updatePosConfigTime: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  }
 };

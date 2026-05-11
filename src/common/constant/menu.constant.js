@@ -16,7 +16,8 @@ export const eInvoiceMenu = [
       {
         label: 'Quản lý phát hành',
         items: [{ label: 'Ký hiệu hóa đơn', to: '/e-invoice/serial-invoice', grandchild: true }]
-      }
+      },
+      { label: 'Gửi hóa đơn MTT', to: '/e-invoice/pos-invoice' }
     ]
   }
 ];

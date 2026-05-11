@@ -21,7 +21,8 @@ export const useEInoiveStore = defineStore('eInoive', {
     },
     guestVatOptions: [],
     serialInvoiceList: {},
-    serialInvoiceTemplate: []
+    serialInvoiceTemplate: [],
+    posInvoiceList: {}
   }),
 
   getters: {
@@ -266,6 +267,14 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.serialInvoiceTemplate = response?.data || [];
       } catch (err) {
         throw new Error(err?.message || '');
+      }
+    },
+    async getListPosInvoice(params) {
+      try {
+        const response = await invoiceService.getListPosInvoice(params);
+        this.posInvoiceList = response?.data || {};
+      } catch (err) {
+        this.posInvoiceList = { error: err?.message };
       }
     }
   }
