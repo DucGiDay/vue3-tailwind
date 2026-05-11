@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
@@ -40,14 +40,30 @@ const mapMicroRouters = (routes, inheritedAbstractName = '') => {
   });
 };
 
-const createAppRouter = (microRouter) => {
+const createAppRouter = (microRouter, componentName = '') => {
+  // Trường hợp chạy dưới chế độ component (ví dụ: SmartReport) sẽ không cần setup router phức tạp, chỉ trả về 1 route mặc định
+  const isComponentMode = !!componentName;
+  if (isComponentMode) {
+    return createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        {
+          path: '/',
+          name: 'Default',
+          component: { render: () => null }
+        }
+      ]
+    });
+  }
+
+  // Trường hợp chạy độc lập hoặc chạy dưới Qiankun với vai trò là micro app thì setup router bình thường với các route được map từ microRouter config
   const microRouters =
     Object.keys(microRouter).length > 0
       ? mapMicroRouters(microRouter?.children, '').map((route) => ({
           ...route,
           path: '/' + route.path
         }))
-      : reportRouters;
+      : [];
 
   const routes = [
     {

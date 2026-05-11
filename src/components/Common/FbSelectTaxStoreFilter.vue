@@ -8,7 +8,7 @@
     :placeholder="placeholder"
     filterPlaceholder="Tìm kiếm"
     v-model:expandedKeys="expandedKeys"
-    class="md:fb-w-[300px] fb-w-full"
+    class="md:fb-w-[18.75rem] fb-w-full"
     :display="props.display"
     :size="size"
     showClear

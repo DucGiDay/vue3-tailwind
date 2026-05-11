@@ -39,7 +39,14 @@
         @change="filter"
       /> -->
 
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <!-- <FbDateFilter @update:modelValue="filter" size="small" /> -->
+      <FbDateSelect
+        size="small"
+        v-model="dateRange"
+        placeholder="Chọn thời gian"
+        showClear
+        @update:modelValue="filter"
+      />
     </template>
 
     <template #table>
@@ -104,6 +111,7 @@ const pageSize = ref(50);
 const serialInvoiceList = computed(() => invoiceStore.serialInvoiceList); // data from api
 const items = ref([]); // data display in table
 const isLoading = ref(false);
+const dateRange = ref();
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
@@ -113,8 +121,8 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date,
+    start_date: dateRange.value?.[0] ? Math.floor(new Date(dateRange.value[0]).getTime() / 1000) : undefined,
+    end_date: dateRange.value?.[1] ? Math.floor(new Date(dateRange.value[1]).setHours(23, 59, 59, 999) / 1000) : undefined,
     page: currentPage.value,
     perpage: pageSize.value,
     serial: searchField.value
