@@ -33,6 +33,7 @@ function render(props = {}) {
     app = createApp({
       render: () =>
         h(SmartReport, {
+          reportType: props?.reportType,
           onClose: props?.onClose || (() => {}) // Truyền function từ host vào prop 'onClose'
         })
     });

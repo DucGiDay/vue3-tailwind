@@ -2,10 +2,8 @@
   <div
     class="fb-flex fb-flex-col fb-w-[19.5rem] fb-min-w-[19.5rem] fb-border-r fb-border-[#e9eaeb] fb-bg-white fb-overflow-hidden"
   >
-   
-
-    <!-- Tabs (Acting as sub-header) -->
-    <div class="fb-flex fb-gap-0.5 fb-px-2 fb-pt-3 fb-pb-2 fb-border-b fb-border-[#e9eaeb]">
+    <!-- Tabs -->
+    <div class="fb-flex fb-gap-0.5 fb-px-2 fb-pt-3 fb-pb-2">
       <Button
         v-for="tab in tabs"
         :key="tab.key"
@@ -22,68 +20,212 @@
 
     <!-- List -->
     <div class="fb-flex-1 fb-overflow-y-auto fb-p-2 custom-scrollbar">
-      <Button
-        v-for="item in currentList"
-        :key="item.id"
-        text
-        severity="secondary"
-        class="!fb-w-full !fb-justify-start !fb-flex-col !fb-items-start !fb-px-2.5 !fb-py-2"
-        :class="selectedId === item.id ? '!fb-bg-blue-50' : ''"
-        @click="onSelect(item)"
-      >
-        <span class="fb-text-[0.8125rem] fb-font-medium fb-text-gray-900 fb-leading-snug">
-          {{ item.title }}
-        </span>
-        <span class="fb-text-xs fb-text-gray-500 fb-mt-0.5">{{ item.date }}</span>
-      </Button>
+      <!-- Tab: Lịch sử gần nhất -->
+      <template v-if="activeTab === 'recent'">
+        <!-- Skeleton khi đang thêm mới -->
+        <Skeleton v-if="isAdding" height="2.5rem" class="fb-mb-1 !fb-rounded-lg" />
+
+        <Button
+          v-for="item in listSession"
+          :key="item.session_id"
+          text
+          severity="secondary"
+          class="!fb-w-full !fb-justify-start !fb-flex-col !fb-items-start !fb-px-2.5 !fb-py-2 !fb-rounded-lg"
+          :class="detailSession?.session_id === item.session_id ? '!fb-bg-blue-50' : ''"
+          @click="onSelect(item.session_id, 'recent')"
+        >
+          <span
+            class="fb-text-[0.8125rem] fb-font-medium fb-text-gray-900 fb-leading-snug fb-text-left"
+          >
+            {{ item.session_name }}
+          </span>
+        </Button>
+
+        <!-- Skeleton loading list -->
+        <template v-if="isLoading">
+          <Skeleton v-for="n in 5" :key="n" height="2.5rem" class="fb-mb-1 !fb-rounded-lg" />
+        </template>
+
+        <!-- Empty -->
+        <div
+          v-else-if="!listSession.length && !isAdding"
+          class="fb-text-center fb-text-gray-400 fb-text-sm fb-py-6"
+        >
+          Chưa có dữ liệu
+        </div>
+      </template>
+
+      <!-- Tab: Báo cáo tuần -->
+      <template v-else-if="activeTab === 'weekly'">
+        <Skeleton
+          v-if="isLoadingWeek"
+          v-for="n in 5"
+          :key="n"
+          height="2.5rem"
+          class="fb-mb-1 !fb-rounded-lg"
+        />
+
+        <Button
+          v-for="item in listSessionWeek"
+          :key="item.session_id"
+          text
+          severity="secondary"
+          class="!fb-w-full !fb-justify-start !fb-flex-col !fb-items-start !fb-px-2.5 !fb-py-2 !fb-rounded-lg"
+          :class="detailSessionWeek?.session_id === item.session_id ? '!fb-bg-blue-50' : ''"
+          @click="onSelect(item.session_id, 'weekly')"
+        >
+          <div class="fb-flex fb-items-center fb-gap-1.5 fb-w-full">
+            <span
+              class="fb-text-[0.8125rem] fb-font-medium fb-text-gray-900 fb-leading-snug fb-flex-1 fb-text-left"
+            >
+              {{ item.report_name }}
+            </span>
+            <IconSave
+              v-if="item.is_favorite"
+              filled
+              class="fb-w-4 fb-h-4 fb-text-yellow-500 fb-flex-shrink-0"
+            />
+          </div>
+        </Button>
+
+        <div
+          v-if="!isLoadingWeek && !listSessionWeek.length"
+          class="fb-text-center fb-text-gray-400 fb-text-sm fb-py-6"
+        >
+          Chưa có dữ liệu
+        </div>
+      </template>
+
+      <!-- Tab: Kiến thức (Favorite) -->
+      <template v-else-if="activeTab === 'knowledge'">
+        <Skeleton
+          v-if="isLoadingFavorite"
+          v-for="n in 5"
+          :key="n"
+          height="2.5rem"
+          class="fb-mb-1 !fb-rounded-lg"
+        />
+
+        <Button
+          v-for="item in listFavoriteReports"
+          :key="item.session_id"
+          text
+          severity="secondary"
+          class="!fb-w-full !fb-justify-start !fb-flex-col !fb-items-start !fb-px-2.5 !fb-py-2 !fb-rounded-lg"
+          :class="detailSessionWeek?.session_id === item.session_id ? '!fb-bg-blue-50' : ''"
+          @click="onSelect(item.session_id, 'knowledge')"
+        >
+          <div class="fb-flex fb-items-center fb-gap-1.5 fb-w-full">
+            <span
+              class="fb-text-[0.8125rem] fb-font-medium fb-text-gray-900 fb-leading-snug fb-flex-1 fb-text-left"
+            >
+              {{ item.report_name }}
+            </span>
+            <IconSave filled class="fb-w-4 fb-h-4 fb-text-yellow-500 fb-flex-shrink-0" />
+          </div>
+        </Button>
+
+        <div
+          v-if="!isLoadingFavorite && !listFavoriteReports.length"
+          class="fb-text-center fb-text-gray-400 fb-text-sm fb-py-6"
+        >
+          Chưa có dữ liệu
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useSmartReportStore } from '@/stores/smart-report.store';
+import { useGlobalStore } from '@/stores/global.store';
+import IconSave from '@/components/Common/Icon/IconSave.vue';
 
+// ─── Emits ────────────────────────────────────────────────────────────────────
 const emit = defineEmits(['select']);
 
-const activeTab = ref('recent');
-const selectedId = ref(null);
+// ─── Store (Pinia) ────────────────────────────────────────────────────────────
+const srStore = useSmartReportStore();
+const globalStore = useGlobalStore();
 
+const getCompanyUid = computed(() => globalStore?.currentUser?.company_uid);
+const brandUid = computed(() => globalStore?.brandUid);
+const listSession = computed(() => srStore.listSession);
+const detailSession = computed(() => srStore.detailSession);
+const listSessionWeek = computed(() => srStore.listSessionWeek);
+const detailSessionWeek = computed(() => srStore.detailSessionWeek);
+const listFavoriteReports = computed(() => srStore.listFavoriteReports);
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
 const tabs = [
   { key: 'recent', label: 'Lịch sử gần nhất' },
   { key: 'weekly', label: 'Báo cáo tuần' },
   { key: 'knowledge', label: 'Kiến thức' }
 ];
 
-// Mock data — thay bằng API thực sau
-const recentItems = ref([
-  { id: 1, title: 'Cửa hàng A', date: 'ngày 30/01/2025' },
-  { id: 2, title: 'Cửa hàng B', date: 'ngày 30/01/2025' },
-  { id: 3, title: 'Cửa hàng B', date: 'ngày 29/01/2025' },
-  { id: 4, title: 'Cửa hàng B', date: 'ngày 28/01/2025' },
-  { id: 5, title: 'Cửa hàng B', date: 'ngày 27/01/2025' },
-  { id: 6, title: 'Cửa hàng B', date: 'ngày 26/01/2025' },
-  { id: 7, title: 'Cửa hàng B', date: 'ngày 25/01/2025' },
-  { id: 8, title: 'Cửa hàng B', date: 'ngày 24/01/2025' }
-]);
+// ─── State ────────────────────────────────────────────────────────────────────
+const activeTab = ref('recent');
+const isLoading = ref(false);
+const isLoadingWeek = ref(false);
+const isLoadingFavorite = ref(false);
+const isAdding = ref(false);
 
-const weeklyItems = ref([
-  { id: 10, title: 'Tuần 4 - tháng 1', date: '24/01 – 30/01/2025' },
-  { id: 11, title: 'Tuần 3 - tháng 1', date: '17/01 – 23/01/2025' }
-]);
+// ─── Methods ──────────────────────────────────────────────────────────────────
+const params = computed(() => ({
+  company_uid: getCompanyUid.value,
+  brand_uid: brandUid.value
+}));
 
-const knowledgeItems = ref([
-  { id: 20, title: 'Phân tích xu hướng tiêu dùng', date: '01/2025' },
-  { id: 21, title: 'Tối ưu doanh thu mùa lễ', date: '12/2024' }
-]);
+const getListSession = () => srStore.getSessions(params.value);
 
-const currentList = computed(() => {
-  if (activeTab.value === 'recent') return recentItems.value;
-  if (activeTab.value === 'weekly') return weeklyItems.value;
-  return knowledgeItems.value;
-});
+const getData = async (isAddingNew = false, isFavorite = false) => {
+  try {
+    isAdding.value = isAddingNew;
 
-const onSelect = (item) => {
-  selectedId.value = item.id;
-  emit('select', item);
+    if (isAddingNew) {
+      await getListSession().finally(() => {
+        isAdding.value = false;
+      });
+    } else if (isFavorite) {
+      isLoadingFavorite.value = true;
+      await srStore.getFavoriteReports(params.value).finally(() => {
+        isLoadingFavorite.value = false;
+      });
+    } else {
+      isLoading.value = true;
+      isLoadingWeek.value = true;
+      isLoadingFavorite.value = true;
+      await Promise.all([
+        getListSession().finally(() => {
+          isLoading.value = false;
+          isAdding.value = false;
+        }),
+        srStore.getWeekSessions({ ...params.value, limit_weeks: 10 }).finally(() => {
+          isLoadingWeek.value = false;
+        }),
+        srStore.getFavoriteReports(params.value).finally(() => {
+          isLoadingFavorite.value = false;
+        })
+      ]);
+    }
+  } catch (error) {
+    console.error('[SmartReportHistory] getData error:', error);
+    isLoading.value = false;
+    isLoadingWeek.value = false;
+    isLoadingFavorite.value = false;
+  }
 };
+
+// Expose để parent gọi được getData
+defineExpose({ getData, activeTab });
+
+const onSelect = (sessionId, type) => {
+  emit('select', { sessionId, type });
+};
+
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
+onMounted(() => {
+  getData();
+});
 </script>
