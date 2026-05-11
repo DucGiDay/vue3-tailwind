@@ -5,6 +5,7 @@
     selectionMode="range"
     :manualInput="false"
     dateFormat="dd/mm/yy"
+    placeholder="Chọn thời gian"
     inputClass="!fb-font-medium"
     selectOtherMonths
     panelClass="fb-custom-date-panel"
@@ -43,11 +44,11 @@ import moment from 'moment';
 const props = defineProps({
   modelValue: {
     type: Array,
-    default: () => [moment().startOf('day').toDate(), moment().endOf('day').toDate()]
+    default: () => null
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'clear-click']);
 
 const datePicker = ref();
 
@@ -89,13 +90,13 @@ const PRESET_OPTIONS = [
 ];
 
 const currentPreset = ref('');
-const dates = ref([...props.modelValue]);
+const dates = ref(props.modelValue ? [...props.modelValue] : null);
 
 // Sync nếu modelValue thay đổi từ bên ngoài
 watch(
   () => props.modelValue,
   (val) => {
-    if (val) dates.value = val;
+    dates.value = val ? [...val] : null;
   }
 );
 
@@ -110,6 +111,9 @@ const onDateChange = (value) => {
   if (value && value[0] && value[1]) {
     datePicker.value.overlayVisible = false;
     emit('update:modelValue', value);
+  } else if (!value) {
+    datePicker.value.overlayVisible = false;
+    emit('update:modelValue', value);
   }
 };
 </script>
@@ -117,7 +121,7 @@ const onDateChange = (value) => {
 <style lang="scss">
 .fb-custom-date-panel .p-datepicker-other-month .p-datepicker-day {
   &:not(.p-datepicker-day-selected):not(.p-datepicker-day-selected-range) {
-    color: #A4A7AE !important;
+    color: #a4a7ae !important;
     opacity: 0.7;
   }
 }
