@@ -105,6 +105,37 @@ export const eInvoiceRouter = [
         ],
       },
       {
+        path: 'pos-invoice',
+        name: 'POSInvoiceList',
+        children: [
+          {
+            path: '',
+            name: 'POSInvoiceListMain',
+            component: () => import('@/views/e-invoice/pos-invoice/pos-list.vue'),
+            meta: {
+              title: 'Gửi hóa đơn MTT - HDDT',
+              isTableLayout: true,
+            },
+          },
+          {
+            path: 'create',
+            name: 'POSInvoiceCreate',
+            component: () => import('@/views/e-invoice/pos-invoice/create.vue'),
+            meta: {
+              title: 'Tạo máy tính tiền - HDDT',
+            },
+          },
+          {
+            path: 'config-time',
+            name: 'POSInvoiceConfigTime',
+            component: () => import('@/views/e-invoice/pos-invoice/config-time.vue'),
+            meta: {
+              title: 'Cấu hình thời gian gửi - HDDT',
+            },
+          },
+        ],
+      },
+      {
         path: 'report',
         name: 'ReportInvoice',
         children: [

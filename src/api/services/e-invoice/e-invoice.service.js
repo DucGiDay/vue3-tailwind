@@ -110,181 +110,44 @@ export const invoiceService = {
   updateInvoiceByQr: (payload, headers) =>
     api.post('/api/invoice/v1/update-invoice/by-qr', payload, { headers, noAuth: true }),
 
-  // Report API
-  previewReport: async (payload) => {
-    // Call API thật:
-    return api.get(INVOICE_ENDPOINTS.PREVIEW_REPORT, { params: payload });
-
-    // Mock data tạm thời vì BE chưa có API
-    const mockRes = {
-      data: {
-        data: [
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000104',
-            invoice_date: 1777973460379,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000104',
-          },
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000105',
-            invoice_date: 1777973460704,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000105',
-          },
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000106',
-            invoice_date: 1777973460918,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000106',
-          },
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000107',
-            invoice_date: 1777973538475,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000107',
-          },
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000108',
-            invoice_date: 1777973538808,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000108',
-          },
-          {
-            invoice_series: 'C26MOO',
-            invoice_number: '00000109',
-            invoice_date: 1777973539018,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-05700000109',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000014',
-            invoice_date: 1777974270234,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-00900000014',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000015',
-            invoice_date: 1777974771567,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-00900000015',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000017',
-            invoice_date: 1778126492560,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-00900000017',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000018',
-            invoice_date: 1778142426165,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'None',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000020',
-            invoice_date: 1778222626682,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-00900000020',
-          },
-          {
-            invoice_series: 'C26MAB',
-            invoice_number: '00000021',
-            invoice_date: 1778222630861,
-            buyer_name: 'Khách không lấy hóa đơn',
-            buyer_tax_code: '.',
-            payment_method: '',
-            amount_before_tax: 0.0,
-            vat_rate: 0.0,
-            vat_amount: 0.0,
-            lookup_code: 'M1-26-LH6ZT-00900000021',
-          },
-        ],
-        message: null,
-        track_id: 'a6ee5c41-f56c-4b31-89a5-9506b1a0f79c',
-        total: 12,
-      },
-    };
-
-    const page = payload.page || 1;
-    const size = payload.size || 10;
-    const start = (page - 1) * size;
-    const end = start + size;
-    const paginatedData = mockRes.data.data.slice(start, end);
-
+  // POS Invoice Management (Mock APIs)
+  getListPosInvoice: (params) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
           data: {
-            data: paginatedData,
-            total: mockRes.data.total,
+            total: 15,
+            items: Array.from({ length: 15 }).map((_, i) => ({
+              id: i + 1,
+              invoice_number: `INV-2026-${String(i + 1).padStart(4, '0')}`,
+              creator: 'Nguyễn Văn A',
+              created_at: new Date(Date.now() - i * 86400000).toISOString(),
+              updater: 'Trần Thị B',
+              updated_at: new Date(Date.now() - i * 43200000).toISOString(),
+              status: i % 3 === 0 ? 'sent' : i % 2 === 0 ? 'draft' : 'error',
+              symbol: `K${i + 1}26T`,
+            })),
           },
         });
       }, 500);
     });
+  },
+  createPosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  deletePosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  sendPosInvoice: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+  updatePosConfigTime: (payload) => {
+    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
+  },
+
+  // Báo cáo hddt
+  previewReport: async (payload) => {
+    // Call API thật:
+    return api.get(INVOICE_ENDPOINTS.PREVIEW_REPORT, { params: payload });
   },
 };
