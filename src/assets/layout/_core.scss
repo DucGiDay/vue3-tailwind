@@ -142,3 +142,9 @@ body #sub-app {
 .p-dialog-footer {
   border-top: 1px solid var(--surface-border) !important;
 }
+
+// Ghi đè style cho nút close của Toast
+.p-toast-close-button:focus,
+.p-toast-close-button:focus-visible {
+  outline: none !important;
+}
