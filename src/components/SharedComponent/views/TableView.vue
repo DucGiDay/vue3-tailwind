@@ -16,12 +16,12 @@
 
       <!-- Filter/Toolbar row: override entirely with #toolbar, or use #filters + #search for simple cases -->
       <slot name="toolbar">
-        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center">
-          <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-end">
+          <div class="fb-flex-1 fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
             <slot name="filters" />
           </div>
-          <div>
-            <slot name="search">
+          <div class="fb-flex-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+            <slot v-if="searchable" name="search">
               <IconField>
                 <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
                   <IconSearch />
@@ -54,16 +54,20 @@
 const props = defineProps({
   title: {
     type: String,
-    default: ''
+    default: '',
   },
   searchValue: {
     type: String,
-    default: null
+    default: null,
   },
   searchPlaceholder: {
     type: String,
-    default: 'Tìm kiếm...'
-  }
+    default: 'Tìm kiếm...',
+  },
+  searchable: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['update:searchValue', 'search']);

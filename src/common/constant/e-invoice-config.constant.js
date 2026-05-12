@@ -1,26 +1,26 @@
 const acceptZeroVatObj = {
   label: 'Cho phép xuất vat 0%',
   id: 'accept_zero_vat',
-  type: 'checkbox'
+  type: 'checkbox',
 };
 
 const blockExportVat0d = {
   label: 'Chặn xuất VAT với hóa đơn 0đ',
   id: 'block_export_vat_0d',
-  type: 'checkbox'
+  type: 'checkbox',
 };
 
 const invTaxCode = {
   label: 'Mã số thuế',
   id: 'inv_tax_code',
   rules: ['required'],
-  isReplaceSpace: true
+  isReplaceSpace: true,
 };
 
 const exportVatInvoiceDateIsTranDate = {
   label: 'Cho phép xuất VAT ngày xuất là thời gian in bill',
   id: 'export_vat_invoice_date_is_tran_date',
-  type: 'checkbox'
+  type: 'checkbox',
 };
 
 const version = {
@@ -29,20 +29,20 @@ const version = {
   type: 'radio',
   options: [
     { text: 'Version 1', value: 'invoice_v1' },
-    { text: 'Version 2', value: 'invoice_v2' }
-  ]
+    { text: 'Version 2', value: 'invoice_v2' },
+  ],
 };
 
 const showDiscountByItem = {
   label: 'Mẫu HDDT hiển thị chiết khấu theo từng mặt hàng',
   id: 'config_template_v2',
-  type: 'checkbox'
+  type: 'checkbox',
 };
 
 const moneyConfigMeinvoice = {
   label: 'Cho phép thập phân đơn giá, thành tiền',
   id: 'money_config_meinvoice',
-  type: 'checkbox'
+  type: 'checkbox',
 };
 
 export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
@@ -58,10 +58,10 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       hide: () => true,
       options: [
         { text: 'Thông tư 32', value: 'circulars_32' },
-        { text: 'Thông tư 78', value: 'circulars_78' }
-      ]
+        { text: 'Thông tư 78', value: 'circulars_78' },
+      ],
     },
-    version
+    version,
     // showDiscountByItem,
     // acceptZeroVatObj,
     // {
@@ -79,7 +79,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     { label: 'Mật khẩu', id: 'inv_password', rules: ['required'] },
     invTaxCode,
     { label: 'Ký hiệu', id: 'inv_series', rules: ['required'] },
-    version
+    version,
     // acceptZeroVatObj,
     // {
     //   label: 'Cho phép Ký tự động',
@@ -111,7 +111,7 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // blockExportVat0d,
     // exportVatInvoiceDateIsTranDate,
     // moneyConfigMeinvoice,
-    version
+    version,
   ],
   VNPTINVOICE: [
     { label: 'Link trang đăng nhập VNPT', id: 'link_api_vnpt', rules: ['required'] },
@@ -126,8 +126,8 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       ...version,
       label: 'Phiên bản',
       tooltip:
-        '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>'
-    }
+        '<ul><li>Version 1: Tạo hóa đơn ở trạng thái nháp</li><li>Version 2: Phát hành hóa đơn máy tính tiền</li></ul>',
+    },
     // acceptZeroVatObj,
     // blockExportVat0d
   ],
@@ -143,9 +143,9 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
       type: 'radio',
       options: [
         { text: 'Tạo hóa đơn', value: 'invoice_v1' },
-        { text: 'Xuất hóa đơn', value: 'invoice_v2' }
-      ]
-    }
+        { text: 'Xuất hóa đơn', value: 'invoice_v2' },
+      ],
+    },
     // showDiscountByItem,
     // acceptZeroVatObj,
     // {
@@ -158,5 +158,5 @@ export const STORE_CONNECT_PARTNER_CONFIG_KEYS = {
     // },
     // blockExportVat0d,
     // exportVatInvoiceDateIsTranDate
-  ]
+  ],
 };

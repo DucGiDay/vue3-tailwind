@@ -4,7 +4,7 @@ export const INVOICE_STATUS = {
   sent_invoices: 'Hóa đơn đã gửi TCTN',
   summarized_invoices: 'Hóa đơn đã nằm trong danh sách tổng hợp',
   unsend_invoices: 'Hóa đơn chưa gửi TCTN',
-  invalid_invoices: 'Hóa đơn hợp lệ'
+  invalid_invoices: 'Hóa đơn hợp lệ',
 };
 
 // Mapping text cho trạng thái hóa đơn
@@ -48,7 +48,7 @@ export const VAT_PUBLISH_STATUS_MAPPING = {
 
   null: 'Hóa đơn dự thảo',
 
-  '-1': 'Không xác định'
+  '-1': 'Không xác định',
 };
 
 // Mapping màu cho trạng thái hóa đơn
@@ -62,19 +62,19 @@ export const VAT_PUBLISH_STATUS_COLOR = {
   // # Hóa đơn đã nằm trong danh sách tổng hợp
   4000: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100'
+    class: 'fb-text-primary-700 fb-bg-primary-100',
   },
   4001: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100'
+    class: 'fb-text-primary-700 fb-bg-primary-100',
   },
   4002: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100'
+    class: 'fb-text-primary-700 fb-bg-primary-100',
   },
   4003: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100'
+    class: 'fb-text-primary-700 fb-bg-primary-100',
   },
 
   // # Hóa đơn bị TCTN từ chối
@@ -103,7 +103,7 @@ export const VAT_PUBLISH_STATUS_COLOR = {
   32000: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
 
   null: { label: 'Hóa đơn dự thảo', class: 'fb-text-gray-blue-700 fb-bg-gray-blue-100' },
-  '-1': { label: 'Không xác định', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' }
+  '-1': { label: 'Không xác định', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
 };
 
 // Fiter trang thái trang Quản lý hóa đơn
@@ -111,7 +111,7 @@ export const VAT_PUBLISH_STATUS_LIST = [
   { label: 'Hóa đơn nháp', value: '1' },
   { label: 'Đã phát hành', value: '2' },
   { label: 'Chưa đồng bộ', value: '3' },
-  { label: 'Phát hành lỗi', value: '4' }
+  { label: 'Phát hành lỗi', value: '4' },
 ];
 
 export const INVOICE_PARTNERS = [
@@ -119,29 +119,29 @@ export const INVOICE_PARTNERS = [
   { name: 'M-INVOICE', code: 'MINVOICE' },
   { name: 'ME-INVOICE', code: 'MEINVOICE' },
   { name: 'S-INVOICE', code: 'SINVOICE' },
-  { name: 'VNPT-INVOICE', code: 'VNPTINVOICE' }
+  { name: 'VNPT-INVOICE', code: 'VNPTINVOICE' },
 ];
 
 // Mapping màu ký hiệu hóa đơn
 export const SERIAL_INVOICE_COLOR = {
   0: { label: 'Không hoạt động', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
-  1: { label: 'Hoạt động', class: 'fb-text-success-700 fb-bg-success-100' }
+  1: { label: 'Hoạt động', class: 'fb-text-success-700 fb-bg-success-100' },
 };
 // Mapping màu Thông báo sai sót
 export const NOTI_ERROR_STATUS_COLOR = {
   0: { label: 'Chưa gửi TCTN', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
-  1: { label: 'Đã gửi TCTN', class: 'fb-text-success-700 fb-bg-success-100' }
+  1: { label: 'Đã gửi TCTN', class: 'fb-text-success-700 fb-bg-success-100' },
 };
 
 export const AGREEMENT_TYPE_MAP = {
   1: 'Biên bản thay thế hóa đơn',
   2: 'Biên bản điều chỉnh tăng',
   3: 'Biên bản điều chỉnh giảm',
-  4: 'Biên bản điều chỉnh thông tin hóa đơn'
+  4: 'Biên bản điều chỉnh thông tin hóa đơn',
 };
 
 export const AGREEMENT_STATUS_MAP = {
   0: 'Chưa có chữ ký số',
   1: 'Người bán đã ký',
-  2: 'Người bán và người mua đã ký'
+  2: 'Người bán và người mua đã ký',
 };

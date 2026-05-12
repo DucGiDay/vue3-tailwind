@@ -1,0 +1,239 @@
+<template>
+  <TableView title="Báo cáo chi tiết bán hàng" :searchable="false">
+    <template #header-actions>
+      <Button size="small" outlined class="!fb-rounded-lg" @click="openExportHistory">
+        Lịch sử xuất báo cáo
+      </Button>
+      <Button size="small" class="!fb-rounded-lg" @click="exportExcel">
+        <IconDownload class="fb-mr-2" />
+        Xuất excel
+      </Button>
+    </template>
+
+    <template #filters>
+      <!-- Filter by Date -->
+      <FbDateFilter @update:modelValue="filter" size="small" />
+
+      <!-- Lọc Store -->
+      <FbSelectCityStoreFilter
+        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
+        @update:modelValue="filter"
+      />
+
+      <!-- Other filters -->
+      <Select
+        v-model="statisticTypeField"
+        :options="statisticTypeOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Hình thức thống kê"
+        class="fb-w-auto md:fb-w-48"
+        showClear
+        size="small"
+        @change="filter"
+      />
+      <Select
+        v-model="creatorField"
+        :options="creatorOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn Người tạo"
+        class="fb-w-auto md:fb-w-48"
+        showClear
+        size="small"
+        @change="filter"
+      />
+      <Select
+        v-model="patternField"
+        :options="patternOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn Mẫu số"
+        class="fb-w-auto md:fb-w-48"
+        showClear
+        size="small"
+        @change="filter"
+      />
+      <Select
+        v-model="serialField"
+        :options="serialOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn Ký hiệu"
+        class="fb-w-auto md:fb-w-48"
+        showClear
+        size="small"
+        @change="filter"
+      />
+      <Select
+        v-model="statusField"
+        :options="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn Trạng thái"
+        class="fb-w-auto md:fb-w-48"
+        showClear
+        size="small"
+        @change="filter"
+      />
+    </template>
+
+    <template #table>
+      <FbTable
+        :columns="DETAIL_SALES_COLUMNS"
+        :items="dataList"
+        enableScrollPagination
+        :hasMoreData="hasMoreData"
+        reorderableColumns
+        :stripedRows="false"
+        :isLoading="isLoading"
+        :currentPage="currentPage"
+        :pageSize="pageSize"
+        scrollHeight="flex"
+        @page-change="loadMore"
+      >
+        <template #revenue="{ row }">
+          {{ (row?.quantity || 0) * (row?.unit_price || 0) }}
+        </template>
+        <template #empty>Chưa có dữ liệu</template>
+      </FbTable>
+    </template>
+
+    <template #extra>
+      <!-- Export History Dialog -->
+      <Dialog
+        v-model:visible="showExportHistory"
+        header="Lịch sử xuất báo cáo"
+        modal
+        :style="{ width: '60vw' }"
+        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
+      >
+        <FbTable :columns="exportHistoryColumns" :items="exportHistoryData" :stripedRows="false">
+          <template #empty>Chưa có lịch sử xuất báo cáo</template>
+        </FbTable>
+      </Dialog>
+    </template>
+  </TableView>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
+import { DETAIL_SALES_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import IconDownload from '@/components/Common/Icon/IconDownload.vue';
+import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
+import { useFilterStore } from '@/stores/filter.store';
+import { useGlobalStore } from '@/stores/global.store';
+
+const filterStore = useFilterStore();
+const globalStore = useGlobalStore();
+
+// State for filters
+const searchField = ref('');
+
+const statisticTypeField = ref(null);
+const creatorField = ref(null);
+const patternField = ref(null);
+const serialField = ref(null);
+const statusField = ref(null);
+
+const statisticTypeOptions = ref([]); // Will be populated from API/Constants
+const creatorOptions = ref([]);
+const patternOptions = ref([]);
+const serialOptions = ref([]);
+const statusOptions = ref([]);
+
+// State for Table
+const dataList = ref([]);
+const isLoading = ref(false);
+const currentPage = ref(1);
+const pageSize = ref(50);
+const hasMoreData = ref(true);
+
+// State for Export History
+const showExportHistory = ref(false);
+const exportHistoryColumns = [
+  { field: 'time', header: 'Thời gian' },
+  { field: 'user', header: 'Người xuất' },
+  { field: 'status', header: 'Trạng thái' },
+];
+const exportHistoryData = ref([]);
+
+// Methods
+const getPayload = () => {
+  return {
+    company_uid: globalStore?.currentUser?.company_uid,
+    report_type: 'invoice_details',
+    start_date: filterStore.report.start_date,
+    end_date: filterStore.report.end_date,
+    list_store_uid: filterStore.report.stores_uid?.length
+      ? filterStore.report.stores_uid.join(',')
+      : (globalStore?.storesIdPermissionActive || []).join(','),
+  };
+};
+
+const getData = async () => {
+  const payload = getPayload();
+  if (!payload.start_date || !payload.end_date) return;
+
+  isLoading.value = true;
+  try {
+    const res = await invoiceService.previewReport({
+      ...payload,
+      page: currentPage.value,
+      result_per_page: pageSize.value,
+    });
+
+    const fetchedData = res?.data || [];
+
+    if (currentPage.value === 1) {
+      dataList.value = fetchedData;
+    } else {
+      dataList.value = [...dataList.value, ...fetchedData];
+    }
+
+    // Check if we loaded all data
+    hasMoreData.value = pageSize.value === fetchedData.length;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    if (currentPage.value === 1) dataList.value = [];
+    hasMoreData.value = false;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const loadMore = () => {
+  if (isLoading.value || !hasMoreData.value) return;
+  currentPage.value++;
+  getData();
+};
+
+const filter = async () => {
+  currentPage.value = 1;
+  await getData();
+};
+
+let searchTimeout = null;
+const onSearchChange = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    filter();
+  }, 500);
+};
+
+const openExportHistory = () => {
+  showExportHistory.value = true;
+  // TODO: Fetch export history data from API
+};
+
+const exportExcel = () => {
+  console.log('Xuất excel - Báo cáo chi tiết bán hàng');
+};
+
+onMounted(() => {
+  getData();
+});
+</script>
+
+<style scoped></style>

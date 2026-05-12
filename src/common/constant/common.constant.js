@@ -20,7 +20,7 @@ export const CURRENTCY_OPTIONS = {
   HUF: 'Ft',
   CZK: 'Kč',
   KHR: '៛',
-  ZAR: 'R'
+  ZAR: 'R',
 };
 
 export const CURRENCY_ALLOW_FLOAT = [
@@ -34,12 +34,12 @@ export const CURRENCY_ALLOW_FLOAT = [
   'PHP',
   'MYR',
   'RUB',
-  'CZK'
+  'CZK',
 ];
 
 export const BILL_STATUS = {
   STATE_BILL_ACTION_NONE: 0,
   STATE_BILL_ACTION_DELETE: 1,
   STATE_BILL_ACTION_NEGATIVE: 2,
-  STATE_BILL_ACTION_EDIT: 3
+  STATE_BILL_ACTION_EDIT: 3,
 };

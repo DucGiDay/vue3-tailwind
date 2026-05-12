@@ -10,13 +10,43 @@ export const eInvoiceMenu = [
         label: 'Quản lý sai sót',
         items: [
           { label: 'Thông báo sai sót', to: '/e-invoice/noti-error', grandchild: true },
-          { label: 'Biên bản thỏa thuận', to: '/e-invoice/agreement-protocol', grandchild: true }
-        ]
+          { label: 'Biên bản thỏa thuận', to: '/e-invoice/agreement-protocol', grandchild: true },
+        ],
       },
       {
         label: 'Quản lý phát hành',
-        items: [{ label: 'Ký hiệu hóa đơn', to: '/e-invoice/serial-invoice', grandchild: true }]
-      }
-    ]
-  }
+        items: [{ label: 'Ký hiệu hóa đơn', to: '/e-invoice/serial-invoice', grandchild: true }],
+      },
+      {
+        label: 'Báo cáo',
+        items: [
+          {
+            label: 'Bảng kê hóa đơn hàng tháng',
+            to: '/e-invoice/report/monthly-invoice-list',
+            grandchild: true,
+          },
+          {
+            label: 'Báo cáo chi tiết bán hàng',
+            to: '/e-invoice/report/detail-sales',
+            grandchild: true,
+          },
+          {
+            label: 'Báo cáo tổng hợp bán hàng',
+            to: '/e-invoice/report/summary-sales',
+            grandchild: true,
+          },
+          {
+            label: 'Bảng kê chi tiết hóa đơn',
+            to: '/e-invoice/report/detail-invoice-list',
+            grandchild: true,
+          },
+          {
+            label: 'Tình hình sử dụng hóa đơn',
+            to: '/e-invoice/report/invoice-usage-status',
+            grandchild: true,
+          },
+        ],
+      },
+    ],
+  },
 ];

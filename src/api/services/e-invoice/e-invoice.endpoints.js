@@ -44,5 +44,6 @@ export const INVOICE_ENDPOINTS = {
   GUEST_SESSION: '/api/einvoice/v1/guest-session',
   LIST_SERIAL_INVOICE: '/api/einvoice/v1/invoice_serials/list',
   CREATE_SERIAL_INVOICE: '/api/einvoice/v1/invoice_serials/create',
-  SERIAL_INVOICE_TEMPLATE: '/api/einvoice/v1/invoice_serials/template'
+  SERIAL_INVOICE_TEMPLATE: '/api/einvoice/v1/invoice_serials/template',
+  PREVIEW_REPORT: '/api/invoice/v1/invoice-report/preview',
 };

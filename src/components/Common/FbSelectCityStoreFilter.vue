@@ -193,16 +193,18 @@ const expandNode = (node) => {
 
 const setStoreSelected = async (value) => {
   const listStoreUids = [];
-  filteredItems.value.forEach((city) => {
-    const isEmptyCity = !city.children || !city.children.length;
-    if (!isEmptyCity) {
-      city.children.forEach((store) => {
-        if (value[store.key]?.checked) {
-          listStoreUids.push(store.key);
-        }
-      });
-    }
-  });
+  if (value) {
+    filteredItems.value.forEach((city) => {
+      const isEmptyCity = !city.children || !city.children.length;
+      if (!isEmptyCity) {
+        city.children.forEach((store) => {
+          if (value[store.key]?.checked) {
+            listStoreUids.push(store.key);
+          }
+        });
+      }
+    });
+  }
 
   // update filter trong Pinia
   await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
