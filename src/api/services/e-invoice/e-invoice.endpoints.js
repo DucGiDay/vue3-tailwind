@@ -46,4 +46,10 @@ export const INVOICE_ENDPOINTS = {
   CREATE_SERIAL_INVOICE: '/api/einvoice/v1/invoice_serials/create',
   SERIAL_INVOICE_TEMPLATE: '/api/einvoice/v1/invoice_serials/template',
   PREVIEW_REPORT: '/api/invoice/v1/invoice-report/preview',
+  LIST_POS_CONFIG_TIME: '/api/einvoice/v1/mtt_schedule_config/list',
+  CREATE_POS_CONFIG_TIME: '/api/einvoice/v1/mtt_schedule_config/create',
+  UPDATE_POS_CONFIG_TIME: (id = '') => `/api/einvoice/v1/mtt_schedule_config/${id}`,
+  LIST_POS_INVOICE: '/api/einvoice/v1/batch_invoice/invoices',
+  CREATE_POS_INVOICE: '/api/einvoice/v1/batch_invoice/create_and_send',
+  LIST_BATCH_INVOICE: '/api/einvoice/v1/batch_invoice/list',
 };
