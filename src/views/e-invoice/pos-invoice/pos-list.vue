@@ -6,10 +6,16 @@
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToCreate">Tạo MTT</Button>
-      <Button size="small" outlined @click="directToConfig">Cấu hình thời gian gửi</Button>
-      <Button size="small" severity="danger" outlined @click="onDeleteAll">Xóa tất cả MTT</Button>
-      <Button
+      <Button size="small" raised severity="secondary" @click="directToConfig">
+        <IconSetting />
+        Cấu hình thời gian gửi
+      </Button>
+      <Button size="small" raised @click="directToCreate">
+        <IconPlus />
+        Tạo MTT
+      </Button>
+      <!-- <Button size="small" severity="danger" outlined @click="onDeleteAll">Xóa tất cả MTT</Button> -->
+      <!-- <Button
         size="small"
         severity="success"
         raised
@@ -17,7 +23,8 @@
         @click="onSendInvoice"
       >
         Gửi Hóa đơn MTT
-      </Button>
+      </Button> -->
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -32,17 +39,7 @@
         size="small"
         @change="filter"
       />
-      <Select
-        v-model="symbolField"
-        :options="symbolOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn ký hiệu"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
+
       <FbDateFilter @update:modelValue="filter" size="small" />
     </template>
 
@@ -62,8 +59,7 @@
         keyLoading="id"
         @page-change="getData"
       >
-        <!-- Custom columns -->
-        <template #status="{ record }">
+        <!-- <template #status="{ record }">
           <span
             class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
             :class="{
@@ -76,7 +72,7 @@
               record.status === 'sent' ? 'Đã gửi' : record.status === 'draft' ? 'Bản nháp' : 'Lỗi'
             }}
           </span>
-        </template>
+        </template> -->
 
         <template #action="{ row }">
           <div class="fb-flex fb-justify-center">
@@ -144,21 +140,35 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import IconEye from '@/components/Common/Icon/IconEye.vue';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
+// --- Initialization ---
 const router = useRouter();
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 const toast = useToast();
 
+// --- State ---
+const searchField = ref('');
+const statusField = ref(null);
+const currentPage = ref(1);
+const pageSize = ref(50);
+const isLoading = ref(false);
+const selectedItems = ref([]);
+const showDetailDialog = ref(false);
+const itemDetail = ref(null);
+let searchTimeout = null;
+
+// --- Constants & Options ---
 const POS_INVOICE_TABLE_COLUMNS = [
   { field: 'invoice_number', header: 'Số' },
-  { field: 'creator', header: 'Người tạo' },
+  { field: 'created_by', header: 'Người tạo' },
   { field: 'created_at', header: 'Ngày tạo', format: 'date' },
-  { field: 'updater', header: 'Người cập nhật' },
+  { field: 'updated_by', header: 'Người cập nhật' },
   { field: 'updated_at', header: 'Ngày cập nhật', format: 'date' },
   { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: 'Thao tác' }
+  { field: 'action', header: '' }
 ];
 
 const statusOptions = [
@@ -167,49 +177,25 @@ const statusOptions = [
   { label: 'Lỗi', value: 'error' }
 ];
 
-const symbolOptions = [
-  { label: 'K126T', value: 'K126T' },
-  { label: 'K226T', value: 'K226T' }
-];
-
-const searchField = ref('');
-const statusField = ref(null);
-const symbolField = ref(null);
-
-const currentPage = ref(1);
-const pageSize = ref(50);
-const isLoading = ref(false);
-const selectedItems = ref([]);
-
+// --- Computed ---
 const posInvoiceList = computed(() => invoiceStore.posInvoiceList || {});
-const items = computed(() => {
-  return (posInvoiceList.value?.items || []).map((item, index) => ({
-    ...item,
-    no: (currentPage.value - 1) * pageSize.value + index + 1
-  }));
-});
+const items = computed(() => posInvoiceList.value?.batches || []);
 
-const showDetailDialog = ref(false);
-const itemDetail = ref(null);
-
+// --- Methods ---
 const getData = async ({ page, rows } = {}) => {
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
 
   const payload = {
-    brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
     start_date: filterStore?.report?.start_date,
     end_date: filterStore?.report?.end_date,
     page: currentPage.value,
-    results_per_page: pageSize.value,
-    search: searchField.value,
-    status: statusField.value,
-    symbol: symbolField.value
+    results_per_page: pageSize.value
   };
 
   isLoading.value = true;
-  await invoiceStore.getListPosInvoice(payload);
+  await invoiceStore.getListBatchInvoice(payload);
   isLoading.value = false;
 };
 
@@ -219,7 +205,6 @@ const filter = async () => {
   await getData();
 };
 
-let searchTimeout = null;
 const onSearchChange = async () => {
   if (searchTimeout) clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
@@ -268,7 +253,8 @@ const onViewDetail = (row) => {
   showDetailDialog.value = true;
 };
 
-onMounted(async () => {
-  await getData();
+// --- Lifecycle hooks ---
+onMounted(() => {
+  getData();
 });
 </script>

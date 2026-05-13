@@ -269,9 +269,9 @@ export const useEInoiveStore = defineStore('eInoive', {
         throw new Error(err?.message || '');
       }
     },
-    async getListPosInvoice(params) {
+    async getListBatchInvoice(params) {
       try {
-        const response = await invoiceService.getListPosInvoice(params);
+        const response = await invoiceService.getListBatchInvoice(params);
         this.posInvoiceList = response?.data || {};
       } catch (err) {
         this.posInvoiceList = { error: err?.message };
