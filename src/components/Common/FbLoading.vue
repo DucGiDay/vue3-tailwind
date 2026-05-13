@@ -1,14 +1,16 @@
 <template>
   <Transition name="fade">
     <div
-      v-if="show"
+      v-if="show && fullScreen"
       class="fb-loading-overlay fb-flex fb-flex-col fb-items-center fb-justify-center"
       :class="{ 'fb-loading-full': fullScreen, 'fb-loading-absolute': !fullScreen }"
     >
-      <div class="fb-loading-content fb-flex fb-flex-col fb-items-center fb-gap-4 fb-p-8 fb-rounded-2xl">
+      <div
+        class="fb-loading-content fb-flex fb-flex-col fb-items-center fb-gap-4 fb-p-8 fb-rounded-2xl"
+      >
         <ProgressSpinner
           style="width: 3.125rem; height: 3.125rem"
-          strokeWidth="4"
+          strokeWidth="6"
           fill="transparent"
         />
         <p v-if="label" class="fb-text-sm fb-font-medium fb-text-gray-700 fb-m-0">
@@ -16,6 +18,13 @@
         </p>
       </div>
     </div>
+
+    <ProgressSpinner
+      v-else-if="show"
+      style="width: 1rem; height: 1rem"
+      strokeWidth="6"
+      fill="transparent"
+    />
   </Transition>
 </template>
 
@@ -23,16 +32,16 @@
 defineProps({
   show: {
     type: Boolean,
-    default: false
+    default: false,
   },
   label: {
     type: String,
-    default: 'Đang xử lý...'
+    default: 'Đang xử lý...',
   },
   fullScreen: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 </script>
 
@@ -63,7 +72,9 @@ defineProps({
 
 .fb-loading-content {
   background: white;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 

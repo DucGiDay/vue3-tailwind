@@ -139,7 +139,7 @@ export const SERIAL_INVOICE_TABLE_COLUMNS = [
 ];
 
 // Columns Bảng kê hóa đơn hàng tháng
-export const DETAIL_INVOICE_LIST_COLUMNS = [
+export const MONTHLY_INVOICE_LIST_COLUMNS = [
   { field: 'invoice_series', header: 'Ký hiệu' },
   { field: 'invoice_number', header: 'Số hóa đơn' },
   { field: 'invoice_date', header: 'Ngày phát hành', format: 'date' },
@@ -195,3 +195,24 @@ export const SUMMARY_SALES_COLUMNS = [
   { field: 'total_amount', header: 'Thành tiền', format: 'currency' },
   { field: 'note', header: 'Ghi chú' },
 ];
+// Columns Bảng kê chi tiết hóa đơn
+export const DETAIL_INVOICE_LIST_COLUMNS = [
+  { field: 'invoice_series', header: 'invoice_series' },
+  { field: 'lookup_code', header: 'lookup_code' },
+  { field: 'buyer_name', header: 'buyer_name' },
+  { field: 'buyer_tax_code', header: 'buyer_tax_code' },
+  { field: 'invoice_date', header: 'invoice_date', format: 'date' },
+  { field: 'invoice_number', header: 'invoice_number' },
+  { field: 'payment_method', header: 'payment_method' },
+  { field: 'status', header: 'status' },
+  { field: 'total_amount', header: 'total_amount', format: 'currency' },
+];
+// buyer_name: 'Người mua không lấy hóa đơn';
+// buyer_tax_code: '.';
+// invoice_date: 1778000400000;
+// invoice_number: '00413417';
+// invoice_series: 'C26MTM';
+// lookup_code: null;
+// payment_method: '';
+// status: 1;
+// total_amount: 0;

@@ -1,11 +1,24 @@
 <template>
   <TableView title="Báo cáo chi tiết bán hàng" :searchable="false">
     <template #header-actions>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="openExportHistory">
+      <Button
+        size="small"
+        severity="secondary"
+        raised
+        class="!fb-rounded-lg"
+        @click="openExportHistory"
+      >
         Lịch sử xuất báo cáo
       </Button>
-      <Button size="small" class="!fb-rounded-lg" @click="exportExcel">
-        <IconDownload class="fb-mr-2" />
+      <Button
+        :loading="isLoadingExport"
+        size="small"
+        outlined
+        class="!fb-rounded-lg"
+        @click="exportExcel"
+      >
+        <IconDownload v-if="!isLoadingExport" color="currentColor" />
+        <FbLoading v-else show />
         Xuất excel
       </Button>
     </template>
@@ -118,15 +131,20 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import moment from 'moment';
+import { useToast } from 'primevue/usetoast';
+import { saveAs } from 'file-saver';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { DETAIL_SALES_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
+import FbLoading from '@/components/Common/FbLoading.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const toast = useToast();
 
 // State for filters
 const searchField = ref('');
@@ -146,6 +164,7 @@ const statusOptions = ref([]);
 // State for Table
 const dataList = ref([]);
 const isLoading = ref(false);
+const isLoadingExport = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
 const hasMoreData = ref(true);
@@ -227,8 +246,29 @@ const openExportHistory = () => {
   // TODO: Fetch export history data from API
 };
 
-const exportExcel = () => {
-  console.log('Xuất excel - Báo cáo chi tiết bán hàng');
+const exportExcel = async () => {
+  try {
+    isLoadingExport.value = true;
+    const payload = getPayload();
+    const res = await invoiceService.exportReportInvoice(payload);
+    const fileName = `BC_CHITIET_BANHANG_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
+    saveAs(res, fileName);
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Đang tải tệp báo cáo',
+      life: 3000,
+    });
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error?.message || 'Không thể xuất báo cáo',
+      life: 5000,
+    });
+  } finally {
+    isLoadingExport.value = false;
+  }
 };
 
 onMounted(() => {

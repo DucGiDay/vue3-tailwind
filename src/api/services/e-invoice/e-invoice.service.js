@@ -135,4 +135,12 @@ export const invoiceService = {
   previewReport: async (payload) => {
     return api.get(INVOICE_ENDPOINTS.PREVIEW_REPORT, { params: payload });
   },
+
+  // Report Invoice
+  exportReportInvoice: async (payload) => {
+    return api.post(INVOICE_ENDPOINTS.EXPORT_REPORT, payload, { responseType: 'blob' });
+  },
+  getExportReportHistory: async (params) => {
+    return api.get(INVOICE_ENDPOINTS.EXPORT_REPORT_HISTORY, { params });
+  },
 };
