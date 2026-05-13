@@ -10,8 +10,15 @@
       >
         Lịch sử xuất báo cáo
       </Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="exportExcel">
-        <IconDownload color="currentColor" />
+      <Button
+        :loading="isLoadingExport"
+        size="small"
+        outlined
+        class="!fb-rounded-lg"
+        @click="exportExcel"
+      >
+        <IconDownload v-if="!isLoadingExport" color="currentColor" />
+        <FbLoading v-else show />
         Xuất excel
       </Button>
     </template>
@@ -135,7 +142,7 @@
 
     <template #table>
       <FbTable
-        :columns="DETAIL_INVOICE_LIST_COLUMNS"
+        :columns="MONTHLY_INVOICE_LIST_COLUMNS"
         :items="dataList"
         enableScrollPagination
         :hasMoreData="hasMoreData"
@@ -188,15 +195,18 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import moment from 'moment';
+import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import { DETAIL_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import { MONTHLY_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { saveAs } from 'file-saver';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const toast = useToast();
 
 // State for filters
 const searchField = ref('');
@@ -232,6 +242,7 @@ const serialOptions = ref([]);
 // State for Table
 const dataList = ref([]);
 const isLoading = ref(false);
+const isLoadingExport = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
 const totalRecords = ref(0);
@@ -240,9 +251,11 @@ const hasMoreData = ref(true);
 // State for Export History
 const showExportHistory = ref(false);
 const exportHistoryColumns = [
-  { field: 'time', header: 'Thời gian' },
-  { field: 'user', header: 'Người xuất' },
+  { field: 'report_type', header: 'Loại báo cáo' },
+  { field: 'requested_by', header: 'Người xuất' },
   { field: 'status', header: 'Trạng thái' },
+  { field: 'expires_at', header: 'Thời gian hết hạn', format: 'date' },
+  { field: 'actions', header: '' },
 ];
 const exportHistoryData = ref([]);
 
@@ -333,13 +346,45 @@ const onSearchChange = () => {
   }, 500);
 };
 
-const openExportHistory = () => {
+const openExportHistory = async () => {
   showExportHistory.value = true;
-  // TODO: Fetch export history data from API
+  try {
+    const params = {
+      company_uid: globalStore?.currentUser?.company_uid,
+      limit: 20,
+      offset: 0,
+    };
+    const res = await invoiceService.getExportReportHistory(params);
+    exportHistoryData.value = res?.data || [];
+  } catch (error) {
+    console.error('Fetch export history error:', error);
+    exportHistoryData.value = [];
+  }
 };
 
-const exportExcel = () => {
-  console.log('Xuất excel - Bảng kê chi tiết hóa đơn');
+const exportExcel = async () => {
+  try {
+    isLoadingExport.value = true;
+    const payload = getPayload();
+    const res = await invoiceService.exportReportInvoice(payload);
+    const fileName = `BCN_MTT_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
+    saveAs(res, fileName);
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Đang tải tệp báo cáo',
+      life: 3000,
+    });
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error?.message || '',
+      life: 5000,
+    });
+  } finally {
+    isLoadingExport.value = false;
+  }
 };
 
 onMounted(() => {
