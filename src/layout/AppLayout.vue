@@ -20,7 +20,8 @@ const containerClass = computed(() => {
   return {
     'layout-overlay': layoutConfig.menuMode === 'overlay',
     'layout-static': layoutConfig.menuMode === 'static',
-    'layout-static-inactive': layoutState.staticMenuDesktopInactive && layoutConfig.menuMode === 'static',
+    'layout-static-inactive':
+      layoutState.staticMenuDesktopInactive && layoutConfig.menuMode === 'static',
     'layout-overlay-active': layoutState.overlayMenuActive,
     'layout-mobile-active': layoutState.staticMenuMobileActive
   };
@@ -41,7 +42,7 @@ function bindOutsideClickListener() {
 
 function unbindOutsideClickListener() {
   if (outsideClickListener.value) {
-    document.removeEventListener('click', outsideClickListener);
+    document.removeEventListener('click', outsideClickListener.value);
     outsideClickListener.value = null;
   }
 }
@@ -61,15 +62,12 @@ function isOutsideClicked(event) {
 
 <template>
   <div class="layout-wrapper" :class="containerClass">
-    <app-topbar></app-topbar>
+    <!-- <app-topbar></app-topbar> -->
     <app-sidebar></app-sidebar>
-    <div class="layout-main-container">
-      <div class="layout-main">
-        <router-view></router-view>
-      </div>
-      <app-footer></app-footer>
+    <div class="layout-main-container" :class="{ 'is-table-view-paginate': $route.meta.isTableViewPaginate }">
+      <router-view></router-view>
     </div>
     <div class="layout-mask fb-animate-fadein"></div>
   </div>
-  <Toast />
+  <!-- <Toast /> -->
 </template>

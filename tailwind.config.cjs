@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import PrimeUI from 'tailwindcss-primeui';
 
-export default {
+module.exports = {
   prefix: 'fb-',
   darkMode: ['selector', '[class*="fabi-cms-sub-dark"]'],
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
@@ -64,21 +64,6 @@ export default {
         900: '#101323',
         950: '#0D0F1C',
         DEFAULT: '#4E5BA6'
-      },
-      'gray-dark': {
-        25: '#FAFAFA',
-        50: '#F7F7F7',
-        100: '#F0F0F1',
-        200: '#ECECED',
-        300: '#CECFD2',
-        400: '#94979C',
-        500: '#85888E',
-        600: '#61656C',
-        700: '#373A41',
-        800: '#22262F',
-        900: '#13161B',
-        950: '#0C0E12',
-        DEFAULT: '#85888E'
       },
       gray: {
         25: '#FDFDFD',

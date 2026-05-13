@@ -10,7 +10,9 @@ RUN npm install
 
 # Copy toàn bộ mã nguồn và build ứng dụng
 COPY . .
-RUN npm run build
+ARG WORKSPACE=site-product
+
+RUN npm run build:${WORKSPACE}
 
 # Stage 2: Serve với nginx
 FROM nginx:stable-alpine

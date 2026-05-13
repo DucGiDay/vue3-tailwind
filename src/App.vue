@@ -1,11 +1,17 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+    <Toast />
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
-}
+  name: 'App',
+  setup() {
+    return {};
+  }
+};
 </script>
 
 <style>

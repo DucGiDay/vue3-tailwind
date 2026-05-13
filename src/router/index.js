@@ -1,42 +1,70 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import { pascalToKebab } from '@/common/ulties';
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
+import { extendLicenseComponentMap } from './modules/extend-license.router';
+import { eInvoiceRouter, exportVatRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
 import NotFound from '@/views/pages/NotFound.vue';
 import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 
-const mapMicroRouters = (microRouters, parentComponentName = '') => {
-  return (microRouters || []).map((route) => {
-    const path = route.path;
-    const componentPath =
-      parentComponentName +
-      '/' +
-      pascalToKebab(route.name) +
-      (route?.redirect ? '' : route?.meta?.viewType === 'list' ? '/index.vue' : '.vue');
-    // const component = route?.redirect ? null : () => import('../views' + componentPath);
-    const component = route?.redirect ? null : reportComponentMap[route?.name] || NotFound;
-    const children = route.children ? mapMicroRouters(route.children, componentPath) : [];
+const componentMap = {
+  MicroReport: reportComponentMap,
+  ExtendLicense: extendLicenseComponentMap
+};
+
+const mapMicroRouters = (routes, inheritedAbstractName = '') => {
+  let activeAbstractName = inheritedAbstractName;
+
+  return (routes || []).map((route) => {
+    const { path, name, children, meta = {} } = route;
+    const isAbstract = meta.isAbstractRoute;
+
+    // Nếu route hiện tại là abstract → update activeAbstractName
+    activeAbstractName = isAbstract ? name : inheritedAbstractName;
+
+    // Abstract routes không có component thực
+    const component = isAbstract ? null : componentMap?.[activeAbstractName]?.[name] || NotFound;
+
+    // Đệ quy xử lý children routes
+    const mappedChildren = children ? mapMicroRouters(children, activeAbstractName) : [];
+
     return {
       path,
-      name: route.name,
+      name,
       component,
-      children,
-      meta: route?.meta || {}
+      children: mappedChildren,
+      meta
     };
   });
 };
 
-const createAppRouter = (microRouter) => {
+const createAppRouter = (microRouter, componentName = '') => {
+  // Trường hợp chạy dưới chế độ component (ví dụ: SmartReport) sẽ không cần setup router phức tạp, chỉ trả về 1 route mặc định
+  const isComponentMode = !!componentName;
+  if (isComponentMode) {
+    return createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        {
+          path: '/',
+          name: 'Default',
+          component: { render: () => null }
+        }
+      ]
+    });
+  }
+
+  // Trường hợp chạy độc lập hoặc chạy dưới Qiankun với vai trò là micro app thì setup router bình thường với các route được map từ microRouter config
   const microRouters =
     Object.keys(microRouter).length > 0
       ? mapMicroRouters(microRouter?.children, '').map((route) => ({
           ...route,
           path: '/' + route.path
         }))
-      : reportRouters;
+      : [];
+
   const routes = [
     {
       path: '/',
@@ -53,30 +81,23 @@ const createAppRouter = (microRouter) => {
           name: 'Document',
           redirect: '/pages/documentation'
         },
+
         ...pagesExampleRouter,
-        ...uikitRouter
+        ...uikitRouter,
+        ...eInvoiceRouter
       ]
     },
-
-    { path: '/404', name: 'NotFound', component: NotFound },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') },
     ...pagesNotHaveLayoutRouter,
-    ...microRouters
+    ...microRouters,
+    ...exportVatRouter,
+    { path: '/404', name: 'NotFound', component: NotFound },
+    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') }
   ];
 
   const router = createRouter({
     history: createWebHistory(qiankunWindow.__POWERED_BY_QIANKUN__ ? '/micro' : '/'),
     routes
   });
-
-  // router.beforeEach((to, from) => {
-  //   if (to.meta && to.meta.requiresAuth) {
-  //     const token = localStorage.getItem('token');
-  //     if (!token) {
-  //       return { name: 'Login', query: { redirect: to.fullPath } };
-  //     }
-  //   }
-  // });
 
   return router;
 };

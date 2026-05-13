@@ -2,9 +2,9 @@
   #sub-app {
     .layout-main,
     .landing-wrapper {
-      width: 1504px;
-      margin-left: auto !important;
-      margin-right: auto !important;
+      // width: 1504px;
+      // margin-left: auto !important;
+      // margin-right: auto !important;
     }
   }
 }
@@ -44,7 +44,7 @@
 
       &.layout-static {
         .layout-main-container {
-          margin-left: 22rem;
+          margin-left: 20rem;
         }
 
         &.layout-static-inactive {

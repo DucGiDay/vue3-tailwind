@@ -28,18 +28,28 @@ const props = defineProps({
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
+onMounted(() => {
+  if (props.item.to && checkActiveRoute(props.item)) {
+    setActiveMenuItem(itemKey.value);
+  }
+});
+
 onBeforeMount(() => {
-  itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
+  itemKey.value = props.parentItemKey
+    ? props.parentItemKey + '-' + props.index
+    : String(props.index);
 
   const activeItem = layoutState.activeMenuItem;
 
-  isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
+  isActiveMenu.value =
+    activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
 });
 
 watch(
   () => layoutState.activeMenuItem,
   (newVal) => {
-    isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
+    isActiveMenu.value =
+      newVal === itemKey.value || (newVal && newVal.startsWith(itemKey.value + '-'));
   }
 );
 
@@ -49,7 +59,10 @@ function itemClick(event, item) {
     return;
   }
 
-  if ((item.to || item.url) && (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)) {
+  if (
+    (item.to || item.url) &&
+    (layoutState.staticMenuMobileActive || layoutState.overlayMenuActive)
+  ) {
     toggleMenu();
   }
 
@@ -57,19 +70,34 @@ function itemClick(event, item) {
     item.command({ originalEvent: event, item: item });
   }
 
-  const foundItemKey = item.items ? (isActiveMenu.value ? props.parentItemKey : itemKey) : itemKey.value;
-
-  setActiveMenuItem(foundItemKey);
+  onActiveMenu(item);
 }
 
+const onActiveMenu = (item) => {
+  const foundItemKey = item.items
+    ? isActiveMenu.value
+      ? props.parentItemKey
+      : itemKey
+    : itemKey.value;
+
+  setActiveMenuItem(foundItemKey);
+};
+
 function checkActiveRoute(item) {
-  return route.path === item.to || route.fullPath.startsWith(item?.startWith);
+  return route.path === item.to || (item?.startWith && route.fullPath.startsWith(item.startWith));
 }
 </script>
 
 <template>
-  <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
-    <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
+  <li
+    :class="[
+      { 'fb-border-l fb-ml-5': item.grandchild },
+      { 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }
+    ]"
+  >
+    <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
+      {{ item.label }}
+    </div>
     <a
       v-if="(!item.to || item.items) && item.visible !== false"
       :href="item.url"
@@ -77,25 +105,39 @@ function checkActiveRoute(item) {
       :class="item.class"
       :target="item.target"
       tabindex="0"
+      class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md fb-flex fb-items-center fb-justify-between"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+      <IconChevronRight
+        :class="[
+          isActiveMenu ? 'fb-rotate-[270deg]' : 'fb-rotate-[90deg]',
+          'fb-transition-transform'
+        ]"
+      />
     </a>
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
       @click="itemClick($event, item, index)"
-      :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
+      :class="[
+        'fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md',
+        item.class,
+        { 'active-route fb-border-l-primary': checkActiveRoute(item) }
+      ]"
       tabindex="0"
       :to="item.to"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
     </router-link>
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
       <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
-        <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
+        <app-menu-item
+          v-for="(child, i) in item.items"
+          :key="child"
+          :index="i"
+          :item="child"
+          :parentItemKey="itemKey"
+          :root="false"
+        ></app-menu-item>
       </ul>
     </Transition>
   </li>
