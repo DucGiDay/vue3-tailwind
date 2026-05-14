@@ -7,7 +7,7 @@
         class="fb-flex fb-justify-between fb-items-center fb-mb-6"
       >
         <div class="fb-flex fb-items-center fb-space-x-3">
-          <h4 class="!fb-m-0">{{ title }}</h4>
+          <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">{{ title }}</h5>
         </div>
         <div class="fb-flex fb-justify-end fb-gap-2">
           <slot name="header-actions" />
@@ -69,6 +69,17 @@ const props = defineProps({
     default: true,
   },
 });
+
+const home = ref({
+  label: 'Home',
+});
+const items = ref([
+  { label: 'Electronics' },
+  { label: 'Computer' },
+  { label: 'Accessories' },
+  { label: 'Keyboard' },
+  { label: 'Wireless' },
+]);
 
 const emit = defineEmits(['update:searchValue', 'search']);
 

@@ -319,12 +319,15 @@
     header="Cấu hình cột hiển thị"
     dismissableMask
     modal
-    :style="{ width: '45rem' }"
+    contentClass="!fb-flex !fb-flex-col !fb-overflow-hidden"
+    :style="{ width: '45rem', height: '100%' }"
     :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
   >
     <DataTable
       :value="internalColumns"
       :reorderableRows="true"
+      scrollable
+      scrollHeight="flex"
       @rowReorder="onColumnRowReorder"
       dataKey="field"
       size="small"

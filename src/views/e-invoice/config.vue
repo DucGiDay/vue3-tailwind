@@ -1,7 +1,7 @@
 <template>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <h4 class="!fb-m-0">Cấu hình</h4>
+      <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">{{ title }}</h5>
     </div>
     <div class="fb-flex fb-items-center fb-space-x-3">
       <Button @click="openDetail()" size="small" raised>Tạo cấu hình mới</Button>
@@ -11,11 +11,6 @@
       </Button>
     </div>
   </div>
-  <!-- <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-4']">
-    <div class="fb-flex fb-items-center fb-space-x-3">
-      <FbDateSelect />
-    </div>
-  </div> -->
 
   <div class="!fb-p-0">
     <FbTable
@@ -71,7 +66,7 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    partner_id: partner.value
+    partner_id: partner.value,
   };
 
   isLoading.value = true;

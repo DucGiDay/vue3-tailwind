@@ -441,7 +441,7 @@ const searchByTaxCode = async () => {
     toast.add({
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
-      detail: error.message || 'Đã có lỗi xảy ra',
+      detail: error.message || '',
       life: 3000
     });
   }

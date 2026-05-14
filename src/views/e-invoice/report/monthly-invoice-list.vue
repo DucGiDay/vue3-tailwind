@@ -72,10 +72,7 @@
           </div>
 
           <!-- Lọc Store -->
-          <FbSelectCityStoreFilter
-            :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
-            @update:modelValue="filter"
-          />
+          <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
           <Button
             v-tooltip.bottom="'Lọc nâng cao'"
             :severity="showAdvancedFilter ? 'primary' : 'secondary'"
