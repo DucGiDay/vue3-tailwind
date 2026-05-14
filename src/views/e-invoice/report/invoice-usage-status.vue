@@ -32,12 +32,7 @@
       <FbDateFilter @update:modelValue="filter" size="small" />
 
       <!-- Lọc Store -->
-      <FbSelectCityStoreFilter
-        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
-        @update:modelValue="filter"
-      />
-
-   
+      <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
     </template>
 
     <template #table>

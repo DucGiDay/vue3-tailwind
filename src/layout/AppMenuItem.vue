@@ -1,8 +1,9 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const { layoutState, setActiveMenuItem, toggleMenu } = useLayout();
 
@@ -70,7 +71,23 @@ function itemClick(event, item) {
     item.command({ originalEvent: event, item: item });
   }
 
+  if (item.items && !isActiveMenu.value && !isAnyChildActive(item)) {
+    const firstChild = item.items.find((i) => i.to && i.visible !== false);
+    if (firstChild) {
+      router.push(firstChild.to);
+    }
+  }
+
   onActiveMenu(item);
+}
+
+function isAnyChildActive(item) {
+  if (!item.items) return false;
+  return item.items.some((child) => {
+    if (checkActiveRoute(child)) return true;
+    if (child.items) return isAnyChildActive(child);
+    return false;
+  });
 }
 
 const onActiveMenu = (item) => {

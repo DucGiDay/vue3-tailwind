@@ -15,7 +15,7 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(',')
+    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(','),
   };
 
   await Promise.all([
@@ -23,7 +23,7 @@ const getData = async () => {
     getStatisticInvoice(payload),
     getTotalQuantityInvoices(payload),
     getStatusInvoices(payload),
-    getDailyStatistics(payload)
+    getDailyStatistics(payload),
   ]);
 };
 
@@ -70,7 +70,7 @@ const get7Day = () => {
   const end_date = end.getTime();
   return {
     start_date,
-    end_date
+    end_date,
   };
 };
 
@@ -87,7 +87,7 @@ onMounted(() => {
 <template>
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <h4 class="!fb-m-0">Tổng quan</h4>
+      <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">{{ title }}</h5>
     </div>
     <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
       <IconCart />
