@@ -48,16 +48,15 @@
         v-model:selection="selectedItems"
         :columns="POS_INVOICE_TABLE_COLUMNS"
         :items="items"
-        enablePagination
+        enableScrollPagination
         enableCheckbox
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
         :pageSize="pageSize"
-        :totalRecords="posInvoiceList.total || 0"
         scrollHeight="flex"
-        keyLoading="id"
-        @page-change="getData"
+        :hasMoreData="hasMoreData"
+        @page-change="loadMore"
       >
         <!-- <template #status="{ record }">
           <span
@@ -159,6 +158,8 @@ const selectedItems = ref([]);
 const showDetailDialog = ref(false);
 const itemDetail = ref(null);
 let searchTimeout = null;
+const hasMoreData = ref(true);
+const items = ref([]);
 
 // --- Constants & Options ---
 const POS_INVOICE_TABLE_COLUMNS = [
@@ -168,34 +169,37 @@ const POS_INVOICE_TABLE_COLUMNS = [
   { field: 'updated_by', header: 'Người cập nhật' },
   { field: 'updated_at', header: 'Ngày cập nhật', format: 'date' },
   { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '' }
+  { field: 'action', header: '' },
 ];
 
 const statusOptions = [
   { label: 'Bản nháp', value: 'draft' },
   { label: 'Đã gửi', value: 'sent' },
-  { label: 'Lỗi', value: 'error' }
+  { label: 'Lỗi', value: 'error' },
 ];
 
 // --- Computed ---
 const posInvoiceList = computed(() => invoiceStore.posInvoiceList || {});
-const items = computed(() => posInvoiceList.value?.batches || []);
+// const items = computed(() => posInvoiceList.value?.batches || []);
 
 // --- Methods ---
-const getData = async ({ page, rows } = {}) => {
-  currentPage.value = page || 1;
-  pageSize.value = rows || 50;
-
+const getData = async () => {
   const payload = {
     company_uid: globalStore?.currentUser?.company_uid,
     start_date: filterStore?.report?.start_date,
     end_date: filterStore?.report?.end_date,
-    page: currentPage.value,
-    results_per_page: pageSize.value
+    offset: (currentPage.value - 1) * pageSize.value,
+    limit: pageSize.value,
   };
 
   isLoading.value = true;
   await invoiceStore.getListBatchInvoice(payload);
+  if (currentPage.value === 1) {
+    items.value = posInvoiceList.value?.batches || [];
+  } else {
+    items.value = [...items.value, ...(posInvoiceList.value?.batches || [])];
+  }
+  hasMoreData.value = (posInvoiceList.value?.batches || []).length === pageSize.value;
   isLoading.value = false;
 };
 
@@ -227,7 +231,7 @@ const onDeleteAll = () => {
         severity: 'success',
         summary: 'Thành công',
         detail: 'Đã xóa tất cả MTT',
-        life: 3000
+        life: 3000,
       });
       filter();
     });
@@ -241,7 +245,7 @@ const onSendInvoice = () => {
       severity: 'success',
       summary: 'Thành công',
       detail: 'Đã gửi hóa đơn MTT',
-      life: 3000
+      life: 3000,
     });
     selectedItems.value = [];
     filter();
@@ -251,6 +255,12 @@ const onSendInvoice = () => {
 const onViewDetail = (row) => {
   itemDetail.value = row;
   showDetailDialog.value = true;
+};
+
+const loadMore = async () => {
+  if (isLoading.value || !hasMoreData.value) return;
+  currentPage.value += 1;
+  getData();
 };
 
 // --- Lifecycle hooks ---

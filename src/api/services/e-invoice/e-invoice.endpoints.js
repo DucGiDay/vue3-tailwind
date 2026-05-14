@@ -57,4 +57,5 @@ export const INVOICE_ENDPOINTS = {
   PREVIEW_REPORT: '/api/invoice/v1/invoice-report/preview',
   EXPORT_REPORT: '/api/invoice/v1/invoice-report/export',
   EXPORT_REPORT_HISTORY: '/api/invoice/v1/invoice-report/export/history',
+  GET_EXPORT_REPORT_URL: (id = '') => `/api/invoice/v1/invoice-report/export/${id}`,
 };

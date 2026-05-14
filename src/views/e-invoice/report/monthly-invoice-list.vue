@@ -143,7 +143,6 @@
         :items="dataList"
         enableScrollPagination
         :hasMoreData="hasMoreData"
-        reorderableColumns
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
@@ -151,46 +150,17 @@
         scrollHeight="flex"
         @page-change="loadMore"
       >
-        <!-- <template #header>
-          <div class="fb-flex fb-items-center fb-ml-auto fb-mr-4 fb-gap-4">
-            <Button
-              size="small"
-              severity="secondary"
-              raised
-              class="!fb-rounded-lg"
-              @click="openExportHistory"
-            >
-              Lịch sử xuất báo cáo
-            </Button>
-            <Button size="small" outlined class="!fb-rounded-lg" @click="exportExcel">
-              <IconDownload color="currentColor" />
-              Xuất excel
-            </Button>
-          </div>
-        </template> -->
         <template #empty>Chưa có dữ liệu</template>
       </FbTable>
     </template>
 
-    <template #extra>
-      <!-- Export History Dialog -->
-      <Dialog
-        v-model:visible="showExportHistory"
-        header="Lịch sử xuất báo cáo"
-        modal
-        :style="{ width: '60vw' }"
-        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
-      >
-        <FbTable :columns="exportHistoryColumns" :items="exportHistoryData" :stripedRows="false">
-          <template #empty>Chưa có lịch sử xuất báo cáo</template>
-        </FbTable>
-      </Dialog>
-    </template>
+    <template #extra></template>
   </TableView>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
@@ -204,9 +174,9 @@ import { saveAs } from 'file-saver';
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
 const toast = useToast();
+const router = useRouter();
 
 // State for filters
-const searchField = ref('');
 const showAdvancedFilter = ref(false);
 const filterType = ref('date'); // 'month' | 'date'
 const filterTypeOptions = [
@@ -244,17 +214,6 @@ const currentPage = ref(1);
 const pageSize = ref(50);
 const totalRecords = ref(0);
 const hasMoreData = ref(true);
-
-// State for Export History
-const showExportHistory = ref(false);
-const exportHistoryColumns = [
-  { field: 'report_type', header: 'Loại báo cáo' },
-  { field: 'requested_by', header: 'Người xuất' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'expires_at', header: 'Thời gian hết hạn', format: 'date' },
-  { field: 'actions', header: '' },
-];
-const exportHistoryData = ref([]);
 
 // Methods
 const getPayload = () => {
@@ -335,28 +294,8 @@ const onFilterTypeChange = () => {
   filter();
 };
 
-let searchTimeout = null;
-const onSearchChange = () => {
-  if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    filter();
-  }, 500);
-};
-
-const openExportHistory = async () => {
-  showExportHistory.value = true;
-  try {
-    const params = {
-      company_uid: globalStore?.currentUser?.company_uid,
-      limit: 20,
-      offset: 0,
-    };
-    const res = await invoiceService.getExportReportHistory(params);
-    exportHistoryData.value = res?.data || [];
-  } catch (error) {
-    console.error('Fetch export history error:', error);
-    exportHistoryData.value = [];
-  }
+const openExportHistory = () => {
+  router.push('/e-invoice/report/export-invoice-history');
 };
 
 const exportExcel = async () => {

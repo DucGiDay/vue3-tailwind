@@ -179,6 +179,14 @@ export const eInvoiceRouter = [
               title: 'Tình hình sử dụng hóa đơn - HDDT',
             },
           },
+          {
+            path: 'export-invoice-history',
+            name: 'ExportInvoiceHistory',
+            component: () => import('@/views/e-invoice/report/export-invoice-history.vue'),
+            meta: {
+              title: 'Lịch sử xuất báo cáo - HDDT',
+            },
+          },
         ],
       },
     ],

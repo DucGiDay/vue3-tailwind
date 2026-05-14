@@ -143,4 +143,7 @@ export const invoiceService = {
   getExportReportHistory: async (params) => {
     return api.get(INVOICE_ENDPOINTS.EXPORT_REPORT_HISTORY, { params });
   },
+  getExportReportUrl: async (id) => {
+    return api.get(INVOICE_ENDPOINTS.GET_EXPORT_REPORT_URL(id));
+  },
 };

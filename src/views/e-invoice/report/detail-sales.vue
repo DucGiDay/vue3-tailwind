@@ -94,7 +94,6 @@
         :items="dataList"
         enableScrollPagination
         :hasMoreData="hasMoreData"
-        reorderableColumns
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
@@ -109,25 +108,13 @@
       </FbTable>
     </template>
 
-    <template #extra>
-      <!-- Export History Dialog -->
-      <Dialog
-        v-model:visible="showExportHistory"
-        header="Lịch sử xuất báo cáo"
-        modal
-        :style="{ width: '60vw' }"
-        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
-      >
-        <FbTable :columns="exportHistoryColumns" :items="exportHistoryData" :stripedRows="false">
-          <template #empty>Chưa có lịch sử xuất báo cáo</template>
-        </FbTable>
-      </Dialog>
-    </template>
+    <template #extra></template>
   </TableView>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import { saveAs } from 'file-saver';
@@ -142,9 +129,7 @@ import { useGlobalStore } from '@/stores/global.store';
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
 const toast = useToast();
-
-// State for filters
-const searchField = ref('');
+const router = useRouter();
 
 const statisticTypeField = ref(null);
 const creatorField = ref(null);
@@ -165,15 +150,6 @@ const isLoadingExport = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
 const hasMoreData = ref(true);
-
-// State for Export History
-const showExportHistory = ref(false);
-const exportHistoryColumns = [
-  { field: 'time', header: 'Thời gian' },
-  { field: 'user', header: 'Người xuất' },
-  { field: 'status', header: 'Trạng thái' },
-];
-const exportHistoryData = ref([]);
 
 // Methods
 const getPayload = () => {
@@ -230,17 +206,8 @@ const filter = async () => {
   await getData();
 };
 
-let searchTimeout = null;
-const onSearchChange = () => {
-  if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    filter();
-  }, 500);
-};
-
 const openExportHistory = () => {
-  showExportHistory.value = true;
-  // TODO: Fetch export history data from API
+  router.push('/e-invoice/report/export-invoice-history');
 };
 
 const exportExcel = async () => {

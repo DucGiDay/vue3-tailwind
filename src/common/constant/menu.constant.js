@@ -46,6 +46,11 @@ export const eInvoiceMenu = [
             to: '/e-invoice/report/invoice-usage-status',
             grandchild: true,
           },
+          {
+            label: 'Lịch sử xuất báo cáo',
+            to: '/e-invoice/report/export-invoice-history',
+            grandchild: true,
+          },
         ],
       },
     ],
