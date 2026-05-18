@@ -158,9 +158,8 @@ const getPayload = () => {
     report_type: 'invoice_details',
     start_date: filterStore.report.start_date,
     end_date: filterStore.report.end_date,
-    list_store_uid: filterStore.report.stores_uid?.length
-      ? filterStore.report.stores_uid.join(',')
-      : (globalStore?.storesIdPermissionActive || []).join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
+    tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };
 };
 

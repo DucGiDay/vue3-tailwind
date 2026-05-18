@@ -206,12 +206,18 @@ export const DETAIL_INVOICE_LIST_COLUMNS = [
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   { field: 'status', header: 'Trạng thái' },
 ];
-// buyer_name: 'Người mua không lấy hóa đơn';
-// buyer_tax_code: '.';
-// invoice_date: 1778000400000;
-// invoice_number: '00413417';
-// invoice_series: 'C26MTM';
-// lookup_code: null;
-// payment_method: '';
-// status: 1;
-// total_amount: 0;
+
+export const HISTORY_ACTION_COLUMNS = [
+  { field: 'timestamp', header: 'Thời gian', format: 'datetime' },
+  { field: 'updated_by', header: 'Người thao tác' },
+  { field: 'tax_code', header: 'Mã số thuế' },
+  { field: 'series', header: 'Ký hiệu' },
+  { field: 'action_desc', header: 'Thao tác' },
+  {
+    field: 'detail',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' },
+  },
+];

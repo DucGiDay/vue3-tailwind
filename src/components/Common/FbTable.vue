@@ -671,13 +671,19 @@ const onRowsChange = (e) => {
   emit('page-change', { page: 1, rows: internalRows.value });
 };
 
+let lastScrollTop = 0;
 const onScrollLoadMore = () => {
   if (!props.enableScrollPagination) return;
   if (!scrollContainer) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+  // Chỉ xử lý khi cuộn dọc (scrollTop thay đổi)
+  if (scrollTop === lastScrollTop) return;
+  lastScrollTop = scrollTop;
+
   if (props.isLoading) return;
   if (!props.hasMoreData) return;
 
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
   if (scrollTop + clientHeight >= scrollHeight - props.scrollThreshold) {
     emit('page-change');
   }
@@ -861,16 +867,16 @@ onBeforeUnmount(() => {
     }
 
     thead.p-datatable-thead > tr > th {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       background-color: #fafafa;
       color: #85888e;
       font-weight: 500;
     }
     tbody.p-datatable-tbody > tr > td {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       &.action-cell {
         text-align: center;
-        padding: 0.75rem 0.5rem;
+        padding: 0.5rem 0.5rem;
       }
     }
   }
@@ -883,7 +889,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.75rem 0;
+  padding: 0.5rem 0;
   gap: 1rem;
   font-size: 0.875rem;
   color: var(--text-color-secondary);

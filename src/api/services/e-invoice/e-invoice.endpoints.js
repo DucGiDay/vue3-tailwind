@@ -6,6 +6,7 @@ export const INVOICE_ENDPOINTS = {
   STATUS_INVOICE: '/api/einvoice/v1/dashboard/status-invoices',
   DAILY_STATISTICS: '/api/einvoice/v1/dashboard/daily-statistics',
   GET_SALE_BY_LIST_TRAN_ID: '/api/v3/pos-cms/get-sale-by-list-tran-id',
+  GET_SALE_BY_TRAN_ID: '/api/v1/reports/sales/get-sale-by-tran-id',
   SALE_CHANGE_LOG: '/api/v3/pos-cms/sale-change-log',
 
   // Invoice manage
@@ -58,4 +59,5 @@ export const INVOICE_ENDPOINTS = {
   EXPORT_REPORT: '/api/invoice/v1/invoice-report/export',
   EXPORT_REPORT_HISTORY: '/api/invoice/v1/invoice-report/export/history',
   GET_EXPORT_REPORT_URL: (id = '') => `/api/invoice/v1/invoice-report/export/${id}`,
+  LIST_AUDIT_LOGS: '/api/invoice/v1/audit_logs/list',
 };

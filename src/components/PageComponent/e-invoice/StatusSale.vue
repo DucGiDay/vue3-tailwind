@@ -92,10 +92,9 @@ const legendItems = computed(() => {
   }));
 });
 
-//
-onMounted(() => {
-  setColorOptions();
-});
+// onMounted(() => {
+//   setColorOptions();
+// });
 watch(
   [getPrimary, getSurface, isDarkTheme, statusInvoices],
   () => {

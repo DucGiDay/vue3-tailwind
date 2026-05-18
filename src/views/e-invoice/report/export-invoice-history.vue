@@ -18,14 +18,14 @@
         </template>
         <template #status="{ row }">
           <Tag
-            :severity="getStatusSeverity(row.status)"
-            :value="getStatusLabel(row.status)"
+            :severity="statusMap(row.status).severity"
+            :value="statusMap(row.status).label"
             class="!fb-text-xs !fb-font-medium"
           />
         </template>
         <template #actions="{ row }">
           <Button
-            v-if="row.status === 'done' && row.s3_url"
+            v-if="row.status === 'done'"
             :loading="loadingId === row.id"
             severity="primary"
             text
@@ -76,30 +76,13 @@ const getReportTypeName = (type) => {
   return types[type] || type;
 };
 
-const getStatusSeverity = (status) => {
-  switch (status) {
-    case 'done':
-      return 'success';
-    case 'pending':
-      return 'warn';
-    case 'error':
-      return 'danger';
-    default:
-      return 'secondary';
-  }
-};
-
-const getStatusLabel = (status) => {
-  switch (status) {
-    case 'done':
-      return 'Thành công';
-    case 'pending':
-      return 'Đang xử lý';
-    case 'error':
-      return 'Thất bại';
-    default:
-      return status;
-  }
+const statusMap = (status) => {
+  const map = {
+    done: { severity: 'success', label: 'Thành công' },
+    pending: { severity: 'warn', label: 'Đang xử lý' },
+    error: { severity: 'danger', label: 'Thất bại' },
+  };
+  return map[status] || { severity: 'secondary', label: status };
 };
 
 const fetchHistory = async () => {

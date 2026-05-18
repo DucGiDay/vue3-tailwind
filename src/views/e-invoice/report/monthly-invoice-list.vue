@@ -150,7 +150,13 @@
         scrollHeight="flex"
         @page-change="loadMore"
       >
-        <template #empty>Chưa có dữ liệu</template>
+        <template #empty>
+          {{
+            !Object.values(filterStore?.invoice?.store_uid_by_tax_code || {}).flat().length
+              ? 'Vui lòng chọn cửa hàng'
+              : 'Chưa có dữ liệu'
+          }}
+        </template>
       </FbTable>
     </template>
 
@@ -239,15 +245,17 @@ const getPayload = () => {
     report_type: 'monthly_invoice_list',
     start_date,
     end_date,
-    list_store_uid: filterStore.report.stores_uid?.length
-      ? filterStore.report.stores_uid.join(',')
-      : (globalStore?.storesIdPermissionActive || []).join(','), // fallback if empty
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
+    tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };
 };
 
 const getData = async () => {
   const payload = getPayload();
-  if (!payload.start_date || !payload.end_date) return;
+  if (!payload.start_date || !payload.end_date || !payload.list_store_uid) {
+    dataList.value = [];
+    return;
+  }
 
   isLoading.value = true;
   try {

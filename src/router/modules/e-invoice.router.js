@@ -18,10 +18,18 @@ export const eInvoiceRouter = [
       {
         path: 'invoice-manage',
         name: 'InvoiceManage',
-        component: () => import('@/views/e-invoice/invoice-manage.vue'),
+        component: () => import('@/views/e-invoice/invoice-manage/invoice-manage-list.vue'),
         meta: {
           title: 'Quản lý hóa đơn - HDDT',
           isTableViewPaginate: true,
+        },
+      },
+      {
+        path: 'invoice-manage/detail',
+        name: 'InvoiceManageDetail',
+        component: () => import('@/views/e-invoice/invoice-manage/invoice-manage-detail.vue'),
+        meta: {
+          title: 'Chi tiết hóa đơn - HDDT',
         },
       },
       {
@@ -44,7 +52,7 @@ export const eInvoiceRouter = [
       {
         path: 'noti-error',
         name: 'NotiErrorList',
-        component: () => import('@/views/e-invoice/noti-error/list.vue'),
+        component: () => import('@/views/e-invoice/noti-error/noti-error-list.vue'),
         meta: {
           title: 'Danh sách thông báo sai sót - HDDT',
           isTableViewPaginate: true,
@@ -53,7 +61,7 @@ export const eInvoiceRouter = [
       {
         path: 'noti-error/detail/:id?',
         name: 'NotiErrorDetail',
-        component: () => import('@/views/e-invoice/noti-error/detail.vue'),
+        component: () => import('@/views/e-invoice/noti-error/noti-error-detail.vue'),
         meta: {
           title: 'Chi tiết thông báo sai sót - HDDT',
         },
@@ -88,7 +96,7 @@ export const eInvoiceRouter = [
           {
             path: '',
             name: 'SerialInvoiceList',
-            component: () => import('@/views/e-invoice/serial-invoice/list.vue'),
+            component: () => import('@/views/e-invoice/serial-invoice/serial-invoice-list.vue'),
             meta: {
               title: 'Ký hiệu hóa đơn - HDDT',
               isTableViewPaginate: true,
@@ -97,7 +105,7 @@ export const eInvoiceRouter = [
           {
             path: 'detail/:id?',
             name: 'SerialInvoiceDetail',
-            component: () => import('@/views/e-invoice/serial-invoice/detail.vue'),
+            component: () => import('@/views/e-invoice/serial-invoice/serial-invoice-detail.vue'),
             meta: {
               title: 'Ký hiệu hóa đơn - HDDT',
             },
@@ -188,6 +196,14 @@ export const eInvoiceRouter = [
             },
           },
         ],
+      },
+      {
+        path: 'history-action',
+        name: 'HistoryAction',
+        component: () => import('@/views/e-invoice/history-action.vue'),
+        meta: {
+          title: 'Lịch sử thao tác - HDDT',
+        },
       },
     ],
   },

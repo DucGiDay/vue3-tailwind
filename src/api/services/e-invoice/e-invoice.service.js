@@ -11,6 +11,7 @@ export const invoiceService = {
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
   getSaleByListTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_LIST_TRAN_ID, { params }),
+  getSaleByTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_TRAN_ID, { params }),
   getSaleChangeLog: (params) => api.get(INVOICE_ENDPOINTS.SALE_CHANGE_LOG, { params }),
 
   // Quản lý hóa đơn
@@ -131,19 +132,22 @@ export const invoiceService = {
   // Danh sách hóa đơn chuẩn bị đóng gói
   getListPosInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_POS_INVOICE, { params }),
 
-  // Báo cáo hddt
+  // Báo cáo hddt - view
   previewReport: async (payload) => {
     return api.get(INVOICE_ENDPOINTS.PREVIEW_REPORT, { params: payload });
   },
-
-  // Report Invoice
+  // Báo cáo hddt - xuất excel
   exportReportInvoice: async (payload) => {
     return api.post(INVOICE_ENDPOINTS.EXPORT_REPORT, payload, { responseType: 'blob' });
   },
+  // Báo cáo hddt - Lích sử xuất ex
   getExportReportHistory: async (params) => {
     return api.get(INVOICE_ENDPOINTS.EXPORT_REPORT_HISTORY, { params });
   },
+  // Tải xuống báo cáo
   getExportReportUrl: async (id) => {
     return api.get(INVOICE_ENDPOINTS.GET_EXPORT_REPORT_URL(id));
   },
+  // Lịch sử thao tác
+  listAuditLogs: (params) => api.get(INVOICE_ENDPOINTS.LIST_AUDIT_LOGS, { params }),
 };

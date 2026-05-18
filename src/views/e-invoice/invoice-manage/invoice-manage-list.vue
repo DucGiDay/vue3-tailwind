@@ -144,13 +144,14 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
+import { useRouter } from 'vue-router';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
 import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMail.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
-  VAT_PUBLISH_STATUS_LIST
+  VAT_PUBLISH_STATUS_LIST,
 } from '@/common/constant/e-invoice.constant';
 import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
@@ -169,6 +170,7 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
+const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 
@@ -215,7 +217,7 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,
-    status: statusField.value
+    status: statusField.value,
   };
 
   isLoading.value = true;
@@ -244,25 +246,21 @@ const statusMap = (status) => {
 
 const menuItems = (row) => {
   return [
-    // {
-    //   label: 'Xuất VAT',
-    //   icon: markRaw(IconDownload),
-    //   command: () => {
-    //     console.log(row);
-    //   }
-    // },
-    // {
-    //   label: 'Sửa hóa đơn',
-    //   icon: markRaw(IconEdit),
-    //   visible: row?.statusSale?.is_edit && [1, 2].includes(row?.statusSale?.edit_type),
-    //   command: () => {
-    //     const url =
-    //       window.location.origin +
-    //       `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-    //     // window.location.assign(url);
-    //     window.open(url, '_self');
-    //   }
-    // },
+    {
+      label: 'Điều chỉnh tăng',
+      icon: markRaw(IconEdit),
+      command: () => {
+        router.push(
+          `/e-invoice/invoice-manage/detail?tran_id=${row.tran_id}&store_uid=${row.store_uid}`,
+        );
+      },
+      // command: () => {
+      //   const url =
+      //     window.location.origin +
+      //     `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+      //   window.open(url, '_self');
+      // },
+    },
     {
       label: 'Thay thế',
       icon: markRaw(IconReplace),
@@ -271,9 +269,8 @@ const menuItems = (row) => {
         const url =
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        // window.location.assign(url);
         window.open(url, '_self');
-      }
+      },
     },
     {
       label: 'Phát hành lại hóa đơn',
@@ -283,9 +280,8 @@ const menuItems = (row) => {
         const url =
           window.location.origin +
           `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        // window.location.assign(url);
         window.open(url, '_self');
-      }
+      },
     },
     {
       label: 'Sửa thông tin VAT',
@@ -296,10 +292,10 @@ const menuItems = (row) => {
         currentSaleData.value = {
           extra_sale: row || null,
           sales: [row],
-          is_immediate: false
+          is_immediate: false,
         };
         visibleExportVat.value = true;
-      }
+      },
     },
 
     {
@@ -309,7 +305,7 @@ const menuItems = (row) => {
       class: 'fb-text-error',
       command: () => {
         onDeleteDraft(row);
-      }
+      },
     },
 
     {
@@ -318,29 +314,29 @@ const menuItems = (row) => {
       icon: markRaw(IconEye),
       command: async () => {
         await onViewInvoice(row);
-      }
+      },
     },
     {
       label: 'Tải XML',
       icon: markRaw(IconDownload),
       command: async () => {
         await exportXML(row);
-      }
+      },
     },
     {
       label: 'Tải PDF',
       icon: markRaw(IconDownload),
       command: async () => {
         await onDownloadPDF(row);
-      }
+      },
     },
     {
       label: 'Gửi lại email',
       icon: markRaw(IconMail),
       command: async () => {
         await openResendEmail(row);
-      }
-    }
+      },
+    },
   ];
 };
 
@@ -349,7 +345,7 @@ const onToggleMenu = async (_, row) => {
   try {
     const response = await invoiceService.getStatus({ tran_id: row.tran_id });
     Object.assign(row, {
-      statusSale: response?.data
+      statusSale: response?.data,
     });
   } catch (error) {
     console.error('Error fetching status:', error);
@@ -362,7 +358,7 @@ const exportXML = async (item) => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       tran_id: item.tran_id,
-      store_uid: item?.store_uid
+      store_uid: item?.store_uid,
     };
     const responseData = await invoiceService.exportXML(payload);
 
@@ -400,7 +396,7 @@ const fetchAndCachePDF = async (item) => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       tran_id: item.tran_id,
-      store_uid: item?.store_uid
+      store_uid: item?.store_uid,
     };
     const responseData = await invoiceService.exportPDF(payload);
     const base64String = responseData.data;
@@ -457,18 +453,18 @@ const onDeleteDraft = (row) => {
     header: 'Xác nhận xóa',
     acceptProps: {
       label: 'Xác nhận',
-      severity: 'danger'
+      severity: 'danger',
     },
     rejectProps: {
       label: 'Hủy',
       severity: 'secondary',
-      outlined: true
+      outlined: true,
     },
     accept: async () => {
       loadingActionRowCustom.value = row.tran_id;
       try {
         const payload = {
-          merged_tran_id: row.tran_id
+          merged_tran_id: row.tran_id,
         };
         await invoiceService.deleteDraftInvoice(payload);
         toast.add({ severity: 'success', summary: 'Xóa hóa đơn dự thảo thành công', life: 3000 });
@@ -478,12 +474,12 @@ const onDeleteDraft = (row) => {
         toast.add({
           severity: 'error',
           summary: error?.message || 'Xóa hóa đơn dự thảo thất bại',
-          life: 3000
+          life: 3000,
         });
       } finally {
         loadingActionRowCustom.value = null;
       }
-    }
+    },
   });
 };
 
@@ -493,14 +489,14 @@ const onViewInvoice = async (row) => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       tran_id: row.tran_id,
-      store_uid: row?.store_uid
+      store_uid: row?.store_uid,
     };
     const response = await invoiceService.viewInvoice(payload);
     if (response?.data) {
       visibleViewBeforeSend.value = true;
       dataViewBeforeSend.value = {
         data: [response?.data],
-        payload: payload
+        payload: payload,
       };
     } else throw new Error('Không tìm thấy dữ liệu hóa đơn');
   } catch (error) {
@@ -521,7 +517,7 @@ const onSendEmail = async (row) => {
       company_uid: globalStore?.currentUser?.company_uid,
       merged_tran_id: row?.tran_id_sync_vat,
       store_uid: row?.store_uid,
-      email: row?.email
+      email: row?.email,
     };
     if (row?.cc) {
       payload.cc = row?.cc;
