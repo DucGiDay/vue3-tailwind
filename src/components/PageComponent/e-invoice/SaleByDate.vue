@@ -36,6 +36,7 @@ function setChartData() {
         backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
         data: invoiceStore.dailyStatisticsInvoice,
         barThickness: 70,
+        borderRadius: { topLeft: 8, topRight: 8 },
       },
     ],
   };

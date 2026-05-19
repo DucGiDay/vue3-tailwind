@@ -20,7 +20,7 @@
           <div class="fb-flex-1 fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
             <slot name="filters" />
           </div>
-          <div class="fb-flex-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+          <div class="fb-flex-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-items-center fb-ml-auto">
             <slot v-if="searchable" name="search">
               <IconField>
                 <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">

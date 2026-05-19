@@ -4,11 +4,10 @@
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Cấu hình</h5>
     </div>
     <div class="fb-flex fb-items-center fb-space-x-3">
-      <Button @click="openDetail()" size="small" raised>Tạo cấu hình mới</Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
-      </Button>
+      <Button @click="openDetail()" size="small" raised>
+        <IconPlus />
+        Tạo cấu hình mới</Button>
+      <ButtonExtendInvoice />
     </div>
   </div>
 
@@ -47,6 +46,7 @@ import { ref, computed, onMounted } from 'vue';
 import { INVOICE_PARTNERS } from '@/common/constant/e-invoice.constant';
 import { STORE_CONFIG_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import DetailConfig from '@/components/PageComponent/e-invoice/DetailConfig.vue';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

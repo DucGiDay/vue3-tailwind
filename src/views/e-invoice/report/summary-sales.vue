@@ -135,7 +135,6 @@ const toast = useToast();
 const router = useRouter();
 
 // State for filters
-
 const statisticTypeField = ref(null);
 const creatorField = ref(null);
 const patternField = ref(null);

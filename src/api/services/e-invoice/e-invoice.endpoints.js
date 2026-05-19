@@ -59,5 +59,5 @@ export const INVOICE_ENDPOINTS = {
   EXPORT_REPORT: '/api/invoice/v1/invoice-report/export',
   EXPORT_REPORT_HISTORY: '/api/invoice/v1/invoice-report/export/history',
   GET_EXPORT_REPORT_URL: (id = '') => `/api/invoice/v1/invoice-report/export/${id}`,
-  LIST_AUDIT_LOGS: '/api/invoice/v1/audit_logs/list',
+  LIST_AUDIT_LOGS: '/api/einvoice/v1/audit_logs/list',
 };

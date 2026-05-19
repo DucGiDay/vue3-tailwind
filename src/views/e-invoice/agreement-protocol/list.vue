@@ -6,11 +6,11 @@
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToDetail()">Thêm mới</Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
+      <Button size="small" raised @click="directToDetail()">
+        <IconPlus />
+        Thêm mới
       </Button>
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -164,6 +164,7 @@ import { formatDate } from '@/common/utils/common';
 import { AGREEMENT_PROTOCOL_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { AGREEMENT_TYPE_MAP, AGREEMENT_STATUS_MAP } from '@/common/constant/e-invoice.constant';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 const router = useRouter();
 
@@ -203,7 +204,7 @@ const getData = async ({ page, rows } = {}) => {
     results_per_page: pageSize.value,
     search: searchField.value,
     start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date
+    end_date: filterStore?.report?.end_date,
   };
 
   isLoading.value = true;

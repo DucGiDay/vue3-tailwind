@@ -104,11 +104,14 @@
       </div>
     </div>
 
-    <div class="fb-col-span-12 fb-mb-5 fb-mt-8">Báo cáo thống kê 7 ngày trước</div>
+    <div class="fb-col-span-12 fb-mb-5 fb-mt-8 fb-flex fb-items-center fb-gap-4">
+      <span class="fb-text-lg fb-font-semibold">Báo cáo thống kê</span>
+      <slot name="date-filter"></slot>
+    </div>
 
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
       <!-- Tổng số hóa đơn -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Tổng số hóa đơn
@@ -121,7 +124,7 @@
       </div>
 
       <!-- Hóa đơn chờ xử lý -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn chờ xử lý
@@ -134,7 +137,7 @@
       </div>
 
       <!-- Hóa đơn lỗi -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn lỗi
@@ -145,6 +148,19 @@
           </div>
         </div>
       </div>
+
+      <!-- Hóa đơn chưa xuất VAT -->
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
+        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+          <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+            Hóa đơn chưa xuất VAT
+          </span>
+          <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+          <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+            {{ formatNumber(statisticInvoice?.data?.unsync_vat_invoices || 0) }}
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -152,6 +168,7 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatNumber } from '@/common/utils/common';
+import { computed } from 'vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

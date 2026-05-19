@@ -123,6 +123,25 @@ body #sub-app {
   a {
     text-decoration: none;
   }
+
+  // Hiệu ứng slide cho filter
+  .filter-slide-enter-active,
+  .filter-slide-leave-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 200px;
+    opacity: 1;
+    overflow: hidden;
+  }
+
+  .filter-slide-enter-from,
+  .filter-slide-leave-to {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    overflow: hidden;
+  }
 }
 
 // Phải để ngoài #sub-app để ghi đè style của PrimeVue

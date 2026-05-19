@@ -18,7 +18,7 @@
 
     <template #header v-if="reorderableColumns || $slots.header">
       <div class="fb-flex fb-justify-between fb-items-center">
-        <div>
+        <div class="fb-flex-1">
           <slot name="header" />
         </div>
 

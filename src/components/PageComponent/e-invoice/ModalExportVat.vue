@@ -416,7 +416,7 @@ const handleExport = async () => {
       severity: 'success',
       // summary: t('NOTIFICATION--TITLE_SUCCESS'),
       detail: 'Dữ liệu đang được đồng bộ sang HĐĐT',
-      life: 5000
+      life: 3000
     });
 
     emit('success');

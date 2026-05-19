@@ -6,11 +6,10 @@
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToDetail">Thêm mới</Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
-      </Button>
+      <Button size="small" raised @click="directToDetail">
+        <IconPlus />
+        Thêm mới</Button>
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -93,6 +92,7 @@ import { SERIAL_INVOICE_COLOR } from '@/common/constant/e-invoice.constant';
 import { SERIAL_INVOICE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 const router = useRouter();
 

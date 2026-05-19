@@ -17,10 +17,7 @@
       <Button v-if="saleSelecteds.length" size="small" @click="handleExportVat(false)">
         Xuất chi tiết
       </Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
-      </Button>
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -114,6 +111,7 @@ import { onMounted, ref, computed } from 'vue';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { SALE_ORDER_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();

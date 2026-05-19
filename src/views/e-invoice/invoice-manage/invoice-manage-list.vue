@@ -1,36 +1,79 @@
 <template>
-  <TableView
-    title="Quản lý hóa đơn"
-    v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm mã hóa đơn"
-    @search="onSearchChange"
-  >
+  <TableView title="Quản lý hóa đơn">
     <template #header-actions>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
-      </Button>
+      <ButtonExtendInvoice />
     </template>
-    <template #filters>
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn trạng thái"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
+    <template #toolbar>
+      <div
+        class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
+      >
+        <FbDateFilter @update:modelValue="filter" size="small" />
+        <FbSelectSingleTaxStoreFilter
+          placeholder="Chọn theo cửa hàng"
+          size="small"
+          @update:modelValue="filter"
+        />
+        <Button
+          v-tooltip.bottom="'Lọc nâng cao'"
+          :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+          outlined
+          size="small"
+          @click="showAdvancedFilter = !showAdvancedFilter"
+        >
+          <IconFilter color="currentColor" />
+        </Button>
+        <IconField class="fb-ml-auto">
+          <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
+            <IconSearch />
+          </InputIcon>
+          <InputText
+            :modelValue="searchField"
+            placeholder="Tìm kiếm mã hóa đơn"
+            class="fb-w-full md:fb-w-72"
+            size="small"
+            @input="onSearchChange"
+          />
+        </IconField>
+      </div>
+      <transition name="filter-slide">
+        <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-3">
+          <!-- Các bộ lọc khác -->
+          <Select
+            v-model="statusField"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn trạng thái"
+            class="fb-w-full md:fb-w-52"
+            showClear
+            size="small"
+            @change="filter"
+          />
 
-      <FbDateFilter @update:modelValue="filter" size="small" />
-
-      <FbSelectSingleTaxStoreFilter
-        placeholder="Chọn theo cửa hàng"
-        size="small"
-        @update:modelValue="filter"
-      />
+          <InputText
+            v-model="serialField"
+            placeholder="Ký hiệu"
+            class="fb-w-full md:fb-w-52"
+            size="small"
+            @input="onSearchChange"
+          />
+          <Select
+            v-model="invoiceAction"
+            :options="[
+              { label: 'Hóa đơn gốc', value: 'origin' },
+              { label: 'Hóa đơn điều chỉnh', value: 'adjust' },
+              { label: 'Hóa đơn thay thế', value: 'replace' },
+            ]"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Loại hóa đơn"
+            class="fb-w-full md:fb-w-52"
+            showClear
+            size="small"
+            @change="filter"
+          />
+        </div>
+      </transition>
     </template>
 
     <template #table>
@@ -52,6 +95,20 @@
         :onToggleMenu="onToggleMenu"
         @page-change="getData"
       >
+        <template #header>
+          <SelectButton
+            v-model="invoiceType"
+            :options="[
+              { label: 'Danh sách hóa đơn', value: '1' },
+              { label: 'Hóa đơn chờ xuất', value: '2,3' },
+            ]"
+            size="small"
+            optionLabel="label"
+            optionValue="value"
+            :allowEmpty="false"
+            @change="filter"
+          />
+        </template>
         <template #inv_buyerLegalName="{ record, row }">
           <div>{{ `Tên: ${record}` }}</div>
           <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
@@ -156,13 +213,14 @@ import {
 import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
-import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
-import IconReplace from '@/components/Common/Icon/IconReplace.vue';
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
-import IconDownload from '@/components/Common/Icon/IconDownload.vue';
-import IconEye from '@/components/Common/Icon/IconEye.vue';
+import IconReplace from '@/components/Common/Icon/IconReplace.vue';
 import IconUpload from '@/components/Common/Icon/IconUpload.vue';
+import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
+import IconEye from '@/components/Common/Icon/IconEye.vue';
+import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 import IconMail from '@/components/Common/Icon/IconMail.vue';
 
 // Store/Getter
@@ -175,8 +233,12 @@ const toast = useToast();
 const confirm = useConfirm();
 
 // State
+const showAdvancedFilter = ref(false);
 const searchField = ref(null);
 const statusField = ref(null);
+const invoiceAction = ref(null);
+const serialField = ref(null);
+const invoiceType = ref('1');
 const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
 const currentPage = ref(1);
 const pageSize = ref(50);
@@ -218,6 +280,9 @@ const getData = async ({ page, rows } = {}) => {
     results_per_page: pageSize.value,
     search: searchField.value,
     status: statusField.value,
+    is_sync_vat: invoiceType.value,
+    vat_invoice_serial: serialField.value,
+    invoice_action: invoiceAction.value,
   };
 
   isLoading.value = true;

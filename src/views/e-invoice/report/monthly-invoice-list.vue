@@ -81,7 +81,7 @@
             class="fb-ml-auto"
             @click="showAdvancedFilter = !showAdvancedFilter"
           >
-            <IconFilter />
+            <IconFilter color="currentColor" />
           </Button>
         </div>
       </div>
@@ -171,7 +171,6 @@ import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { MONTHLY_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
-import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -335,23 +334,3 @@ onMounted(() => {
   getData();
 });
 </script>
-
-<style scoped>
-.filter-slide-enter-active,
-.filter-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 200px;
-  opacity: 1;
-  overflow: hidden;
-}
-
-.filter-slide-enter-from,
-.filter-slide-leave-to {
-  max-height: 0;
-  opacity: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  margin-top: 0;
-  overflow: hidden;
-}
-</style>

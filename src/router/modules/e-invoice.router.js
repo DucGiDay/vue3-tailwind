@@ -25,17 +25,9 @@ export const eInvoiceRouter = [
         },
       },
       {
-        path: 'invoice-manage/detail',
-        name: 'InvoiceManageDetail',
-        component: () => import('@/views/e-invoice/invoice-manage/invoice-manage-detail.vue'),
-        meta: {
-          title: 'Chi tiết hóa đơn - HDDT',
-        },
-      },
-      {
         path: 'sale-order',
         name: 'SaleOrder',
-        component: () => import('@/views/e-invoice/sale-order.vue'),
+        component: () => import('@/views/e-invoice/invoice-manage/sale-order.vue'),
         meta: {
           title: 'Hóa đơn bán hàng - HDDT',
           isTableViewPaginate: true,

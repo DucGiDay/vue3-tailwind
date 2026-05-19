@@ -5,6 +5,25 @@ import SaleByDate from '@/components/PageComponent/e-invoice/SaleByDate.vue';
 import StatsWidget from '@/components/PageComponent/e-invoice/StatsWidget.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import FbDateSelect from '@/components/Common/FbDateSelect.vue';
+import moment from 'moment';
+import { ref } from 'vue';
+
+const reportDateRange = ref([
+  moment().subtract(7, 'days').startOf('day').toDate(),
+  moment().subtract(1, 'days').endOf('day').toDate(),
+]);
+
+const onDateChange = () => {
+  const payload = {
+    brand_uid: globalStore?.brandUid,
+    company_uid: globalStore?.currentUser?.company_uid,
+    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(','),
+  };
+  getStatisticInvoice(payload);
+  getStatusInvoices(payload);
+};
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -32,9 +51,13 @@ const getListRecentInvoice = async (payload) => {
   await invoiceStore.getListRecentInvoice(payload);
 };
 
-// Báo cáo thống kê 7 ngày trước
+// Báo cáo thống kê
 const getStatisticInvoice = async (payload) => {
-  await invoiceStore.getStatisticInvoice(payload);
+  const datePayload = {
+    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
+    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+  };
+  await invoiceStore.getStatisticInvoice({ ...payload, ...datePayload });
 };
 
 // Báo cáo tài nguyên sử dụng
@@ -46,7 +69,11 @@ const getTotalQuantityInvoices = async (payload) => {
 
 // Báo cáo trạng thái hóa đơn
 const getStatusInvoices = async (payload) => {
-  await invoiceStore.getStatusInvoices(payload);
+  const datePayload = {
+    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
+    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+  };
+  await invoiceStore.getStatusInvoices({ ...payload, ...datePayload });
 };
 
 // Biểu đồ số lượng hóa đơn theo ngày
@@ -89,13 +116,19 @@ onMounted(() => {
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Tổng quan</h5>
     </div>
-    <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-      <IconCart />
-      Mua hóa đơn
-    </Button>
+    <ButtonExtendInvoice />
   </div>
   <div class="fb-grid fb-grid-cols-12 fb-gap-6">
-    <StatsWidget class="fb-col-span-12" />
+    <StatsWidget class="fb-col-span-12">
+      <template #date-filter>
+        <FbDateSelect
+          v-model="reportDateRange"
+          class="fb-w-72"
+          size="small"
+          @update:modelValue="onDateChange"
+        />
+      </template>
+    </StatsWidget>
 
     <div class="fb-col-span-12 xl:fb-col-span-8">
       <SaleByDate class="fb-h-full" />

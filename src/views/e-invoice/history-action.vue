@@ -52,11 +52,18 @@
           >
         </div>
         <template #footer>
-          <div class="fb-flex fb-justify-end fb-pt-2">
+          <div class="fb-flex fb-justify-end fb-pt-2 fb-gap-2">
             <Button
               label="Đóng"
               severity="secondary"
               @click="displayDetailDialog = false"
+              raised
+              size="small"
+            />
+            <Button
+              label="Sao chép"
+              severity="primary"
+              @click="copyToClipboard"
               raised
               size="small"
             />
@@ -79,6 +86,7 @@ import { useToast } from 'primevue/usetoast';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const toast = useToast();
 
 // State for Table
 const dataList = ref([]);
@@ -92,6 +100,25 @@ const displayDetailDialog = ref(false);
 const formattedJsonDetail = ref('');
 
 // Methods
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(formattedJsonDetail.value);
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Đã sao chép vào clipboard',
+      life: 3000,
+    });
+  } catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không thể sao chép',
+      life: 3000,
+    });
+  }
+};
+
 const getPayload = () => {
   return {
     company_uid: globalStore?.currentUser?.company_uid,
@@ -99,57 +126,6 @@ const getPayload = () => {
     end_date: filterStore.report.end_date,
   };
 };
-
-const MOCK_DATA = [
-  {
-    trace_id: '2026-0516-164110-fd7738e7-837c-4b70-aa61-27ff493cb2b7',
-    action: 'create',
-    data: '{"id": "9c814a84-774b-6d0f-5f3c-afe4e46fa103", "serial": "123411", "pattern": "123", "tax_code": "0106713804-999", "from_no": 1, "to_no": 99999999, "start_date": 1778924470795, "end_date": 1798650000000}',
-    service: 'einvoice',
-    uuid: '9c814a84-774b-6d0f-5f3c-afe4e46fa103',
-    hour: 9,
-    company_uid: '483deb8f-9184-4b10-bd5e-e02df70c2905',
-    series: '123411',
-    timestamp: '2026-05-16T09:41:13.787148+00:00',
-    tax_code: '0106713804-999',
-    model: 'invoice_serials',
-    name: '123/123411',
-    updated_by: '12541',
-    source: 'api',
-  },
-  {
-    trace_id: '2026-0516-164520-fd7738e7-837c-4b70-aa61-27ff493cb2b8',
-    action: 'update',
-    data: '{"id": "9c814a84-774b-6d0f-5f3c-afe4e46fa103", "serial": "123411", "pattern": "123", "tax_code": "0106713804-999", "from_no": 1, "to_no": 99999999, "start_date": 1778924470795, "end_date": 1798650000000, "note": "Cập nhật dải số cấu hình hóa đơn"}',
-    service: 'einvoice',
-    uuid: '9c814a84-774b-6d0f-5f3c-afe4e46fa103',
-    hour: 10,
-    company_uid: '483deb8f-9184-4b10-bd5e-e02df70c2905',
-    series: '123411',
-    timestamp: '2026-05-16T10:45:20.123456+00:00',
-    tax_code: '0106713804-999',
-    model: 'invoice_serials',
-    name: '123/123411',
-    updated_by: '12541',
-    source: 'api',
-  },
-  {
-    trace_id: '2026-0517-091530-fd7738e7-837c-4b70-aa61-27ff493cb2b9',
-    action: 'delete',
-    data: '{"id": "9c814a84-774b-6d0f-5f3c-afe4e46fa103"}',
-    service: 'einvoice',
-    uuid: '9c814a84-774b-6d0f-5f3c-afe4e46fa103',
-    hour: 9,
-    company_uid: '483deb8f-9184-4b10-bd5e-e02df70c2905',
-    series: '123411',
-    timestamp: '2026-05-17T09:15:30.987654+00:00',
-    tax_code: '0106713804-999',
-    model: 'invoice_serials',
-    name: '123/123411',
-    updated_by: '12542',
-    source: 'api',
-  },
-];
 
 const getData = async () => {
   const payload = getPayload();
@@ -163,10 +139,10 @@ const getData = async () => {
       perpage: pageSize.value,
     });
 
-    const fetchedData = res?.data?.data || res?.data || [];
+    const fetchedData = res?.data?.items || [];
 
     if (currentPage.value === 1) {
-      dataList.value = fetchedData.length ? fetchedData : MOCK_DATA;
+      dataList.value = fetchedData.length ? fetchedData : [];
     } else {
       dataList.value = [...dataList.value, ...fetchedData];
     }
@@ -174,10 +150,6 @@ const getData = async () => {
     hasMoreData.value = fetchedData.length === pageSize.value && fetchedData.length > 0;
   } catch (error) {
     console.error('Error fetching audit logs, falling back to mock data:', error);
-    if (currentPage.value === 1) {
-      dataList.value = MOCK_DATA;
-    }
-    hasMoreData.value = false;
   } finally {
     isLoading.value = false;
   }
