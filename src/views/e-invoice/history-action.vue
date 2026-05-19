@@ -122,8 +122,8 @@ const copyToClipboard = async () => {
 const getPayload = () => {
   return {
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: filterStore.report.start_date,
-    end_date: filterStore.report.end_date,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
   };
 };
 

@@ -160,8 +160,8 @@ const getPayload = () => {
   return {
     company_uid: globalStore?.currentUser?.company_uid,
     report_type: 'invoices_grouped_by_items',
-    start_date: filterStore.report.start_date,
-    end_date: filterStore.report.end_date,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
     list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
     tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };

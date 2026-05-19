@@ -53,6 +53,7 @@ export const INVOICE_ENDPOINTS = {
   LIST_POS_INVOICE: '/api/einvoice/v1/batch_invoice/invoices',
   CREATE_POS_INVOICE: '/api/einvoice/v1/batch_invoice/create_and_send',
   LIST_BATCH_INVOICE: '/api/einvoice/v1/batch_invoice/list',
+  GET_INVOICE_BY_TRAN_IDS: '/api/einvoice/v1/invoice/get-by-tran-ids',
 
   // Report Invoice API
   PREVIEW_REPORT: '/api/invoice/v1/invoice-report/preview',

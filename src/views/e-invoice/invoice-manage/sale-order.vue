@@ -87,7 +87,7 @@
         <template #empty>
           {{
             saleNotSyncVat?.error ||
-            (!filterStore?.report?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+            (!filterStore?.invoice?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
           }}
         </template>
       </FbTable>
@@ -133,7 +133,7 @@ const currentSaleData = ref({});
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
-  if (!filterStore?.report?.store_uid) return;
+  if (!filterStore?.invoice?.store_uid) return;
 
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
@@ -141,9 +141,9 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.report?.store_uid,
-    start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date,
+    list_store_uid: filterStore?.invoice?.store_uid,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value

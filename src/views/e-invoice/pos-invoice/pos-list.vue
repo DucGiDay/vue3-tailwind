@@ -58,20 +58,13 @@
         :hasMoreData="hasMoreData"
         @page-change="loadMore"
       >
-        <!-- <template #status="{ record }">
-          <span
-            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-            :class="{
-              'fb-bg-green-100 fb-text-green-800': record.status === 'sent',
-              'fb-bg-yellow-100 fb-text-yellow-800': record.status === 'draft',
-              'fb-bg-red-100 fb-text-red-800': record.status === 'error'
-            }"
-          >
-            {{
-              record.status === 'sent' ? 'Đã gửi' : record.status === 'draft' ? 'Bản nháp' : 'Lỗi'
-            }}
-          </span>
-        </template> -->
+        <template #status="{ row }">
+          <Tag
+            :severity="statusMap(row.status).severity"
+            :value="statusMap(row.status).label"
+            class="!fb-text-xs !fb-font-medium"
+          />
+        </template>
 
         <template #action="{ row }">
           <div class="fb-flex fb-justify-center">
@@ -91,39 +84,32 @@
       <!-- Dialog Chi tiết -->
       <Dialog
         v-model:visible="showDetailDialog"
-        header="Chi tiết hóa đơn POS"
+        header="Chi tiết hóa đơn MTT"
         modal
-        :style="{ width: '450px' }"
+        :style="{ width: '65vw' }"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
       >
-        <div v-if="itemDetail" class="fb-flex fb-flex-col fb-gap-3">
-          <div class="fb-flex fb-justify-between">
-            <span class="fb-font-medium">Số hóa đơn:</span>
-            <span>{{ itemDetail.invoice_number }}</span>
-          </div>
-          <div class="fb-flex fb-justify-between">
-            <span class="fb-font-medium">Ký hiệu:</span>
-            <span>{{ itemDetail.symbol }}</span>
-          </div>
-          <div class="fb-flex fb-justify-between">
-            <span class="fb-font-medium">Người tạo:</span>
-            <span>{{ itemDetail.creator }}</span>
-          </div>
-          <div class="fb-flex fb-justify-between">
-            <span class="fb-font-medium">Trạng thái:</span>
-            <span>
-              {{
-                itemDetail.status === 'sent'
-                  ? 'Đã gửi'
-                  : itemDetail.status === 'draft'
-                    ? 'Bản nháp'
-                    : 'Lỗi'
-              }}
-            </span>
-          </div>
+        <div class="fb-w-full fb-h-full">
+          <FbTable
+            :columns="POS_INVOICE_DETAIL_COLUMNS"
+            :items="itemDetailList"
+            :isLoading="isLoadingDetail"
+            :showGridlines="true"
+            :hideIndexRow="true"
+            :scrollHeight="'flex'"
+          >
+            <template #no="{ index }">
+              {{ index + 1 }}
+            </template>
+            <template #status="{ row }">
+              <Tag
+                :severity="statusMap(row.status).severity"
+                :value="statusMap(row.status).label"
+                class="!fb-text-xs !fb-font-medium"
+              />
+            </template>
+          </FbTable>
         </div>
-        <template #footer>
-          <Button label="Đóng" @click="showDetailDialog = false" variant="text" size="small" />
-        </template>
       </Dialog>
     </template>
   </TableView>
@@ -134,6 +120,7 @@ import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
+import FbTable from '@/components/Common/FbTable.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
@@ -156,26 +143,44 @@ const pageSize = ref(50);
 const isLoading = ref(false);
 const selectedItems = ref([]);
 const showDetailDialog = ref(false);
-const itemDetail = ref(null);
+const itemDetailList = ref([]);
+const isLoadingDetail = ref(false);
 let searchTimeout = null;
 const hasMoreData = ref(true);
 const items = ref([]);
 
 // --- Constants & Options ---
 const POS_INVOICE_TABLE_COLUMNS = [
-  { field: 'invoice_number', header: 'Số' },
+  { field: 'total', header: 'Tổng số hóa đơn' },
   { field: 'created_by', header: 'Người tạo' },
   { field: 'created_at', header: 'Ngày tạo', format: 'date' },
-  { field: 'updated_by', header: 'Người cập nhật' },
-  { field: 'updated_at', header: 'Ngày cập nhật', format: 'date' },
+  { field: 'created_by', header: 'Người cập nhật' },
+  { field: 'finished_at', header: 'Ngày cập nhật', format: 'date' },
   { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '' },
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' },
+  },
+];
+
+const POS_INVOICE_DETAIL_COLUMNS = [
+  { field: 'no', header: 'STT' },
+  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'vat_invoice_series', header: 'Ký hiệu' },
+  { field: 'vat_invoice_number', header: 'Số' },
+  { field: 'lookup_code', header: 'Mã tra cứu' },
+  { field: 'cqt_code', header: 'Mã cơ quan thuế' },
+  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
+  { field: 'status', header: 'Trạng thái' },
 ];
 
 const statusOptions = [
-  { label: 'Bản nháp', value: 'draft' },
-  { label: 'Đã gửi', value: 'sent' },
-  { label: 'Lỗi', value: 'error' },
+  { label: 'Thất bại', value: 'failed' },
+  { label: 'Thành công', value: 'done' },
+  { label: 'Đang đồng bộ', value: 'pending' },
 ];
 
 // --- Computed ---
@@ -186,10 +191,11 @@ const posInvoiceList = computed(() => invoiceStore.posInvoiceList || {});
 const getData = async () => {
   const payload = {
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
     offset: (currentPage.value - 1) * pageSize.value,
     limit: pageSize.value,
+    status: statusField.value,
   };
 
   isLoading.value = true;
@@ -224,37 +230,39 @@ const directToConfig = () => {
   router.push('/e-invoice/pos-invoice/config-time');
 };
 
-const onDeleteAll = () => {
-  if (confirm('Bạn có chắc chắn muốn xóa tất cả Máy tính tiền?')) {
-    invoiceService.deletePosInvoice().then(() => {
-      toast.add({
-        severity: 'success',
-        summary: 'Thành công',
-        detail: 'Đã xóa tất cả MTT',
-        life: 3000,
-      });
-      filter();
-    });
-  }
+const statusMap = (status) => {
+  const map = {
+    done: { severity: 'success', label: 'Thành công' },
+    pending: { severity: 'warn', label: 'Đang đồng bộ' },
+    failed: { severity: 'danger', label: 'Thất bại' },
+  };
+  return map[status] || { severity: 'secondary', label: status };
 };
 
-const onSendInvoice = () => {
-  if (selectedItems.value.length === 0) return;
-  invoiceService.sendPosInvoice({ ids: selectedItems.value.map((i) => i.id) }).then(() => {
-    toast.add({
-      severity: 'success',
-      summary: 'Thành công',
-      detail: 'Đã gửi hóa đơn MTT',
-      life: 3000,
-    });
-    selectedItems.value = [];
-    filter();
-  });
-};
-
-const onViewDetail = (row) => {
-  itemDetail.value = row;
+const onViewDetail = async (row) => {
+  itemDetailList.value = [];
   showDetailDialog.value = true;
+
+  if (!row.list_merged_tran_id || !row.list_merged_tran_id.length) return;
+
+  isLoadingDetail.value = true;
+  try {
+    const list_merged_tran_id = Array.isArray(row.list_merged_tran_id)
+      ? row.list_merged_tran_id.join(',')
+      : row.list_merged_tran_id;
+
+    const res = await invoiceService.getInvoiceByTranIds({ list_merged_tran_id });
+    itemDetailList.value = (res?.data?.invoices || []).map((item) => {
+      return {
+        ...item,
+        status: row.status,
+      };
+    });
+  } catch (error) {
+    console.error('Lỗi lấy chi tiết hóa đơn POS:', error);
+  } finally {
+    isLoadingDetail.value = false;
+  }
 };
 
 const loadMore = async () => {

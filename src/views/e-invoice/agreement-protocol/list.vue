@@ -103,7 +103,7 @@
         <template #empty>
           {{
             agreementProtocolList?.error ||
-            (!filterStore?.report?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có biên bản')
+            (!filterStore?.invoice?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có biên bản')
           }}
         </template>
       </FbTable>
@@ -203,8 +203,8 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,
-    start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
   };
 
   isLoading.value = true;

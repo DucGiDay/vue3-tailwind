@@ -13,24 +13,46 @@ import FbDateSelect from './FbDateSelect.vue';
  * FbDateFilter — Wrapper của FbDateSelect tích hợp filterStore.
  * Đọc giá trị khởi tạo từ store, và ghi lại store khi người dùng chọn ngày.
  */
+const props = defineProps({
+  module: {
+    type: String,
+    default: 'report', // 'report' | 'invoice'
+  },
+});
+
 const emit = defineEmits(['update:modelValue']);
 
 const filterStore = useFilterStore();
-const { report } = storeToRefs(filterStore);
+
+const currentState = props.module === 'invoice' ? filterStore.invoice : filterStore.report;
+
+const getDefaultStartDate = () => {
+  return props.module === 'invoice'
+    ? moment().subtract(7, 'days').startOf('day').toDate()
+    : moment().startOf('day').toDate();
+};
+
+const getDefaultEndDate = () => {
+  return props.module === 'invoice'
+    ? moment().subtract(1, 'days').endOf('day').toDate()
+    : moment().endOf('day').toDate();
+};
 
 const dates = ref([
-  report.value.start_date ? new Date(report.value.start_date) : moment().startOf('day').toDate(),
-  report.value.end_date ? new Date(report.value.end_date) : moment().endOf('day').toDate()
+  currentState?.start_date ? new Date(currentState.start_date) : getDefaultStartDate(),
+  currentState?.end_date ? new Date(currentState.end_date) : getDefaultEndDate()
 ]);
 
 const onDateChange = async (value) => {
-  await filterStore.updateFilter({
-    report: {
-      ...filterStore.report,
-      start_date: new Date(value[0]).setHours(0, 0, 0, 0),
-      end_date: new Date(value[1]).setHours(23, 59, 59, 999)
-    }
-  });
+  if (value && value[0] && value[1]) {
+    await filterStore.updateFilter({
+      [props.module]: {
+        ...filterStore[props.module],
+        start_date: new Date(value[0]).setHours(0, 0, 0, 0),
+        end_date: new Date(value[1]).setHours(23, 59, 59, 999)
+      }
+    });
+  }
 
   emit('update:modelValue', value);
 };

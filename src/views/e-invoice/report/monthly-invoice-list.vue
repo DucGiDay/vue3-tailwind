@@ -234,8 +234,8 @@ const getPayload = () => {
       end_date = date.endOf('month').valueOf();
     }
   } else {
-    start_date = filterStore.report.start_date;
-    end_date = filterStore.report.end_date;
+    start_date = filterStore?.invoice?.start_date;
+    end_date = filterStore?.invoice?.end_date;
   }
 
   // TODO: Map filter fields (statusField, creatorField, etc.) correctly when backend supports them.

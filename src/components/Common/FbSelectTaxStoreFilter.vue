@@ -156,6 +156,23 @@ const itemSelected = computed({
 
 onMounted(async () => {
   await fetchStores();
+
+  const currentStores = filterStore?.invoice?.store_uid_by_tax_code || {};
+  const hasSelectedStores = Object.values(currentStores).flat().filter(Boolean).length > 0;
+
+  if (!hasSelectedStores && filteredItems.value && filteredItems.value.length > 0) {
+    const firstTax = filteredItems.value[0];
+    if (firstTax && firstTax.children && firstTax.children.length > 0) {
+      const firstStore = firstTax.children[0];
+      const autoValue = {
+        [firstStore.key]: {
+          checked: true,
+          partialChecked: false,
+        },
+      };
+      await setStoreSelected(autoValue);
+    }
+  }
   expandAll();
 });
 
