@@ -34,7 +34,7 @@ function render(props = {}) {
       render: () =>
         h(SmartReport, {
           reportType: props?.reportType,
-          onClose: props?.onClose || (() => {}) // Truyền function từ host vào prop 'onClose'
+          onClose: props?.onClose || (() => { }) // Truyền function từ host vào prop 'onClose'
         })
     });
   } else {
@@ -79,7 +79,7 @@ function render(props = {}) {
     }, true);
   }
 
-  console.log('[sub-vue3] mounted edited');
+  console.log('[sub-vue3] mounted');
 }
 
 // Khi chạy trong Qiankun

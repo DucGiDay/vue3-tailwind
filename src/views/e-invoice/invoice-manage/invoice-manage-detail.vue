@@ -100,198 +100,263 @@
       </div>
 
       <!-- Card 2: Thông tin khách hàng & hóa đơn -->
-      <div
-        class="card !fb-p-4 !fb-rounded-2xl !fb-border !fb-border-gray-300 fb-mb-6"
-        style="box-shadow: 0 0.5px 2px 0 rgba(10, 13, 18, 0.03) !important"
-      >
-        <div class="fb-grid fb-grid-cols-1 md:fb-grid-cols-12 fb-gap-x-10 fb-gap-y-4">
-          <!-- Hàng 1 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mã khách hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.customer_code" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Ngày hóa đơn</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.vat_invoice_date" />
-          </div>
-
-          <!-- Hàng 2 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mã số thuế</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerTaxCode" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Họ tên người mua</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerDisplayName" />
-          </div>
-
-          <!-- Hàng 3 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Căn cước công dân</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerIdentityCard" />
-          </div>
-          <div class="md:fb-col-span-6 hidden md:fb-block"></div>
-
-          <!-- Hàng 4 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mail khách hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerEmail" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mail CC</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.mail_cc" />
-          </div>
-
-          <!-- Hàng 5 - Full Width -->
-          <div
-            class="md:fb-col-span-12 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center fb-mt-4"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Đơn vị mua</label>
-            <InputText
-              size="small"
-              class="fb-w-full"
-              v-model="formInfo.extra_sale.inv_buyerLegalName"
-            />
-          </div>
-
-          <!-- Hàng 6 - Full Width -->
-          <div
-            class="md:fb-col-span-12 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center fb-mb-4"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Địa chỉ</label>
-            <InputText
-              size="small"
-              class="fb-w-full"
-              v-model="formInfo.extra_sale.inv_buyerAddressLine"
-            />
-          </div>
-
-          <!-- Hàng 7 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Số chứng từ</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.tran_no" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mã QHNS</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.budget_unit_code" />
-          </div>
-
-          <!-- Hàng 8 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Hộ chiếu</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.passport_number" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Mã cửa hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.fb_store_id" />
-          </div>
-
-          <!-- Hàng 9 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Tên cửa hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.store_name" />
-          </div>
-          <div class="md:fb-col-span-6 hidden md:fb-block"></div>
-
-          <!-- Hàng 10 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">
-              Hình thức thanh toán
-              <span class="fb-text-error">*</span>
-            </label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.payment_method_name" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">
-              Tiêu chí điều chỉnh
-              <span class="fb-text-error">*</span>
-            </label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.adjustment_criteria" />
-          </div>
-
-          <!-- Hàng 11 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Số tài khoản ngân hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerBankAccount" />
-          </div>
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Tên ngân hàng</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.inv_buyerBankName" />
-          </div>
-
-          <!-- Hàng 12 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Biên bản đính kèm</label>
-            <InputText
-              size="small"
-              class="fb-w-full"
-              v-model="formInfo.attachment_file"
-              placeholder="Nhấn chuột vào đây để đính kèm biên bản (doc, docx, pdf)"
-            />
-          </div>
-          <div class="md:fb-col-span-6 hidden md:fb-block"></div>
-
-          <!-- Hàng 13 -->
-          <div
-            class="md:fb-col-span-6 fb-grid md:fb-grid-cols-[170px_1fr] fb-gap-2 md:fb-items-center"
-          >
-            <label class="fb-text-sm fb-font-medium fb-text-gray-700">Ghi chú</label>
-            <InputText size="small" class="fb-w-full" v-model="formInfo.extra_sale.note" />
-          </div>
-          <div class="md:fb-col-span-6 fb-flex fb-items-center fb-justify-end fb-gap-6">
-            <div class="fb-flex fb-items-center fb-gap-2">
-              <label class="fb-text-sm fb-font-medium fb-text-gray-700">Hỗ trợ tính toán</label>
-              <InputText size="small" class="fb-w-[100px]" v-model="formInfo.calculation_support" />
-            </div>
-            <div class="fb-flex fb-items-center fb-gap-2">
-              <label class="fb-text-sm fb-font-medium fb-text-gray-700">
-                Hỗ trợ chọn thuế suất
-              </label>
-              <InputText size="small" class="fb-w-[60px]" v-model="formInfo.tax_rate_support" />
-            </div>
+      <div class="card fb-w-full !fb-rounded-2xl fb-overflow-visible !fb-p-6">
+        <div class="fb-bg-surface-0 fb-border-b fb-border-surface-200 fb-pb-5">
+          <div class="fb-flex fb-flex-col fb-items-center">
+            <h6 class="!fb-font-semibold !fb-text-sm !fb-mb-0">
+              {{ t('SALE_SYNC_VAT--VAT_INFO') }}
+            </h6>
+            <p class="fb-text-sm fb-text-muted-color fb-mt-1 fb-font-normal text-center">
+              {{
+                !url ? t('SALE_SYNC_VAT--TEXT_NOTE') : t('SALE_SYNC_VAT--EXPORT_VAT_SUCCESS_NOTE')
+              }}
+            </p>
           </div>
         </div>
 
-        <div class="fb-mt-4 fb-text-center fb-text-sm fb-font-medium fb-text-gray-700">
-          (Điều chỉnh giảm cho hóa đơn mẫu số 1, ký hiệu C26MDT, số 00000193, ngày 12 tháng 5 năm
-          2026)
+        <div class="fb-py-5">
+          <Fluid class="">
+            <div class="fb-flex fb-flex-wrap fb-items-center fb-gap-4 fb-justify-between fb-mb-4">
+              <!-- Đối tượng: Cá nhân / Tổ chức -->
+              <div class="fb-flex fb-gap-8">
+                <div class="fb-flex fb-items-center">
+                  <RadioButton
+                    v-model="scope"
+                    inputId="scope_company"
+                    :value="0"
+                    :disabled="isLoading"
+                  />
+                  <label
+                    for="scope_company"
+                    class="fb-ml-2 fb-font-semibold fb-cursor-pointer fb-mb-0"
+                  >
+                    {{ t('SALE_SYNC_VAT--COMPANY') }}
+                  </label>
+                </div>
+                <div class="fb-flex fb-items-center">
+                  <RadioButton
+                    v-model="scope"
+                    inputId="scope_individual"
+                    :value="1"
+                    :disabled="isLoading"
+                  />
+                  <label
+                    for="scope_individual"
+                    class="fb-ml-2 fb-font-semibold fb-cursor-pointer fb-mb-0"
+                  >
+                    {{ t('SALE_SYNC_VAT--INDIVIDUAL') }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grid 2 cột cho các trường còn lại -->
+            <div class="fb-grid fb-grid-cols-1 md:fb-grid-cols-2 fb-gap-x-6 fb-gap-y-4 fb-mb-4">
+              <!-- Mã số thuế (Chỉ hiện nếu là Tổ chức) -->
+              <div
+                v-if="scope === 0"
+                class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
+              >
+                <label for="tax_code" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('MINVOICE_ROW--LIST_CONFIG--TAX_CODE') }}
+                  <span class="fb-text-error fb-ml-1">*</span>
+                </label>
+                <InputText
+                  id="tax_code"
+                  v-model="extraSale.inv_buyerTaxCode"
+                  class="fb-w-full"
+                  size="small"
+                  :disabled="isLoading"
+                  :invalid="scope === 0 && !extraSale.inv_buyerTaxCode"
+                  :placeholder="t('MINVOICE_ROW--DETAIL_CONFIG--TAX_CODE_INPUT_PLACEHOLDER')"
+                  @input="handleSearchTaxCode"
+                />
+              </div>
+
+              <!-- Tên đơn vị (Chỉ hiện nếu là Tổ chức) -->
+              <div
+                v-if="scope === 0"
+                class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
+              >
+                <label for="legal_name" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_SYNC_VAT--BUYER_LEGAL_NAME') }}
+                  <span class="fb-text-error fb-ml-1">*</span>
+                </label>
+                <InputText
+                  id="legal_name"
+                  v-model="extraSale.inv_buyerLegalName"
+                  class="fb-w-full"
+                  size="small"
+                  :disabled="isLoading"
+                  :invalid="scope === 0 && !extraSale.inv_buyerLegalName"
+                  :placeholder="t('CREATE_EDIT_LOCATION--INPUT_COMPANY_NAME_PLACEHOLDER')"
+                />
+              </div>
+
+              <!-- Tên khách hàng -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
+                <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
+                  <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
+                </label>
+                <InputText
+                  id="display_name"
+                  v-model="extraSale.inv_buyerDisplayName"
+                  class="fb-w-full"
+                  size="small"
+                  :disabled="isLoading"
+                  :invalid="scope === 1 && !extraSale.inv_buyerDisplayName"
+                  :placeholder="t('CREATE_EDIT_LOCATION--INPUT_GUEST_NAME_PLACEHOLDER')"
+                />
+              </div>
+
+              <!-- Email -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="email" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_SYNC_VAT--BUYER_EMAIL') }}
+                </label>
+                <InputText
+                  id="email"
+                  v-model="extraSale.inv_buyerEmail"
+                  size="small"
+                  :disabled="isLoading"
+                  :placeholder="t('REGISTER--FORM_EMAIL_PLACEHOLDER')"
+                />
+              </div>
+
+              <!-- Số điện thoại -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('BILL_CONTENT--CUSTOMER_PHONE') }}
+                  <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
+                </label>
+                <InputText
+                  id="phone"
+                  v-model="extraSale.sdtnmua"
+                  size="small"
+                  :disabled="isLoading"
+                  :invalid="scope === 1 && !extraSale.sdtnmua"
+                  :placeholder="t('CONNECT_AHAMOVE_MODAL--PHONE_INPUT_PLACEHOLDER')"
+                />
+              </div>
+
+              <!-- CCCD / Identity Card -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="id_card" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_SYNC_VAT--INPUT_CCCD') }}
+                </label>
+                <InputGroup>
+                  <InputText
+                    id="id_card"
+                    v-model="extraSale.inv_buyerIdentityCard"
+                    size="small"
+                    :disabled="isLoading"
+                    :placeholder="t('SALE_SYNC_VAT--INPUT_CCCD_PLACEHOLDER')"
+                    maxlength="12"
+                  />
+                  <InputGroupAddon class="fb-text-xs">
+                    {{ (extraSale.inv_buyerIdentityCard || '').length }}/12
+                  </InputGroupAddon>
+                </InputGroup>
+              </div>
+
+              <!-- Hộ chiếu -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="passport" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER') }}
+                </label>
+                <InputGroup>
+                  <InputText
+                    id="passport"
+                    v-model="extraSale.passport_number"
+                    size="small"
+                    :disabled="isLoading"
+                    :placeholder="t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER_PLACEHOLDER')"
+                    maxlength="20"
+                  />
+                  <InputGroupAddon class="fb-text-xs">
+                    {{ (extraSale.passport_number || '').length }}/20
+                  </InputGroupAddon>
+                </InputGroup>
+              </div>
+
+              <!-- Số tai khoản -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="bank_acc" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
+                </label>
+                <InputText
+                  id="bank_acc"
+                  v-model="extraSale.inv_buyerBankAccount"
+                  size="small"
+                  :disabled="isLoading"
+                  :placeholder="t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
+                />
+              </div>
+              <!-- Tên ngân hàng -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="bank_name" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL') }}
+                </label>
+                <InputText
+                  id="bank_name"
+                  v-model="extraSale.inv_buyerBankName"
+                  size="small"
+                  :disabled="isLoading"
+                  :placeholder="t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL')"
+                />
+              </div>
+
+              <!-- Ghi chú (Full width) -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="note" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('BILL_CONTENT--NOTE') }}
+                </label>
+                <Textarea
+                  id="note"
+                  v-model="extraSale.note"
+                  class="fb-w-full"
+                  size="small"
+                  :disabled="isLoading"
+                  :placeholder="t('SALE_SYNC_VAT--INPUT_NOTE_PLACEHOLDER')"
+                  rows="2"
+                />
+              </div>
+
+              <!-- Địa chỉ -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="address" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ t('SALE_SYNC_VAT--BUYER_ADDRESS') }}
+                </label>
+                <Textarea
+                  id="address"
+                  v-model="extraSale.inv_buyerAddressLine"
+                  class="fb-w-full"
+                  size="small"
+                  rows="2"
+                  :disabled="isLoading"
+                  :placeholder="t('CREATE_EDIT_LOCATION--INPUT_ADDRESS_PLACEHOLDER')"
+                />
+              </div>
+
+              <!-- PTTT -->
+              <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+                <label for="address" class="fb-font-medium fb-text-sm fb-mb-0">
+                  {{ 'Hình thức thanh toán' }}
+                </label>
+                <Select
+                  :options="[]"
+                  optionLabel="name"
+                  optionValue="value"
+                  class="fb-w-full"
+                  placeholder="Chọn PTTT"
+                  size="small"
+                />
+              </div>
+            </div>
+          </Fluid>
         </div>
       </div>
-
       <!-- Bảng 1: Hàng hóa dịch vụ -->
       <FbTable
         class="fb-mb-6"
@@ -464,17 +529,80 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 import DetailView from '@/components/SharedComponent/views/DetailView.vue';
 import { useGlobalStore } from '@/stores/global.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
+import { useI18n } from '@/common/i18n';
+
+const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
 const globalStore = useGlobalStore();
 const saleData = ref({});
-const formInfo = ref({
-  extra_sale: {},
-});
+const isLoading = ref(false);
+
+const DEFAULT_EXTRA_SALE = {
+  source: 'CMS',
+  inv_buyerDisplayName: '',
+  inv_buyerLegalName: '',
+  inv_buyerTaxCode: '',
+  inv_buyerAddressLine: '',
+  inv_buyerEmail: '',
+  inv_buyerBankAccount: '',
+  inv_buyerBankName: '',
+  sdtnmua: '',
+  ma_dt: '',
+  inv_buyerIdentityCard: '',
+  note: '',
+  budget_unit_code: '',
+  passport_number: '',
+  _id: '',
+};
+
+const formInfo = ref({});
+const extraSale = ref({ ...DEFAULT_EXTRA_SALE });
+
+const scope = ref(0); // 0: Tổ chức, 1: Cá nhân
+
+// Simple debounce implementation
+const debounce = (fn, delay) => {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+};
+
+const searchByTaxCode = async () => {
+  if (!extraSale.value?.inv_buyerTaxCode) return;
+  try {
+    const respoonse = await invoiceService.searchByTaxCode({
+      tax_code: extraSale.value.inv_buyerTaxCode,
+    });
+
+    if (respoonse?.data) {
+      const { inv_buyerLegalName, inv_buyerAddressLine, inv_buyerDisplayName } =
+        respoonse.data || {};
+
+      extraSale.value.inv_buyerLegalName = inv_buyerLegalName;
+      extraSale.value.inv_buyerAddressLine = inv_buyerAddressLine;
+      extraSale.value.inv_buyerDisplayName = inv_buyerDisplayName;
+    }
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      detail: error.message || '',
+      life: 3000,
+    });
+  }
+};
+
+const handleSearchTaxCode = debounce(searchByTaxCode, 500);
 
 const handleBack = () => {
   router.push('/e-invoice/invoice-manage');
@@ -490,18 +618,19 @@ onMounted(async () => {
     };
     const res = await invoiceService.getSaleByTranId(payload);
     saleData.value = res?.data || {};
-      const data = res.data;
-      formInfo.value = {
-        ...data,
-        extra_sale: data.extra_sale || {},
-      };
-      
-      // Default values for fields not in API
-      formInfo.value.calculation_support = 'Mặc định';
-      formInfo.value.tax_rate_support = '0%';
-      formInfo.value.adjustment_criteria = 'Điều chỉnh số lượng';
-      formInfo.value.payment_method_name = data.sale_payment_method?.[0]?.payment_method_name || 'Thanh toán tiền mặt';
-    
+    const data = res.data;
+    formInfo.value = {
+      ...data,
+    };
+    extraSale.value = { ...DEFAULT_EXTRA_SALE, ...(data.extra_sale || {}) };
+
+    // Default values for fields not in API
+    formInfo.value.calculation_support = 'Mặc định';
+    formInfo.value.tax_rate_support = '0%';
+    formInfo.value.adjustment_criteria = 'Điều chỉnh số lượng';
+    formInfo.value.payment_method_name =
+      data.sale_payment_method?.[0]?.payment_method_name || 'Thanh toán tiền mặt';
+
     console.log('getSaleByTranId response:', res);
   } catch (error) {
     console.error('getSaleByTranId error:', error);

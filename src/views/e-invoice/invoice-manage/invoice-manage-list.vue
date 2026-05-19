@@ -58,7 +58,7 @@
         </template>
         <template #invoice_type="{ record, row }">
           <div>{{ record }}</div>
-          <div v-if="row?.tran_id" class="fb-text-primary">({{ row.tran_id }})</div>
+          <div v-if="row?.origin_tran_id" class="fb-text-primary">({{ row.origin_tran_id }})</div>
         </template>
 
         <template #vat_publish_status="{ record, row }">
@@ -249,17 +249,42 @@ const menuItems = (row) => {
     {
       label: 'Điều chỉnh tăng',
       icon: markRaw(IconEdit),
-      command: () => {
-        router.push(
-          `/e-invoice/invoice-manage/detail?tran_id=${row.tran_id}&store_uid=${row.store_uid}`,
-        );
-      },
+      visible: row?.statusSale?.is_edit,
       // command: () => {
-      //   const url =
-      //     window.location.origin +
-      //     `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-      //   window.open(url, '_self');
+      //   router.push(
+      //     `/e-invoice/invoice-manage/detail?tran_id=${row.tran_id}&store_uid=${row.store_uid}`,
+      //   );
       // },
+      command: () => {
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=1`;
+        window.open(url, '_self');
+      },
+    },
+    {
+      label: 'Điều chỉnh giảm',
+      icon: markRaw(IconEdit),
+      visible: row?.statusSale?.is_edit,
+
+      command: () => {
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+        window.open(url, '_self');
+      },
+    },
+    {
+      label: 'Điều chỉnh thông tin',
+      icon: markRaw(IconEdit),
+      visible: row?.statusSale?.is_edit,
+
+      command: () => {
+        const url =
+          window.location.origin +
+          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+        window.open(url, '_self');
+      },
     },
     {
       label: 'Thay thế',
@@ -346,6 +371,9 @@ const onToggleMenu = async (_, row) => {
     const response = await invoiceService.getStatus({ tran_id: row.tran_id });
     Object.assign(row, {
       statusSale: response?.data,
+      vat_publish_status: response?.data?.vat_publish_status || row?.vat_publish_status,
+      vat_publish_status_code:
+        response?.data?.vat_publish_status_code || row?.vat_publish_status_code,
     });
   } catch (error) {
     console.error('Error fetching status:', error);

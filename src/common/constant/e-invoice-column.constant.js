@@ -66,7 +66,6 @@ export const SALE_ORDER_TABLE_COLUMNS = [
     frozen: true,
     alignFrozen: 'left',
   },
-  { field: 'vat_invoice_number', header: 'Số hóa đơn điện tử' },
   { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
   { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
   { field: 'staff', header: 'Nhân viên' },
