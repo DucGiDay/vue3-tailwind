@@ -63,3 +63,14 @@ export const eInvoiceMenu = [
     ],
   },
 ];
+
+export const employee = [
+  {
+    label: '',
+    items: [
+      { label: 'Danh sách nhân viên', url: '/employee/list' },
+      { label: 'Danh sách chức vụ', url: '/employee/role' },
+      { label: 'Quản lý truy cập', to: '/employee/access' },
+    ],
+  },
+];

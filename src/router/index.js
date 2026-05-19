@@ -3,6 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
 import { extendLicenseComponentMap } from './modules/extend-license.router';
+import { employee } from './modules/employee.router.js';
 import { eInvoiceRouter, exportVatRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
 import Dashboard from '@/views/pages/Dashboard.vue';
@@ -74,24 +75,25 @@ const createAppRouter = (microRouter, componentName = '') => {
         {
           path: '/',
           name: 'Dashboard',
-          component: Dashboard
+          component: Dashboard,
         },
         {
           path: '/document',
           name: 'Document',
-          redirect: '/pages/documentation'
+          redirect: '/pages/documentation',
         },
 
         ...pagesExampleRouter,
         ...uikitRouter,
-        ...eInvoiceRouter
-      ]
+        ...eInvoiceRouter,
+        ...employee,
+      ],
     },
     ...pagesNotHaveLayoutRouter,
     ...microRouters,
     ...exportVatRouter,
     { path: '/404', name: 'NotFound', component: NotFound },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') }
+    { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') },
   ];
 
   const router = createRouter({
