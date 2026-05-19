@@ -14,6 +14,10 @@
       &.is-table-view-paginate {
         padding: 5rem 2rem 0 2rem;
       }
+
+      &.disabled-sidebar-sub {
+        margin-left: 0 !important;
+      }
     }
   }
 }

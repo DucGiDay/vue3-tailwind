@@ -1,6 +1,6 @@
 <script setup>
 import AppMenuItem from './AppMenuItem.vue';
-import { eInvoiceMenu } from '@/common/constant/menu.constant';
+import { eInvoiceMenu, employee } from '@/common/constant/menu.constant';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -14,6 +14,8 @@ const listItems = computed(() => {
   switch (parentRoute.value) {
     case 'e-invoice':
       return eInvoiceMenu;
+    case 'employee':
+      return employee;
     default:
       return eInvoiceMenu;
   }

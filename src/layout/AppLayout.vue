@@ -63,10 +63,16 @@ function isOutsideClicked(event) {
 <template>
   <div class="layout-wrapper" :class="containerClass">
     <!-- <app-topbar></app-topbar> -->
-    <app-sidebar></app-sidebar>
+    <app-sidebar :class="{ 'fb-hidden': $route.meta.disableSidebar }"></app-sidebar>
     <div
-      class="layout-main-container"
-      :class="{ 'is-table-view-paginate': $route.meta.isTableViewPaginate }"
+      :class="[
+        'layout-main-container',
+        $route.meta?.layoutClass || '',
+        {
+          'is-table-view-paginate': $route.meta?.isTableViewPaginate,
+          'disabled-sidebar-sub': $route.meta?.disableSidebar,
+        },
+      ]"
     >
       <router-view></router-view>
     </div>

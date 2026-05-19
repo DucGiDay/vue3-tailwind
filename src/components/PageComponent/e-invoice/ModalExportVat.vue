@@ -299,7 +299,7 @@ const props = defineProps({
 const visible = defineModel('visible', { default: false });
 const emit = defineEmits(['success']);
 const toast = useToast();
-const { t } = useI18n();
+
 const isLoading = ref(false);
 const scope = ref(1); // 0: Tổ chức, 1: Cá nhân
 
@@ -455,7 +455,7 @@ watch(visible, (newVal) => {
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
     console.log(props.saleData);
-    
+
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };
