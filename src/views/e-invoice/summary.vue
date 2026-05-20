@@ -24,6 +24,7 @@ const onDateChange = () => {
       .flat()
       .join(','),
   };
+  getDailyStatistics(payload);
   getStatisticInvoice(payload);
   getStatusInvoices(payload);
 };
@@ -84,8 +85,12 @@ const getStatusInvoices = async (payload) => {
 
 // Biểu đồ số lượng hóa đơn theo ngày
 const getDailyStatistics = async (payload) => {
-  const dateRange = get7Day();
-  await invoiceStore.getDailyStatistics({ ...payload, ...dateRange });
+  // const dateRange = get7Day();
+  const datePayload = {
+    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
+    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+  };
+  await invoiceStore.getDailyStatistics({ ...payload, ...datePayload });
 };
 
 const get7Day = () => {
@@ -128,12 +133,12 @@ onMounted(() => {
     <StatsWidget class="fb-col-span-12">
       <template #date-filter>
         <div class="fb-flex fb-items-center fb-space-x-3">
-          <FbDateSelect
-            v-model="reportDateRange"
-            size="small"
+          <FbDateSelect v-model="reportDateRange" size="small" @update:modelValue="onDateChange" />
+          <FbSelectTaxStoreFilter
+            class="!fb-hidden"
+            isSingleGroup
             @update:modelValue="onDateChange"
           />
-          <FbSelectTaxStoreFilter class="!fb-hidden" isSingleGroup @update:modelValue="onDateChange" />
         </div>
       </template>
     </StatsWidget>
