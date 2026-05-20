@@ -2,7 +2,10 @@
   <section id="summary">
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
       <!-- Số lượng hóa đơn đã mua -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
+        @click="navigateTo('/')"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -36,7 +39,10 @@
       </div>
 
       <!-- Số lượng hóa đơn đã sử dụng -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
+        @click="navigateTo('/')"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -70,7 +76,10 @@
       </div>
 
       <!-- Số lượng hóa đơn còn lại -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
+        @click="navigateTo('/')"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -111,7 +120,10 @@
 
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
       <!-- Tổng số hóa đơn -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
+        @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '1' })"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Tổng số hóa đơn
@@ -124,7 +136,10 @@
       </div>
 
       <!-- Hóa đơn chờ xử lý -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
+        @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '2,3' })"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn chờ xử lý
@@ -137,7 +152,10 @@
       </div>
 
       <!-- Hóa đơn lỗi -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
+        @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '2,3' })"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn lỗi
@@ -150,7 +168,10 @@
       </div>
 
       <!-- Hóa đơn chưa xuất VAT -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3">
+      <div
+        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
+        @click="navigateTo('/e-invoice/sale-order')"
+      >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn chưa xuất VAT
@@ -168,10 +189,22 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatNumber } from '@/common/utils/common';
+import { useRouter } from 'vue-router';
 import { computed } from 'vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const statisticInvoice = computed(() => invoiceStore.statisticInvoice);
 const totalQuantityInvoices = computed(() => invoiceStore.totalQuantityInvoices);
+
+// Router
+const router = useRouter();
+
+// Methods
+const navigateTo = (path, query = {}) => {
+  router.push({
+    path,
+    query,
+  });
+};
 </script>

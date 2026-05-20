@@ -55,6 +55,10 @@ export const invoiceService = {
   deleteDraftInvoice: (payload) =>
     api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
 
+  // Hủy xuất VAT
+  deleteVatInvoice: (payload) =>
+    api.delete(INVOICE_ENDPOINTS.DELETE_VAT_INVOICE, { params: payload }),
+
   // Danh sách thông tin vat đã lưu
   getGuestVatInfo: (params) =>
     api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), { params, noAuth: true, withCredentials: true }),

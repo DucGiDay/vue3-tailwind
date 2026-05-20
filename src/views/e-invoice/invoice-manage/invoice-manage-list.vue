@@ -192,7 +192,6 @@
           </div>
         </template>
       </Dialog>
-
       <ModalResendMail v-model:visible="showResendEmail" @send="onSendEmail" />
     </template>
   </TableView>
@@ -204,7 +203,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
 import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMail.vue';
@@ -232,6 +231,7 @@ const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 const confirm = useConfirm();
 
@@ -313,128 +313,143 @@ const statusMap = (status) => {
 };
 
 const menuItems = (row) => {
-  return [
-    {
-      label: 'Điều chỉnh tăng',
-      icon: markRaw(IconEdit),
-      visible: row?.statusSale?.is_edit,
-      // command: () => {
-      //   router.push(
-      //     `/e-invoice/invoice-manage/detail?tran_id=${row.tran_id}&store_uid=${row.store_uid}`,
-      //   );
-      // },
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=1`;
-        window.open(url, '_self');
-      },
-    },
-    {
-      label: 'Điều chỉnh giảm',
-      icon: markRaw(IconEdit),
-      visible: row?.statusSale?.is_edit,
-
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
-        window.open(url, '_self');
-      },
-    },
-    {
-      label: 'Điều chỉnh thông tin',
-      icon: markRaw(IconEdit),
-      visible: row?.statusSale?.is_edit,
-
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
-        window.open(url, '_self');
-      },
-    },
-    {
-      label: 'Thay thế',
-      icon: markRaw(IconReplace),
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        window.open(url, '_self');
-      },
-    },
-    {
-      label: 'Phát hành lại hóa đơn',
-      visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
-      icon: markRaw(IconUpload),
-      command: () => {
-        const url =
-          window.location.origin +
-          `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
-        window.open(url, '_self');
-      },
-    },
-    {
-      label: 'Sửa thông tin VAT',
-      icon: markRaw(IconEdit),
-      disabledd: row?.enable_vat_cms == 0,
-      tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
-      command: () => {
-        currentSaleData.value = {
-          extra_sale: row || null,
-          sales: [row],
-          is_immediate: false,
-        };
-        visibleExportVat.value = true;
-      },
-    },
-
-    {
-      label: 'Xóa hóa đơn dự thảo',
-      visible: !row?.vat_invoice_number,
-      icon: markRaw(IconDeleteDoc),
-      class: 'fb-text-error',
-      command: () => {
-        onDeleteDraft(row);
-      },
-    },
-
-    {
-      label: 'Xem gửi CQT',
-      visible: row?.partner_id === 'IPOSINVOICE' && !!row?.vat_invoice_number,
-      icon: markRaw(IconEye),
-      command: async () => {
-        await onViewInvoice(row);
-      },
-    },
-    {
-      label: 'Tải XML',
-      icon: markRaw(IconDownload),
-      command: async () => {
-        await exportXML(row);
-      },
-    },
-    {
-      label: 'Tải PDF',
-      icon: markRaw(IconDownload),
-      command: async () => {
-        await onDownloadPDF(row);
-      },
-    },
-    {
-      label: 'Gửi lại email',
-      icon: markRaw(IconMail),
-      command: async () => {
-        await openResendEmail(row);
-      },
-    },
-  ];
+  return invoiceType.value === '1'
+    ? [
+        {
+          label: 'Điều chỉnh tăng',
+          icon: markRaw(IconEdit),
+          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          command: () => {
+            const url =
+              window.location.origin +
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=1`;
+            window.open(url, '_self');
+          },
+        },
+        {
+          label: 'Điều chỉnh giảm',
+          icon: markRaw(IconEdit),
+          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          command: () => {
+            const url =
+              window.location.origin +
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+            window.open(url, '_self');
+          },
+        },
+        {
+          label: 'Điều chỉnh thông tin',
+          icon: markRaw(IconEdit),
+          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          command: () => {
+            const url =
+              window.location.origin +
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+            window.open(url, '_self');
+          },
+        },
+        {
+          label: 'Thay thế',
+          icon: markRaw(IconReplace),
+          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          command: () => {
+            const url =
+              window.location.origin +
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+            window.open(url, '_self');
+          },
+        },
+        {
+          label: 'Phát hành lại hóa đơn',
+          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 2,
+          icon: markRaw(IconUpload),
+          command: () => {
+            const url =
+              window.location.origin +
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+            window.open(url, '_self');
+          },
+        },
+        {
+          label: 'Sửa thông tin VAT',
+          icon: markRaw(IconEdit),
+          disabledd: row?.enable_vat_cms == 0,
+          tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
+          command: () => {
+            currentSaleData.value = {
+              extra_sale: row || null,
+              sales: [row],
+              is_immediate: false,
+            };
+            visibleExportVat.value = true;
+          },
+        },
+        {
+          label: 'Xóa hóa đơn dự thảo',
+          visible: !row?.vat_invoice_number,
+          icon: markRaw(IconDeleteDoc),
+          class: 'fb-text-error',
+          command: () => {
+            onDeleteDraft(row);
+          },
+        },
+        {
+          label: 'Xem gửi CQT',
+          visible: row?.partner_id === 'IPOSINVOICE' && !!row?.vat_invoice_number,
+          icon: markRaw(IconEye),
+          command: async () => {
+            await onViewInvoice(row);
+          },
+        },
+        {
+          label: 'Tải XML',
+          icon: markRaw(IconDownload),
+          command: async () => {
+            await exportXML(row);
+          },
+        },
+        {
+          label: 'Tải PDF',
+          icon: markRaw(IconDownload),
+          command: async () => {
+            await onDownloadPDF(row);
+          },
+        },
+        {
+          label: 'Gửi lại email',
+          icon: markRaw(IconMail),
+          command: async () => {
+            await openResendEmail(row);
+          },
+        },
+      ]
+    : [
+        {
+          label: 'Xuất VAT',
+          icon: markRaw(IconDownload),
+          command: () => {
+            currentSaleData.value = {
+              extra_sale: row || null,
+              sales: [row],
+              is_immediate: false,
+              is_re_export_vat: true,
+            };
+            visibleExportVat.value = true;
+          },
+        },
+        {
+          label: 'Hủy xuất VAT',
+          icon: markRaw(IconDeleteDoc),
+          class: 'fb-text-error',
+          command: () => {
+            onCancelExportVat(row);
+          },
+        },
+      ];
 };
 
 const onToggleMenu = async (_, row) => {
-  if (row?.statusSale) return;
+  // if (row?.statusSale) return;
   try {
     const response = await invoiceService.getStatus({ tran_id: row.tran_id });
     Object.assign(row, {
@@ -579,6 +594,42 @@ const onDeleteDraft = (row) => {
   });
 };
 
+const onCancelExportVat = (row) => {
+  confirm.require({
+    message: 'Bạn có chắc chắn muốn hủy xuất VAT cho hóa đơn này?',
+    header: 'Xác nhận hủy xuất VAT',
+    acceptProps: {
+      label: 'Xác nhận',
+      severity: 'danger',
+    },
+    rejectProps: {
+      label: 'Hủy',
+      severity: 'secondary',
+      outlined: true,
+    },
+    accept: async () => {
+      loadingActionRowCustom.value = row.tran_id;
+      try {
+        const payload = {
+          merged_tran_id: row.tran_id,
+        };
+        await invoiceService.deleteVatInvoice(payload);
+        toast.add({ severity: 'success', summary: 'Hủy xuất VAT thành công', life: 3000 });
+        await filter();
+      } catch (error) {
+        console.error('Error deleteVatInvoice', error);
+        toast.add({
+          severity: 'error',
+          summary: error?.message || 'Hủy xuất VAT thất bại',
+          life: 5000,
+        });
+      } finally {
+        loadingActionRowCustom.value = null;
+      }
+    },
+  });
+};
+
 const onViewInvoice = async (row) => {
   try {
     const payload = {
@@ -636,6 +687,9 @@ const onBuyInvoice = () => {
 
 // life cycle
 onMounted(() => {
+  const queryType = route.query?.invoiceType;
+  const validTypes = ['1', '2,3'];
+  invoiceType.value = validTypes.includes(queryType) ? queryType : '1';
   getData();
 });
 </script>

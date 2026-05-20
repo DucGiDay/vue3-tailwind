@@ -1,10 +1,6 @@
 <template>
-  <TableView
-    title="Gửi hóa đơn MTT"
-    v-model:searchValue="searchField"
-    searchPlaceholder="Tìm kiếm số hóa đơn"
-    @search="onSearchChange"
-  >
+  <TableView title="Gửi hóa đơn MTT" v-model:searchValue="searchField" searchPlaceholder="Tìm kiếm số hóa đơn"
+    @search="onSearchChange">
     <template #header-actions>
       <Button size="small" raised severity="secondary" @click="directToConfig">
         <IconSetting />
@@ -28,42 +24,19 @@
     </template>
 
     <template #filters>
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn trạng thái"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
+      <Select v-model="statusField" :options="statusOptions" optionLabel="label" optionValue="value"
+        placeholder="Chọn trạng thái" class="fb-w-auto md:fb-w-48" showClear size="small" @change="filter" />
 
       <FbDateFilter @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>
-      <FbTable
-        v-model:selection="selectedItems"
-        :columns="POS_INVOICE_TABLE_COLUMNS"
-        :items="items"
-        enableScrollPagination
-        enableCheckbox
-        :stripedRows="false"
-        :isLoading="isLoading"
-        :currentPage="currentPage"
-        :pageSize="pageSize"
-        scrollHeight="flex"
-        :hasMoreData="hasMoreData"
-        @page-change="loadMore"
-      >
+      <FbTable v-model:selection="selectedItems" :columns="POS_INVOICE_TABLE_COLUMNS" :items="items"
+        enableScrollPagination enableCheckbox :stripedRows="false" :isLoading="isLoading" :currentPage="currentPage"
+        :pageSize="pageSize" scrollHeight="flex" :hasMoreData="hasMoreData" @page-change="loadMore">
         <template #status="{ row }">
-          <Tag
-            :severity="statusMap(row.status).severity"
-            :value="statusMap(row.status).label"
-            class="!fb-text-xs !fb-font-medium"
-          />
+          <Tag :severity="statusMap(row.status).severity" :value="statusMap(row.status).label"
+            class="!fb-text-xs !fb-font-medium" />
         </template>
 
         <template #action="{ row }">
@@ -82,31 +55,20 @@
 
     <template #extra>
       <!-- Dialog Chi tiết -->
-      <Dialog
-        v-model:visible="showDetailDialog"
-        header="Chi tiết hóa đơn MTT"
-        modal
-        :style="{ width: '65vw' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-      >
+      <Dialog v-model:visible="showDetailDialog" header="Chi tiết hóa đơn MTT" modal :style="{ width: '65vw' }"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="fb-w-full fb-h-full">
-          <FbTable
-            :columns="POS_INVOICE_DETAIL_COLUMNS"
-            :items="itemDetailList"
-            :isLoading="isLoadingDetail"
-            :showGridlines="true"
-            :hideIndexRow="true"
-            :scrollHeight="'flex'"
-          >
+          <FbTable :columns="POS_INVOICE_DETAIL_COLUMNS" :items="itemDetailList" :isLoading="isLoadingDetail"
+            :showGridlines="true" :hideIndexRow="true" :scrollHeight="'flex'">
+            <template #['extra_data.IPTemplateID']="{ row }">
+              {{ row.extra_data?.IPTemplateID || '' }}
+            </template>
             <template #no="{ index }">
               {{ index + 1 }}
             </template>
             <template #status="{ row }">
-              <Tag
-                :severity="statusMap(row.status).severity"
-                :value="statusMap(row.status).label"
-                class="!fb-text-xs !fb-font-medium"
-              />
+              <Tag :severity="statusMap(row.status).severity" :value="statusMap(row.status).label"
+                class="!fb-text-xs !fb-font-medium" />
             </template>
           </FbTable>
         </div>
@@ -168,11 +130,11 @@ const POS_INVOICE_TABLE_COLUMNS = [
 
 const POS_INVOICE_DETAIL_COLUMNS = [
   { field: 'no', header: 'STT' },
-  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'extra_data.IPTemplateID', header: 'Mẫu số' },
   { field: 'vat_invoice_series', header: 'Ký hiệu' },
   { field: 'vat_invoice_number', header: 'Số' },
-  { field: 'lookup_code', header: 'Mã tra cứu' },
-  { field: 'cqt_code', header: 'Mã cơ quan thuế' },
+  { field: 'merged_tran_id', header: 'Mã tra cứu' },
+  { field: 'vat_invoice_code', header: 'Mã cơ quan thuế' },
   { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
   { field: 'status', header: 'Trạng thái' },
 ];

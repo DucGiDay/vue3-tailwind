@@ -5,6 +5,7 @@ import SaleByDate from '@/components/PageComponent/e-invoice/SaleByDate.vue';
 import StatsWidget from '@/components/PageComponent/e-invoice/StatsWidget.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { useFilterStore } from '@/stores/filter.store';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 import FbDateSelect from '@/components/Common/FbDateSelect.vue';
 import moment from 'moment';
@@ -19,13 +20,16 @@ const onDateChange = () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
+      .flat()
+      .join(','),
   };
   getStatisticInvoice(payload);
   getStatusInvoices(payload);
 };
 
 // Store/Getter
+const filterStore = useFilterStore();
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 
@@ -34,7 +38,9 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: (globalStore?.currentBrandStoreIds || []).join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
+      .flat()
+      .join(','),
   };
 
   await Promise.all([
@@ -121,12 +127,14 @@ onMounted(() => {
   <div class="fb-grid fb-grid-cols-12 fb-gap-6">
     <StatsWidget class="fb-col-span-12">
       <template #date-filter>
-        <FbDateSelect
-          v-model="reportDateRange"
-          class="fb-w-72"
-          size="small"
-          @update:modelValue="onDateChange"
-        />
+        <div class="fb-flex fb-items-center fb-space-x-3">
+          <FbDateSelect
+            v-model="reportDateRange"
+            size="small"
+            @update:modelValue="onDateChange"
+          />
+          <FbSelectTaxStoreFilter class="!fb-hidden" isSingleGroup @update:modelValue="onDateChange" />
+        </div>
       </template>
     </StatsWidget>
 
