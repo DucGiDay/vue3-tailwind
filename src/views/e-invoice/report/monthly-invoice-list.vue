@@ -175,10 +175,12 @@ import { MONTHLY_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { saveAs } from 'file-saver';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const invoiceStore = useEInoiveStore();
 const toast = useToast();
 const router = useRouter();
 
@@ -221,12 +223,6 @@ const pageSize = ref(50);
 const totalRecords = ref(0);
 const hasMoreData = ref(true);
 
-const storeUidByTaxCode = computed(() => {
-  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
-    .flat()
-    .join(',');
-});
-
 // Methods
 const getPayload = () => {
   let start_date = null;
@@ -251,17 +247,21 @@ const getPayload = () => {
     report_type: 'monthly_invoice_list',
     start_date,
     end_date,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
-      .flat()
-      .join(','),
-    tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
+    list_store_uid: (() => {
+      const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+      if (!selectedObj || Object.keys(selectedObj).length === 0) {
+        return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+      }
+      return Object.values(selectedObj).flat().filter(Boolean).join(',');
+    })(),
+    tax_code: invoiceStore.currentTaxCode,
   };
 };
 
 const getData = async () => {
   const payload = getPayload();
   if (!payload.start_date || !payload.end_date || !payload.list_store_uid) {
-    dataList.value = [];
+    hasMoreData.value = false;
     return;
   }
 
@@ -300,6 +300,7 @@ const loadMore = () => {
 
 const filter = async () => {
   currentPage.value = 1;
+  dataList.value = [];
   await getData();
 };
 

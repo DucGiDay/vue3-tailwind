@@ -86,6 +86,7 @@ const listTaxStores = computed(() => eInvoiceStore.listTaxStores.data);
 const filteredItems = computed(() => {
   const storeObj = filterStore?.invoice?.store_uid_by_tax_code || {};
   const selectedStores = Object.values(storeObj).flat();
+  const savedTaxCode = localStorage.getItem('fabi_selected_tax_code');
 
   let activeTaxCode = null;
   if (props.isSingleGroup && selectedStores.length > 0) {
@@ -102,6 +103,7 @@ const filteredItems = computed(() => {
   }
 
   return listTaxStores.value
+    .filter((item) => !savedTaxCode || item.tax_code === savedTaxCode)
     .map((item) => {
       const isDisabled =
         props.isSingleGroup && activeTaxCode !== null && item.tax_code !== activeTaxCode;
@@ -157,22 +159,22 @@ const itemSelected = computed({
 onMounted(async () => {
   await fetchStores();
 
-  const currentStores = filterStore?.invoice?.store_uid_by_tax_code || {};
-  const hasSelectedStores = Object.values(currentStores).flat().filter(Boolean).length > 0;
+  // const currentStores = filterStore?.invoice?.store_uid_by_tax_code || {};
+  // const hasSelectedStores = Object.values(currentStores).flat().filter(Boolean).length > 0;
 
-  if (!hasSelectedStores && filteredItems.value && filteredItems.value.length > 0) {
-    const firstTax = filteredItems.value[0];
-    if (firstTax && firstTax.children && firstTax.children.length > 0) {
-      const firstStore = firstTax.children[0];
-      const autoValue = {
-        [firstStore.key]: {
-          checked: true,
-          partialChecked: false,
-        },
-      };
-      await setStoreSelected(autoValue);
-    }
-  }
+  // if (!hasSelectedStores && filteredItems.value && filteredItems.value.length > 0) {
+  //   const firstTax = filteredItems.value[0];
+  //   if (firstTax && firstTax.children && firstTax.children.length > 0) {
+  //     const firstStore = firstTax.children[0];
+  //     const autoValue = {
+  //       [firstStore.key]: {
+  //         checked: true,
+  //         partialChecked: false,
+  //       },
+  //     };
+  //     await setStoreSelected(autoValue);
+  //   }
+  // }
   expandAll();
 });
 

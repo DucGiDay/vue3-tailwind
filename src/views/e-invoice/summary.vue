@@ -19,9 +19,7 @@ const onDateChange = () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
-      .flat()
-      .join(','),
+    list_store_uid: invoiceStore.listStoreUidInCurrentTaxCode.join(','),
   };
   getDailyStatistics(payload);
   getStatisticInvoice(payload);
@@ -38,9 +36,7 @@ const getData = async () => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
-      .flat()
-      .join(','),
+    list_store_uid: invoiceStore.listStoreUidInCurrentTaxCode.join(','),
   };
 
   await Promise.all([

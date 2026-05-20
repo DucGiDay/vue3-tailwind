@@ -48,8 +48,8 @@ const onDateChange = async (value) => {
     await filterStore.updateFilter({
       [props.module]: {
         ...filterStore[props.module],
-        start_date: new Date(value[0]).setHours(0, 0, 0, 0),
-        end_date: new Date(value[1]).setHours(23, 59, 59, 999),
+        start_date: moment(value[0]).startOf('day').valueOf(),
+        end_date: moment(value[1]).endOf('day').valueOf(),
       },
     });
   }

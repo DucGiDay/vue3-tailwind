@@ -22,12 +22,6 @@
 
     <template #filters>
       <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-
-      <!-- <FbSelectSingleTaxStoreFilter
-        placeholder="Chọn theo cửa hàng"
-        size="small"
-        @update:modelValue="filter"
-      /> -->
       <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
     </template>
 
@@ -124,9 +118,11 @@ const visibleExportVat = ref(false);
 const currentSaleData = ref({});
 
 const storeUidByTaxCode = computed(() => {
-  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
-    .flat()
-    .join(',');
+  const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+  if (!selectedObj || Object.keys(selectedObj).length === 0) {
+    return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+  }
+  return Object.values(selectedObj).flat().filter(Boolean).join(',');
 });
 
 // Methods

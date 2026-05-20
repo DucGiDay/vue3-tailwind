@@ -5,7 +5,10 @@ export const eInvoiceRouter = [
     path: '/e-invoice',
     name: 'EInvoicePage',
     redirect: '/e-invoice/summary',
-    meta: {},
+    component: () => import('@/views/e-invoice/layout.vue'),
+    meta: {
+      layoutClass: '!fb-pt-[110px]',
+    },
     children: [
       {
         path: '/e-invoice/summary',

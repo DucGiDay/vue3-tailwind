@@ -17,12 +17,13 @@ export const useEInoiveStore = defineStore('eInoive', {
     storeSettingInvoices: {},
     listTaxStores: {
       data: [],
-      isLoading: false
+      isLoading: false,
     },
     guestVatOptions: [],
     serialInvoiceList: {},
     serialInvoiceTemplate: [],
-    posInvoiceList: {}
+    posInvoiceList: {},
+    showTaxCodeDialog: false,
   }),
 
   getters: {
@@ -39,7 +40,22 @@ export const useEInoiveStore = defineStore('eInoive', {
         acc[item.type_error.toString()] = item.name;
         return acc;
       }, {});
-    }
+    },
+
+    currentTaxCode() {
+      return localStorage.getItem('fabi_selected_tax_code');
+    },
+
+    listStoreInCurrentTaxCode() {
+      const taxtCodeData = this.listTaxStores.data.find(
+        (item) => item.tax_code === this.currentTaxCode,
+      );
+      return taxtCodeData?.list_store_uid || [];
+    },
+
+    listStoreUidInCurrentTaxCode() {
+      return this.listStoreInCurrentTaxCode.map((s) => s.store_uid);
+    },
   },
 
   actions: {
@@ -198,12 +214,12 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.updateStoreSettingInvoice(payload);
         return {
           data: response?.data || null,
-          error: null
+          error: null,
         };
       } catch (err) {
         return {
           data: null,
-          error: err
+          error: err,
         };
       }
     },
@@ -215,6 +231,7 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.getListStoreGroupByTaxCode(params);
         this.listTaxStores.data = response?.data || [];
       } catch (err) {
+        this.listTaxStores.error = err?.message;
         console.error('Error getListStoreGroupByTaxCode', err);
       } finally {
         this.listTaxStores.isLoading = false;
@@ -225,12 +242,12 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.syncSaleMinvoice(payload);
         return {
           data: response?.data || null,
-          error: null
+          error: null,
         };
       } catch (err) {
         return {
           data: null,
-          error: err
+          error: err,
         };
       }
     },
@@ -276,6 +293,6 @@ export const useEInoiveStore = defineStore('eInoive', {
       } catch (err) {
         this.posInvoiceList = { error: err?.message };
       }
-    }
-  }
+    },
+  },
 });

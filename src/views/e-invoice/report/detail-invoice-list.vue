@@ -68,9 +68,11 @@ import FbLoading from '@/components/Common/FbLoading.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { useEInoiveStore } from '@/stores/e-invoice.store';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const invoiceStore = useEInoiveStore();
 const toast = useToast();
 const router = useRouter();
 
@@ -89,16 +91,23 @@ const getPayload = () => {
     report_type: 'invoices',
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
-      .flat()
-      .join(','),
-    tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
+    list_store_uid: (() => {
+      const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+      if (!selectedObj || Object.keys(selectedObj).length === 0) {
+        return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+      }
+      return Object.values(selectedObj).flat().filter(Boolean).join(',');
+    })(),
+    tax_code: invoiceStore.currentTaxCode,
   };
 };
 
 const getData = async () => {
   const payload = getPayload();
-  if (!payload.start_date || !payload.end_date) return;
+  if (!payload.start_date || !payload.end_date || !payload.list_store_uid) {
+    hasMoreData.value = false;
+    return;
+  }
 
   isLoading.value = true;
   try {
@@ -135,6 +144,7 @@ const loadMore = () => {
 
 const filter = async () => {
   currentPage.value = 1;
+  dataList.value = [];
   await getData();
 };
 

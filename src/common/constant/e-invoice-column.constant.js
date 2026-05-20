@@ -80,6 +80,7 @@ export const SALE_ORDER_TABLE_COLUMNS = [
   {
     field: 'end_date',
     header: 'Thời gian ra',
+    format: 'datetime',
   },
 ];
 

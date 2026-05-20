@@ -8,11 +8,7 @@
         class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
       >
         <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-        <!-- <FbSelectSingleTaxStoreFilter
-          placeholder="Chọn theo cửa hàng"
-          size="small"
-          @update:modelValue="filter"
-        /> -->
+
         <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
 
         <Button
@@ -268,9 +264,11 @@ const visibleViewBeforeSend = ref(false);
 const dataViewBeforeSend = ref([]);
 
 const storeUidByTaxCode = computed(() => {
-  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
-    .flat()
-    .join(',');
+  const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+  if (!selectedObj || Object.keys(selectedObj).length === 0) {
+    return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+  }
+  return Object.values(selectedObj).flat().filter(Boolean).join(',');
 });
 
 // Methods
