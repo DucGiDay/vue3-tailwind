@@ -1,23 +1,40 @@
 <template>
   <transition name="filter-slide">
-    <div v-if="hasTaxCode && isLoaded" title="Chọn mã số thuế"
+    <div
+      v-if="hasTaxCode && isLoaded"
+      title="Chọn mã số thuế"
       class="fb-fixed fb-w-full lg:fb-w-[calc(100%-20rem)] lg:fb-top-[60px] fb-left-0 lg:fb-left-[20rem] fb-z-10 fb-bg-primary-50/90 fb-backdrop-blur-md fb-border-b fb-border-primary-100 fb-px-4 fb-py-2 fb-flex fb-items-center fb-shadow-sm fb-cursor-pointer"
-      @click="eInvoiceStore.showTaxCodeDialog = true">
+      @click="eInvoiceStore.showTaxCodeDialog = true"
+    >
       <span class="fb-text-sm fb-text-primary-900">
         MST:
         <strong class="fb-text-primary-700 fb-ml-1">{{ eInvoiceStore.currentTaxCode }}</strong>
       </span>
     </div>
-  </Transition>
-  <router-view></router-view>
+  </transition>
+  <router-view v-if="hasTaxCode && isLoaded" :key="eInvoiceStore.currentTaxCode"></router-view>
 
-  <Dialog v-model:visible="eInvoiceStore.showTaxCodeDialog" modal header="Chọn mã số thuế" :closable="hasTaxCode"
-    :style="{ width: '40vw' }">
+  <Dialog
+    v-model:visible="eInvoiceStore.showTaxCodeDialog"
+    modal
+    header="Chọn mã số thuế"
+    :closable="hasTaxCode"
+    :style="{ width: '40vw' }"
+  >
     <div class="fb-flex fb-flex-col fb-gap-4">
       <span>Vui lòng chọn mã số thuế để tiếp tục:</span>
-      <Select v-if="taxCodeOptions?.length" v-model="selectedTaxCode" :options="taxCodeOptions" optionLabel="tax_code"
-        optionValue="tax_code" placeholder="Chọn mã số thuế" class="fb-w-full" />
-      <div v-else class="fb-text-error-500">{{ eInvoiceStore.listTaxStores?.error || 'Không tìm thấy MST' }}</div>
+      <Select
+        v-if="taxCodeOptions?.length"
+        v-model="selectedTaxCode"
+        :options="taxCodeOptions"
+        optionLabel="tax_code"
+        optionValue="tax_code"
+        placeholder="Chọn mã số thuế"
+        class="fb-w-full"
+      />
+      <div v-else class="fb-text-error-500">
+        {{ eInvoiceStore.listTaxStores?.error || 'Không tìm thấy MST' }}
+      </div>
       <div class="fb-flex fb-justify-end fb-mt-4">
         <Button label="Xác nhận" @click="confirmTaxCode" :disabled="!selectedTaxCode" />
       </div>
@@ -69,9 +86,9 @@ onMounted(async () => {
 const confirmTaxCode = () => {
   if (selectedTaxCode.value) {
     localStorage.setItem('fabi_selected_tax_code', selectedTaxCode.value);
+    eInvoiceStore.currentTaxCode = selectedTaxCode.value;
     eInvoiceStore.showTaxCodeDialog = false;
     hasTaxCode.value = true;
-    window.location.reload(); // Reload to refresh data with new tax code
   }
 };
 </script>

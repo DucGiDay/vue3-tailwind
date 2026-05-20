@@ -378,7 +378,7 @@ const menuItems = (row) => {
         {
           label: 'Sửa thông tin VAT',
           icon: markRaw(IconEdit),
-          disabledd: row?.enable_vat_cms == 0,
+          notAllowClick: row?.enable_vat_cms == 0,
           tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
           command: () => {
             currentSaleData.value = {

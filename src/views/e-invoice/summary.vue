@@ -7,13 +7,6 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
-import moment from 'moment';
-import { ref } from 'vue';
-
-const reportDateRange = ref([
-  moment().subtract(6, 'days').startOf('day').toDate(),
-  moment().endOf('day').toDate(),
-]);
 
 const onDateChange = () => {
   const payload = {
@@ -56,8 +49,8 @@ const getListRecentInvoice = async (payload) => {
 // Báo cáo thống kê
 const getStatisticInvoice = async (payload) => {
   const datePayload = {
-    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
-    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
   };
   await invoiceStore.getStatisticInvoice({ ...payload, ...datePayload });
 };
@@ -72,18 +65,17 @@ const getTotalQuantityInvoices = async (payload) => {
 // Báo cáo trạng thái hóa đơn
 const getStatusInvoices = async (payload) => {
   const datePayload = {
-    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
-    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
   };
   await invoiceStore.getStatusInvoices({ ...payload, ...datePayload });
 };
 
 // Biểu đồ số lượng hóa đơn theo ngày
 const getDailyStatistics = async (payload) => {
-  // const dateRange = get7Day();
   const datePayload = {
-    start_date: reportDateRange.value?.[0] ? reportDateRange.value[0].getTime() : null,
-    end_date: reportDateRange.value?.[1] ? reportDateRange.value[1].getTime() : null,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
   };
   await invoiceStore.getDailyStatistics({ ...payload, ...datePayload });
 };

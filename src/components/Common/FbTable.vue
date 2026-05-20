@@ -281,7 +281,7 @@
         :class="[
           'fb-flex fb-items-center',
           {
-            'fb-opacity-50 !fb-cursor-default': item?.disabledd,
+            'fb-opacity-50 !fb-cursor-default': item?.notAllowClick,
           },
         ]"
       >

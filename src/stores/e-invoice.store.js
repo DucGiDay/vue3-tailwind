@@ -24,6 +24,7 @@ export const useEInoiveStore = defineStore('eInoive', {
     serialInvoiceTemplate: [],
     posInvoiceList: {},
     showTaxCodeDialog: false,
+    currentTaxCode: localStorage.getItem('fabi_selected_tax_code') || null,
   }),
 
   getters: {
@@ -40,10 +41,6 @@ export const useEInoiveStore = defineStore('eInoive', {
         acc[item.type_error.toString()] = item.name;
         return acc;
       }, {});
-    },
-
-    currentTaxCode() {
-      return localStorage.getItem('fabi_selected_tax_code');
     },
 
     listStoreInCurrentTaxCode() {

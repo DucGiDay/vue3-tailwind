@@ -44,8 +44,8 @@ import moment from 'moment';
 const props = defineProps({
   modelValue: {
     type: Array,
-    default: () => null
-  }
+    default: () => null,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'clear-click']);
@@ -54,39 +54,39 @@ const datePicker = ref();
 
 const responsiveOptions = ref([
   { breakpoint: '769px', numMonths: 2 },
-  { breakpoint: '0', numMonths: 1 }
+  { breakpoint: '0', numMonths: 1 },
 ]);
 
 const PRESET_OPTIONS = [
   {
     label: 'Hôm nay',
-    getValue: () => [moment().startOf('day').toDate(), moment().endOf('day').toDate()]
+    getValue: () => [moment().startOf('day').toDate(), moment().endOf('day').toDate()],
   },
   {
     label: 'Hôm qua',
     getValue: () => [
       moment().subtract(1, 'days').startOf('day').toDate(),
-      moment().subtract(1, 'days').endOf('day').toDate()
-    ]
+      moment().subtract(1, 'days').endOf('day').toDate(),
+    ],
   },
   {
     label: '7 ngày trước',
     getValue: () => [
-      moment().subtract(7, 'days').startOf('day').toDate(),
-      moment().subtract(1, 'days').endOf('day').toDate()
-    ]
+      moment().subtract(6, 'days').startOf('day').toDate(),
+      moment().endOf('day').toDate(),
+    ],
   },
   {
     label: 'Tháng này',
-    getValue: () => [moment().startOf('month').toDate(), moment().endOf('month').toDate()]
+    getValue: () => [moment().startOf('month').toDate(), moment().endOf('month').toDate()],
   },
   {
     label: 'Tháng trước',
     getValue: () => [
       moment().subtract(1, 'month').startOf('month').toDate(),
-      moment().subtract(1, 'month').endOf('month').toDate()
-    ]
-  }
+      moment().subtract(1, 'month').endOf('month').toDate(),
+    ],
+  },
 ];
 
 const currentPreset = ref('');
@@ -97,7 +97,7 @@ watch(
   () => props.modelValue,
   (val) => {
     dates.value = val ? [...val] : null;
-  }
+  },
 );
 
 const selectPreset = (item) => {
