@@ -38,7 +38,7 @@
         @change="filter"
       /> -->
 
-      <!-- <FbDateFilter @update:modelValue="filter" size="small" /> -->
+      <!-- <FbDateFilter module="invoice" @update:modelValue="filter" size="small" /> -->
       <FbDateSelect
         size="small"
         v-model="dateRange"

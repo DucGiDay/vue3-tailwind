@@ -27,7 +27,7 @@
       <Select v-model="statusField" :options="statusOptions" optionLabel="label" optionValue="value"
         placeholder="Chọn trạng thái" class="fb-w-auto md:fb-w-48" showClear size="small" @change="filter" />
 
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>

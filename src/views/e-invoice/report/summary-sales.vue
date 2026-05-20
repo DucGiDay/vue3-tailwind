@@ -1,8 +1,5 @@
 <template>
-  <TableView
-    title="Báo cáo tổng hợp bán hàng"
-    :searchable="false"
-  >
+  <TableView title="Báo cáo tổng hợp bán hàng" :searchable="false">
     <template #header-actions>
       <Button
         size="small"
@@ -28,7 +25,7 @@
 
     <template #filters>
       <!-- Filter by Date -->
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
 
       <!-- Lọc Store -->
       <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
@@ -162,7 +159,9 @@ const getPayload = () => {
     report_type: 'invoices_grouped_by_items',
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
+      .flat()
+      .join(','),
     tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };
 };

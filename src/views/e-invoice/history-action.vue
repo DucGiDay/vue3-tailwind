@@ -2,7 +2,7 @@
   <TableView title="Lịch sử thao tác" :searchable="false">
     <template #filters>
       <!-- Filter by Date -->
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>

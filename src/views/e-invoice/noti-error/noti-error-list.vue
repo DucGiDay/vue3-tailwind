@@ -27,7 +27,7 @@
         @change="filter"
       />
 
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>

@@ -14,7 +14,7 @@
     </template>
 
     <template #filters>
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>
@@ -101,10 +101,7 @@
         </template>
 
         <template #empty>
-          {{
-            agreementProtocolList?.error ||
-            (!filterStore?.invoice?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có biên bản')
-          }}
+          {{ agreementProtocolList?.error || 'Chưa có hóa đơn' }}
         </template>
       </FbTable>
     </template>

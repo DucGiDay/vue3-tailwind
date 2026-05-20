@@ -1,8 +1,5 @@
 <template>
-  <TableView
-    title="Tình hình sử dụng hóa đơn"
-    :searchable="false"
-  >
+  <TableView title="Tình hình sử dụng hóa đơn" :searchable="false">
     <template #header-actions>
       <Button
         size="small"
@@ -28,7 +25,7 @@
 
     <template #filters>
       <!-- Filter by Date -->
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
 
       <!-- Lọc Store -->
       <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
@@ -77,7 +74,6 @@ const globalStore = useGlobalStore();
 const toast = useToast();
 const router = useRouter();
 
-
 // State for Table
 const dataList = ref([]);
 const isLoading = ref(false);
@@ -93,7 +89,9 @@ const getPayload = () => {
     report_type: 'invoices',
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
+      .flat()
+      .join(','),
     tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };
 };

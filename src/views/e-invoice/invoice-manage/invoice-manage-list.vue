@@ -7,12 +7,14 @@
       <div
         class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
       >
-        <FbDateFilter @update:modelValue="filter" size="small" />
-        <FbSelectSingleTaxStoreFilter
+        <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
+        <!-- <FbSelectSingleTaxStoreFilter
           placeholder="Chọn theo cửa hàng"
           size="small"
           @update:modelValue="filter"
-        />
+        /> -->
+        <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
+
         <Button
           v-tooltip.bottom="'Lọc nâng cao'"
           :severity="showAdvancedFilter ? 'primary' : 'secondary'"
@@ -148,8 +150,7 @@
 
         <template #empty>
           {{
-            vatInvoice?.error ||
-            (!filterStore?.invoice?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+            vatInvoice?.error || (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
           }}
         </template>
       </FbTable>
@@ -266,9 +267,15 @@ const currentSaleData = ref({});
 const visibleViewBeforeSend = ref(false);
 const dataViewBeforeSend = ref([]);
 
+const storeUidByTaxCode = computed(() => {
+  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
+    .flat()
+    .join(',');
+});
+
 // Methods
 const getData = async ({ page, rows } = {}) => {
-  if (!filterStore?.invoice?.store_uid) return;
+  if (!storeUidByTaxCode.value) return;
 
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
@@ -276,7 +283,7 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.invoice?.store_uid,
+    list_store_uid: storeUidByTaxCode.value,
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
     page: currentPage.value,

@@ -68,7 +68,12 @@
             />
           </div>
           <div v-else class="fb-col-span-1 md:fb-col-span-2 lg:fb-col-span-1">
-            <FbDateFilter @update:modelValue="filter" class="fb-w-full" size="small" />
+            <FbDateFilter
+              module="invoice"
+              @update:modelValue="filter"
+              class="fb-w-full"
+              size="small"
+            />
           </div>
 
           <!-- Lọc Store -->
@@ -151,11 +156,7 @@
         @page-change="loadMore"
       >
         <template #empty>
-          {{
-            !Object.values(filterStore?.invoice?.store_uid_by_tax_code || {}).flat().length
-              ? 'Vui lòng chọn cửa hàng'
-              : 'Chưa có dữ liệu'
-          }}
+          {{ !storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có dữ liệu' }}
         </template>
       </FbTable>
     </template>
@@ -220,6 +221,12 @@ const pageSize = ref(50);
 const totalRecords = ref(0);
 const hasMoreData = ref(true);
 
+const storeUidByTaxCode = computed(() => {
+  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
+    .flat()
+    .join(',');
+});
+
 // Methods
 const getPayload = () => {
   let start_date = null;
@@ -244,7 +251,9 @@ const getPayload = () => {
     report_type: 'monthly_invoice_list',
     start_date,
     end_date,
-    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {}).flat().join(','),
+    list_store_uid: Object.values(filterStore.invoice.store_uid_by_tax_code || {})
+      .flat()
+      .join(','),
     tax_code: Object.keys(filterStore.invoice.store_uid_by_tax_code || {}).join(','),
   };
 };

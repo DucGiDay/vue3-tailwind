@@ -21,22 +21,14 @@
     </template>
 
     <template #filters>
-      <FbDateFilter @update:modelValue="filter" size="small" />
-      <!-- <FbSelectCityStoreFilter
-        :placeholder="$t('SELECT_CITIES_STORES_FILTER--INPUT_PLACEHOLDER_BLUR')"
-        size="normal"
-        @update:modelValue="filter"
-      /> -->
-      <!-- <FbSelectTaxStoreFilter
-        placeholder="Chọn theo mã số thuế"
-        size="normal"
-        @update:modelValue="filter"
-      /> -->
-      <FbSelectSingleTaxStoreFilter
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
+
+      <!-- <FbSelectSingleTaxStoreFilter
         placeholder="Chọn theo cửa hàng"
         size="small"
         @update:modelValue="filter"
-      />
+      /> -->
+      <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
     </template>
 
     <template #table>
@@ -87,7 +79,7 @@
         <template #empty>
           {{
             saleNotSyncVat?.error ||
-            (!filterStore?.invoice?.store_uid ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+            (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
           }}
         </template>
       </FbTable>
@@ -131,9 +123,15 @@ const pageSize = ref(50);
 const visibleExportVat = ref(false);
 const currentSaleData = ref({});
 
+const storeUidByTaxCode = computed(() => {
+  return Object.values(filterStore?.invoice?.store_uid_by_tax_code || {})
+    .flat()
+    .join(',');
+});
+
 // Methods
 const getData = async ({ page, rows } = {}) => {
-  if (!filterStore?.invoice?.store_uid) return;
+  if (!storeUidByTaxCode.value) return;
 
   currentPage.value = page || 1;
   pageSize.value = rows || 50;
@@ -141,12 +139,12 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    list_store_uid: filterStore?.invoice?.store_uid,
+    list_store_uid: storeUidByTaxCode.value,
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
-    search: searchField.value
+    search: searchField.value,
   };
 
   isLoading.value = true;
@@ -167,7 +165,7 @@ const handleExportVat = (isImmediate = false) => {
   // Nếu là nhiều sales, API thường nhận object chứa array list_sale
   currentSaleData.value = {
     sales: saleSelecteds.value,
-    is_immediate: isImmediate // Flag để modal biết là xuất ngay (nếu cần xử lý riêng)
+    is_immediate: isImmediate, // Flag để modal biết là xuất ngay (nếu cần xử lý riêng)
   };
 
   visibleExportVat.value = true;

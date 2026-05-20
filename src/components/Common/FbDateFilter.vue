@@ -28,19 +28,19 @@ const currentState = props.module === 'invoice' ? filterStore.invoice : filterSt
 
 const getDefaultStartDate = () => {
   return props.module === 'invoice'
-    ? moment().subtract(7, 'days').startOf('day').toDate()
-    : moment().startOf('day').toDate();
+    ? moment().subtract(6, 'days').startOf('day').valueOf()
+    : moment().startOf('day').valueOf();
 };
 
 const getDefaultEndDate = () => {
   return props.module === 'invoice'
-    ? moment().subtract(1, 'days').endOf('day').toDate()
-    : moment().endOf('day').toDate();
+    ? moment().endOf('day').valueOf()
+    : moment().endOf('day').valueOf();
 };
 
 const dates = ref([
   currentState?.start_date ? new Date(currentState.start_date) : getDefaultStartDate(),
-  currentState?.end_date ? new Date(currentState.end_date) : getDefaultEndDate()
+  currentState?.end_date ? new Date(currentState.end_date) : getDefaultEndDate(),
 ]);
 
 const onDateChange = async (value) => {
@@ -49,8 +49,8 @@ const onDateChange = async (value) => {
       [props.module]: {
         ...filterStore[props.module],
         start_date: new Date(value[0]).setHours(0, 0, 0, 0),
-        end_date: new Date(value[1]).setHours(23, 59, 59, 999)
-      }
+        end_date: new Date(value[1]).setHours(23, 59, 59, 999),
+      },
     });
   }
 

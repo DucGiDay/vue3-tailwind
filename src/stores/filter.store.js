@@ -1,5 +1,6 @@
 // Các filter được đồng bộ với host app
 import { defineStore } from 'pinia';
+import moment from 'moment';
 
 export const useFilterStore = defineStore('filter', {
   state: () => getDefaultFilter(),
@@ -28,8 +29,8 @@ function getDefaultFilter() {
     },
     invoice: {
       store_uid_by_tax_code: {},
-      start_date: new Date().setHours(0, 0, 0, 0),
-      end_date: new Date().setHours(23, 59, 59, 999),
+      start_date: moment().subtract(6, 'days').startOf('day').valueOf(),
+      end_date: moment().endOf('day').valueOf(),
     },
   };
 }

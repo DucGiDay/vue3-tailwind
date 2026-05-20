@@ -7,13 +7,12 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
-import FbDateSelect from '@/components/Common/FbDateSelect.vue';
 import moment from 'moment';
 import { ref } from 'vue';
 
 const reportDateRange = ref([
-  moment().subtract(7, 'days').startOf('day').toDate(),
-  moment().subtract(1, 'days').endOf('day').toDate(),
+  moment().subtract(6, 'days').startOf('day').toDate(),
+  moment().endOf('day').toDate(),
 ]);
 
 const onDateChange = () => {
@@ -133,7 +132,7 @@ onMounted(() => {
     <StatsWidget class="fb-col-span-12">
       <template #date-filter>
         <div class="fb-flex fb-items-center fb-space-x-3">
-          <FbDateSelect v-model="reportDateRange" size="small" @update:modelValue="onDateChange" />
+          <FbDateFilter module="invoice" size="small" @update:modelValue="onDateChange" />
           <FbSelectTaxStoreFilter
             class="!fb-hidden"
             isSingleGroup
