@@ -90,7 +90,7 @@
         scrollHeight="flex"
         keyLoading="tran_id"
         :menuItems="menuItems"
-        :onToggleMenu="onToggleMenu"
+        :onToggleMenu="getStatusSale"
         @page-change="getData"
       >
         <template #header>
@@ -130,6 +130,7 @@
             <Button
               size="small"
               text
+              v-tooltip.left="{ value: 'Xem trước hóa đơn', showDelay: 500, hideDelay: 100 }"
               @click="onPreviewPDF(row)"
               :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
             >
@@ -140,6 +141,21 @@
                 style="width: 1rem; height: 1rem"
               />
               <IconEye v-else class="!fb-text-primary" color="currentColor" />
+            </Button>
+            <Button
+              size="small"
+              text
+              v-tooltip.left="{ value: 'Làm mới', showDelay: 500, hideDelay: 100 }"
+              @click="refreshRow(row)"
+              :loading="loadingRefreshTranId === row.tran_id"
+            >
+              <ProgressSpinner
+                v-if="loadingRefreshTranId === row.tran_id"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconRefresh v-else class="!fb-text-primary" color="currentColor" />
             </Button>
           </div>
         </template>
@@ -249,6 +265,7 @@ const sales = ref([]); // data display in table
 
 const isLoading = ref(false);
 const loadingPdfTranId = ref(null);
+const loadingRefreshTranId = ref(null);
 const loadingActionRowCustom = ref(null);
 
 const pdfAction = ref(''); // 'preview' | 'download'
@@ -378,8 +395,9 @@ const menuItems = (row) => {
         {
           label: 'Sửa thông tin VAT',
           icon: markRaw(IconEdit),
-          notAllowClick: row?.enable_vat_cms == 0,
-          tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
+          visible: row?.statusSale?.is_edit,
+          // notAllowClick: row?.enable_vat_cms == 0,
+          // tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
           command: () => {
             currentSaleData.value = {
               extra_sale: row || null,
@@ -453,7 +471,13 @@ const menuItems = (row) => {
       ];
 };
 
-const onToggleMenu = async (_, row) => {
+const refreshRow = async (row) => {
+  loadingRefreshTranId.value = row.tran_id;
+  await getStatusSale(null, row);
+  loadingRefreshTranId.value = null;
+};
+
+const getStatusSale = async (_, row) => {
   // if (row?.statusSale) return;
   try {
     const response = await invoiceService.getStatus({ tran_id: row.tran_id });
