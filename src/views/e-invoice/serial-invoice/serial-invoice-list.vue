@@ -121,8 +121,8 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: dateRange.value?.[0] ? Math.floor(new Date(dateRange.value[0]).getTime() / 1000) : undefined,
-    end_date: dateRange.value?.[1] ? Math.floor(new Date(dateRange.value[1]).setHours(23, 59, 59, 999) / 1000) : undefined,
+    start_date: dateRange.value?.[0] ? new Date(dateRange.value[0]).getTime() : undefined,
+    end_date: dateRange.value?.[1] ? new Date(dateRange.value[1]).setHours(23, 59, 59, 999) : undefined,
     page: currentPage.value,
     perpage: pageSize.value,
     serial: searchField.value
