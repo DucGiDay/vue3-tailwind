@@ -45,12 +45,11 @@
         @page-change="getData"
       >
         <template #status="{ record }">
-          <span
-            :class="statusMap(record)?.class"
-            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ statusMap(record)?.label }}
-          </span>
+          <Tag
+            :value="statusMap(record)?.label"
+            :severity="statusMap(record)?.severity"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
 
         <template #extra_data="{ record }">
@@ -227,7 +226,7 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return NOTI_ERROR_STATUS_COLOR[status] || NOTI_ERROR_STATUS_COLOR['-1'];
+  return NOTI_ERROR_STATUS_COLOR?.[status] || {};
 };
 
 const fetchAndCachePDF = async (item) => {

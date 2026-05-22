@@ -7,6 +7,12 @@ REPO_URL=$4
 
 
 DEPLOYMENTNAME="${IMAGE_NAME}"
+
+# FIX: Patch strategy trước khi update image
+# maxSurge=1: tạo pod mới trước
+# maxUnavailable=0: KHÔNG xóa pod cũ cho đến khi pod mới sẵn sàng
+STRATEGY_PATCH='{"spec":{"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0}}}}'
+
 if [ $WORKSPACE != "site-product" ]
 then
 echo "START UPDATE IMAGES $IMAGE_VERSION ON $WORKSPAICE - $DEPLOYMENTNAME"

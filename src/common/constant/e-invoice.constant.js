@@ -129,8 +129,8 @@ export const SERIAL_INVOICE_COLOR = {
 };
 // Mapping màu Thông báo sai sót
 export const NOTI_ERROR_STATUS_COLOR = {
-  0: { label: 'Chưa gửi TCTN', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
-  1: { label: 'Đã gửi TCTN', class: 'fb-text-success-700 fb-bg-success-100' },
+  0: { label: 'Chưa gửi TCTN', severity: 'secondary' },
+  1: { label: 'Đã gửi TCTN', severity: 'success' },
 };
 
 export const AGREEMENT_TYPE_MAP = {
@@ -152,12 +152,12 @@ export const CREATE_MTT_TABLE_COLUMNS = [
   { field: 'vat_invoice_code', header: 'Mẫu số' },
   { field: 'vat_invoice_series', header: 'Ký hiệu' },
   { field: 'vat_invoice_number', header: 'Số hóa đơn' },
-  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' }
+  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
 ];
 
 export const STOP_ON_ERROR_OPTIONS = [
   { label: 'Dừng lại khi có lỗi', value: true },
-  { label: 'Tiếp tục khi có lỗi', value: false }
+  { label: 'Tiếp tục khi có lỗi', value: false },
 ];
 
 export const QUANTITY_PACKAGE_OPTIONS = [
@@ -167,7 +167,7 @@ export const QUANTITY_PACKAGE_OPTIONS = [
   { label: 'Gói 100 Hóa đơn', value: 100 },
   { label: 'Gói 150 Hóa đơn', value: 150 },
   { label: 'Gói 200 Hóa đơn', value: 200 },
-  { label: 'Gói 250 Hóa đơn', value: 250 }
+  { label: 'Gói 250 Hóa đơn', value: 250 },
 ];
 
 export const MAX_RETRY_OPTIONS = [
@@ -180,5 +180,5 @@ export const MAX_RETRY_OPTIONS = [
   { label: '7 lần', value: 7 },
   { label: '8 lần', value: 8 },
   { label: '9 lần', value: 9 },
-  { label: '10 lần', value: 10 }
+  { label: '10 lần', value: 10 },
 ];

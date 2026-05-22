@@ -118,7 +118,7 @@
 
         <template #vat_publish_status="{ record, row }">
           <Tag
-            :severity="statusMap(row?.vat_publish_status_code)?.severity"
+            :severity="statusMap(row?.vat_publish_status_code)?.severity || 'secondary'"
             :value="record || statusMap('-1')?.label"
             class="!fb-text-xs !fb-font-medium"
           />
