@@ -1,6 +1,10 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
+      <Button size="small" raised>
+        <IconPlus />
+        Tạo hóa đơn
+      </Button>
       <ButtonExtendInvoice />
     </template>
     <template #toolbar>

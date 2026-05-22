@@ -26,7 +26,7 @@
         enableScrollPagination enableCheckbox :stripedRows="false" :isLoading="isLoading" :currentPage="currentPage"
         :pageSize="pageSize" scrollHeight="flex" :hasMoreData="hasMoreData" @page-change="loadMore">
         <template #status="{ row }">
-          <Tag :severity="statusMap(row.status).severity" :value="statusMap(row.status).label"
+          <Tag :severity="statusMap(row?.status)?.severity" :value="statusMap(row?.status)?.label"
             class="!fb-text-xs !fb-font-medium" />
         </template>
 
@@ -75,7 +75,7 @@
               {{ index + 1 }}
             </template>
             <template #status="{ row }">
-              <Tag :severity="statusMap(row.status).severity" :value="statusMap(row.status).label"
+              <Tag :severity="statusMap(row?.status)?.severity" :value="statusMap(row?.status)?.label"
                 class="!fb-text-xs !fb-font-medium" />
             </template>
           </FbTable>
