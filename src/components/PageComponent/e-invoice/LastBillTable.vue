@@ -13,12 +13,11 @@
         @rowClick="openDetail"
       >
         <template #vat_publish_status="{ record }">
-          <span
-            :class="VAT_PUBLISH_STATUS_COLOR[record?.code]?.class"
-            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ record?.name }}
-          </span>
+          <Tag
+            :severity="VAT_PUBLISH_STATUS_COLOR[record?.code]?.severity"
+            :value="record?.name"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
         <template #extra_data="{ record }">
           {{ record?.inv_buyerDisplayName || '' }}

@@ -54,56 +54,56 @@ export const VAT_PUBLISH_STATUS_MAPPING = {
 // Mapping màu cho trạng thái hóa đơn
 export const VAT_PUBLISH_STATUS_COLOR = {
   // # Hóa đơn chưa gửi TCTN
-  0: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
-  1: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
-  2: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
-  3: { label: 'Hóa đơn chưa gửi TCTN', class: 'fb-text-warning-700 fb-bg-warning-100' },
+  0: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
+  1: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
+  2: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
+  3: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
 
   // # Hóa đơn đã nằm trong danh sách tổng hợp
   4000: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100',
+    severity: 'primary',
   },
   4001: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100',
+    severity: 'primary',
   },
   4002: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100',
+    severity: 'primary',
   },
   4003: {
     label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    class: 'fb-text-primary-700 fb-bg-primary-100',
+    severity: 'primary',
   },
 
   // # Hóa đơn bị TCTN từ chối
-  8000: { label: 'Hóa đơn bị TCTN từ chối', class: 'fb-text-error-700 fb-bg-error-100' },
-  8001: { label: 'Hóa đơn bị TCTN từ chối', class: 'fb-text-error-700 fb-bg-error-100' },
-  8002: { label: 'Hóa đơn bị TCTN từ chối', class: 'fb-text-error-700 fb-bg-error-100' },
-  8003: { label: 'Hóa đơn bị TCTN từ chối', class: 'fb-text-error-700 fb-bg-error-100' },
+  8000: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
+  8001: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
+  8002: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
+  8003: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
 
   // # Hóa đơn đã gửi TCTN
-  12000: { label: 'Hóa đơn đã gửi TCTN', class: 'fb-text-primary-700 fb-bg-primary-100' },
-  12001: { label: 'Hóa đơn đã gửi TCTN', class: 'fb-text-primary-700 fb-bg-primary-100' },
-  12002: { label: 'Hóa đơn đã gửi TCTN', class: 'fb-text-primary-700 fb-bg-primary-100' },
-  12003: { label: 'Hóa đơn đã gửi TCTN', class: 'fb-text-primary-700 fb-bg-primary-100' },
+  12000: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
+  12001: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
+  12002: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
+  12003: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
 
   // # Hóa đơn không hợp lệ
-  24000: { label: 'Hóa đơn không hợp lệ', class: 'fb-text-error-700 fb-bg-error-100' },
-  24001: { label: 'Hóa đơn không hợp lệ', class: 'fb-text-error-700 fb-bg-error-100' },
-  24002: { label: 'Hóa đơn không hợp lệ', class: 'fb-text-error-700 fb-bg-error-100' },
-  24003: { label: 'Hóa đơn không hợp lệ', class: 'fb-text-error-700 fb-bg-error-100' },
+  24000: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
+  24001: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
+  24002: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
+  24003: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
 
   // # Hóa đơn hợp lệ
-  28000: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
-  28001: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
-  28002: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
-  28003: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
-  32000: { label: 'Hóa đơn hợp lệ', class: 'fb-text-success-700 fb-bg-success-100' },
+  28000: { label: 'Hóa đơn hợp lệ', severity: 'success' },
+  28001: { label: 'Hóa đơn hợp lệ', severity: 'success' },
+  28002: { label: 'Hóa đơn hợp lệ', severity: 'success' },
+  28003: { label: 'Hóa đơn hợp lệ', severity: 'success' },
+  32000: { label: 'Hóa đơn hợp lệ', severity: 'success' },
 
-  null: { label: 'Hóa đơn dự thảo', class: 'fb-text-gray-blue-700 fb-bg-gray-blue-100' },
-  '-1': { label: 'Không xác định', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
+  null: { label: 'Hóa đơn dự thảo', severity: 'secondary' },
+  '-1': { label: 'Không xác định', severity: 'secondary' },
 };
 
 // Fiter trang thái trang Quản lý hóa đơn

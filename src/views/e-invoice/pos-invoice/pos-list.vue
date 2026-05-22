@@ -45,7 +45,6 @@
     </template>
 
     <template #extra>
-      <ConfirmDialog />
       
       <!-- Dialog Xác nhận xóa -->
       <Dialog v-model:visible="showDeleteDialog" header="Xác nhận xóa" modal :style="{ width: '400px' }">
@@ -90,7 +89,6 @@
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import FbTable from '@/components/Common/FbTable.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
@@ -106,7 +104,6 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 const toast = useToast();
-const confirm = useConfirm();
 
 // --- State ---
 const searchField = ref('');

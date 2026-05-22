@@ -117,12 +117,11 @@
         </template>
 
         <template #vat_publish_status="{ record, row }">
-          <span
-            :class="statusMap(row?.vat_publish_status_code)?.class"
-            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ record || statusMap('-1')?.label }}
-          </span>
+          <Tag
+            :severity="statusMap(row?.vat_publish_status_code)?.severity"
+            :value="record || statusMap('-1')?.label"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
 
         <template #action="{ row }">
