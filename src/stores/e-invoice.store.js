@@ -291,5 +291,13 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.posInvoiceList = { error: err?.message };
       }
     },
+    async deletePosInvoice(payload) {
+      try {
+        const response = await invoiceService.deletePosInvoice(payload);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
   },
 });

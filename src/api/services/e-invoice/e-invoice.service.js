@@ -119,9 +119,7 @@ export const invoiceService = {
   getListBatchInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_BATCH_INVOICE, { params }),
   getInvoiceByTranIds: (params) => api.get(INVOICE_ENDPOINTS.GET_INVOICE_BY_TRAN_IDS, { params }),
   createPosInvoice: (payload) => api.post(INVOICE_ENDPOINTS.CREATE_POS_INVOICE, payload),
-  deletePosInvoice: (payload) => {
-    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
-  },
+  deletePosInvoice: (payload) => api.delete(INVOICE_ENDPOINTS.DELETE_BATCH_INVOICE, { data: payload }),
   sendPosInvoice: (payload) => {
     return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
   },

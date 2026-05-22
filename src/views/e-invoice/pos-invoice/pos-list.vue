@@ -10,16 +10,7 @@
         <IconPlus />
         Tạo MTT
       </Button>
-      <!-- <Button size="small" severity="danger" outlined @click="onDeleteAll">Xóa tất cả MTT</Button> -->
-      <!-- <Button
-        size="small"
-        severity="success"
-        raised
-        :disabled="!selectedItems.length"
-        @click="onSendInvoice"
-      >
-        Gửi Hóa đơn MTT
-      </Button> -->
+      <Button size="small" severity="danger" raised :disabled="!selectedItems.length" @click="onDeleteInvoice">Xóa</Button>
       <ButtonExtendInvoice />
     </template>
 
@@ -54,6 +45,24 @@
     </template>
 
     <template #extra>
+      <ConfirmDialog />
+      
+      <!-- Dialog Xác nhận xóa -->
+      <Dialog v-model:visible="showDeleteDialog" header="Xác nhận xóa" modal :style="{ width: '400px' }">
+        <div class="fb-flex fb-flex-col fb-gap-4 fb-pt-2">
+          <div v-if="invalidDeleteItems.length > 0" class="fb-p-3 fb-bg-orange-50 fb-text-orange-600 fb-rounded-md fb-border fb-border-orange-200">
+            <span class="fb-font-medium">Cảnh báo:</span> Có <b>{{ invalidDeleteItems.length }}</b> hóa đơn không ở trạng thái "Đang đồng bộ" sẽ bị bỏ qua.
+          </div>
+          <div class="fb-text-gray-700">
+            Bạn có chắc chắn muốn xóa <b>{{ validDeleteItems.length }}</b> hóa đơn hợp lệ?
+          </div>
+          <div class="fb-flex fb-justify-end fb-gap-2 fb-mt-2">
+            <Button label="Hủy" severity="secondary" outlined @click="showDeleteDialog = false" />
+            <Button label="Xác nhận" severity="danger" @click="executeDelete" :loading="isDeleting" />
+          </div>
+        </div>
+      </Dialog>
+
       <!-- Dialog Chi tiết -->
       <Dialog v-model:visible="showDetailDialog" header="Chi tiết hóa đơn MTT" modal :style="{ width: '65vw' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -81,6 +90,7 @@
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import FbTable from '@/components/Common/FbTable.vue';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
@@ -96,6 +106,7 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 const toast = useToast();
+const confirm = useConfirm();
 
 // --- State ---
 const searchField = ref('');
@@ -111,6 +122,12 @@ let searchTimeout = null;
 const hasMoreData = ref(true);
 const items = ref([]);
 
+// Delete Dialog State
+const showDeleteDialog = ref(false);
+const isDeleting = ref(false);
+const validDeleteItems = ref([]);
+const invalidDeleteItems = ref([]);
+
 // --- Constants & Options ---
 const POS_INVOICE_TABLE_COLUMNS = [
   { field: 'total', header: 'Tổng số hóa đơn' },
@@ -124,7 +141,7 @@ const POS_INVOICE_TABLE_COLUMNS = [
     header: '',
     frozen: true,
     alignFrozen: 'right',
-    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' },
+    style: { width: '3rem', minWidth: '3rem', padding: '0 !important' },
   },
 ];
 
@@ -147,7 +164,6 @@ const statusOptions = [
 
 // --- Computed ---
 const posInvoiceList = computed(() => invoiceStore.posInvoiceList || {});
-// const items = computed(() => posInvoiceList.value?.batches || []);
 
 // --- Methods ---
 const getData = async () => {
@@ -224,6 +240,41 @@ const onViewDetail = async (row) => {
     console.error('Lỗi lấy chi tiết hóa đơn POS:', error);
   } finally {
     isLoadingDetail.value = false;
+  }
+};
+
+const onDeleteInvoice = () => {
+  if (!selectedItems.value.length) return;
+
+  validDeleteItems.value = selectedItems.value.filter(item => item.status === 'pending');
+  invalidDeleteItems.value = selectedItems.value.filter(item => item.status !== 'pending');
+
+  if (validDeleteItems.value.length === 0) {
+    toast.add({ severity: 'warn', summary: 'Không hợp lệ', detail: 'Chỉ có thể xóa hóa đơn ở trạng thái "Đang đồng bộ".', life: 3000 });
+    return;
+  }
+
+  showDeleteDialog.value = true;
+};
+
+const executeDelete = async () => {
+  try {
+    isDeleting.value = true;
+    const payload = {
+      batch_ids: validDeleteItems.value.map(item => item?.id).filter(Boolean)
+    };
+    const res = await invoiceStore.deletePosInvoice(payload);
+    if (res.error) throw new Error(res.error.message || 'Xóa thất bại');
+    
+    toast.add({ severity: 'success', summary: 'Xóa thành công', life: 3000 });
+    selectedItems.value = [];
+    showDeleteDialog.value = false;
+    await filter();
+  } catch (error) {
+    console.error('Lỗi xóa hóa đơn MTT:', error);
+    toast.add({ severity: 'error', summary: error.message || 'Xóa thất bại', life: 3000 });
+  } finally {
+    isDeleting.value = false;
   }
 };
 
