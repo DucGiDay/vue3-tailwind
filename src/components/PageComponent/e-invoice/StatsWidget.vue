@@ -2,10 +2,7 @@
   <section id="summary">
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
       <!-- Số lượng hóa đơn đã mua -->
-      <div
-        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
-        @click="navigateTo('/')"
-      >
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -39,10 +36,7 @@
       </div>
 
       <!-- Số lượng hóa đơn đã sử dụng -->
-      <div
-        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
-        @click="navigateTo('/')"
-      >
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -76,10 +70,7 @@
       </div>
 
       <!-- Số lượng hóa đơn còn lại -->
-      <div
-        class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer"
-        @click="navigateTo('/')"
-      >
+      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
           <div class="fb-flex fb-justify-between">
             <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -124,7 +115,7 @@
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
         @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '1' })"
       >
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Tổng số hóa đơn
           </span>
@@ -140,7 +131,7 @@
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
         @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '2,3' })"
       >
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn chờ xử lý
           </span>
@@ -156,7 +147,7 @@
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
         @click="navigateTo('/e-invoice/invoice-manage', { invoiceType: '2,3' })"
       >
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn lỗi
           </span>
@@ -172,7 +163,7 @@
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
         @click="navigateTo('/e-invoice/sale-order')"
       >
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
             Hóa đơn chưa xuất VAT
           </span>
