@@ -1,6 +1,6 @@
 <template>
   <div class="layout-wrapper">
-    <div class="layout-main-container is-table-layout !fb-px-4">
+    <div class="layout-main-container pb-0">
       <TableView
         v-model:searchValue="searchField"
         searchPlaceholder="Tìm kiếm mã hóa đơn"
@@ -99,7 +99,7 @@
 import {
   ORDER_STATUS_FILTER_LIST,
   ORDER_STATUS_COLOR,
-  EXTEND_LICENSE_TABLE_COLUMNS
+  EXTEND_LICENSE_TABLE_COLUMNS,
 } from '@/common/constant/extend-license.constant';
 import { useExtendLicenseStore } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -145,7 +145,7 @@ const getData = async ({ page, rows } = {}) => {
     numPerPage: numPerPage.value,
     list_store_uid: globalStore.storesIdPermissionActive.join(','),
     textSearch: searchField.value,
-    ...(route.query?.product_code ? { productCode: route.query?.product_code } : {})
+    ...(route.query?.product_code ? { productCode: route.query?.product_code } : {}),
   });
 
   totalRecords.value = orderHistory.value?.meta?.count;
@@ -159,7 +159,7 @@ const onDeleteItem = async () => {
       // status: 'CANCELED',
       orderCode: selectedItem.value?.roCode,
       cancelNote: reason.value,
-      _id: selectedItem.value?._id
+      _id: selectedItem.value?._id,
     };
     isLoading.value = true;
     displayConfirmation.value = false;
