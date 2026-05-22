@@ -46,8 +46,8 @@
       >
         <template #status="{ record }">
           <Tag
-            :value="statusMap(record)?.label"
-            :severity="statusMap(record)?.severity"
+            :severity="statusMap(record)?.severity || 'secondary'"
+            :value="statusMap(record)?.label || '-'"
             class="!fb-text-xs !fb-font-medium"
           />
         </template>

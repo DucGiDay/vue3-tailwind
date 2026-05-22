@@ -62,12 +62,11 @@
         @page-change="getData"
       >
         <template #status="{ record }">
-          <div
-            :class="statusMap(record)?.class"
-            class="fb-w-fit fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ statusMap(record)?.label }}
-          </div>
+         <Tag
+            :severity="statusMap(record)?.severity || 'secondary'"
+            :value="statusMap(record)?.label || '-'"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
         <template #['extra_data.start_no']="{ row }">
           {{ row?.extra_data?.start_no }}
@@ -149,7 +148,7 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return SERIAL_INVOICE_COLOR[status] || SERIAL_INVOICE_COLOR['-1'];
+  return SERIAL_INVOICE_COLOR[status] || {};
 };
 
 const directToDetail = () => {

@@ -124,8 +124,8 @@ export const INVOICE_PARTNERS = [
 
 // Mapping màu ký hiệu hóa đơn
 export const SERIAL_INVOICE_COLOR = {
-  0: { label: 'Không hoạt động', class: 'fb-text-gray-700 fb-bg-gray-100 fb-border' },
-  1: { label: 'Hoạt động', class: 'fb-text-success-700 fb-bg-success-100' },
+  0: { label: 'Không hoạt động', severity: 'secondary' },
+  1: { label: 'Hoạt động', severity: 'success' },
 };
 // Mapping màu Thông báo sai sót
 export const NOTI_ERROR_STATUS_COLOR = {
