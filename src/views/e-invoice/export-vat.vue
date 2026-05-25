@@ -670,6 +670,7 @@ const getGuestSession = async () => {
   isLoadingSession.value = true;
   // const visitorId = await getVisitorId();
   const visitorId = await getStableVisitorId();
+  console.log(visitorId);
   await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
   isLoadingSession.value = false;
 };
@@ -716,5 +717,22 @@ const handleSelectVatInfo = (event) => {
 
 onMounted(() => {
   getData();
+
+  // Tải và khởi tạo Eruda động để debug trên thiết bị di động (chỉ chạy trong file này)
+  if (!window.eruda) {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    script.async = true;
+    script.onload = () => {
+      window.eruda.init();
+    };
+    document.body.appendChild(script);
+  } else {
+    try {
+      window.eruda.init();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 });
 </script>

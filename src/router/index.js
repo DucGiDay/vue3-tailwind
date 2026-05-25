@@ -17,27 +17,35 @@ const componentMap = {
 const mapMicroRouters = (routes, inheritedAbstractName = '') => {
   let activeAbstractName = inheritedAbstractName;
 
-  return (routes || []).map((route) => {
-    const { path, name, children, meta = {} } = route;
-    const isAbstract = meta.isAbstractRoute;
+  return (routes || [])
+    .map((route) => {
+      const { path, name, children, meta = {} } = route;
+      const isAbstract = meta.isAbstractRoute;
 
-    // Nếu route hiện tại là abstract → update activeAbstractName
-    activeAbstractName = isAbstract ? name : inheritedAbstractName;
+      // Nếu route hiện tại là abstract → update activeAbstractName
+      activeAbstractName = isAbstract ? name : inheritedAbstractName;
 
-    // Abstract routes không có component thực
-    const component = isAbstract ? null : componentMap?.[activeAbstractName]?.[name] || NotFound;
+      // Abstract routes không có component thực
+      const component = isAbstract ? null : componentMap?.[activeAbstractName]?.[name] || NotFound;
 
-    // Đệ quy xử lý children routes
-    const mappedChildren = children ? mapMicroRouters(children, activeAbstractName) : [];
+      // Đệ quy xử lý children routes
+      const mappedChildren = children ? mapMicroRouters(children, activeAbstractName) : [];
 
-    return {
-      path,
-      name,
-      component,
-      children: mappedChildren,
-      meta
-    };
-  });
+      return {
+        path,
+        name,
+        component,
+        children: mappedChildren,
+        meta
+      };
+    })
+    .filter((route) => {
+      // Loại bỏ các abstract route không có children để tránh cảnh báo từ Vue Router
+      if (route.meta?.isAbstractRoute && (!route.children || route.children.length === 0)) {
+        return false;
+      }
+      return true;
+    });
 };
 
 const createAppRouter = (microRouter) => {
