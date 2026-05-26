@@ -669,9 +669,19 @@ const getData = async () => {
 const getGuestSession = async () => {
   isLoadingSession.value = true;
   // const visitorId = await getVisitorId();
-  const visitorId = await getStableVisitorId();
-  console.log(visitorId);
-  await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
+  let visitorId = '';
+  try {
+    visitorId = await getStableVisitorId();
+  } catch (error) {
+    visitorId = localStorage.getItem('stable_visitor_id') || '';
+  }
+
+  try {
+    console.log('visitorId', visitorId);
+    await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
+  } catch (error) {
+    console.log('Error fetching guest session', error);
+  }
   isLoadingSession.value = false;
 };
 
