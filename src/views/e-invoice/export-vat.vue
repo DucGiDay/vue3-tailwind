@@ -673,7 +673,12 @@ const getGuestSession = async () => {
   try {
     visitorId = await getStableVisitorId();
   } catch (error) {
-    visitorId = localStorage.getItem('stable_visitor_id') || '';
+    console.error('Error getting stable visitor ID', error);
+    try {
+      visitorId = (typeof localStorage !== 'undefined' && localStorage) ? localStorage.getItem('stable_visitor_id') || '' : '';
+    } catch (e) {
+      visitorId = '';
+    }
   }
 
   try {
