@@ -448,7 +448,7 @@ const handleExport = async () => {
       severity: 'success',
       // summary: t('NOTIFICATION--TITLE_SUCCESS'),
       detail: 'Dữ liệu đang được đồng bộ sang HĐĐT',
-      life: 3000,
+      life: 5000,
     });
 
     emit('success');
@@ -460,7 +460,7 @@ const handleExport = async () => {
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
       detail: error?.message || t('ERROR_RESPONSE_MESSAGE--520'),
-      life: 3000,
+      life: 5000,
     });
   } finally {
     isLoading.value = false;

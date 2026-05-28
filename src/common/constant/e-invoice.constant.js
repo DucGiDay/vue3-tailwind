@@ -108,10 +108,20 @@ export const VAT_PUBLISH_STATUS_COLOR = {
 
 // Fiter trang thái trang Quản lý hóa đơn
 export const VAT_PUBLISH_STATUS_LIST = [
-  { label: 'Hóa đơn nháp', value: '1' },
-  { label: 'Đã phát hành', value: '2' },
-  { label: 'Chưa đồng bộ', value: '3' },
-  { label: 'Phát hành lỗi', value: '4' },
+  { label: 'Hóa đơn hợp lệ', value: 'valid_invoices' },
+  { label: 'Hóa đơn không hợp lệ', value: 'invalid_invoices' },
+  { label: 'Hóa đơn chưa gửi TCTN', value: 'unsend_invoices' },
+  { label: 'Hóa đơn đã gửi TCTN', value: 'sent_invoices' },
+  { label: 'Hóa đơn bị TCTN từ chối', value: 'rejected_invoices' },
+];
+// Filter trạng thái báo cáo
+export const VAT_PUBLISH_STATUS_CODE_LIST = [
+  { label: 'Hóa đơn chưa gửi TCTN', value: '0,1,2,3' },
+  { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', value: '4000,4001,4002,4003' },
+  { label: 'Hóa đơn bị TCTN từ chối', value: '8000,8001,8002,8003' },
+  { label: 'Hóa đơn đã gửi TCTN', value: '12000,12001,12002,12003' },
+  { label: 'Hóa đơn không hợp lệ', value: '24000,24001,24002,24003' },
+  { label: 'Hóa đơn hợp lệ', value: '28000,28001,28002,28003,32000' },
 ];
 
 export const INVOICE_PARTNERS = [

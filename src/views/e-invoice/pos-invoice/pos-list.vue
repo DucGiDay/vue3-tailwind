@@ -97,6 +97,7 @@ import { useFilterStore } from '@/stores/filter.store';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import IconEye from '@/components/Common/Icon/IconEye.vue';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import { POS_INVOICE_TABLE_COLUMNS, POS_INVOICE_DETAIL_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 
 // --- Initialization ---
 const router = useRouter();
@@ -124,34 +125,6 @@ const showDeleteDialog = ref(false);
 const isDeleting = ref(false);
 const validDeleteItems = ref([]);
 const invalidDeleteItems = ref([]);
-
-// --- Constants & Options ---
-const POS_INVOICE_TABLE_COLUMNS = [
-  { field: 'total', header: 'Tổng số hóa đơn' },
-  { field: 'created_by', header: 'Người tạo' },
-  { field: 'created_at', header: 'Ngày tạo', format: 'date' },
-  { field: 'created_by', header: 'Người cập nhật' },
-  { field: 'finished_at', header: 'Ngày cập nhật', format: 'date' },
-  { field: 'status', header: 'Trạng thái' },
-  {
-    field: 'action',
-    header: '',
-    frozen: true,
-    alignFrozen: 'right',
-    style: { width: '3rem', minWidth: '3rem', padding: '0 !important' },
-  },
-];
-
-const POS_INVOICE_DETAIL_COLUMNS = [
-  { field: 'no', header: 'STT' },
-  { field: 'extra_data.IPTemplateID', header: 'Mẫu số' },
-  { field: 'vat_invoice_series', header: 'Ký hiệu' },
-  { field: 'vat_invoice_number', header: 'Số' },
-  { field: 'merged_tran_id', header: 'Mã tra cứu' },
-  { field: 'vat_invoice_code', header: 'Mã cơ quan thuế' },
-  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
-  { field: 'status', header: 'Trạng thái' },
-];
 
 const statusOptions = [
   { label: 'Thất bại', value: 'failed' },

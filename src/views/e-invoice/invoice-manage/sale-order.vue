@@ -28,7 +28,7 @@
     <template #table>
       <FbTable
         v-model:selection="saleSelecteds"
-        :columns="SALE_ORDER_TABLE_COLUMNS"
+        :columns="invoiceTab === 'tab1' ? SALE_ORDER_TABLE_COLUMNS : INVOICE_MANAGE_TABLE_COLUMNS"
         :items="sales"
         enableCheckbox
         enablePagination
@@ -36,10 +36,34 @@
         :isLoading="isLoading"
         :currentPage="currentPage"
         :pageSize="pageSize"
-        :totalRecords="saleNotSyncVat.data?.num_results || 0"
-        :totalPages="saleNotSyncVat.data?.total_pages || 0"
+        :totalRecords="
+          invoiceTab === 'tab1'
+            ? saleNotSyncVat.data?.num_results || 0
+            : vatInvoice.data?.num_results || 0
+        "
+        :totalPages="
+          invoiceTab === 'tab1'
+            ? saleNotSyncVat.data?.total_pages || 0
+            : vatInvoice.data?.total_pages || 0
+        "
         @page-change="getData"
       >
+        <template #header>
+          <SelectButton
+            v-model="invoiceTab"
+            :options="[
+              { label: 'Hóa đơn chưa xuất', value: 'tab1' },
+              { label: 'Hóa đơn chờ đồng bộ', value: 'tab2' },
+              { label: 'Hóa đơn xuất lỗi', value: 'tab3' },
+            ]"
+            size="small"
+            optionLabel="label"
+            optionValue="value"
+            :allowEmpty="false"
+            @change="filter"
+          />
+        </template>
+        <!-- START Tab hóa đơn chưa xuất -->
         <template #tran_id="{ record, row }">
           <span v-tooltip.top="record ? { value: record } : null">
             {{ truncate(record) }}
@@ -70,10 +94,69 @@
             </svg>
           </span>
         </template>
+        <!-- END Tab hóa đơn chưa xuất -->
+
+        <!-- START Tab hóa đơn chờ đồng bộ và Hóa đơn xuất lỗi -->
+        <template #inv_buyerLegalName="{ record, row }">
+          <div>{{ `Tên: ${record}` }}</div>
+          <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
+        </template>
+        <template #invoice_type="{ record, row }">
+          <div>{{ record }}</div>
+          <div v-if="row?.origin_tran_id" class="fb-text-primary">({{ row.origin_tran_id }})</div>
+        </template>
+
+        <template #vat_publish_status="{ record, row }">
+          <Tag
+            :severity="statusMap(row?.vat_publish_status_code)?.severity || 'secondary'"
+            :value="record || statusMap('-1')?.label"
+            class="!fb-text-xs !fb-font-medium"
+          />
+        </template>
+
+        <template #action="{ row }">
+          <div class="fb-flex fb-justify-center">
+            <Button
+              size="small"
+              text
+              v-tooltip.left="{ value: 'Xem trước hóa đơn', showDelay: 500, hideDelay: 100 }"
+              @click="onPreviewPDF(row)"
+              :loading="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+            >
+              <ProgressSpinner
+                v-if="loadingPdfTranId === row.tran_id && pdfAction === 'preview'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconEye v-else class="!fb-text-primary" color="currentColor" />
+            </Button>
+            <Button
+              size="small"
+              text
+              v-tooltip.left="{ value: 'Làm mới', showDelay: 500, hideDelay: 100 }"
+              @click="refreshRow(row)"
+              :loading="loadingRefreshTranId === row.tran_id"
+            >
+              <ProgressSpinner
+                v-if="loadingRefreshTranId === row.tran_id"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconRefresh v-else class="!fb-text-primary" color="currentColor" />
+            </Button>
+          </div>
+        </template>
+        <!-- END Tab hóa đơn chờ đồng bộ và Hóa đơn xuất lỗi -->
+
         <template #empty>
           {{
-            saleNotSyncVat?.error ||
-            (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+            invoiceTab === 'tab1'
+              ? saleNotSyncVat?.error ||
+                (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
+              : vatInvoice?.error ||
+                (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
           }}
         </template>
       </FbTable>
@@ -96,7 +179,13 @@ import { useFilterStore } from '@/stores/filter.store';
 import { onMounted, ref, computed } from 'vue';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import { SALE_ORDER_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import {
+  SALE_ORDER_TABLE_COLUMNS,
+  INVOICE_MANAGE_TABLE_COLUMNS,
+} from '@/common/constant/e-invoice-column.constant';
+import {
+  VAT_PUBLISH_STATUS_COLOR,
+} from '@/common/constant/e-invoice.constant';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 // Store/Getter
@@ -106,15 +195,16 @@ const filterStore = useFilterStore();
 
 // State
 const searchField = ref(null);
-
+const invoiceTab = ref('tab1'); // tab1, tab2, tab3
 const saleSelecteds = ref([]);
-const saleNotSyncVat = computed(() => invoiceStore.saleNotSyncVat);
-const sales = ref([]);
 const isLoading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
-
 const visibleExportVat = ref(false);
+
+const saleNotSyncVat = computed(() => invoiceStore.saleNotSyncVat);
+const vatInvoice = computed(() => invoiceStore.vatInvoice); // data from api
+const sales = ref([]);
 const currentSaleData = ref({});
 
 const storeUidByTaxCode = computed(() => {
@@ -149,10 +239,41 @@ const getData = async ({ page, rows } = {}) => {
   isLoading.value = false;
 };
 
+const getExportedInvoice = async ({ page, rows } = {}) => {
+  if (!storeUidByTaxCode.value) return;
+
+  currentPage.value = page || 1;
+  pageSize.value = rows || 50;
+
+  const payload = {
+    brand_uid: globalStore?.brandUid,
+    company_uid: globalStore?.currentUser?.company_uid,
+    list_store_uid: storeUidByTaxCode.value,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
+    page: currentPage.value,
+    results_per_page: pageSize.value,
+    search: searchField.value,
+    is_sync_vat: invoiceTab.value === 'tab2' ? '3' : invoiceTab.value === 'tab3' ? '2' : null,
+  };
+
+  isLoading.value = true;
+  await invoiceStore.getVatInvoice(payload);
+  sales.value = vatInvoice.value?.data?.data || [];
+  isLoading.value = false;
+};
+
 const filter = async () => {
   currentPage.value = 1;
   sales.value = [];
-  await getData();
+  if (invoiceTab.value === 'tab1') {
+    await getData();
+  } else {
+    await getExportedInvoice();
+  }
+};
+const statusMap = (status) => {
+  return VAT_PUBLISH_STATUS_COLOR[status] || VAT_PUBLISH_STATUS_COLOR['-1'];
 };
 
 const handleExportVat = (isImmediate = false) => {

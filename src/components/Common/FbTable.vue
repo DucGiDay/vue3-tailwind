@@ -13,6 +13,8 @@
     v-bind="$attrs"
     resizable-columns
     @columnReorder="onColReorder"
+    @rowClick="emit('row-click', $event)"
+    @rowDblclick="emit('row-dblclick', $event)"
   >
     <slot />
 
@@ -181,9 +183,8 @@
     <!-- Footer -->
     <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
       <nav class="fb-flex fb-items-center fb-pr-10">
-        <slot name="footer" />
         <div
-          class="fb-paginator fb-ml-auto"
+          class="fb-paginator fb-mr-auto"
           v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
         >
           <Select
@@ -262,6 +263,7 @@
             </Button>
           </ButtonGroup>
         </div>
+        <slot name="footer" />
       </nav>
     </template>
   </DataTable>

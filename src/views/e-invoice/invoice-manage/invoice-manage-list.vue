@@ -12,11 +12,9 @@
         class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
       >
         <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-
         <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
-
         <Button
-          v-tooltip.bottom="'Lọc nâng cao'"
+          v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
           :severity="showAdvancedFilter ? 'primary' : 'secondary'"
           outlined
           size="small"
@@ -29,7 +27,7 @@
             <IconSearch />
           </InputIcon>
           <InputText
-            :modelValue="searchField"
+            v-model="searchField"
             placeholder="Tìm kiếm mã hóa đơn"
             class="fb-w-full md:fb-w-72"
             size="small"
@@ -41,6 +39,7 @@
         <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-3">
           <!-- Các bộ lọc khác -->
           <Select
+            v-if="invoiceTab === 'tab1'"
             v-model="statusField"
             :options="statusOptions"
             optionLabel="label"
@@ -99,10 +98,11 @@
       >
         <template #header>
           <SelectButton
-            v-model="invoiceType"
+            v-model="invoiceTab"
             :options="[
-              { label: 'Danh sách hóa đơn', value: '1' },
-              { label: 'Hóa đơn chờ xuất', value: '2,3' },
+              { label: 'Danh sách hóa đơn', value: 'tab1' },
+              { label: 'Hóa đơn dự thảo', value: 'tab2' },
+              { label: 'Hóa đơn chờ xuất', value: 'tab3' },
             ]"
             size="small"
             optionLabel="label"
@@ -110,6 +110,10 @@
             :allowEmpty="false"
             @change="filter"
           />
+        </template>
+        <template #inv_series="{ record, row }">
+          <div>{{ `Mẫu số: ${record}` }}</div>
+          <div>{{ `Ký hiệu: ${row.pattern || ''}` }}</div>
         </template>
         <template #inv_buyerLegalName="{ record, row }">
           <div>{{ `Tên: ${record}` }}</div>
@@ -168,6 +172,15 @@
             vatInvoice?.error || (!storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có hóa đơn')
           }}
         </template>
+
+        <template #footer>
+          <div class="fb-text-base fb-font-medium fb-text-gray-700">
+            Tổng cộng:
+            <span class="!fb-text-color !fb-font-bold">
+              {{ formatCurrency(vatInvoice.data?.total_amounts || 0) }}
+            </span>
+          </div>
+        </template>
       </FbTable>
     </template>
 
@@ -214,12 +227,14 @@
 </template>
 
 <script setup>
+import { ref, reactive, computed, onMounted, markRaw } from 'vue';
 import VuePdfEmbed from 'vue-pdf-embed';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { formatCurrency } from '@/common/utils/common';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
 import ModalResendMail from '@/components/PageComponent/e-invoice/ModalResendMail.vue';
@@ -246,18 +261,17 @@ const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
-const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 const confirm = useConfirm();
 
 // State
-const showAdvancedFilter = ref(false);
+const showAdvancedFilter = ref(true);
 const searchField = ref(null);
 const statusField = ref(null);
-const invoiceAction = ref(null);
+const invoiceAction = ref(null); // Loại hóa đơn
 const serialField = ref(null);
-const invoiceType = ref('1');
+const invoiceTab = ref('tab1'); // tab1, tab2, tab3
 const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
 const currentPage = ref(1);
 const pageSize = ref(50);
@@ -307,10 +321,11 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,
-    status: statusField.value,
-    is_sync_vat: invoiceType.value,
+    status: invoiceTab.value === 'tab1' ? 2 : invoiceTab.value === 'tab2' ? 1 : null,
+    is_sync_vat: invoiceTab.value === 'tab3' ? '2,3' : '1',
     vat_invoice_serial: serialField.value,
     invoice_action: invoiceAction.value,
+    vat_publish_status: invoiceTab.value === 'tab1' ? statusField.value : null,
   };
 
   isLoading.value = true;
@@ -338,7 +353,7 @@ const statusMap = (status) => {
 };
 
 const menuItems = (row) => {
-  return invoiceType.value === '1'
+  return ['tab1', 'tab2'].includes(invoiceTab.value)
     ? [
         {
           label: 'Điều chỉnh tăng',
@@ -679,8 +694,7 @@ const onViewInvoice = async (row) => {
       };
     } else throw new Error('Không tìm thấy dữ liệu hóa đơn');
   } catch (error) {
-    console.error('Error viewInvoice', error);
-    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+    toast.add({ severity: 'error', detail: error?.message, life: 5000 });
   }
 };
 
@@ -706,22 +720,17 @@ const onSendEmail = async (row) => {
       toast.add({ severity: 'success', summary: 'Gửi email thành công', life: 3000 });
     } else throw new Error('Không tìm thấy dữ liệu hóa đơn');
   } catch (error) {
-    console.error('Error sendEmail', error);
-    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+    toast.add({ severity: 'error', detail: error?.message, life: 5000 });
   } finally {
     loadingActionRowCustom.value = null;
   }
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
-
 // life cycle
 onMounted(() => {
-  const queryType = route.query?.invoiceType;
-  const validTypes = ['1', '2,3'];
-  invoiceType.value = validTypes.includes(queryType) ? queryType : '1';
+  const queryType = route.query?.invoiceTab;
+  const validTypes = ['tab1', 'tab2', 'tab3'];
+  invoiceTab.value = validTypes.includes(queryType) ? queryType : 'tab1';
   getData();
 });
 </script>

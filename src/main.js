@@ -24,7 +24,7 @@ const handleChunkError = () => {
 
     // Thông báo nhẹ nhàng
     const confirmed = window.confirm(
-      'Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang (dữ liệu chưa lưu sẽ mất).\nBấm Hủy để tiếp tục và lưu dữ liệu trước.',
+      'Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang.',
     );
 
     if (confirmed) {

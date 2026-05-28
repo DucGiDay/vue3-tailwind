@@ -10,7 +10,8 @@ export const INVOICE_ENDPOINTS = {
   SALE_CHANGE_LOG: '/api/v3/pos-cms/sale-change-log',
 
   // Invoice manage
-  VAT_INVOCIE: '/api/v3/pos-cms/vat-invoice',
+  // VAT_INVOCIE: '/api/v3/pos-cms/vat-invoice',
+  VAT_INVOCIE: '/api/invoice/v1/vat-invoice/v2',
   SALE_NOT_SYNC_VAT: '/api/v3/pos-client/sale-not-sync-vat',
 
   // Config store

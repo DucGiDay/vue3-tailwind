@@ -58,7 +58,7 @@ export const eInvoiceMenu = [
         ],
       },
 
-      // { label: 'Cấu hình', to: '/e-invoice/config' },
+      { label: 'Cấu hình', to: '/e-invoice/config' },
       { label: 'Lịch sử thao tác', to: '/e-invoice/history-action' },
     ],
   },

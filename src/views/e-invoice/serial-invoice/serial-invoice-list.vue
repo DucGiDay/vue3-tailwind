@@ -85,11 +85,9 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
-import { useFilterStore } from '@/stores/filter.store';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { SERIAL_INVOICE_COLOR } from '@/common/constant/e-invoice.constant';
 import { SERIAL_INVOICE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
-import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
@@ -98,9 +96,6 @@ const router = useRouter();
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
-const filterStore = useFilterStore();
-
-const toast = useToast();
 
 // State
 const searchField = ref(null);
@@ -155,9 +150,6 @@ const directToDetail = () => {
   router.push({ path: '/e-invoice/serial-invoice/detail' });
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
 
 // life cycle
 onMounted(async () => {
