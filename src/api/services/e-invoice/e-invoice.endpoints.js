@@ -64,4 +64,9 @@ export const INVOICE_ENDPOINTS = {
   EXPORT_REPORT_HISTORY: '/api/invoice/v1/invoice-report/export/history',
   GET_EXPORT_REPORT_URL: (id = '') => `/api/invoice/v1/invoice-report/export/${id}`,
   LIST_AUDIT_LOGS: '/api/einvoice/v1/audit_logs/list',
+
+  // Publish Invoice
+  PUBLISH_HSM: '/api/einvoice/v1/invoice/publish-hsm',
+  HASH_PUBLISH_USB_TOKEN: '/api/einvoice/v1/invoice/hash-publish-usb-token',
+  PUBLISH_USB_TOKEN: '/api/einvoice/v1/invoice/publish-usb-token',
 };

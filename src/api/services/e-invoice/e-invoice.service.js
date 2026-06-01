@@ -119,7 +119,8 @@ export const invoiceService = {
   getListBatchInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_BATCH_INVOICE, { params }),
   getInvoiceByTranIds: (params) => api.get(INVOICE_ENDPOINTS.GET_INVOICE_BY_TRAN_IDS, { params }),
   createPosInvoice: (payload) => api.post(INVOICE_ENDPOINTS.CREATE_POS_INVOICE, payload),
-  deletePosInvoice: (payload) => api.delete(INVOICE_ENDPOINTS.DELETE_BATCH_INVOICE, { data: payload }),
+  deletePosInvoice: (payload) =>
+    api.delete(INVOICE_ENDPOINTS.DELETE_BATCH_INVOICE, { data: payload }),
   sendPosInvoice: (payload) => {
     return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
   },
@@ -153,4 +154,9 @@ export const invoiceService = {
   },
   // Lịch sử thao tác
   listAuditLogs: (params) => api.get(INVOICE_ENDPOINTS.LIST_AUDIT_LOGS, { params }),
+
+  // Phát hành hóa đơn
+  publishHsm: (payload) => api.post(INVOICE_ENDPOINTS.PUBLISH_HSM, payload),
+  hashPublishUsbToken: (payload) => api.post(INVOICE_ENDPOINTS.HASH_PUBLISH_USB_TOKEN, payload),
+  publishUsbToken: (payload) => api.post(INVOICE_ENDPOINTS.PUBLISH_USB_TOKEN, payload),
 };

@@ -177,6 +177,7 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { onMounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
@@ -192,6 +193,7 @@ import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoic
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
+const route = useRoute();
 
 // State
 const searchField = ref(null);
@@ -305,6 +307,18 @@ const onBuyInvoice = () => {
 };
 
 onMounted(() => {
-  getData();
+  const queryType = route.query?.invoiceTab;
+  if (!queryType) {
+    invoiceTab.value = 'tab1';
+    getData();
+    return;
+  }
+  const validTypes = ['tab1', 'tab2', 'tab3'];
+  invoiceTab.value = validTypes.includes(queryType) ? queryType : 'tab1';
+  if (invoiceTab.value === 'tab1') {
+    getData();
+  } else {
+    getExportedInvoice();
+  }
 });
 </script>

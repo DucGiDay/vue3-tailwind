@@ -130,11 +130,11 @@ onMounted(() => {
       </template>
     </StatsWidget>
 
-    <div class="fb-col-span-12 xl:fb-col-span-8">
+    <div class="fb-col-span-12 xl:fb-col-span-6">
       <SaleByDate class="fb-h-full" />
     </div>
 
-    <div class="fb-col-span-12 xl:fb-col-span-4">
+    <div class="fb-col-span-12 xl:fb-col-span-6">
       <StatusSale class="fb-h-full" />
     </div>
 

@@ -5,7 +5,6 @@
 <script setup>
 import { ref } from 'vue';
 import { useFilterStore } from '@/stores/filter.store';
-import { storeToRefs } from 'pinia';
 import moment from 'moment';
 import FbDateSelect from './FbDateSelect.vue';
 
@@ -31,12 +30,7 @@ const getDefaultStartDate = () => {
     ? moment().subtract(6, 'days').startOf('day').valueOf()
     : moment().startOf('day').valueOf();
 };
-
-const getDefaultEndDate = () => {
-  return props.module === 'invoice'
-    ? moment().endOf('day').valueOf()
-    : moment().endOf('day').valueOf();
-};
+const getDefaultEndDate = () => moment().endOf('day').valueOf()
 
 const dates = ref([
   currentState?.start_date ? new Date(currentState.start_date) : getDefaultStartDate(),

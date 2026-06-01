@@ -29,7 +29,7 @@
       >
         <!-- Header: Toggle Chế độ lọc -->
         <div class="fb-flex fb-items-center fb-gap-3">
-          <span class="fb-text-sm fb-font-medium fb-text-surface-600">Thời gian báo cáo:</span>
+          <!-- <span class="fb-text-sm fb-font-medium fb-text-surface-600">Thời gian báo cáo:</span> -->
           <SelectButton
             v-model="filterType"
             :options="filterTypeOptions"
@@ -50,6 +50,33 @@
               optionLabel="label"
               optionValue="value"
               placeholder="Chọn Tháng"
+              class="fb-w-full"
+              showClear
+              size="small"
+              @change="filter"
+            />
+            <Select
+              v-model="yearField"
+              :options="yearOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn Năm"
+              class="fb-w-full"
+              showClear
+              size="small"
+              @change="filter"
+            />
+          </div>
+          <div
+            v-else-if="filterType === 'quarter'"
+            class="fb-col-span-1 md:fb-col-span-2 lg:fb-col-span-1 fb-flex fb-gap-2"
+          >
+            <Select
+              v-model="quarterField"
+              :options="quarterOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn Quý"
               class="fb-w-full"
               showClear
               size="small"
@@ -172,6 +199,7 @@ import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { MONTHLY_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import { VAT_PUBLISH_STATUS_CODE_LIST } from '@/common/constant/e-invoice.constant';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -190,9 +218,11 @@ const filterType = ref('date'); // 'month' | 'date'
 const filterTypeOptions = [
   { label: 'Theo ngày', value: 'date' },
   { label: 'Theo tháng', value: 'month' },
+  { label: 'Theo quý', value: 'quarter' },
 ];
 
 const monthField = ref(moment().month() + 1);
+const quarterField = ref(moment().quarter());
 const yearField = ref(moment().year());
 const statusField = ref(null);
 const creatorField = ref(null);
@@ -203,13 +233,19 @@ const monthOptions = Array.from({ length: 12 }, (_, i) => ({
   label: `Tháng ${i + 1}`,
   value: i + 1,
 }));
+const quarterOptions = [
+  { label: 'Quý 1', value: 1 },
+  { label: 'Quý 2', value: 2 },
+  { label: 'Quý 3', value: 3 },
+  { label: 'Quý 4', value: 4 },
+];
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 5 }, (_, i) => ({
   label: `Năm ${currentYear - i}`,
   value: currentYear - i,
 }));
 
-const statusOptions = ref([]); // Will be populated from API/Constants
+const statusOptions = ref(VAT_PUBLISH_STATUS_CODE_LIST);
 const creatorOptions = ref([]);
 const patternOptions = ref([]);
 const serialOptions = ref([]);
@@ -220,7 +256,6 @@ const isLoading = ref(false);
 const isLoadingExport = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
-const totalRecords = ref(0);
 const hasMoreData = ref(true);
 
 // Methods
@@ -236,12 +271,19 @@ const getPayload = () => {
       start_date = date.startOf('month').valueOf();
       end_date = date.endOf('month').valueOf();
     }
+  } else if (filterType.value === 'quarter') {
+    if (quarterField.value && yearField.value) {
+      const date = moment()
+        .year(yearField.value)
+        .quarter(quarterField.value);
+      start_date = date.startOf('quarter').valueOf();
+      end_date = date.endOf('quarter').valueOf();
+    }
   } else {
     start_date = filterStore?.invoice?.start_date;
     end_date = filterStore?.invoice?.end_date;
   }
 
-  // TODO: Map filter fields (statusField, creatorField, etc.) correctly when backend supports them.
   return {
     company_uid: globalStore?.currentUser?.company_uid,
     report_type: 'monthly_invoice_list',
@@ -255,6 +297,10 @@ const getPayload = () => {
       return Object.values(selectedObj).flat().filter(Boolean).join(',');
     })(),
     tax_code: invoiceStore.currentTaxCode,
+    vat_publish_status: statusField.value || null,
+    created_by: creatorField.value || null,
+    template_id: patternField.value || null,
+    invoice_series: serialField.value || null,
   };
 };
 
@@ -307,6 +353,7 @@ const filter = async () => {
 const onFilterTypeChange = () => {
   // Reset related fields when switching filter types
   monthField.value = null;
+  quarterField.value = null;
   yearField.value = null;
   filter();
 };

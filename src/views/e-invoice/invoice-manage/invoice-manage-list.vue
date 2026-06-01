@@ -102,7 +102,7 @@
             :options="[
               { label: 'Danh sách hóa đơn', value: 'tab1' },
               { label: 'Hóa đơn dự thảo', value: 'tab2' },
-              { label: 'Hóa đơn chờ xuất', value: 'tab3' },
+              // { label: 'Hóa đơn chờ xuất', value: 'tab3' },
             ]"
             size="small"
             optionLabel="label"
@@ -112,8 +112,8 @@
           />
         </template>
         <template #inv_series="{ record, row }">
-          <div>{{ `Mẫu số: ${record}` }}</div>
-          <div>{{ `Ký hiệu: ${row.pattern || ''}` }}</div>
+          <div>{{ `Mẫu số: ${row.pattern || ''}` }}</div>
+          <div>{{ `Ký hiệu: ${record}` }}</div>
         </template>
         <template #inv_buyerLegalName="{ record, row }">
           <div>{{ `Tên: ${record}` }}</div>
@@ -222,6 +222,11 @@
         </template>
       </Dialog>
       <ModalResendMail v-model:visible="showResendEmail" @send="onSendEmail" />
+      <ModalPublishInvoice
+        v-model:visible="showPublishDialog"
+        :mergedTranIds="publishTranIds"
+        @success="filter"
+      />
     </template>
   </TableView>
 </template>
@@ -247,6 +252,7 @@ import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import ModalPublishInvoice from '@/components/PageComponent/e-invoice/ModalPublishInvoice.vue';
 
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
 import IconReplace from '@/components/Common/Icon/IconReplace.vue';
@@ -296,6 +302,9 @@ const currentSaleData = ref({});
 
 const visibleViewBeforeSend = ref(false);
 const dataViewBeforeSend = ref([]);
+
+const showPublishDialog = ref(false);
+const publishTranIds = ref([]);
 
 const storeUidByTaxCode = computed(() => {
   const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
@@ -456,11 +465,20 @@ const menuItems = (row) => {
             await onDownloadPDF(row);
           },
         },
+        // {
+        //   label: 'Gửi lại email',
+        //   icon: markRaw(IconMail),
+        //   command: async () => {
+        //     await openResendEmail(row);
+        //   },
+        // },
         {
-          label: 'Gửi lại email',
+          label: 'Phát hành hóa đơn',
+          visible: !row?.vat_invoice_number || row?.vat_invoice_number === '00000000',
           icon: markRaw(IconMail),
           command: async () => {
-            await openResendEmail(row);
+            publishTranIds.value = [row.tran_id];
+            showPublishDialog.value = true;
           },
         },
       ]

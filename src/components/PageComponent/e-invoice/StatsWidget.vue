@@ -129,7 +129,7 @@
       <!-- Hóa đơn chờ xử lý -->
       <div
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
-        @click="navigateTo('/e-invoice/invoice-manage', { invoiceTab: 'tab3' })"
+        @click="navigateTo('/e-invoice/sale-order', { invoiceTab: 'tab2' })"
       >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
@@ -145,7 +145,7 @@
       <!-- Hóa đơn lỗi -->
       <div
         class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-cursor-pointer"
-        @click="navigateTo('/e-invoice/invoice-manage', { invoiceTab: 'tab3' })"
+        @click="navigateTo('/e-invoice/sale-order', { invoiceTab: 'tab3' })"
       >
         <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs hover:fb-shadow-md hover:fb-border-gray-100 fb-transition-colors fb-duration-200">
           <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
