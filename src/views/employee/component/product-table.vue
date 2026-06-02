@@ -6,7 +6,9 @@
       :value="product.product_name"
       severity="secondary"
       rounded
-    />
+    >
+      {{ product.product_code === 'GENERAL' ? 'FABI' : product.product_name }}
+    </Tag>
 
     <Tag v-if="hiddenCount > 0" :value="`+${hiddenCount}`" rounded />
 
@@ -30,12 +32,29 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['edit']);
+
 const containerRef = ref(null);
 
-const visibleCount = ref(props.products.length);
+const visibleCount = ref(0);
 
 const TAG_ESTIMATE_WIDTH = 90;
 const MORE_TAG_WIDTH = 50;
+const MAX_VISIBLE = 2;
+
+const filteredProducts = computed(() => {
+  return (props.products || []).filter(
+    (product) => !(product.is_active === false && product.is_requesting === false),
+  );
+});
+
+const visibleProducts = computed(() => {
+  return filteredProducts.value.slice(0, MAX_VISIBLE);
+});
+
+const hiddenCount = computed(() => {
+  return Math.max(filteredProducts.value.length - MAX_VISIBLE, 0);
+});
 
 const calculateVisibleTags = () => {
   if (!containerRef.value) return;
@@ -45,7 +64,7 @@ const calculateVisibleTags = () => {
   let usedWidth = 0;
   let count = 0;
 
-  for (const product of props.products) {
+  for (const product of filteredProducts.value) {
     usedWidth += TAG_ESTIMATE_WIDTH;
 
     if (usedWidth + MORE_TAG_WIDTH > containerWidth) {
@@ -57,16 +76,6 @@ const calculateVisibleTags = () => {
 
   visibleCount.value = count || 1;
 };
-
-const visibleProducts = computed(() => {
-  return (props.products || []).slice(0, visibleCount.value);
-});
-
-const hiddenCount = computed(() => {
-  return props.products.length - visibleCount.value;
-});
-
-const emit = defineEmits(['edit']);
 
 const openDetail = (payload) => {
   emit('edit', payload);
@@ -80,7 +89,6 @@ watch(
   () => props.products,
   async () => {
     await nextTick();
-
     calculateVisibleTags();
   },
   {
@@ -106,5 +114,10 @@ onBeforeUnmount(() => {
   gap: 4px;
   overflow: hidden;
   white-space: nowrap;
+}
+:deep(.p-tag.p-component.p-tag-rounded) {
+  background: rgba(233, 234, 235, 1) !important;
+  color: rgba(65, 70, 81, 1) !important;
+  font-weight: 500 !important;
 }
 </style>
