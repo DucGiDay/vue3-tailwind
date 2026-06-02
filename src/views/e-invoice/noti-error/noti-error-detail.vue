@@ -12,7 +12,10 @@
         <div class="fb-grid fb-grid-cols-1 md:fb-grid-cols-2 fb-gap-6">
           <!-- Cột trái -->
           <div class="fb-flex fb-flex-col fb-gap-4">
-            <div class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-2 md:fb-gap-4">
+            <div
+              v-if="false"
+              class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-2 md:fb-gap-4"
+            >
               <label class="fb-w-full md:fb-w-1/3 fb-text-sm fb-font-medium fb-text-gray-700">
                 Loại sai sót
                 <span class="fb-text-error">*</span>
@@ -44,13 +47,20 @@
                 <span class="fb-text-error">*</span>
               </label>
               <div class="fb-w-full md:fb-w-2/3">
-                <InputText
+                <Select
                   v-model="filterField.pattern"
+                  :options="[
+                    { label: '1', value: '1' },
+                    { label: '2', value: '2' },
+                    { label: '5', value: '5' },
+                  ]"
+                  optionLabel="label"
+                  optionValue="value"
                   class="fb-w-full"
                   :invalid="!!error['pattern']"
-                  placeholder="Nhập mẫu hóa đơn"
+                  placeholder="Chọn mẫu hóa đơn"
                   size="small"
-                  @input="
+                  @change="
                     delete error['pattern'];
                     onFormChange();
                   "
@@ -64,7 +74,10 @@
 
           <!-- Cột phải -->
           <div class="fb-flex fb-flex-col fb-gap-4">
-            <div class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-2 md:fb-gap-4">
+            <div
+              v-if="false"
+              class="fb-flex fb-flex-col md:fb-flex-row md:fb-items-center fb-gap-2 md:fb-gap-4"
+            >
               <label class="fb-w-full md:fb-w-1/3 fb-text-sm fb-font-medium fb-text-gray-700">
                 Loại HDDT
                 <span class="fb-text-error">*</span>
@@ -137,21 +150,21 @@
         :columns="[
           {
             field: 'no',
-            header: 'STT'
+            header: 'STT',
           },
           {
             field: 'vat_invoice_series',
-            header: 'Ký hiệu số'
+            header: 'Ký hiệu số',
           },
           {
             field: 'created_at',
             header: 'Ngày lập',
-            format: 'date'
+            format: 'date',
           },
           {
             field: 'vat_invoice_code',
-            header: 'Mã CQT'
-          }
+            header: 'Mã CQT',
+          },
         ]"
         :showGridlines="true"
         :hideIndexRow="true"
@@ -307,10 +320,11 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useGlobalStore } from '@/stores/global.store';
 import { validateByFields } from '@/common/utils/validate';
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
+const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 
@@ -322,13 +336,13 @@ const error = ref({});
 
 const notiError = ref({
   reason: '',
-  type_error: null,
-  type_invoice: null
+  type_error: 4,
+  type_invoice: 1,
 });
 const filterField = ref({
   pattern: '',
   serial: '',
-  searchValue: ''
+  searchValue: '',
 });
 const items = ref([]);
 const invoiceTypeList = computed(() => invoiceStore.invoiceTypeList || []);
@@ -337,7 +351,7 @@ const listMergedTranIds = computed(() => (items.value || []).map((item) => item.
 const showResponseDialog = ref(false);
 const responseCreate = ref({
   success: [],
-  failed: []
+  failed: [],
 });
 
 const handleBack = () => {
@@ -368,16 +382,16 @@ const handleSave = async () => {
   error.value = validateByFields(notiError.value, [
     {
       id: 'type_error',
-      rules: ['required']
+      rules: ['required'],
     },
     {
       id: 'reason',
-      rules: ['required']
+      rules: ['required'],
     },
     {
       id: 'type_invoice',
-      rules: ['required']
-    }
+      rules: ['required'],
+    },
   ]);
 
   Object.assign(
@@ -385,16 +399,16 @@ const handleSave = async () => {
     validateByFields(filterField.value, [
       {
         id: 'pattern',
-        rules: ['required']
-      }
-    ])
+        rules: ['required'],
+      },
+    ]),
   );
 
   if (Object.keys(error.value).length > 0) {
     toast.add({
       severity: 'warn',
       summary: 'Vui lòng kiểm tra lại các trường thông tin',
-      life: 3000
+      life: 3000,
     });
     return;
   }
@@ -402,7 +416,7 @@ const handleSave = async () => {
   loading.value = true;
   const payload = {
     ...notiError.value,
-    list_merged_tran_id: listMergedTranIds.value
+    list_merged_tran_id: listMergedTranIds.value,
   };
   try {
     const res = await invoiceService.createNotiError(payload);
@@ -414,7 +428,7 @@ const handleSave = async () => {
         severity: 'success',
         summary: 'Thành công',
         detail: 'Tạo thông báo sai sót thành công',
-        life: 3000
+        life: 3000,
       });
       router.back();
     }
@@ -424,7 +438,7 @@ const handleSave = async () => {
       severity: 'error',
       summary: 'Lỗi hệ thống',
       detail: err?.message || 'Không thể kết nối đến máy chủ',
-      life: 3000
+      life: 3000,
     });
   } finally {
     loading.value = false;
@@ -449,7 +463,7 @@ const filter = async () => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       pattern: filterField.value.pattern,
-      serial: filterField.value.serial
+      serial: filterField.value.serial,
     };
     const res = await invoiceService.filterInvoiceByNumbers(payload);
     if (res?.data) {
@@ -463,7 +477,7 @@ const filter = async () => {
       severity: 'error',
       summary: 'Lỗi hệ thống',
       detail: err?.message || 'Không thể kết nối đến máy chủ',
-      life: 3000
+      life: 3000,
     });
   } finally {
     loadingTable.value = false;
@@ -471,6 +485,14 @@ const filter = async () => {
 };
 
 onMounted(() => {
+  if (route?.query?.inv_series) {
+    filterField.value.serial = route.query.inv_series;
+  }
+  if (route?.query?.vat_invoice_number) {
+    filterField.value.searchValue = route.query.vat_invoice_number;
+  }
+  filter();
   getData();
+  router.replace({ query: null });
 });
 </script>

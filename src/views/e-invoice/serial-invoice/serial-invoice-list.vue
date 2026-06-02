@@ -6,11 +6,10 @@
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToDetail">Thêm mới</Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
-      </Button>
+      <Button size="small" raised @click="directToDetail">
+        <IconPlus />
+        Thêm mới</Button>
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -39,7 +38,7 @@
         @change="filter"
       /> -->
 
-      <!-- <FbDateFilter @update:modelValue="filter" size="small" /> -->
+      <!-- <FbDateFilter module="invoice" @update:modelValue="filter" size="small" /> -->
       <FbDateSelect
         size="small"
         v-model="dateRange"
@@ -63,12 +62,11 @@
         @page-change="getData"
       >
         <template #status="{ record }">
-          <div
-            :class="statusMap(record)?.class"
-            class="fb-w-fit fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ statusMap(record)?.label }}
-          </div>
+         <Tag
+            :severity="statusMap(record)?.severity || 'secondary'"
+            :value="statusMap(record)?.label || '-'"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
         <template #['extra_data.start_no']="{ row }">
           {{ row?.extra_data?.start_no }}
@@ -87,21 +85,17 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
-import { useFilterStore } from '@/stores/filter.store';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { SERIAL_INVOICE_COLOR } from '@/common/constant/e-invoice.constant';
 import { SERIAL_INVOICE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
-import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 const router = useRouter();
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
-const filterStore = useFilterStore();
-
-const toast = useToast();
 
 // State
 const searchField = ref(null);
@@ -121,11 +115,12 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: dateRange.value?.[0] ? Math.floor(new Date(dateRange.value[0]).getTime() / 1000) : undefined,
-    end_date: dateRange.value?.[1] ? Math.floor(new Date(dateRange.value[1]).setHours(23, 59, 59, 999) / 1000) : undefined,
+    start_date: dateRange.value?.[0] ? new Date(dateRange.value[0]).getTime() : undefined,
+    end_date: dateRange.value?.[1] ? new Date(dateRange.value[1]).setHours(23, 59, 59, 999) : undefined,
     page: currentPage.value,
     perpage: pageSize.value,
-    serial: searchField.value
+    serial: searchField.value,
+    tax_code: invoiceStore?.currentTaxCode
   };
 
   isLoading.value = true;
@@ -149,16 +144,13 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return SERIAL_INVOICE_COLOR[status] || SERIAL_INVOICE_COLOR['-1'];
+  return SERIAL_INVOICE_COLOR[status] || {};
 };
 
 const directToDetail = () => {
   router.push({ path: '/e-invoice/serial-invoice/detail' });
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
 
 // life cycle
 onMounted(async () => {

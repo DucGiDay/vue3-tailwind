@@ -2,12 +2,14 @@
   <Dialog
     v-model:visible="visibleDetail"
     modal
-    header="Sửa thông tin"
+    header="Tạo cấu hình"
     :style="{ width: '50vw' }"
     :breakpoints="{ '1199px': '70vw', '575px': '90vw' }"
   >
     <template #header>
-      <h6 class="fb-text-center fb-font-semibold fb-text-lg fb-flex-1">Sửa thông tin</h6>
+      <h6 class="fb-text-center fb-font-semibold fb-text-lg fb-flex-1">
+        {{ isEdit ? 'Chỉnh sửa cấu hình' : 'Tạo cấu hình' }}
+      </h6>
     </template>
     <div v-if="false" class="fb-flex fb-items-center fb-justify-center fb-h-[20rem]">
       <ProgressSpinner class="fb-stroke-primary" />
@@ -31,6 +33,28 @@
         <input type="password" name="fake_password_to_prevent_autofill" tabindex="-1" />
       </div>
 
+      <div class="fb-grid fb-grid-cols-12 fb-gap-1">
+        <label
+          for="inv_tax_code"
+          class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-2 fb-mb-0"
+        >
+          Mã số thuế
+          <span class="fb-text-error fb-ml-1">*</span>
+        </label>
+        <div class="fb-col-span-12 md:fb-col-span-10 fb-flex fb-flex-col fb-gap-1">
+          <InputText
+            id="inv_tax_code"
+            v-model="inv_tax_code"
+            disabled
+            :invalid="!!error.inv_tax_code"
+            @change="delete error.inv_tax_code"
+            placeholder="Nhập mã số thuế"
+          />
+          <Message v-if="error.inv_tax_code" severity="error" size="small" variant="simple">
+            {{ error.inv_tax_code }}
+          </Message>
+        </div>
+      </div>
       <div class="fb-grid fb-grid-cols-12 fb-gap-1">
         <label
           for="partner"
@@ -78,6 +102,7 @@
             :disabled="isEdit"
             @change="delete error.store"
           />
+
           <Message v-if="error.store" severity="error" size="small" variant="simple">
             {{ error.store }}
           </Message>
@@ -141,7 +166,7 @@
           <div
             :class="[
               'fb-col-span-12 fb-flex fb-flex-col fb-gap-1',
-              field.type === 'checkbox' ? 'md:fb-col-span-12' : 'md:fb-col-span-10'
+              field.type === 'checkbox' ? 'md:fb-col-span-12' : 'md:fb-col-span-10',
             ]"
           >
             <!-- Radio -->
@@ -265,25 +290,26 @@ const invoiceStore = useEInoiveStore();
 const props = defineProps({
   partnerSelected: {
     type: String,
-    default: ''
+    default: '',
   },
   storeSelected: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   isEdit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const visibleDetail = defineModel('visible');
 const storeOptions = computed(() => {
-  return globalStore?.currentBrandStores || [];
+  return invoiceStore?.listStoreInCurrentTaxCode || [];
 });
 const partnerOptions = INVOICE_PARTNERS;
 
 const partner = ref(props.partnerSelected || null);
+const inv_tax_code = ref(localStorage.getItem('fabi_selected_tax_code'));
 const store = ref();
 const isLoading = ref(false);
 const error = ref({});
@@ -300,7 +326,7 @@ const generateDefaultConfig = (fields) => {
     accept_zero_vat: 0,
     enable_savesign: 0,
     block_export_vat_0d: 0,
-    export_vat_invoice_date_is_tran_date: 0
+    export_vat_invoice_date_is_tran_date: 0,
   };
   fields.forEach((f) => {
     if (f.defaultValue) {
@@ -327,25 +353,25 @@ const onPartnerChange = () => {
 const saveConfig = async () => {
   // 1. Tự động validate dựa trên các trường cấu hình động trong Constant
   error.value = validateByFields(
-    { ...config.value, partner: partner.value, store: store.value?.id },
+    { ...config.value, partner: partner.value, store: store.value?.store_uid },
     [
       ...partnerConfigFields.value,
       {
         id: 'partner',
-        rules: ['required']
+        rules: ['required'],
       },
       {
         id: 'store',
-        rules: ['required']
-      }
-    ]
+        rules: ['required'],
+      },
+    ],
   );
 
   if (Object.keys(error.value).length > 0) {
     toast.add({
       severity: 'warn',
       summary: 'Vui lòng kiểm tra lại các trường thông tin',
-      life: 3000
+      life: 3000,
     });
     return;
   }
@@ -353,11 +379,12 @@ const saveConfig = async () => {
   isLoading.value = true;
   const res = await invoiceStore.updateStoreSettingInvoice({
     ...config.value,
-    store_uid: store.value.id,
+    inv_tax_code: inv_tax_code.value,
+    store_uid: store.value.store_uid,
     store_name: store.value.store_name,
     partner_id: partner.value,
     company_uid: globalStore.currentUser.company_uid,
-    brand_uid: globalStore.brandUid
+    brand_uid: globalStore.brandUid,
   });
   isLoading.value = false;
   if (res?.error) {
@@ -372,15 +399,15 @@ watch(
   () => props.partnerSelected,
   (newVal) => {
     partner.value = newVal;
-  }
+  },
 );
 
 watch(
   () => props.storeSelected,
   (newVal) => {
     if (newVal?.store_uid) {
-      store.value = globalStore?.currentBrandStores?.find(
-        (item) => item.id === newVal.store_uid
+      store.value = invoiceStore?.listStoreInCurrentTaxCode?.find(
+        (item) => item.store_uid === newVal.store_uid,
       );
       config.value = { ...generateDefaultConfig(partnerConfigFields.value), ...newVal };
       partner.value = newVal.partner_id;
@@ -390,7 +417,7 @@ watch(
   },
   {
     deep: true,
-    immediate: true
-  }
+    immediate: true,
+  },
 );
 </script>

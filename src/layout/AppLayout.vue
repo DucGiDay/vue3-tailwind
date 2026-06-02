@@ -67,6 +67,7 @@ function isOutsideClicked(event) {
     <div
       :class="[
         'layout-main-container',
+        'fb-relative',
         $route.meta?.layoutClass || '',
         {
           'is-table-view-paginate': $route.meta?.isTableViewPaginate,

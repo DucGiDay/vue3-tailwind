@@ -23,12 +23,16 @@
           :key="index"
           :label="store?.label"
           :class="{
-            'fb-text-xs': props.size === 'small'
+            'fb-text-xs': props.size === 'small',
           }"
         />
       </div>
       <div v-else-if="props.display === 'comma'" class="fb-space-x-1">
-        {{ getStoreSelected(value)?.map((store) => store?.label || '').join(', ') }}
+        {{
+          getStoreSelected(value)
+            ?.map((store) => store?.label || '')
+            .join(', ')
+        }}
       </div>
     </template>
 
@@ -80,7 +84,9 @@ const expandedKeys = ref({});
 const listTaxStores = computed(() => eInvoiceStore.listTaxStores.data);
 
 const filteredItems = computed(() => {
-  const selectedStores = filterStore?.report?.store_uid_by_tax_code || [];
+  const storeObj = filterStore?.invoice?.store_uid_by_tax_code || {};
+  const selectedStores = Object.values(storeObj).flat();
+  const savedTaxCode = localStorage.getItem('fabi_selected_tax_code');
 
   let activeTaxCode = null;
   if (props.isSingleGroup && selectedStores.length > 0) {
@@ -97,6 +103,7 @@ const filteredItems = computed(() => {
   }
 
   return listTaxStores.value
+    .filter((item) => !savedTaxCode || item.tax_code === savedTaxCode)
     .map((item) => {
       const isDisabled =
         props.isSingleGroup && activeTaxCode !== null && item.tax_code !== activeTaxCode;
@@ -119,12 +126,13 @@ const filteredItems = computed(() => {
 
 const itemSelected = computed({
   get() {
-    const stores = props.isSingleGroup ? filterStore?.report?.store_uid_by_tax_code || [] : [];
+    const storeObj = filterStore?.invoice?.store_uid_by_tax_code || {};
+    const stores = props.isSingleGroup ? Object.values(storeObj).flat() : [];
     if (!stores.length) {
       return null;
     }
     const results = {};
-    filteredItems.value.forEach((tax) => {
+    filteredItems.value?.forEach((tax) => {
       const isEmptyTax = !tax.children || !tax.children.length;
       results[tax.key] = {
         partialChecked:
@@ -150,6 +158,23 @@ const itemSelected = computed({
 
 onMounted(async () => {
   await fetchStores();
+
+  // const currentStores = filterStore?.invoice?.store_uid_by_tax_code || {};
+  // const hasSelectedStores = Object.values(currentStores).flat().filter(Boolean).length > 0;
+
+  // if (!hasSelectedStores && filteredItems.value && filteredItems.value.length > 0) {
+  //   const firstTax = filteredItems.value[0];
+  //   if (firstTax && firstTax.children && firstTax.children.length > 0) {
+  //     const firstStore = firstTax.children[0];
+  //     const autoValue = {
+  //       [firstStore.key]: {
+  //         checked: true,
+  //         partialChecked: false,
+  //       },
+  //     };
+  //     await setStoreSelected(autoValue);
+  //   }
+  // }
   expandAll();
 });
 
@@ -164,7 +189,7 @@ const fetchStores = async () => {
 
 const expandAll = () => {
   expandedKeys.value = {};
-  for (let node of filteredItems.value) {
+  for (let node of filteredItems.value || []) {
     expandNode(node);
   }
 };
@@ -179,23 +204,35 @@ const expandNode = (node) => {
 };
 
 const setStoreSelected = async (value) => {
+  const resultObj = {};
   const listStoreUids = [];
-  filteredItems.value.forEach((tax) => {
+  filteredItems.value?.forEach((tax) => {
+    const storesForTax = [];
     (tax?.children || []).forEach((store) => {
-      if (value[store.key]?.checked) {
+      if (value?.[store.key]?.checked) {
+        storesForTax.push(store.key);
         listStoreUids.push(store.key);
       }
     });
+    if (storesForTax.length > 0) {
+      resultObj[tax.key] = storesForTax;
+    }
   });
 
   // update filter trong Pinia
-  await filterStore.updateFilter({ report: { ...filterStore.report, store_uid_by_tax_code: listStoreUids } });
+  await filterStore.updateFilter({
+    invoice: {
+      ...filterStore.invoice,
+      store_uid_by_tax_code: resultObj,
+    },
+  });
+
   emit('update:modelValue', listStoreUids);
 };
 
 const getStoreSelected = (value) => {
   // Lấy danh sách tất cả các cửa hàng được chọn nhưng không bao gồm Tax Code
-if (!value) return [];
+  if (!value) return [];
   // Loại bỏ value là Tax Code
   // filterItems là cây 2 cấp: TaxCode -> Stores
   // tree-select của PrimeVue khi dùng v-model:selectionMode="checkbox" trả về object { [id]: {checked, partialChecked} }

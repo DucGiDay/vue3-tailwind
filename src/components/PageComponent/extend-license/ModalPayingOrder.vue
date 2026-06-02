@@ -6,7 +6,6 @@
     header="Thanh toán đơn hàng"
     :style="{ width: '75vw' }"
     :breakpoints="{ '1199px': '85vw', '575px': '90vw' }"
-    v-bind="$attrs"
     @hide="onHideDialog"
   >
     <div v-if="isLoading" class="fb-flex fb-justify-center">
@@ -47,15 +46,9 @@ const isLoading = ref(false);
 const qrCode = ref({});
 
 // Watchers
-watch(
-  () => visible,
-  async (newVal) => {
-    if (newVal) {
-      await getQRCode();
-    }
-  },
-  { deep: true }
-);
+watch(visible, async (newVal) => {
+  if (newVal) await getQRCode()
+})
 
 // Methods
 const QR_TTL_MINUTES = 100; // 100 phút = 1 giờ 40 phút

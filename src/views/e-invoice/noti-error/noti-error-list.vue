@@ -6,11 +6,11 @@
     @search="onSearchChange"
   >
     <template #header-actions>
-      <Button size="small" raised @click="directToDetail">Thêm mới</Button>
-      <Button size="small" outlined class="!fb-rounded-lg" @click="onBuyInvoice">
-        <IconCart />
-        Mua hóa đơn
+      <Button size="small" raised @click="directToDetail">
+        <IconPlus />
+        Thêm mới
       </Button>
+      <ButtonExtendInvoice />
     </template>
 
     <template #filters>
@@ -27,7 +27,7 @@
         @change="filter"
       />
 
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
 
     <template #table>
@@ -45,12 +45,11 @@
         @page-change="getData"
       >
         <template #status="{ record }">
-          <span
-            :class="statusMap(record)?.class"
-            class="fb-px-2 fb-py-[0.125rem] fb-rounded-2xl fb-text-xs"
-          >
-            {{ statusMap(record)?.label }}
-          </span>
+          <Tag
+            :severity="statusMap(record)?.severity || 'secondary'"
+            :value="statusMap(record)?.label || '-'"
+            class="!fb-text-xs !fb-font-medium"
+          />
         </template>
 
         <template #extra_data="{ record }">
@@ -148,9 +147,7 @@ import { NOTI_ERROR_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 import { NOTI_ERROR_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
-
-import IconEye from '@/components/Common/Icon/IconEye.vue';
-import IconDownload from '@/components/Common/Icon/IconDownload.vue';
+import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
 
 const router = useRouter();
 
@@ -189,12 +186,12 @@ const getData = async ({ page, rows } = {}) => {
   const payload = {
     brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
-    start_date: filterStore?.report?.start_date,
-    end_date: filterStore?.report?.end_date,
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
     page: currentPage.value,
     results_per_page: pageSize.value,
     search: searchField.value,
-    type_error: typeErrorField.value
+    type_error: typeErrorField.value,
   };
 
   isLoading.value = true;
@@ -208,7 +205,7 @@ const getErrorType = async () => {
   isLoadingErrorType.value = true;
   const payload = {
     brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid
+    company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getErrorType(payload);
   isLoadingErrorType.value = false;
@@ -229,7 +226,7 @@ const onSearchChange = async () => {
 };
 
 const statusMap = (status) => {
-  return NOTI_ERROR_STATUS_COLOR[status] || NOTI_ERROR_STATUS_COLOR['-1'];
+  return NOTI_ERROR_STATUS_COLOR?.[status] || {};
 };
 
 const fetchAndCachePDF = async (item) => {

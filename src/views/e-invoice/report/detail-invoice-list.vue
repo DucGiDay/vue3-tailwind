@@ -1,5 +1,5 @@
 <template>
-  <TableView title="Bảng kê chi tiết hóa đơn" v-model:searchValue="searchField" :searchable="false">
+  <TableView title="Bảng kê chi tiết hóa đơn" :searchable="false">
     <template #header-actions>
       <Button
         size="small"
@@ -25,7 +25,7 @@
 
     <template #filters>
       <!-- Filter by Date -->
-      <FbDateFilter @update:modelValue="filter" size="small" />
+      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
 
       <!-- Lọc Store -->
       <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
@@ -36,7 +36,6 @@
         :columns="DETAIL_INVOICE_LIST_COLUMNS"
         :items="dataList"
         enableScrollPagination
-        reorderableColumns
         :hasMoreData="hasMoreData"
         :stripedRows="false"
         :isLoading="isLoading"
@@ -52,25 +51,13 @@
       </FbTable>
     </template>
 
-    <template #extra>
-      <!-- Export History Dialog -->
-      <Dialog
-        v-model:visible="showExportHistory"
-        header="Lịch sử xuất báo cáo"
-        modal
-        :style="{ width: '60vw' }"
-        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
-      >
-        <FbTable :columns="exportHistoryColumns" :items="exportHistoryData" :stripedRows="false">
-          <template #empty>Chưa có lịch sử xuất báo cáo</template>
-        </FbTable>
-      </Dialog>
-    </template>
+    <template #extra></template>
   </TableView>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import { saveAs } from 'file-saver';
@@ -81,25 +68,13 @@ import FbLoading from '@/components/Common/FbLoading.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { useEInoiveStore } from '@/stores/e-invoice.store';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const invoiceStore = useEInoiveStore();
 const toast = useToast();
-
-// State for filters
-const searchField = ref('');
-
-const statisticTypeField = ref(null);
-const creatorField = ref(null);
-const patternField = ref(null);
-const serialField = ref(null);
-const statusField = ref(null);
-
-const statisticTypeOptions = ref([]); // Will be populated from API/Constants
-const creatorOptions = ref([]);
-const patternOptions = ref([]);
-const serialOptions = ref([]);
-const statusOptions = ref([]);
+const router = useRouter();
 
 // State for Table
 const dataList = ref([]);
@@ -109,31 +84,30 @@ const currentPage = ref(1);
 const pageSize = ref(50);
 const hasMoreData = ref(true);
 
-// State for Export History
-const showExportHistory = ref(false);
-const exportHistoryColumns = [
-  { field: 'time', header: 'Thời gian' },
-  { field: 'user', header: 'Người xuất' },
-  { field: 'status', header: 'Trạng thái' },
-];
-const exportHistoryData = ref([]);
-
 // Methods
 const getPayload = () => {
   return {
     company_uid: globalStore?.currentUser?.company_uid,
     report_type: 'invoices',
-    start_date: filterStore.report.start_date,
-    end_date: filterStore.report.end_date,
-    list_store_uid: filterStore.report.stores_uid?.length
-      ? filterStore.report.stores_uid.join(',')
-      : (globalStore?.storesIdPermissionActive || []).join(','),
+    start_date: filterStore?.invoice?.start_date,
+    end_date: filterStore?.invoice?.end_date,
+    list_store_uid: (() => {
+      const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+      if (!selectedObj || Object.keys(selectedObj).length === 0) {
+        return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+      }
+      return Object.values(selectedObj).flat().filter(Boolean).join(',');
+    })(),
+    tax_code: invoiceStore.currentTaxCode,
   };
 };
 
 const getData = async () => {
   const payload = getPayload();
-  if (!payload.start_date || !payload.end_date) return;
+  if (!payload.start_date || !payload.end_date || !payload.list_store_uid) {
+    hasMoreData.value = false;
+    return;
+  }
 
   isLoading.value = true;
   try {
@@ -170,20 +144,12 @@ const loadMore = () => {
 
 const filter = async () => {
   currentPage.value = 1;
+  dataList.value = [];
   await getData();
 };
 
-let searchTimeout = null;
-const onSearchChange = () => {
-  if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    filter();
-  }, 500);
-};
-
 const openExportHistory = () => {
-  showExportHistory.value = true;
-  // TODO: Fetch export history data from API
+  router.push('/e-invoice/report/export-invoice-history');
 };
 
 const exportExcel = async () => {

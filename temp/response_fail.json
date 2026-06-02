@@ -1,0 +1,21 @@
+{
+  "status": false,
+  "Status": false,
+  "statusCode": 404,
+  "StatusCode": 404,
+  "userMessege": "Không tìm thấy chữ ký số",
+  "Message": "Không tìm thấy chữ ký số",
+  "DevMessage": "Hilo.Api.Domain.Exception.NotFoundException: Không tìm thấy chữ ký số\r\n   at Hilo.Api.Services.Bussiness.CertificateService.ExecuteAsync(GetRequest, CancellationToken) + 0x2a6\r\n   at Program.<>c__DisplayClass0_3.<<Main>$>b__28() + 0x1b\r\n   at Hilo.Api.Services.Handler.HandlerService.<>c__DisplayClass8_0`1.<<RunStaAsync>b__0>d.MoveNext() + 0x81\r\n--- End of stack trace from previous location ---\r\n   at Hilo.Api.Services.Handler.HandlerService.<HandleAsync>d__9`1.MoveNext() + 0x96",
+  "Messages": [
+    {
+      "Type": {
+        "Name": "Error",
+        "Description": "error",
+        "Value": 0
+      },
+      "Messages": ["Không tìm thấy chữ ký số"]
+    }
+  ],
+  "Data": null,
+  "data": null
+}
