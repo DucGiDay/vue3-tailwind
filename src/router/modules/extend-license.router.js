@@ -1,3 +1,3 @@
 export const extendLicenseComponentMap = {
-  ExtendLicenseHistory: () => import('@/views/extend-license/extend-license-history/index.vue')
+  ExtendLicenseHistory: () => import('@/views/extend-license/extend-license-history.vue')
 };

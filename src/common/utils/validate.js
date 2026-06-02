@@ -86,6 +86,14 @@ export const validateForm = (data, schema) => {
 };
 
 /**
+ * @description Helper to get nested value from object via path string (e.g. 'extra_data.cus_email')
+ * @private
+ */
+const getNestedValue = (obj, path) => {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
+
+/**
  * @description Validate một object data dựa trên danh sách fields chứa thuộc tính rules
  * @param {Object} data - Dữ liệu cần validate
  * @param {Array} fields - Danh sách các field (vd: [{ id: 'email', rules: ['required', 'email' }])
@@ -94,7 +102,8 @@ export const validateForm = (data, schema) => {
 export const validateByFields = (data, fields) => {
   return fields.reduce((errors, field) => {
     if (field.rules) {
-      const result = runValidation(data[field.id], field.rules);
+      const value = getNestedValue(data, field.id);
+      const result = runValidation(value, field.rules);
       if (result !== true) errors[field.id] = result;
     }
     return errors;

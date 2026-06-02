@@ -104,44 +104,137 @@
       </div>
     </div>
 
-    <div class="fb-col-span-12 fb-mb-5 fb-mt-8">Báo cáo thống kê 7 ngày trước</div>
+    <div class="fb-col-span-12 fb-mb-5 fb-mt-8 fb-flex fb-items-center fb-gap-4">
+      <span class="fb-text-lg fb-font-semibold">Báo cáo thống kê</span>
+      <slot name="date-filter"></slot>
+    </div>
 
-    <div class="fb-grid fb-grid-cols-12 fb-gap-6">
-      <!-- Tổng số hóa đơn -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
-          <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-            Tổng số hóa đơn
-          </span>
-          <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
-          <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(statisticInvoice?.data?.total_invoices || 0) }}
+    <div class="card">
+      <p class="fb-text-muted-color fb-font-medium">Hóa đơn chưa đồng bộ</p>
+      <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+      <p v-else class="fb-text-2xl fb-font-semibold">
+        {{ formatNumber(totalUnsyncedInvoices) }}
+      </p>
+      <div
+        class="fb-grid fb-grid-cols-12 fb-gap-px fb-mt-[1.5rem] fb-bg-gray-200 fb-border fb-border-gray-200 fb-rounded-lg fb-overflow-hidden"
+      >
+        <!-- Hóa đơn chờ đồng bộ -->
+        <div
+          class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer fb-bg-white hover:fb-bg-gray-50 fb-transition-colors fb-duration-200"
+          @click="navigateTo('/e-invoice/sale-order', { invoiceTab: 'tab2' })"
+        >
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn chờ đồng bộ
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.unsynced_invoices?.pending_invoices || 0) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Hóa đơn lỗi -->
+        <div
+          class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer fb-bg-white hover:fb-bg-gray-50 fb-transition-colors fb-duration-200"
+          @click="navigateTo('/e-invoice/sale-order', { invoiceTab: 'tab3' })"
+        >
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn lỗi
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.unsynced_invoices?.error_invoices || 0) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Hóa đơn chưa xuất VAT -->
+        <div
+          class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4 fb-cursor-pointer fb-bg-white hover:fb-bg-gray-50 fb-transition-colors fb-duration-200"
+          @click="navigateTo('/e-invoice/sale-order')"
+        >
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn chưa xuất VAT
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{
+                formatNumber(statisticInvoice?.data?.unsynced_invoices?.unsync_vat_invoices || 0)
+              }}
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Hóa đơn chờ xử lý -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
-          <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-            Hóa đơn chờ xử lý
-          </span>
-          <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
-          <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(statisticInvoice?.data?.pending_invoices || 0) }}
+    <div class="card fb-mt-4">
+      <div
+        class="fb-cursor-pointer hover:fb-bg-gray-50 fb-transition-colors fb-duration-200"
+        @click="navigateTo('/e-invoice/invoice-manage')"
+      >
+        <p class="fb-text-muted-color fb-font-medium">Hóa đơn đã đồng bộ thành công</p>
+        <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+        <p v-else class="fb-text-2xl fb-font-semibold">
+          {{ formatNumber(totalSyncedInvoices) }}
+        </p>
+      </div>
+      <div
+        class="fb-grid fb-grid-cols-12 fb-gap-px fb-mt-[1.5rem] fb-bg-gray-200 fb-border fb-border-gray-200 fb-rounded-lg fb-overflow-hidden"
+      >
+        <!-- Hóa đơn nháp -->
+        <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-bg-white">
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn nháp
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.synced_invoices?.draft_invoices || 0) }}
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Hóa đơn lỗi -->
-      <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
-          <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
-            Hóa đơn lỗi
-          </span>
-          <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
-          <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
-            {{ formatNumber(statisticInvoice?.data?.error_invoices || 0) }}
+        <!-- Hóa đơn chưa phát hành -->
+        <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-bg-white">
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn chưa phát hành
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.synced_invoices?.unsend_invoices || 0) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Hóa đơn đã phát hành -->
+        <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 fb-bg-white">
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn đã phát hành
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.synced_invoices?.published_invoices || 0) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Hóa đơn phát hành lỗi -->
+        <div
+          class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-3 publish_error_invoices fb-bg-white"
+        >
+          <div class="fb-p-4 fb-h-full">
+            <span class="fb-block fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
+              Hóa đơn phát hành lỗi
+            </span>
+            <Skeleton v-if="statisticInvoice?.isLoading" width="70%" height="2rem"></Skeleton>
+            <div v-else class="dark:fb-text-surface-0 fb-font-semibold fb-text-3xl">
+              {{ formatNumber(statisticInvoice?.data?.unsync_vat_invoices || 0) }}
+            </div>
           </div>
         </div>
       </div>
@@ -152,9 +245,42 @@
 <script setup>
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatNumber } from '@/common/utils/common';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const statisticInvoice = computed(() => invoiceStore.statisticInvoice);
 const totalQuantityInvoices = computed(() => invoiceStore.totalQuantityInvoices);
+
+const totalUnsyncedInvoices = computed(() => {
+  const data = statisticInvoice.value?.data?.unsynced_invoices;
+  if (!data) return 0;
+  return (
+    (data.pending_invoices || 0) + (data.error_invoices || 0) + (data.unsync_vat_invoices || 0)
+  );
+});
+
+const totalSyncedInvoices = computed(() => {
+  const data = statisticInvoice.value?.data?.synced_invoices;
+  const unsyncVat = statisticInvoice.value?.data?.unsync_vat_invoices || 0;
+  if (!data) return unsyncVat;
+  return (
+    (data.draft_invoices || 0) +
+    (data.unsend_invoices || 0) +
+    (data.published_invoices || 0) +
+    unsyncVat
+  );
+});
+
+// Router
+const router = useRouter();
+
+// Methods
+const navigateTo = (path, query = {}) => {
+  router.push({
+    path,
+    query,
+  });
+};
 </script>

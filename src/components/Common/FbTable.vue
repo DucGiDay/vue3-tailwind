@@ -12,9 +12,29 @@
     class="fb_table--wrapper"
     v-bind="$attrs"
     @columnReorder="onColReorder"
+    @rowClick="emit('row-click', $event)"
+    @rowDblclick="emit('row-dblclick', $event)"
   >
     <slot />
 
+    <template #header v-if="reorderableColumns || $slots.header">
+      <div class="fb-flex fb-justify-between fb-items-center">
+        <div class="fb-flex-1">
+          <slot name="header" />
+        </div>
+
+        <Button
+          v-tooltip.top="'Cấu hình cột'"
+          v-if="reorderableColumns"
+          text
+          raised
+          size="small"
+          @click.stop="showColumnConfig = true"
+        >
+          <IconSetting />
+        </Button>
+      </div>
+    </template>
     <!-- Checkbox column-->
     <Column
       v-if="enableCheckbox"
@@ -36,6 +56,8 @@
       headerClass="fb-font-medium"
       bodyClass="fb-font-normal fb-text-gray-700"
       class=""
+      :alignFrozen="'left'"
+      :frozen="true"
     >
       <template #body="{ index }">
         {{ `${index + 1}` }}
@@ -43,7 +65,7 @@
     </Column>
 
     <Column
-      v-for="(col, index) of columns"
+      v-for="(col, index) of activeColumns"
       :field="col.field"
       :header="col.header"
       :key="col.field + '_' + index"
@@ -55,14 +77,14 @@
         {
           'p-datatable-column-frozen-left-last':
             col?.frozen && (col?.alignFrozen === 'left' || !col?.alignFrozen),
-          'p-datatable-column-frozen-right-first': col?.frozen && col?.alignFrozen === 'right'
-        }
+          'p-datatable-column-frozen-right-first': col?.frozen && col?.alignFrozen === 'right',
+        },
       ]"
       :alignFrozen="col?.alignFrozen || 'left'"
       :frozen="col?.frozen"
       :style="col?.style || {}"
     >
-      <template #body="{ data }">
+      <template #body="{ data, index: i }">
         <Skeleton v-if="props.isLoading && !isLoadmore" />
         <span v-else-if="!$slots?.[col.field]">
           {{ formatData(data[col.field], data, col?.format) }}
@@ -72,7 +94,8 @@
           :name="col.field"
           v-bind="{
             row: data,
-            record: data[col.field]
+            record: data[col.field],
+            index: i,
           }"
         ></slot>
       </template>
@@ -159,9 +182,8 @@
     <!-- Footer -->
     <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
       <nav class="fb-flex fb-items-center fb-pr-10">
-        <slot name="footer" />
         <div
-          class="fb-paginator fb-ml-auto"
+          class="fb-paginator fb-mr-auto"
           v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
         >
           <Select
@@ -240,6 +262,7 @@
             </Button>
           </ButtonGroup>
         </div>
+        <slot name="footer" />
       </nav>
     </template>
   </DataTable>
@@ -259,11 +282,11 @@
         :class="[
           'fb-flex fb-items-center',
           {
-            'fb-opacity-50 !fb-cursor-default': item?.disabledd
-          }
+            'fb-opacity-50 !fb-cursor-default': item?.notAllowClick,
+          },
         ]"
       >
-        <component v-if="item.icon" :is="item.icon" />
+        <component v-if="item.icon" :is="item.icon" class="!fb-h-4 !fb-w-4" color="#A4A7AE"/>
         <span :class="item?.class || ''">{{ item.label }}</span>
         <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
         <span
@@ -279,7 +302,7 @@
   <Dialog
     header="Xác nhận"
     v-model:visible="displayConfirmation"
-    :style="{ width: '350px' }"
+    :style="{ width: '21.875rem' }"
     :modal="true"
   >
     <div class="fb-flex fb-items-center fb-justify-center">
@@ -288,6 +311,56 @@
     <template #footer>
       <Button label="Đóng" @click="toggleConfirmDialog()" text severity="secondary" />
       <Button label="Xác nhận" @click="onDelete" severity="danger" autofocus />
+    </template>
+  </Dialog>
+
+  <!-- Column Config Dialog -->
+  <Dialog
+    v-model:visible="showColumnConfig"
+    header="Cấu hình cột hiển thị"
+    dismissableMask
+    modal
+    contentClass="!fb-flex !fb-flex-col !fb-overflow-hidden"
+    :style="{ width: '45rem', height: '100%' }"
+    :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
+  >
+    <DataTable
+      :value="internalColumns"
+      :reorderableRows="true"
+      scrollable
+      scrollHeight="flex"
+      @rowReorder="onColumnRowReorder"
+      dataKey="field"
+      size="small"
+    >
+      <Column rowReorder headerStyle="width: 3rem" :reorderableColumn="false" />
+      <Column header="Hiển thị" bodyStyle="text-align:center" headerStyle="width: 5rem">
+        <template #body="{ data }">
+          <Checkbox v-model="data.visible" :binary="true" />
+        </template>
+      </Column>
+      <Column field="header" header="Tên cột" />
+      <Column header="Cố định (Freeze)">
+        <template #body="{ data }">
+          <SelectButton
+            v-model="data.frozenState"
+            :options="frozenOptions"
+            optionLabel="label"
+            optionValue="value"
+            :allowEmpty="false"
+          />
+        </template>
+      </Column>
+    </DataTable>
+    <template #footer>
+      <!-- <Button
+        label="Đóng"
+        severity="secondary"
+        outlined
+        @click="showColumnConfig = false"
+        autofocus
+      /> -->
+      <Button label="Khôi phục mặc định" outlined @click="resetColumns" />
     </template>
   </Dialog>
 </template>
@@ -316,55 +389,55 @@ const props = defineProps({
     default: () => [],
     validator: (value) => {
       return value.every((col) => col.hasOwnProperty('field') && col.hasOwnProperty('header'));
-    }
+    },
   },
 
   /** Danh sách dữ liệu hiển thị trong bảng */
   items: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
 
   /** Trạng thái đang tải dữ liệu */
   isLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   /** Hiển thị cột checkbox để chọn nhiều dòng */
   enableCheckbox: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   /** Hàm callback xử lý khi nhấn xóa dòng */
   deleteCallback: {
     type: Function,
-    default: null
+    default: null,
   },
 
   /** Danh sách các hành động trong menu của mỗi dòng */
   menuItems: {
     type: Function,
-    default: null
+    default: null,
   },
 
   /** Hàm callback khi mở menu hành động (thường dùng để gọi API cập nhật trạng thái menu) */
   onToggleMenu: {
     type: Function,
-    default: null
+    default: null,
   },
 
   /** Xử lý loading custom của menuItems */
   loadingActionRowCustom: {
     type: [String, Number],
-    default: null
+    default: null,
   },
 
   /** Tên trường (key) dùng để so sánh trạng thái loading action */
   keyLoading: {
     type: [String, Number],
-    default: null
+    default: null,
   },
 
   // Pagination props
@@ -372,115 +445,137 @@ const props = defineProps({
   enablePagination: {
     // Cho phép phân trang (Cả 2 loại: nút bấm | cuộn chuột)
     type: Boolean,
-    default: false
+    default: false,
   },
   /** Bật chế độ phân trang bằng cách cuộn chuột (infinite scroll) */
   enableScrollPagination: {
     // Phân trang bằng cuộn chuột
     type: Boolean,
-    default: false
+    default: false,
   },
   /** Chiều cao vùng cuộn của bảng */
   scrollHeight: {
     type: String,
-    default: ''
+    default: '',
   },
   /** Khoảng cách (px) từ đáy bảng để kích hoạt tải thêm dữ liệu khi cuộn */
   scrollThreshold: {
     type: Number,
-    default: 100 // px từ đáy để trigger load thêm
+    default: 100, // px từ đáy để trigger load thêm
   },
+  /** Còn dữ liệu để tải thêm khi cuộn (dùng cho scroll pagination, do component cha quản lý) */
+  hasMoreData: {
+    type: Boolean,
+    default: true,
+  },
+
   /** Tổng số bản ghi */
   totalRecords: {
     type: Number,
-    default: 0
+    default: 0,
   },
   /** Tổng số trang */
-  totalPages: {
-    type: Number,
-    default: 0
-  },
+  // totalPages: {
+  //   type: Number,
+  //   default: 0,
+  // },
   /** Số bản ghi hiển thị trên mỗi trang */
   pageSize: {
     type: Number,
-    default: 8
+    default: 8,
   },
   /** Trang hiện tại */
   currentPage: {
     type: Number,
-    default: 1
+    default: 1,
   },
   /** Danh sách các tùy chọn số dòng hiển thị trên một trang */
   rowsPerPageOptions: {
     type: Array,
-    default: () => [8, 10, 20, 50, 100, 200]
-  }
+    default: () => [8, 10, 20, 50, 100, 200],
+  },
+  /** Hiển thị nút cấu hình cột */
+  reorderableColumns: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Emits
-const emit = defineEmits(['page-change']);
+const emit = defineEmits([
+  'page-change',
+  'row-click',
+  'row-dblclick',
+  'selection-change',
+  'row-reorder',
+]);
 
-// Internal pagination state
+// ==========================================
+// 3. Reactive State
+// ==========================================
+// --- Column Config ---
+const showColumnConfig = ref(false);
+const internalColumns = ref([]);
+const frozenOptions = [
+  { label: 'Không', value: 'none' },
+  { label: 'Trái', value: 'left' },
+  { label: 'Phải', value: 'right' },
+];
+
+// --- Pagination ---
 const internalPage = ref(props.currentPage);
 const internalRows = ref(props.pageSize);
 const dataTableRef = ref();
 let scrollContainer = null;
 
-// tách riêng first load (skeleton) và loadmore (spinner overlay)
-const isLoadmore = computed(
-  () => props.enableScrollPagination && props.isLoading && props.currentPage > 1
-);
-
-// Scroll pagination: còn data để load không?
-const hasMoreData = computed(() => {
-  if (!props.enableScrollPagination) return false;
-  return internalPage.value <= totalPageCount.value;
-});
-
+// --- Action Menu ---
 const displayConfirmation = ref(false);
 const selectedItem = ref({});
 const loadingActionRow = ref(null);
 const menu = ref();
 const resolvedMenuItems = ref([]);
 
-// Sync khi props thay đổi
-watch(
-  () => props.currentPage,
-  (val) => {
-    internalPage.value = val;
-  }
-);
-watch(
-  () => props.rows,
-  (val) => {
-    internalRows.value = val;
-  }
+// ==========================================
+// 4. Computed Properties
+// ==========================================
+const activeColumns = computed(() => {
+  return internalColumns.value
+    .filter((c) => c.visible)
+    .map((c) => {
+      const isFrozen = c.frozenState !== 'none';
+      const alignFrozen = c.frozenState === 'right' ? 'right' : 'left';
+      return {
+        ...c,
+        frozen: isFrozen,
+        alignFrozen: alignFrozen,
+      };
+    });
+});
+
+const isLoadmore = computed(
+  () => props.enableScrollPagination && props.isLoading && props.currentPage > 1,
 );
 
-// Computed: total records from API
 const totalRecordsCount = computed(() => {
   return props.totalRecords || 0;
 });
 
-// Computed: rows per page options
 const computedRowsPerPageOptions = computed(() => {
   return props.rowsPerPageOptions;
 });
 
-// Computed: total pages
 const totalPageCount = computed(() => {
   return Math.ceil(totalRecordsCount.value / internalRows.value) || 1;
 });
 
-// Computed: range display
 const rangeStart = computed(() => {
   return (internalPage.value - 1) * internalRows.value + 1;
 });
+
 const rangeEnd = computed(() => {
   return Math.min(internalPage.value * internalRows.value, totalRecordsCount.value);
 });
 
-// Computed: visible page buttons with ellipsis
 const visiblePages = computed(() => {
   const total = totalPageCount.value;
   const current = internalPage.value;
@@ -505,13 +600,65 @@ const visiblePages = computed(() => {
 
 // Data hiển thị
 const paginatedData = computed(() => {
-  // Lần đầu chưa có data -> fill skeleton placeholder
-  // if (isFirstLoad.value && props.isLoading) return Array(internalRows.value).fill({});
   if (props.isLoading && !isLoadmore.value) return Array(8).fill({});
   return props.items;
 });
 
-// Methods
+// ==========================================
+// 5. Methods
+// ==========================================
+// --- Formatting ---
+const formatData = (node, row, format) => {
+  if (typeof format === 'function') return format(node, row);
+  if (!format || node === null || node === undefined) return node;
+
+  switch (format) {
+    case 'date':
+      return moment(node).format('DD/MM/YYYY');
+    case 'datetime':
+      return moment(node).format('DD/MM/YYYY HH:mm');
+    case 'currency':
+      return formatCurrency(node);
+    case 'truncate':
+      return node ? `#${node.toString().slice(-5)}` : '';
+    default:
+      return node;
+  }
+};
+
+// --- Column Config ---
+const initInternalColumns = (cols) => {
+  const currentMap = new Map(internalColumns.value.map((c) => [c.field, c]));
+  internalColumns.value = cols.map((c) => {
+    const existing = currentMap.get(c.field);
+    if (existing) {
+      return { ...c, visible: existing.visible, frozenState: existing.frozenState };
+    }
+    return {
+      ...c,
+      visible: c.visible !== false,
+      frozenState: c.frozen ? (c.alignFrozen === 'right' ? 'right' : 'left') : 'none',
+    };
+  });
+};
+
+const resetColumns = () => {
+  internalColumns.value = props.columns.map((c) => ({
+    ...c,
+    visible: c.visible !== false,
+    frozenState: c.frozen ? (c.alignFrozen === 'right' ? 'right' : 'left') : 'none',
+  }));
+};
+
+const onColumnRowReorder = (event) => {
+  internalColumns.value = event.value;
+};
+
+const onColReorder = (data) => {
+  toast.add({ severity: 'success', summary: 'Column Reordered', life: 3000 });
+};
+
+// --- Pagination ---
 const goToPage = (page) => {
   if (props.isLoading) return;
   if (page < 1 || page > totalPageCount.value) return;
@@ -525,18 +672,46 @@ const onRowsChange = (e) => {
   emit('page-change', { page: 1, rows: internalRows.value });
 };
 
-const onDelete = async () => {
-  await props.deleteCallback(selectedItem.value);
-};
-const toggleConfirmDialog = (item) => {
-  selectedItem.value = item || {};
-  displayConfirmation.value = !displayConfirmation.value;
+let lastScrollTop = 0;
+const onScrollLoadMore = () => {
+  if (!props.enableScrollPagination) return;
+  if (!scrollContainer) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+  // Chỉ xử lý khi cuộn dọc (scrollTop thay đổi)
+  if (scrollTop === lastScrollTop) return;
+  lastScrollTop = scrollTop;
+
+  if (props.isLoading) return;
+  if (!props.hasMoreData) return;
+
+  if (scrollTop + clientHeight >= scrollHeight - props.scrollThreshold) {
+    emit('page-change');
+  }
 };
 
-const onColReorder = () => {
-  toast.add({ severity: 'success', summary: 'Column Reordered', life: 3000 });
+const setupScrollListener = () => {
+  if (!props.enableScrollPagination) return;
+  // Cleanup old listener
+  if (scrollContainer) {
+    scrollContainer.removeEventListener('scroll', onScrollLoadMore);
+    scrollContainer = null;
+  }
+  nextTick(() => {
+    const el = dataTableRef.value?.$el;
+    if (el) {
+      // PrimeVue 4: .p-datatable-table-container, PrimeVue 3: .p-datatable-wrapper
+      scrollContainer =
+        el.querySelector('.p-datatable-table-container') ||
+        el.querySelector('.p-datatable-wrapper');
+      if (scrollContainer) {
+        scrollContainer.addEventListener('scroll', onScrollLoadMore);
+      }
+    }
+  });
 };
 
+// --- Action Menu ---
 const toggleActionMenu = async (event, data) => {
   const target = event.currentTarget;
   selectedItem.value = data;
@@ -573,68 +748,68 @@ const toggleActionMenu = async (event, data) => {
           });
         }
       }
-    }
+    },
   }));
 
   menu.value.toggle({ currentTarget: target });
 };
 
-const formatData = (node, row, format) => {
-  if (typeof format === 'function') return format(node, row);
-  if (!format || node === null || node === undefined) return node;
-
-  switch (format) {
-    case 'date':
-      return moment(node).format('DD/MM/YYYY');
-    case 'datetime':
-      return moment(node).format('DD/MM/YYYY HH:mm');
-    case 'currency':
-      return formatCurrency(node);
-    case 'truncate':
-      return node ? `#${node.toString().slice(-5)}` : '';
-    default:
-      return node;
-  }
+const onDelete = async () => {
+  await props.deleteCallback(selectedItem.value);
 };
 
-// Scroll pagination handler
-const onScrollLoadMore = () => {
-  if (!props.enableScrollPagination) return;
-  if (!scrollContainer) return;
-  if (props.isLoading) return;
-  if (!hasMoreData.value) return;
-
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
-  if (scrollTop + clientHeight >= scrollHeight - props.scrollThreshold) {
-    // internalPage.value++;
-    emit('page-change');
-  }
+const toggleConfirmDialog = (item) => {
+  selectedItem.value = item || {};
+  displayConfirmation.value = !displayConfirmation.value;
 };
 
-const setupScrollListener = () => {
-  if (!props.enableScrollPagination) return;
-  // Cleanup old listener
-  if (scrollContainer) {
-    scrollContainer.removeEventListener('scroll', onScrollLoadMore);
-    scrollContainer = null;
-  }
-  nextTick(() => {
-    const el = dataTableRef.value?.$el;
-    if (el) {
-      // PrimeVue 4: .p-datatable-table-container, PrimeVue 3: .p-datatable-wrapper
-      scrollContainer =
-        el.querySelector('.p-datatable-table-container') ||
-        el.querySelector('.p-datatable-wrapper');
-      if (scrollContainer) {
-        scrollContainer.addEventListener('scroll', onScrollLoadMore);
-      }
+// ==========================================
+// 6. Watchers
+// ==========================================
+watch(
+  () => props.columns,
+  (newCols) => {
+    initInternalColumns(newCols);
+  },
+  { immediate: true, deep: true },
+);
+
+watch(
+  () => props.currentPage,
+  (val) => {
+    internalPage.value = val;
+  },
+);
+
+watch(
+  () => props.rows,
+  (val) => {
+    internalRows.value = val;
+  },
+);
+
+// Tự động load trang tiếp theo nếu dữ liệu hiển thị chưa đủ chiều cao của bảng
+watch(
+  () => props.items,
+  () => {
+    if (props.enableScrollPagination && props.hasMoreData) {
+      nextTick(() => {
+        onScrollLoadMore();
+      });
     }
-  });
-};
+  },
+  { deep: true },
+);
 
+// ==========================================
+// 7. Lifecycle Hooks
+// ==========================================
 onMounted(() => {
   setupScrollListener();
-  // emit('page-change', { page: 1, rows: internalRows.value });
+  // Kích hoạt check lần đầu phòng trường hợp bản ghi ban đầu quá ít chưa tạo ra scrollbar
+  nextTick(() => {
+    onScrollLoadMore();
+  });
 });
 
 onBeforeUnmount(() => {
@@ -647,11 +822,35 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .fb_table--wrapper {
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 0.75rem;
+  overflow: hidden;
+
+  .p-datatable-header {
+    border: none;
+    border-bottom: 1px solid var(--surface-border, #e5e7eb);
+  }
+
   .p-datatable-table-container,
   .p-datatable-wrapper {
-    border: 1px solid var(--surface-border, #e5e7eb);
-    border-radius: 0.5rem;
-    overflow: hidden;
+    border: none !important;
+    border-radius: 0 !important;
+
+    /* Custom scrollbar to avoid clipping with outer border-radius */
+    // &::-webkit-scrollbar {
+    //   width: 8px;
+    //   height: 8px;
+    // }
+    // &::-webkit-scrollbar-track {
+    //   background: transparent;
+    // }
+    // &::-webkit-scrollbar-thumb {
+    //   border-radius: 4px;
+    //   background: rgba(156, 163, 175, 0.5); /* gray-400 */
+    // }
+    // &::-webkit-scrollbar-thumb:hover {
+    //   background: rgba(107, 114, 128, 0.8); /* gray-500 */
+    // }
   }
 
   table:has(.p-datatable-empty-message) {
@@ -669,27 +868,28 @@ onBeforeUnmount(() => {
     }
 
     thead.p-datatable-thead > tr > th {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       background-color: #fafafa;
       color: #85888e;
       font-weight: 500;
     }
     tbody.p-datatable-tbody > tr > td {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       &.action-cell {
         text-align: center;
-        padding: 0.75rem 0.5rem;
+        padding: 0.5rem 0.5rem;
       }
     }
   }
 }
 
-/* Custom Paginator */
+/*
+ Custom Paginator 
+*/
 .fb-paginator {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.75rem 0;
   gap: 1rem;
   font-size: 0.875rem;
   color: var(--text-color-secondary);

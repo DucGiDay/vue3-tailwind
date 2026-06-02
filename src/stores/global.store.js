@@ -11,13 +11,13 @@ export const useGlobalStore = defineStore('global', {
 
   getters: {
     // Danh sách stores trong brand hiện tại
-    storesAccessibleInCurrentBrand(state) {
+    currentBrandStores(state) {
       const cities = state.currentBrand?.cities || [];
       return cities.flatMap((city) => city.stores);
     },
 
-    storesIdAccessibleInCurrentBrand(_) {
-      return this.storesAccessibleInCurrentBrand.map((store) => store.id);
+    currentBrandStoreIds(_) {
+      return this.currentBrandStores.map((store) => store.id);
     },
 
     // Danh sách stores được phân quyền tới user
@@ -34,6 +34,21 @@ export const useGlobalStore = defineStore('global', {
     // Danh sách brands trong storage
     brandsInStorage(state) {
       return state.currentUser?.brands || [];
+    },
+
+    // Danh sách stores trong tất cả brands
+    allStores(_) {
+      const brands = this.brandsInStorage || [];
+      return brands.flatMap((brand) => brand.cities.flatMap((city) => city.stores));
+    },
+
+    // Map store_uid -> store object
+    storesById(_) {
+      const stores = this.allStores || [];
+      return stores.reduce((acc, s) => {
+        acc[s.id] = s;
+        return acc;
+      }, {});
     }
   },
 

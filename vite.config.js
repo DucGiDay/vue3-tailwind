@@ -17,20 +17,20 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
   return {
     optimizeDeps: {
-      noDiscovery: mode !== 'development'
+      noDiscovery: mode !== 'development',
     },
 
     plugins: [
       vue(),
 
       qiankun('fabi-cms-sub-vue3', {
-        useDevMode: true
+        useDevMode: true,
       }),
 
       // Tự động import các component trong '/components/Common' và component Primevue
       Components({
         dirs: ['src/components/Common'],
-        resolvers: [PrimeVueResolver()]
+        resolvers: [PrimeVueResolver()],
       }),
 
       // Tự động import $t để xử lý i18n
@@ -38,26 +38,26 @@ export default defineConfig(({ mode }) => {
         imports: [
           'vue',
           {
-            '@/common/i18n/index': ['$t']
-          }
-        ]
-      })
+            '@/common/i18n/index': ['$t'],
+          },
+        ],
+      }),
     ],
 
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        vue: 'vue/dist/vue.esm-bundler.js'
-      }
+        vue: 'vue/dist/vue.esm-bundler.js',
+      },
     },
 
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `@use "@/assets/styles/scss/_variables.scss" as *;`,
-          silenceDeprecations: ['legacy-js-api']
-        }
-      }
+          silenceDeprecations: ['legacy-js-api'],
+        },
+      },
     },
 
     server: {
@@ -66,13 +66,13 @@ export default defineConfig(({ mode }) => {
       cors: true,
       allowedHosts: ['sub-fabi.nport.link', 'localhost', 'cms.iposdev.com', 'cms.ipos.com'],
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
         // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         // 'Access-Control-Allow-Headers': 'Content-Type'
-      }
+      },
     },
 
-    base: env.VITE_SUB_APP_URL
+    base: env.VITE_SUB_APP_URL,
 
     // build: {
     //   outDir: 'dist',

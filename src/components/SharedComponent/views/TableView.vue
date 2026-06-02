@@ -7,7 +7,7 @@
         class="fb-flex fb-justify-between fb-items-center fb-mb-6"
       >
         <div class="fb-flex fb-items-center fb-space-x-3">
-          <h4 class="!fb-m-0">{{ title }}</h4>
+          <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">{{ title }}</h5>
         </div>
         <div class="fb-flex fb-justify-end fb-gap-2">
           <slot name="header-actions" />
@@ -16,30 +16,15 @@
 
       <!-- Filter/Toolbar row: override entirely with #toolbar, or use #filters + #search for simple cases -->
       <slot name="toolbar">
-        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-center">
-          <div class="fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
+        <div class="fb-flex fb-flex-wrap fb-gap-3 fb-justify-between fb-items-end">
+          <div class="fb-flex-1 fb-flex fb-flex-wrap fb-gap-3 fb-items-center">
             <slot name="filters" />
           </div>
-          <div>
-            <slot name="search">
+          <div class="fb-flex-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-items-center fb-ml-auto">
+            <slot v-if="searchable" name="search">
               <IconField>
                 <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="fb-h-[1rem]"
-                  >
-                    <path
-                      d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-                      stroke="#A4A7AE"
-                      stroke-width="1.66667"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
+                  <IconSearch />
                 </InputIcon>
                 <InputText
                   :modelValue="searchValue"
@@ -69,17 +54,32 @@
 const props = defineProps({
   title: {
     type: String,
-    default: ''
+    default: '',
   },
   searchValue: {
     type: String,
-    default: null
+    default: null,
   },
   searchPlaceholder: {
     type: String,
-    default: 'Tìm kiếm...'
-  }
+    default: 'Tìm kiếm...',
+  },
+  searchable: {
+    type: Boolean,
+    default: true,
+  },
 });
+
+const home = ref({
+  label: 'Home',
+});
+const items = ref([
+  { label: 'Electronics' },
+  { label: 'Computer' },
+  { label: 'Accessories' },
+  { label: 'Keyboard' },
+  { label: 'Wireless' },
+]);
 
 const emit = defineEmits(['update:searchValue', 'search']);
 

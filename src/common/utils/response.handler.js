@@ -1,6 +1,6 @@
 export const handleReportResponse = (response) => {
   if (!response?.success) {
-    throw new Error(response?.data?.message || response?.message || 'Có lỗi xảy ra');
+    throw new Error(response?.data?.message || response?.message || '');
   }
 
   return {
@@ -9,19 +9,19 @@ export const handleReportResponse = (response) => {
     last_id: next_cursor?.last_id || null,
     last_tran_id: next_cursor?.last_tran_id || null,
     error: null,
-    meta: response?.data ?? {}
+    meta: response?.data ?? {},
   };
 };
 
 export const handleListResponse = (response) => {
   if (!response?.success) {
-    throw new Error(response?.data?.message || response?.message || 'Có lỗi xảy ra');
+    throw new Error(response?.data?.message || response?.message || '');
   }
 
   return {
     data: response.data?.data ?? [],
     error: null,
-    meta: response?.data ?? {}
+    meta: response?.data ?? {},
   };
 };
 
@@ -30,7 +30,7 @@ export const handleListHasTotalPageResponse = (response) => {
   return {
     data,
     error: null,
-    meta
+    meta,
   };
 };
 

@@ -9,13 +9,22 @@ export const useEInoiveStore = defineStore('eInoive', {
     statusInvoices: {},
     dailyStatistics: {},
     vatInvoice: {},
+    notiErrorList: {},
+    errorTypeList: [],
+    invoiceTypeList: [],
+    agreementProtocolList: {},
     saleNotSyncVat: {},
     storeSettingInvoices: {},
     listTaxStores: {
       data: [],
-      isLoading: false
+      isLoading: false,
     },
-    guestVatOptions: []
+    guestVatOptions: [],
+    serialInvoiceList: {},
+    serialInvoiceTemplate: [],
+    posInvoiceList: {},
+    showTaxCodeDialog: false,
+    currentTaxCode: localStorage.getItem('fabi_selected_tax_code') || null,
   }),
 
   getters: {
@@ -25,10 +34,37 @@ export const useEInoiveStore = defineStore('eInoive', {
     },
     dailyStatisticsInvoice() {
       return this.dailyStatisticsData.map((e) => e.total_invoices);
-    }
+    },
+
+    errorTypeMap(state) {
+      return state.errorTypeList.reduce((acc, item) => {
+        acc[item.type_error.toString()] = item.name;
+        return acc;
+      }, {});
+    },
+
+    listStoreInCurrentTaxCode() {
+      const taxtCodeData = this.listTaxStores.data.find(
+        (item) => item.tax_code === this.currentTaxCode,
+      );
+      return taxtCodeData?.list_store_uid || [];
+    },
+
+    listStoreUidInCurrentTaxCode() {
+      return this.listStoreInCurrentTaxCode.map((s) => s.store_uid);
+    },
   },
 
   actions: {
+    setCurrentTaxCode(taxCode) {
+      this.currentTaxCode = taxCode;
+      if (taxCode) {
+        localStorage.setItem('fabi_selected_tax_code', taxCode);
+      } else {
+        localStorage.removeItem('fabi_selected_tax_code');
+      }
+    },
+
     async getListRecentInvoice(params) {
       try {
         this.recentInvoice.isLoading = true;
@@ -123,6 +159,54 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.saleNotSyncVat.error = err?.message;
       }
     },
+    async getSaleByListTranId(params) {
+      try {
+        const response = await invoiceService.getSaleByListTranId(params);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+    async getSaleChangeLog(params) {
+      try {
+        const response = await invoiceService.getSaleChangeLog(params);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+    async getNotiError(params) {
+      try {
+        const response = await invoiceService.getNotiErrorList(params);
+        this.notiErrorList.data = response?.data || {};
+      } catch (err) {
+        this.notiErrorList.error = err?.message;
+      }
+    },
+    async getErrorType(params) {
+      try {
+        const response = await invoiceService.getErrorTypeList(params);
+        this.errorTypeList = response?.data || [];
+      } catch (err) {
+        this.errorTypeList = [];
+      }
+    },
+    async getInvoiceType(params) {
+      try {
+        const response = await invoiceService.getInvoiceTypeList(params);
+        this.invoiceTypeList = response?.data || [];
+      } catch (err) {
+        this.invoiceTypeList = [];
+      }
+    },
+    async getAgreementProtocolList(params) {
+      try {
+        const response = await invoiceService.getAgreementProtocolList(params);
+        this.agreementProtocolList.data = response?.data || {};
+      } catch (err) {
+        this.agreementProtocolList.error = err?.message;
+      }
+    },
     async getStoreSettingInvoice(params) {
       try {
         const response = await invoiceService.getStoreSettingInvoice(params);
@@ -136,15 +220,16 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.updateStoreSettingInvoice(payload);
         return {
           data: response?.data || null,
-          error: null
+          error: null,
         };
       } catch (err) {
         return {
           data: null,
-          error: err
+          error: err,
         };
       }
     },
+
     async getListStoreGroupByTaxCode(params) {
       if (this.listTaxStores.data.length > 0) return;
       try {
@@ -152,6 +237,7 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.getListStoreGroupByTaxCode(params);
         this.listTaxStores.data = response?.data || [];
       } catch (err) {
+        this.listTaxStores.error = err?.message;
         console.error('Error getListStoreGroupByTaxCode', err);
       } finally {
         this.listTaxStores.isLoading = false;
@@ -162,12 +248,12 @@ export const useEInoiveStore = defineStore('eInoive', {
         const response = await invoiceService.syncSaleMinvoice(payload);
         return {
           data: response?.data || null,
-          error: null
+          error: null,
         };
       } catch (err) {
         return {
           data: null,
-          error: err
+          error: err,
         };
       }
     },
@@ -188,6 +274,39 @@ export const useEInoiveStore = defineStore('eInoive', {
         console.error('Error fetchGuestSession', err);
         return null;
       }
-    }
-  }
+    },
+
+    async getSerialInvoice(params) {
+      try {
+        const response = await invoiceService.getSerialInvoice(params);
+        this.serialInvoiceList.data = response?.data || {};
+      } catch (err) {
+        this.serialInvoiceList.error = err?.message;
+      }
+    },
+    async getSerialInvoiceTemplate(params) {
+      try {
+        const response = await invoiceService.getSerialInvoiceTemplate(params);
+        this.serialInvoiceTemplate = response?.data || [];
+      } catch (err) {
+        throw new Error(err?.message || '');
+      }
+    },
+    async getListBatchInvoice(params) {
+      try {
+        const response = await invoiceService.getListBatchInvoice(params);
+        this.posInvoiceList = response?.data || {};
+      } catch (err) {
+        this.posInvoiceList = { error: err?.message };
+      }
+    },
+    async deletePosInvoice(payload) {
+      try {
+        const response = await invoiceService.deletePosInvoice(payload);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+  },
 });
