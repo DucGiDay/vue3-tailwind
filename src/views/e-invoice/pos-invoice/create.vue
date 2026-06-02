@@ -25,6 +25,7 @@
                   placeholder="Chọn mã số thuế"
                   size="small"
                   class="fb-w-full"
+                  disabled
                   :loading="isLoadingTaxStores"
                 />
               </div>
@@ -160,7 +161,7 @@ import {
   CREATE_MTT_TABLE_COLUMNS,
   STOP_ON_ERROR_OPTIONS,
   QUANTITY_PACKAGE_OPTIONS,
-  MAX_RETRY_OPTIONS
+  MAX_RETRY_OPTIONS,
 } from '@/common/constant/e-invoice.constant';
 import DetailView from '@/components/SharedComponent/views/DetailView.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
@@ -177,13 +178,13 @@ const loadingTable = ref(false);
 const isLoadingTaxStores = ref(false);
 const items = ref([]);
 const form = ref({
-  tax_code: null,
+  tax_code: invoiceStore.currentTaxCode || null,
   date: new Date(),
   pattern: '',
   stop_on_error: true,
   number_invoice: 1,
   serial: '',
-  max_retries: 1
+  max_retries: 1,
 });
 
 let debounceTimer = null;
@@ -203,7 +204,7 @@ const fetchInvoices = async () => {
       number_invoice: form.value.number_invoice,
       pattern: form.value.pattern,
       serial: form.value.serial,
-      vat_invoice_date: new Date(form.value.date).getTime()
+      vat_invoice_date: new Date(form.value.date).getTime(),
     };
 
     const response = await invoiceService.getListPosInvoice(params);
@@ -213,7 +214,7 @@ const fetchInvoices = async () => {
       severity: 'error',
       summary: 'Lỗi khi lấy danh sách hóa đơn',
       detail: error?.message || '',
-      life: 5000
+      life: 5000,
     });
     items.value = [];
   } finally {
@@ -226,7 +227,7 @@ const getListStoreGroupByTaxCode = async () => {
   isLoadingTaxStores.value = true;
   const payload = {
     brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid
+    company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getListStoreGroupByTaxCode(payload);
   isLoadingTaxStores.value = false;
@@ -247,7 +248,7 @@ const handleSave = async () => {
     toast.add({
       severity: 'warn',
       summary: 'Vui lòng điền đầy đủ các thông tin bắt buộc',
-      life: 3000
+      life: 3000,
     });
     return;
   }
@@ -257,7 +258,7 @@ const handleSave = async () => {
       tax_code: form.value.tax_code,
       list_merged_tran_id: items.value.map((e) => e.merged_tran_id),
       stop_on_error: form.value.stop_on_error,
-      max_retries: form.value.max_retries
+      max_retries: form.value.max_retries,
     };
 
     await invoiceService.createPosInvoice(payload);
@@ -265,7 +266,7 @@ const handleSave = async () => {
       severity: 'success',
       summary: 'Thành công',
       detail: 'Tạo máy tính tiền thành công',
-      life: 3000
+      life: 3000,
     });
     router.back();
   } catch (error) {
@@ -273,7 +274,7 @@ const handleSave = async () => {
       severity: 'error',
       summary: 'Lỗi',
       detail: error?.message || 'Có lỗi xảy ra khi tạo máy tính tiền',
-      life: 5000
+      life: 5000,
     });
   } finally {
     loading.value = false;
@@ -289,7 +290,7 @@ watch(
     debounceTimer = setTimeout(() => {
       fetchInvoices();
     }, 500);
-  }
+  },
 );
 
 // Watch cho các trường Select/Date (gọi ngay lập tức)
@@ -298,7 +299,7 @@ watch(
   () => {
     if (debounceTimer) clearTimeout(debounceTimer);
     fetchInvoices();
-  }
+  },
 );
 
 // --- Lifecycle hooks ---

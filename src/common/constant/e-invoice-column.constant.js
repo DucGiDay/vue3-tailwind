@@ -30,7 +30,8 @@ export const STORE_CONFIG_TABLE_COLUMNS = [
 
 // Columns Quản lý hóa đơn
 export const INVOICE_MANAGE_TABLE_COLUMNS = [
-  { field: 'inv_series', header: 'Mẫu số & Ký hiệu' },
+  { field: 'inv_series', header: 'Ký hiệu' },
+  { field: 'pattern', header: 'Mẫu số' },
   { field: 'vat_invoice_number', header: 'Số hóa đơn', classes: '!fb-text-muted-color' },
   {
     field: 'vat_invoice_date',
@@ -40,6 +41,7 @@ export const INVOICE_MANAGE_TABLE_COLUMNS = [
   },
   { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
   { field: 'inv_buyerLegalName', header: 'Tên đơn vị' },
+  { field: 'info_customer', header: 'Mã/MST' },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   {
     field: 'invoice_type',

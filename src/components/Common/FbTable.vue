@@ -129,7 +129,7 @@
       v-if="menuItems"
       headerClass="fb-font-medium"
       bodyClass="fb-font-normal fb-text-gray-700"
-      class="fb-whitespace-nowrap !fb-px-1"
+      class="fb-whitespace-nowrap !fb-px-1 !fb-py-0"
       alignFrozen="right"
       frozen
     >
