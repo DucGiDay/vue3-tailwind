@@ -128,11 +128,11 @@ onMounted(() => {
       <template #date-filter>
         <div class="fb-flex fb-items-center fb-space-x-3">
           <FbDateFilter module="invoice" size="small" @update:modelValue="onDateChange" />
-          <FbSelectTaxStoreFilter
-            class="!fb-hidden"
+          <!-- <FbSelectTaxStoreFilter
+            class=""
             isSingleGroup
             @update:modelValue="onDateChange"
-          />
+          /> -->
         </div>
       </template>
     </StatsWidget>
