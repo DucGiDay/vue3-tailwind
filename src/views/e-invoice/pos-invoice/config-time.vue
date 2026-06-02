@@ -184,7 +184,7 @@
       <FbTable
         class="fb-mt-5"
         :items="items"
-        :columns="TABLE_COLUMNS"
+        :columns="CONFIG_TIME_TABLE_COLUMNS"
         :showGridlines="true"
         :hideIndexRow="true"
         :loading="loadingTable"
@@ -198,7 +198,7 @@
             class="fb-px-2 fb-py-1 fb-rounded-2xl fb-text-xs"
             :class="{
               'fb-bg-success-100 fb-text-success-600': record,
-              'fb-bg-gray-100 fb-text-gray-800': !record
+              'fb-bg-gray-100 fb-text-gray-800': !record,
             }"
           >
             {{ record ? 'Đang sử dụng' : 'Chưa sử dụng' }}
@@ -247,20 +247,13 @@ import IconTrash from '@/components/Common/Icon/IconTrash.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
+import { CONFIG_TIME_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 
-// Constants
-const TABLE_COLUMNS = [
-  { field: 'no', header: 'STT', classes: 'fb-w-4 !fb-text-center' },
-  { field: 'tax_code', header: 'Mã số thuế' },
-  { field: 'package_time_slots', header: 'Thời gian tạo' },
-  { field: 'send_time_slots', header: 'Thời gian ký' },
-  { field: 'is_enabled', header: 'Trạng thái' },
-  { field: 'action', header: 'Thao tác', classes: 'fb-w-4 !fb-text-center' }
-];
+// Injected Services
 
 const statusOptions = [
   { label: 'Chưa sử dụng', value: false },
-  { label: 'Đang sử dụng', value: true }
+  { label: 'Đang sử dụng', value: true },
 ];
 
 // Injected Services
@@ -282,7 +275,7 @@ const form = ref({
   tax_code: null,
   status: false,
   package_time_slots: [{ start: new Date(), end: new Date() }],
-  send_time_slots: [{ start: new Date(), end: new Date() }]
+  send_time_slots: [{ start: new Date(), end: new Date() }],
 });
 
 // Computed
@@ -299,7 +292,8 @@ const getData = async () => {
   loadingTable.value = true;
   try {
     const res = await invoiceService.getListPosConfigTime({
-      company_uid: globalStore?.currentUser?.company_uid
+      company_uid: globalStore?.currentUser?.company_uid,
+      tax_code: invoiceStore.currentTaxCode,
     });
     items.value = res?.data?.configs || [];
   } catch (error) {
@@ -314,7 +308,7 @@ const getListStoreGroupByTaxCode = async () => {
   isLoadingTaxStores.value = true;
   const payload = {
     brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid
+    company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getListStoreGroupByTaxCode(payload);
   isLoadingTaxStores.value = false;
@@ -327,13 +321,12 @@ const handleCreate = () => {
     tax_code: null,
     status: true,
     package_time_slots: [{ start: new Date(), end: new Date() }],
-    send_time_slots: [{ start: new Date(), end: new Date() }]
+    send_time_slots: [{ start: new Date(), end: new Date() }],
   };
   showDialog.value = true;
 };
 
 const handleEdit = (row) => {
-  console.log(row);
   isEdit.value = true;
   form.value = {
     id: row.id,
@@ -341,18 +334,17 @@ const handleEdit = (row) => {
     status: row.is_enabled,
     package_time_slots: row.package_time_slots.map((s) => ({
       start: stringToDate(s.start),
-      end: stringToDate(s.end)
+      end: stringToDate(s.end),
     })),
     send_time_slots: row.send_time_slots.map((s) => ({
       start: stringToDate(s.start),
-      end: stringToDate(s.end)
-    }))
+      end: stringToDate(s.end),
+    })),
   };
   showDialog.value = true;
 };
 
 const handleSave = async () => {
-  console.log(form.value);
   error.value = {};
 
   if (!form.value.tax_code) {
@@ -381,13 +373,13 @@ const handleSave = async () => {
     company_uid: globalStore?.currentUser?.company_uid,
     package_time_slots: form.value.package_time_slots.map((s) => ({
       start: moment(s.start).format('HH:mm'),
-      end: moment(s.end).format('HH:mm')
+      end: moment(s.end).format('HH:mm'),
     })),
     send_time_slots: form.value.send_time_slots.map((s) => ({
       start: moment(s.start).format('HH:mm'),
-      end: moment(s.end).format('HH:mm')
+      end: moment(s.end).format('HH:mm'),
     })),
-    is_enabled: form.value.status
+    is_enabled: form.value.status,
   };
 
   loadingSave.value = true;
@@ -401,7 +393,7 @@ const handleSave = async () => {
       severity: 'success',
       summary: 'Thành công',
       detail: isEdit.value ? 'Cập nhật cấu hình thành công' : 'Tạo cấu hình thời gian thành công',
-      life: 3000
+      life: 3000,
     });
     showDialog.value = false;
     getData();
@@ -410,7 +402,7 @@ const handleSave = async () => {
       severity: 'error',
       summary: 'Lỗi',
       detail: err?.message || 'Có lỗi xảy ra',
-      life: 5000
+      life: 5000,
     });
   } finally {
     loadingSave.value = false;
@@ -427,7 +419,7 @@ const handleDelete = async (row) => {
       severity: 'success',
       summary: 'Thành công',
       detail: 'Xóa cấu hình thành công',
-      life: 3000
+      life: 3000,
     });
     getData();
   } catch (err) {
@@ -435,7 +427,7 @@ const handleDelete = async (row) => {
       severity: 'error',
       summary: 'Lỗi',
       detail: err?.message || 'Có lỗi xảy ra',
-      life: 5000
+      life: 5000,
     });
   } finally {
     loadingTable.value = false;
@@ -496,7 +488,7 @@ const handleQuickTest = () => {
 
   form.value.package_time_slots = [
     { start: t1, end: t2 },
-    { start: t3, end: t4 }
+    { start: t3, end: t4 },
   ];
 
   const s1 = new Date(now);
@@ -510,7 +502,7 @@ const handleQuickTest = () => {
 
   form.value.send_time_slots = [
     { start: s1, end: s2 },
-    { start: s3, end: s4 }
+    { start: s3, end: s4 },
   ];
 };
 </script>

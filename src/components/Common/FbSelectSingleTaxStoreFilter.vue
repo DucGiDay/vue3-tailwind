@@ -69,7 +69,7 @@ const filteredItems = computed(() => {
 
 const itemSelected = computed({
   get() {
-    const storeUid = filterStore?.report?.store_uid;
+    const storeUid = filterStore?.invoice?.store_uid;
     if (!storeUid) return null;
 
     // TreeSelect in single mode requires an object { [key]: true }
@@ -85,7 +85,7 @@ const itemSelected = computed({
 onMounted(async () => {
   await fetchStores();
 
-  const currentStoreUid = filterStore?.report?.store_uid;
+  const currentStoreUid = filterStore?.invoice?.store_uid;
   const allStoreUids = filteredItems.value.flatMap((item) => item.children.map((child) => child.key));
 
   if (!currentStoreUid || !allStoreUids.includes(currentStoreUid)) {
@@ -125,8 +125,8 @@ const expandNode = (node) => {
 const setStoreSelected = async (selectedUid) => {
   // update filter trong Pinia: lưu vào store_uid (string) thay vì stores_uid (array)
   await filterStore.updateFilter({
-    report: {
-      ...filterStore.report,
+    invoice: {
+      ...filterStore?.invoice,
       store_uid: selectedUid
     }
   });

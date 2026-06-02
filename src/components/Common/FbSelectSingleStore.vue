@@ -9,8 +9,6 @@
     filter
     filterPlaceholder="Tìm kiếm cửa hàng"
     class="md:fb-w-52 fb-w-full"
-    v-bind="$attrs"
-    @update:modelValue="onSelect"
   />
 </template>
 
@@ -27,16 +25,16 @@ import { storeToRefs } from 'pinia';
 const props = defineProps({
   modelValue: {
     type: [Number, String],
-    default: null
+    default: null,
   },
   placeholder: {
     type: String,
-    default: 'Chọn cửa hàng'
+    default: 'Chọn cửa hàng',
   },
   size: {
     type: String,
-    default: 'small'
-  }
+    default: 'small',
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -47,16 +45,12 @@ const { storesPermissionActive } = storeToRefs(globalStore);
 const storeOptions = computed(() =>
   (globalStore?.storesPermissionActive || []).map((store) => ({
     label: store?.store_name,
-    value: store.id
-  }))
+    value: store.id,
+  })),
 );
 
 const selected = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  set: (val) => emit('update:modelValue', val),
 });
-
-const onSelect = (val) => {
-  // emit('update:modelValue', val);
-};
 </script>

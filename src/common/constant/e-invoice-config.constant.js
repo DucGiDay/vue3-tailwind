@@ -15,6 +15,7 @@ const invTaxCode = {
   id: 'inv_tax_code',
   rules: ['required'],
   isReplaceSpace: true,
+  hide: () => true,
 };
 
 const exportVatInvoiceDateIsTranDate = {

@@ -18,6 +18,29 @@ import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
 import SmartReport from '@/components/PageComponent/smart-report/SmartReport.vue';
 
+const handleChunkError = () => {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault(); // Ngăn crash
+
+    // Thông báo nhẹ nhàng
+    const confirmed = window.confirm(
+      'Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang.',
+    );
+
+    if (confirmed) {
+      // Tránh reload loop
+      const last = sessionStorage.getItem('chunk_reload_at');
+      const now = Date.now();
+      if (!last || now - Number(last) > 30000) {
+        sessionStorage.setItem('chunk_reload_at', String(now));
+        window.location.reload();
+      }
+    }
+  });
+};
+
+handleChunkError();
+
 let app = null;
 let offGlobalStateChange = null;
 let pinia = null;
@@ -34,8 +57,8 @@ function render(props = {}) {
       render: () =>
         h(SmartReport, {
           reportType: props?.reportType,
-          onClose: props?.onClose || (() => {}) // Truyền function từ host vào prop 'onClose'
-        })
+          onClose: props?.onClose || (() => {}), // Truyền function từ host vào prop 'onClose'
+        }),
     });
   } else {
     app = createApp(App);
@@ -60,10 +83,10 @@ function render(props = {}) {
     theme: {
       preset: MyDesignPreset,
       options: {
-        darkModeSelector: '.fabi-cms-sub-dark'
-      }
+        darkModeSelector: '.fabi-cms-sub-dark',
+      },
     },
-    locale: MyLocaleTheme
+    locale: MyLocaleTheme,
   });
   app.use(ToastService);
   app.use(ConfirmationService);
@@ -79,7 +102,7 @@ function render(props = {}) {
     }, true);
   }
 
-  console.log('[sub-vue3] mounted edited');
+  console.log('[sub-vue3] mounted');
 }
 
 // Khi chạy trong Qiankun
@@ -90,7 +113,7 @@ renderWithQiankun({
   mount(props) {
     console.log('[sub-vue3] - sub nhận', props?.messageFromHost);
     props?.actions?.setGlobalState?.({
-      messageFromSub: 'pong'
+      messageFromSub: 'pong',
     });
     return Promise.resolve(render(props));
   },
@@ -119,7 +142,7 @@ renderWithQiankun({
     }
 
     return Promise.resolve();
-  }
+  },
 });
 
 //  Trường hợp chạy độc lập (dev riêng)

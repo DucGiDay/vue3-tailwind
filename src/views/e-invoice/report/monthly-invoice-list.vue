@@ -29,7 +29,7 @@
       >
         <!-- Header: Toggle Chế độ lọc -->
         <div class="fb-flex fb-items-center fb-gap-3">
-          <span class="fb-text-sm fb-font-medium fb-text-surface-600">Thời gian báo cáo:</span>
+          <!-- <span class="fb-text-sm fb-font-medium fb-text-surface-600">Thời gian báo cáo:</span> -->
           <SelectButton
             v-model="filterType"
             :options="filterTypeOptions"
@@ -67,8 +67,40 @@
               @change="filter"
             />
           </div>
+          <div
+            v-else-if="filterType === 'quarter'"
+            class="fb-col-span-1 md:fb-col-span-2 lg:fb-col-span-1 fb-flex fb-gap-2"
+          >
+            <Select
+              v-model="quarterField"
+              :options="quarterOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn Quý"
+              class="fb-w-full"
+              showClear
+              size="small"
+              @change="filter"
+            />
+            <Select
+              v-model="yearField"
+              :options="yearOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn Năm"
+              class="fb-w-full"
+              showClear
+              size="small"
+              @change="filter"
+            />
+          </div>
           <div v-else class="fb-col-span-1 md:fb-col-span-2 lg:fb-col-span-1">
-            <FbDateFilter @update:modelValue="filter" class="fb-w-full" size="small" />
+            <FbDateFilter
+              module="invoice"
+              @update:modelValue="filter"
+              class="fb-w-full"
+              size="small"
+            />
           </div>
 
           <!-- Lọc Store -->
@@ -81,7 +113,7 @@
             class="fb-ml-auto"
             @click="showAdvancedFilter = !showAdvancedFilter"
           >
-            <IconFilter />
+            <IconFilter color="currentColor" />
           </Button>
         </div>
       </div>
@@ -143,7 +175,6 @@
         :items="dataList"
         enableScrollPagination
         :hasMoreData="hasMoreData"
-        reorderableColumns
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
@@ -151,70 +182,47 @@
         scrollHeight="flex"
         @page-change="loadMore"
       >
-        <!-- <template #header>
-          <div class="fb-flex fb-items-center fb-ml-auto fb-mr-4 fb-gap-4">
-            <Button
-              size="small"
-              severity="secondary"
-              raised
-              class="!fb-rounded-lg"
-              @click="openExportHistory"
-            >
-              Lịch sử xuất báo cáo
-            </Button>
-            <Button size="small" outlined class="!fb-rounded-lg" @click="exportExcel">
-              <IconDownload color="currentColor" />
-              Xuất excel
-            </Button>
-          </div>
-        </template> -->
-        <template #empty>Chưa có dữ liệu</template>
+        <template #empty>
+          {{ !storeUidByTaxCode ? 'Vui lòng chọn cửa hàng' : 'Chưa có dữ liệu' }}
+        </template>
       </FbTable>
     </template>
 
-    <template #extra>
-      <!-- Export History Dialog -->
-      <Dialog
-        v-model:visible="showExportHistory"
-        header="Lịch sử xuất báo cáo"
-        modal
-        :style="{ width: '60vw' }"
-        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
-      >
-        <FbTable :columns="exportHistoryColumns" :items="exportHistoryData" :stripedRows="false">
-          <template #empty>Chưa có lịch sử xuất báo cáo</template>
-        </FbTable>
-      </Dialog>
-    </template>
+    <template #extra></template>
   </TableView>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { MONTHLY_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
-import IconDownload from '@/components/Common/Icon/IconDownload.vue';
+import { VAT_PUBLISH_STATUS_CODE_LIST } from '@/common/constant/e-invoice.constant';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
+import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { saveAs } from 'file-saver';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
+const invoiceStore = useEInoiveStore();
 const toast = useToast();
+const router = useRouter();
 
 // State for filters
-const searchField = ref('');
-const showAdvancedFilter = ref(false);
-const filterType = ref('date'); // 'month' | 'date'
+const showAdvancedFilter = ref(true);
+const filterType = ref('date'); // 'month' | 'date' | 'quarter'
 const filterTypeOptions = [
   { label: 'Theo ngày', value: 'date' },
   { label: 'Theo tháng', value: 'month' },
+  { label: 'Theo quý', value: 'quarter' },
 ];
 
 const monthField = ref(moment().month() + 1);
+const quarterField = ref(moment().quarter());
 const yearField = ref(moment().year());
 const statusField = ref(null);
 const creatorField = ref(null);
@@ -225,13 +233,19 @@ const monthOptions = Array.from({ length: 12 }, (_, i) => ({
   label: `Tháng ${i + 1}`,
   value: i + 1,
 }));
+const quarterOptions = [
+  { label: 'Quý 1', value: 1 },
+  { label: 'Quý 2', value: 2 },
+  { label: 'Quý 3', value: 3 },
+  { label: 'Quý 4', value: 4 },
+];
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 5 }, (_, i) => ({
   label: `Năm ${currentYear - i}`,
   value: currentYear - i,
 }));
 
-const statusOptions = ref([]); // Will be populated from API/Constants
+const statusOptions = ref(VAT_PUBLISH_STATUS_CODE_LIST);
 const creatorOptions = ref([]);
 const patternOptions = ref([]);
 const serialOptions = ref([]);
@@ -242,19 +256,7 @@ const isLoading = ref(false);
 const isLoadingExport = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
-const totalRecords = ref(0);
 const hasMoreData = ref(true);
-
-// State for Export History
-const showExportHistory = ref(false);
-const exportHistoryColumns = [
-  { field: 'report_type', header: 'Loại báo cáo' },
-  { field: 'requested_by', header: 'Người xuất' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'expires_at', header: 'Thời gian hết hạn', format: 'date' },
-  { field: 'actions', header: '' },
-];
-const exportHistoryData = ref([]);
 
 // Methods
 const getPayload = () => {
@@ -269,26 +271,43 @@ const getPayload = () => {
       start_date = date.startOf('month').valueOf();
       end_date = date.endOf('month').valueOf();
     }
+  } else if (filterType.value === 'quarter') {
+    if (quarterField.value && yearField.value) {
+      const date = moment().year(yearField.value).quarter(quarterField.value);
+      start_date = date.startOf('quarter').valueOf();
+      end_date = date.endOf('quarter').valueOf();
+    }
   } else {
-    start_date = filterStore.report.start_date;
-    end_date = filterStore.report.end_date;
+    start_date = filterStore?.invoice?.start_date;
+    end_date = filterStore?.invoice?.end_date;
   }
 
-  // TODO: Map filter fields (statusField, creatorField, etc.) correctly when backend supports them.
   return {
     company_uid: globalStore?.currentUser?.company_uid,
     report_type: 'monthly_invoice_list',
     start_date,
     end_date,
-    list_store_uid: filterStore.report.stores_uid?.length
-      ? filterStore.report.stores_uid.join(',')
-      : (globalStore?.storesIdPermissionActive || []).join(','), // fallback if empty
+    list_store_uid: (() => {
+      const selectedObj = filterStore?.invoice?.store_uid_by_tax_code;
+      if (!selectedObj || Object.keys(selectedObj).length === 0) {
+        return invoiceStore.listStoreUidInCurrentTaxCode.join(',');
+      }
+      return Object.values(selectedObj).flat().filter(Boolean).join(',');
+    })(),
+    tax_code: invoiceStore.currentTaxCode,
+    vat_publish_status: statusField.value || null,
+    created_by: creatorField.value || null,
+    template_id: patternField.value || null,
+    invoice_series: serialField.value || null,
   };
 };
 
 const getData = async () => {
   const payload = getPayload();
-  if (!payload.start_date || !payload.end_date) return;
+  if (!payload.start_date || !payload.end_date || !payload.list_store_uid) {
+    hasMoreData.value = false;
+    return;
+  }
 
   isLoading.value = true;
   try {
@@ -325,38 +344,20 @@ const loadMore = () => {
 
 const filter = async () => {
   currentPage.value = 1;
+  dataList.value = [];
   await getData();
 };
 
 const onFilterTypeChange = () => {
   // Reset related fields when switching filter types
   monthField.value = null;
+  quarterField.value = null;
   yearField.value = null;
   filter();
 };
 
-let searchTimeout = null;
-const onSearchChange = () => {
-  if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    filter();
-  }, 500);
-};
-
-const openExportHistory = async () => {
-  showExportHistory.value = true;
-  try {
-    const params = {
-      company_uid: globalStore?.currentUser?.company_uid,
-      limit: 20,
-      offset: 0,
-    };
-    const res = await invoiceService.getExportReportHistory(params);
-    exportHistoryData.value = res?.data || [];
-  } catch (error) {
-    console.error('Fetch export history error:', error);
-    exportHistoryData.value = [];
-  }
+const openExportHistory = () => {
+  router.push('/e-invoice/report/export-invoice-history');
 };
 
 const exportExcel = async () => {
@@ -364,7 +365,7 @@ const exportExcel = async () => {
     isLoadingExport.value = true;
     const payload = getPayload();
     const res = await invoiceService.exportReportInvoice(payload);
-    const fileName = `BCN_MTT_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
+    const fileName = `BANG_KE_HD_HANG_THANG_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
     saveAs(res, fileName);
     toast.add({
       severity: 'success',
@@ -388,23 +389,3 @@ onMounted(() => {
   getData();
 });
 </script>
-
-<style scoped>
-.filter-slide-enter-active,
-.filter-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 200px;
-  opacity: 1;
-  overflow: hidden;
-}
-
-.filter-slide-enter-from,
-.filter-slide-leave-to {
-  max-height: 0;
-  opacity: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  margin-top: 0;
-  overflow: hidden;
-}
-</style>

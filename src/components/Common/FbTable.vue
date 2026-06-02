@@ -11,14 +11,15 @@
     tableClass="fb_table--t_table fb-text-[0.8125rem]"
     class="fb_table--wrapper"
     v-bind="$attrs"
-    resizable-columns
     @columnReorder="onColReorder"
+    @rowClick="emit('row-click', $event)"
+    @rowDblclick="emit('row-dblclick', $event)"
   >
     <slot />
 
     <template #header v-if="reorderableColumns || $slots.header">
       <div class="fb-flex fb-justify-between fb-items-center">
-        <div>
+        <div class="fb-flex-1">
           <slot name="header" />
         </div>
 
@@ -181,9 +182,8 @@
     <!-- Footer -->
     <template #footer v-if="$slots.footer || (enablePagination && !enableScrollPagination)">
       <nav class="fb-flex fb-items-center fb-pr-10">
-        <slot name="footer" />
         <div
-          class="fb-paginator fb-ml-auto"
+          class="fb-paginator fb-mr-auto"
           v-if="enablePagination && !enableScrollPagination && totalPageCount > 0"
         >
           <Select
@@ -262,6 +262,7 @@
             </Button>
           </ButtonGroup>
         </div>
+        <slot name="footer" />
       </nav>
     </template>
   </DataTable>
@@ -281,11 +282,11 @@
         :class="[
           'fb-flex fb-items-center',
           {
-            'fb-opacity-50 !fb-cursor-default': item?.disabledd,
+            'fb-opacity-50 !fb-cursor-default': item?.notAllowClick,
           },
         ]"
       >
-        <component v-if="item.icon" :is="item.icon" />
+        <component v-if="item.icon" :is="item.icon" class="!fb-h-4 !fb-w-4" color="#A4A7AE"/>
         <span :class="item?.class || ''">{{ item.label }}</span>
         <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
         <span
@@ -671,13 +672,19 @@ const onRowsChange = (e) => {
   emit('page-change', { page: 1, rows: internalRows.value });
 };
 
+let lastScrollTop = 0;
 const onScrollLoadMore = () => {
   if (!props.enableScrollPagination) return;
   if (!scrollContainer) return;
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+  // Chỉ xử lý khi cuộn dọc (scrollTop thay đổi)
+  if (scrollTop === lastScrollTop) return;
+  lastScrollTop = scrollTop;
+
   if (props.isLoading) return;
   if (!props.hasMoreData) return;
 
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
   if (scrollTop + clientHeight >= scrollHeight - props.scrollThreshold) {
     emit('page-change');
   }
@@ -861,16 +868,16 @@ onBeforeUnmount(() => {
     }
 
     thead.p-datatable-thead > tr > th {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       background-color: #fafafa;
       color: #85888e;
       font-weight: 500;
     }
     tbody.p-datatable-tbody > tr > td {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       &.action-cell {
         text-align: center;
-        padding: 0.75rem 0.5rem;
+        padding: 0.5rem 0.5rem;
       }
     }
   }
@@ -883,7 +890,6 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.75rem 0;
   gap: 1rem;
   font-size: 0.875rem;
   color: var(--text-color-secondary);

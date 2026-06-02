@@ -3,9 +3,13 @@ export const eInvoiceMenu = [
     label: '',
     items: [
       { label: 'Tổng quan', to: '/e-invoice/summary' },
-      { label: 'Quản lý hóa đơn', to: '/e-invoice/invoice-manage' },
-      { label: 'Hóa đơn bán hàng', to: '/e-invoice/sale-order' },
-      { label: 'Cấu hình', to: '/e-invoice/config' },
+      {
+        label: 'Quản lý hóa đơn',
+        items: [
+          { label: 'Danh sách hóa đơn', to: '/e-invoice/invoice-manage' },
+          { label: 'Hóa đơn bán hàng', to: '/e-invoice/sale-order' },
+        ],
+      },
       {
         label: 'Quản lý sai sót',
         items: [
@@ -46,8 +50,16 @@ export const eInvoiceMenu = [
             to: '/e-invoice/report/invoice-usage-status',
             grandchild: true,
           },
+          {
+            label: 'Lịch sử xuất báo cáo',
+            to: '/e-invoice/report/export-invoice-history',
+            grandchild: true,
+          },
         ],
       },
+
+      { label: 'Cấu hình', to: '/e-invoice/config' },
+      { label: 'Lịch sử thao tác', to: '/e-invoice/history-action' },
     ],
   },
 ];

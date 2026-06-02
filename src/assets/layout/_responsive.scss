@@ -45,7 +45,7 @@
 
       &.layout-static {
         .layout-main-container {
-          margin-left: 20rem;
+          margin-left: var(--layout-static-sidebar-width);
         }
 
         &.layout-static-inactive {

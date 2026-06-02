@@ -207,7 +207,7 @@ const setStoreSelected = async (value) => {
   }
 
   // update filter trong Pinia
-  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore?.report, stores_uid: listStoreUids } });
   emit('update:modelValue', listStoreUids);
 };
 
@@ -222,7 +222,7 @@ const onBusinessTypeChange = async () => {
   const listStoreUids = filteredItems.value
     .flatMap((city) => (city?.children ? city?.children : []))
     .map((store) => store.id);
-  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore?.report, stores_uid: listStoreUids } });
   emit('update:modelValue', listStoreUids);
 };
 

@@ -11,6 +11,7 @@ export const invoiceService = {
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
   getSaleByListTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_LIST_TRAN_ID, { params }),
+  getSaleByTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_TRAN_ID, { params }),
   getSaleChangeLog: (params) => api.get(INVOICE_ENDPOINTS.SALE_CHANGE_LOG, { params }),
 
   // Quản lý hóa đơn
@@ -53,6 +54,10 @@ export const invoiceService = {
   // Xóa Hóa đơn dự thảo
   deleteDraftInvoice: (payload) =>
     api.delete(INVOICE_ENDPOINTS.DELETE_DRAFT_INVOICE, { data: payload }),
+
+  // Hủy xuất VAT
+  deleteVatInvoice: (payload) =>
+    api.delete(INVOICE_ENDPOINTS.DELETE_VAT_INVOICE, { params: payload }),
 
   // Danh sách thông tin vat đã lưu
   getGuestVatInfo: (params) =>
@@ -112,10 +117,10 @@ export const invoiceService = {
 
   // Danh sách hóa đơn MTT
   getListBatchInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_BATCH_INVOICE, { params }),
+  getInvoiceByTranIds: (params) => api.get(INVOICE_ENDPOINTS.GET_INVOICE_BY_TRAN_IDS, { params }),
   createPosInvoice: (payload) => api.post(INVOICE_ENDPOINTS.CREATE_POS_INVOICE, payload),
-  deletePosInvoice: (payload) => {
-    return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
-  },
+  deletePosInvoice: (payload) =>
+    api.delete(INVOICE_ENDPOINTS.DELETE_BATCH_INVOICE, { data: payload }),
   sendPosInvoice: (payload) => {
     return new Promise((resolve) => setTimeout(() => resolve({ data: { success: true } }), 500));
   },
@@ -131,16 +136,27 @@ export const invoiceService = {
   // Danh sách hóa đơn chuẩn bị đóng gói
   getListPosInvoice: (params) => api.get(INVOICE_ENDPOINTS.LIST_POS_INVOICE, { params }),
 
-  // Báo cáo hddt
+  // Báo cáo hddt - view
   previewReport: async (payload) => {
     return api.get(INVOICE_ENDPOINTS.PREVIEW_REPORT, { params: payload });
   },
-
-  // Report Invoice
+  // Báo cáo hddt - xuất excel
   exportReportInvoice: async (payload) => {
     return api.post(INVOICE_ENDPOINTS.EXPORT_REPORT, payload, { responseType: 'blob' });
   },
+  // Báo cáo hddt - Lích sử xuất ex
   getExportReportHistory: async (params) => {
     return api.get(INVOICE_ENDPOINTS.EXPORT_REPORT_HISTORY, { params });
   },
+  // Tải xuống báo cáo
+  getExportReportUrl: async (id) => {
+    return api.get(INVOICE_ENDPOINTS.GET_EXPORT_REPORT_URL(id));
+  },
+  // Lịch sử thao tác
+  listAuditLogs: (params) => api.get(INVOICE_ENDPOINTS.LIST_AUDIT_LOGS, { params }),
+
+  // Phát hành hóa đơn
+  publishHsm: (payload) => api.post(INVOICE_ENDPOINTS.PUBLISH_HSM, payload),
+  hashPublishUsbToken: (payload) => api.post(INVOICE_ENDPOINTS.HASH_PUBLISH_USB_TOKEN, payload),
+  publishUsbToken: (payload) => api.post(INVOICE_ENDPOINTS.PUBLISH_USB_TOKEN, payload),
 };

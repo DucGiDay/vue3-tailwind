@@ -30,24 +30,27 @@ export const STORE_CONFIG_TABLE_COLUMNS = [
 
 // Columns Quản lý hóa đơn
 export const INVOICE_MANAGE_TABLE_COLUMNS = [
-  { field: 'inv_series', header: 'Ký hiệu' },
-  { field: 'tran_id', header: 'Mã tra cứu' },
-  { field: 'vat_publish_status', header: 'Trạng thái' },
+  { field: 'inv_series', header: 'Mẫu số & Ký hiệu' },
   { field: 'vat_invoice_number', header: 'Số hóa đơn', classes: '!fb-text-muted-color' },
-  { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
-  { field: 'inv_buyerLegalName', header: 'Thông tin khách hàng' },
   {
     field: 'vat_invoice_date',
     header: 'Ngày hóa đơn',
     classes: '!fb-text-muted-color',
     format: 'date',
   },
+  { field: 'inv_buyerDisplayName', header: 'Người mua', classes: '!fb-text-muted-color' },
+  { field: 'inv_buyerLegalName', header: 'Tên đơn vị' },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   {
     field: 'invoice_type',
     header: 'Loại hóa đơn',
     classes: '!fb-text-muted-color',
   },
+  { field: 'vat_publish_status', header: 'Trạng thái' },
+  { field: 'tran_id', header: 'Mã tra cứu' },
+  // { field: 'original_inv_invSeries', header: 'Thông tin hóa đơn gốc' },
+  // { field: 'business_location_code', header: 'Địa điểm kinh doanh' },
+  // { field: 'pos_id', header: 'POS ID' },
   {
     field: 'action',
     header: '',
@@ -66,10 +69,9 @@ export const SALE_ORDER_TABLE_COLUMNS = [
     frozen: true,
     alignFrozen: 'left',
   },
-  { field: 'vat_invoice_number', header: 'Số hóa đơn điện tử' },
-  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
+  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true, format: 'currency' },
   { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
-  { field: 'staff', header: 'Nhân viên' },
+  { field: 'employee_name', header: 'Nhân viên' },
   { field: 'table_name', header: 'Bàn' },
   { field: 'area_name', header: 'Khu vực' },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
@@ -81,6 +83,7 @@ export const SALE_ORDER_TABLE_COLUMNS = [
   {
     field: 'end_date',
     header: 'Thời gian ra',
+    format: 'datetime',
   },
 ];
 
@@ -206,12 +209,56 @@ export const DETAIL_INVOICE_LIST_COLUMNS = [
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   { field: 'status', header: 'Trạng thái' },
 ];
-// buyer_name: 'Người mua không lấy hóa đơn';
-// buyer_tax_code: '.';
-// invoice_date: 1778000400000;
-// invoice_number: '00413417';
-// invoice_series: 'C26MTM';
-// lookup_code: null;
-// payment_method: '';
-// status: 1;
-// total_amount: 0;
+
+export const HISTORY_ACTION_COLUMNS = [
+  { field: 'timestamp', header: 'Thời gian', format: 'datetime' },
+  { field: 'updated_by', header: 'Người thao tác' },
+  { field: 'tax_code', header: 'Mã số thuế' },
+  { field: 'series', header: 'Ký hiệu' },
+  { field: 'action_desc', header: 'Thao tác' },
+  {
+    field: 'detail',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 0 0 0.25rem !important' },
+  },
+];
+
+// Columns Hóa đơn MTT
+export const POS_INVOICE_TABLE_COLUMNS = [
+  { field: 'total', header: 'Tổng số hóa đơn' },
+  { field: 'created_by', header: 'Người tạo' },
+  { field: 'created_at', header: 'Ngày tạo', format: 'date' },
+  { field: 'created_by', header: 'Người cập nhật' },
+  { field: 'finished_at', header: 'Ngày cập nhật', format: 'date' },
+  { field: 'status', header: 'Trạng thái' },
+  {
+    field: 'action',
+    header: '',
+    frozen: true,
+    alignFrozen: 'right',
+    style: { width: '3rem', minWidth: '3rem', padding: '0 !important' },
+  },
+];
+// Columns Chi tiết hóa đơn MTT
+export const POS_INVOICE_DETAIL_COLUMNS = [
+  { field: 'no', header: 'STT' },
+  { field: 'extra_data.IPTemplateID', header: 'Mẫu số' },
+  { field: 'vat_invoice_series', header: 'Ký hiệu' },
+  { field: 'vat_invoice_number', header: 'Số' },
+  { field: 'merged_tran_id', header: 'Mã tra cứu' },
+  { field: 'vat_invoice_code', header: 'Mã cơ quan thuế' },
+  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
+  { field: 'status', header: 'Trạng thái' },
+];
+
+// Columns Cấu hình thời gian gửi
+export const CONFIG_TIME_TABLE_COLUMNS = [
+  { field: 'no', header: 'STT', classes: 'fb-w-4 !fb-text-center' },
+  { field: 'tax_code', header: 'Mã số thuế' },
+  { field: 'package_time_slots', header: 'Thời gian tạo' },
+  { field: 'send_time_slots', header: 'Thời gian ký' },
+  { field: 'is_enabled', header: 'Trạng thái' },
+  { field: 'action', header: 'Thao tác', classes: 'fb-w-4 !fb-text-center' },
+];
