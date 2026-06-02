@@ -63,7 +63,7 @@ function isOutsideClicked(event) {
 <template>
   <div class="layout-wrapper" :class="containerClass">
     <!-- <app-topbar></app-topbar> -->
-    <app-sidebar :class="{ 'fb-hidden': $route.meta.disableSidebar }"></app-sidebar>
+    <app-sidebar v-show="!$route.meta.disableSidebar"></app-sidebar>
     <div
       :class="[
         'layout-main-container',
