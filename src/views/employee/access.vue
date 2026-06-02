@@ -22,7 +22,6 @@
       <FbTable
         :columns="columns"
         :items="employees"
-        :rowClass="getRowClass"
         enableScrollPagination
         :hasMoreData="hasMoreData"
         :stripedRows="false"
@@ -41,11 +40,9 @@
             v-if="
               row &&
               Array.isArray(row.products) &&
-              row.products.some(
-                (product) => product.is_active === false && product.is_requesting === true,
-              )
+              row.products.find((product) => product.is_active === false)
             "
-            class="fb-flex fb-items-center fb-justify-center fb-gap-2"
+            class="fb-flex fb-items-center fb-justify-end fb-gap-2"
           >
             <Button
               :label="$t('EMPLOYEE_ACCESS--CANCEL')"
@@ -68,7 +65,7 @@
     v-model:visible="visibleProductModal"
     modal
     :header="$t('EMPLOYEE_ACCESS--PRODUCT')"
-    :style="{ width: '750px' }"
+    :style="{ width: '560px' }"
   >
     <div class="fb-flex fb-flex-col fb-gap-3">
       <div
@@ -81,7 +78,7 @@
         @click="toggleProduct(product.id)"
       >
         <label :for="product.id">
-          {{ product.code === 'GENERAL' ? 'FABI' : product.name }}
+          {{ product.name }}
         </label>
         <Checkbox
           v-model="selectedProducts"
@@ -95,12 +92,7 @@
 
     <template #footer>
       <div class="fb-flex fb-justify-end fb-gap-2">
-        <Button
-          :label="$t('EMPLOYEE_ACCESS--CLOSE')"
-          text
-          class="border-btn"
-          @click="visibleProductModal = false"
-        />
+        <Button :label="$t('EMPLOYEE_ACCESS--CLOSE')" text @click="visibleProductModal = false" />
 
         <Button :label="$t('EMPLOYEE_ACCESS--SAVE')" @click="saveProducts" />
       </div>
@@ -255,60 +247,45 @@ const getAllProducts = async () => {
 
 const mapSelectedProducts = () => {
   selectedProducts.value =
-    currentRow.value?.data?.products
-      ?.filter(
-        (product) =>
-          !(
-            product.is_active === false &&
-            product.is_requesting === false
-          )
-      )
-      .map((product) => product.product_uid) || [];
+    currentRow.value?.data?.products?.map((product) => product.product_uid) || [];
 };
 
-const saveProducts = async () => {
-  if (!currentRow.value) return;
+const saveProducts = () => {
+  const oldProducts = currentRow.value?.products || [];
 
-  try {
-    const requestProducts = selectedProducts.value || [];
+  const updatedProducts = productOptions.value
+    .filter((product) => selectedProducts.value.includes(product.id))
+    .map((product) => {
+      const existed = oldProducts.find((item) => item.product_uid === product.id);
 
-    const payload = {
-      user_uid: currentRow.value.data.user_uid,
-      product_uids: requestProducts,
-      mode: 'REPLACE',
-    };
+      if (existed) {
+        return existed;
+      }
 
-    const res = await employeeService.updateProductAccess(payload);
+      return {
+        id: crypto.randomUUID(),
+        product_uid: product.id,
+        product_code: product.code,
+        product_name: product.name,
+        product_description: product.description,
+        is_active: false,
+        is_requesting: false,
+      };
+    });
 
-    if (res?.error) {
-      toast.add({
-        severity: 'error',
-        summary: res.error?.message || 'Lưu thất bại',
-        life: 3000,
-      });
+  currentRow.value.products = updatedProducts;
 
-      return;
+  employees.value = employees.value.map((employee) => {
+    if (employee.user_uid === currentRow.value.data.user_uid) {
+      return {
+        ...employee,
+        products: [...updatedProducts],
+      };
     }
 
-    toast.add({
-      severity: 'success',
-      summary: $t('EMPLOYEE_ACCESS--APPROVAL_SUCCESS'),
-      life: 3000,
-    });
-
-    visibleProductModal.value = false;
-
-    currentPage.value = 1;
-    employees.value = [];
-
-    await getData();
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: error?.response?.data?.message || 'Có lỗi xảy ra',
-      life: 3000,
-    });
-  }
+    return employee;
+  });
+  visibleProductModal.value = false;
 };
 const toggleProduct = (id) => {
   if (selectedProducts.value.includes(id)) {
@@ -327,7 +304,7 @@ const rejectRequest = async (row) => {
     const payload = {
       user_uid: row.user_uid,
       product_uids: [],
-      mode: 'MERGE',
+      mode: 'REPLACE',
     };
 
     const res = await employeeService.updateProductAccess(payload);
@@ -412,13 +389,6 @@ const approveRequest = async (row) => {
   }
 };
 
-const getRowClass = (row) => {
-  const hasPendingProduct =
-    row && Array.isArray(row.products) && row.products.some((product) =>
-      product.is_active === false && product.is_requesting === true);
-  return hasPendingProduct ? 'pending-row' : '';
-};
-
 watch(filterStatus, async () => {
   await filter();
 });
@@ -485,20 +455,5 @@ onMounted(() => {
 
 :deep(.p-checkbox-box) {
   border-radius: 6px;
-}
-
-:deep(.p-dialog-header) {
-  font-weight: 500 !important;
-  font-size: 16px !important;
-}
-.border-btn {
-  border: solid 1px #e5e7eb;
-  color: rgba(65, 70, 81, 1);
-}
-</style>
-
-<style lang="scss">
-.p-datatable-tbody > tr.pending-row > td {
-  background: #eef6fc !important;
 }
 </style>
