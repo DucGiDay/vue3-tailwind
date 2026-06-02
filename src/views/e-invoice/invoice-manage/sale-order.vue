@@ -65,9 +65,7 @@
         </template>
         <!-- START Tab hóa đơn chưa xuất -->
         <template #tran_id="{ record, row }">
-          <span
-            v-tooltip.top="{ value: record, showDelay: 500, hideDelay: 100 }"
-          >
+          <span v-tooltip.top="{ value: record, showDelay: 500, hideDelay: 100 }">
             {{ truncate(record) }}
           </span>
           <span v-if="row?.extra_sale?.error_vat" v-tooltip="{ value: row?.extra_sale?.error_vat }">
@@ -100,19 +98,6 @@
         <!-- END Tab hóa đơn chưa xuất -->
 
         <!-- START Tab hóa đơn chờ đồng bộ và Hóa đơn xuất lỗi -->
-        <template #inv_series="{ record, row }">
-          <div>{{ `Mẫu số: ${row.pattern || ''}` }}</div>
-          <div>{{ `Ký hiệu: ${record || ''}` }}</div>
-        </template>
-        <template #inv_buyerLegalName="{ record, row }">
-          <div>{{ `Tên: ${record}` }}</div>
-          <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
-        </template>
-        <template #invoice_type="{ record, row }">
-          <div>{{ record }}</div>
-          <div v-if="row?.origin_tran_id" class="fb-text-primary">({{ row.origin_tran_id }})</div>
-        </template>
-
         <template #vat_publish_status="{ record, row }">
           <Tag
             :severity="statusMap(row?.vat_publish_status_code)?.severity || 'secondary'"

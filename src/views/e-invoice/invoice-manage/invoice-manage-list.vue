@@ -113,18 +113,6 @@
             @change="filter"
           />
         </template>
-        <template #inv_series="{ record, row }">
-          <div>{{ `Mẫu số: ${row.pattern || ''}` }}</div>
-          <div>{{ `Ký hiệu: ${record}` }}</div>
-        </template>
-        <template #inv_buyerLegalName="{ record, row }">
-          <div>{{ `Tên: ${record}` }}</div>
-          <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
-        </template>
-        <template #invoice_type="{ record, row }">
-          <div>{{ record }}</div>
-          <div v-if="row?.origin_tran_id" class="fb-text-primary">({{ row.origin_tran_id }})</div>
-        </template>
 
         <template #vat_publish_status="{ record, row }">
           <Tag
