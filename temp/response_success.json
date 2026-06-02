@@ -1,0 +1,32 @@
+{
+    "status": true,
+    "Status": true,
+    "statusCode": 200,
+    "StatusCode": 200,
+    "userMessege": null,
+    "Message": null,
+    "DevMessage": null,
+    "Messages": [],
+    "Data": {
+        "CertBase64": "XXXxxxXXXxx...",
+        "certBase64": "XXXxxxXXXxx...",
+        "CertSerial": "YYY...",
+        "certSerial": "YYY...",
+        "Supplier": "CÔNG TY CỔ PHẦN IPOS.VN",
+        "Owner": "HILO-CA SHA-256",
+        "FromDate": "06/05/2026T13:26:24",
+        "ToDate": "04/01/2027T15:14:16",
+        "Subject": "OID.0.9.2342.19200300.100.1.1=MST:0104789847, CN=CÔNG TY CỔ PHẦN IPOS.VN, O=CÔNG TY CỔ PHẦN IPOS.VN, S=Hà Nội, C=VN"
+    },
+    "data": {
+        "CertBase64": "XXXxxxXXXxx...",
+        "certBase64": "XXXxxxXXXxx...",
+        "CertSerial": "YYY...",
+        "certSerial": "YYY...",
+        "Supplier": "CÔNG TY CỔ PHẦN IPOS.VN",
+        "Owner": "HILO-CA SHA-256",
+        "FromDate": "06/05/2026T13:26:24",
+        "ToDate": "04/01/2027T15:14:16",
+        "Subject": "OID.0.9.2342.19200300.100.1.1=MST:0104789847, CN=CÔNG TY CỔ PHẦN IPOS.VN, O=CÔNG TY CỔ PHẦN IPOS.VN, S=Hà Nội, C=VN"
+    }
+}

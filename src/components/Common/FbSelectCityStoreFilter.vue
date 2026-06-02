@@ -8,7 +8,7 @@
     :placeholder="placeholder"
     filterPlaceholder="Tìm kiếm"
     v-model:expandedKeys="expandedKeys"
-    class="md:fb-w-[300px] fb-w-full"
+    class="md:fb-w-[18.75rem] fb-w-full"
     display="chip"
     :size="size"
     showClear
@@ -193,19 +193,21 @@ const expandNode = (node) => {
 
 const setStoreSelected = async (value) => {
   const listStoreUids = [];
-  filteredItems.value.forEach((city) => {
-    const isEmptyCity = !city.children || !city.children.length;
-    if (!isEmptyCity) {
-      city.children.forEach((store) => {
-        if (value[store.key]?.checked) {
-          listStoreUids.push(store.key);
-        }
-      });
-    }
-  });
+  if (value) {
+    filteredItems.value.forEach((city) => {
+      const isEmptyCity = !city.children || !city.children.length;
+      if (!isEmptyCity) {
+        city.children.forEach((store) => {
+          if (value[store.key]?.checked) {
+            listStoreUids.push(store.key);
+          }
+        });
+      }
+    });
+  }
 
   // update filter trong Pinia
-  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore?.report, stores_uid: listStoreUids } });
   emit('update:modelValue', listStoreUids);
 };
 
@@ -220,7 +222,7 @@ const onBusinessTypeChange = async () => {
   const listStoreUids = filteredItems.value
     .flatMap((city) => (city?.children ? city?.children : []))
     .map((store) => store.id);
-  await filterStore.updateFilter({ report: { ...filterStore.report, stores_uid: listStoreUids } });
+  await filterStore.updateFilter({ report: { ...filterStore?.report, stores_uid: listStoreUids } });
   emit('update:modelValue', listStoreUids);
 };
 

@@ -24,12 +24,12 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/no-reserved-component-names': 'off',
     'vue/no-unused-vars': 'warn',
-    'no-unused-vars': 'warn',
-    'vue/component-tags-order': [
-      'error',
-      {
-        order: ['script', 'template', 'style']
-      }
-    ]
+    'no-unused-vars': 'warn'
+    // 'vue/component-tags-order': [
+    //   'error',
+    //   {
+    //     order: ['script', 'template', 'style']
+    //   }
+    // ]
   }
 };

@@ -94,7 +94,8 @@
 //   font-display: swap;
 // }
 
-$font-family-base: 'SF Pro Display',
+$font-family-base:
+  'SF Pro Display',
   -apple-system,
   BlinkMacSystemFont,
   'Segoe UI',
@@ -124,12 +125,63 @@ body #sub-app {
     text-decoration: none;
   }
 
-  .p-button:focus-visible {
-    outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  // ::-webkit-scrollbar {
+  //   width: 8px;
+  //   height: 8px;
+  // }
+  // ::-webkit-scrollbar-track {
+  //   background: transparent;
+  // }
+  // ::-webkit-scrollbar-thumb {
+  //   border-radius: 4px;
+  //   background: rgba(156, 163, 175, 0.5); /* gray-400 */
+  // }
+  // ::-webkit-scrollbar-thumb:hover {
+  //   background: rgba(107, 114, 128, 0.8); /* gray-500 */
+  // }
+
+  // Hiệu ứng slide cho filter
+  .filter-slide-enter-active,
+  .filter-slide-leave-active {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 200px;
+    opacity: 1;
+    overflow: hidden;
   }
 
-  .p-button:focus {
-    outline-color: transparent !important;
-    // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+  .filter-slide-enter-from,
+  .filter-slide-leave-to {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    overflow: hidden;
   }
+}
+
+// Phải để ngoài #sub-app để ghi đè style của PrimeVue
+.p-button:focus-visible,
+.p-togglebutton:focus-visible {
+  outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+}
+
+.p-button:focus,
+.p-togglebutton:focus {
+  outline: none !important;
+  // outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color) !important;
+}
+
+.p-dialog-header {
+  border-bottom: 1px solid var(--surface-border) !important;
+}
+
+.p-dialog-footer {
+  border-top: 1px solid var(--surface-border) !important;
+}
+
+// Ghi đè style cho nút close của Toast
+.p-toast-close-button:focus,
+.p-toast-close-button:focus-visible {
+  outline: none !important;
 }

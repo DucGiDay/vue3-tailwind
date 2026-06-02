@@ -15,7 +15,7 @@
     align-items: center;
 
     .layout-topbar-logo-container {
-      width: 20rem;
+      width: var(--layout-static-sidebar-width);
       display: flex;
       align-items: center;
     }

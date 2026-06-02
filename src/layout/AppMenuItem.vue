@@ -1,8 +1,9 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const { layoutState, setActiveMenuItem, toggleMenu } = useLayout();
 
@@ -28,6 +29,12 @@ const props = defineProps({
 const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
+onMounted(() => {
+  if (props.item.to && checkActiveRoute(props.item)) {
+    setActiveMenuItem(itemKey.value);
+  }
+});
+
 onBeforeMount(() => {
   itemKey.value = props.parentItemKey
     ? props.parentItemKey + '-' + props.index
@@ -42,7 +49,8 @@ onBeforeMount(() => {
 watch(
   () => layoutState.activeMenuItem,
   (newVal) => {
-    isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
+    isActiveMenu.value =
+      newVal === itemKey.value || (newVal && newVal.startsWith(itemKey.value + '-'));
   }
 );
 
@@ -63,6 +71,26 @@ function itemClick(event, item) {
     item.command({ originalEvent: event, item: item });
   }
 
+  if (item.items && !isActiveMenu.value && !isAnyChildActive(item)) {
+    const firstChild = item.items.find((i) => i.to && i.visible !== false);
+    if (firstChild) {
+      router.push(firstChild.to);
+    }
+  }
+
+  onActiveMenu(item);
+}
+
+function isAnyChildActive(item) {
+  if (!item.items) return false;
+  return item.items.some((child) => {
+    if (checkActiveRoute(child)) return true;
+    if (child.items) return isAnyChildActive(child);
+    return false;
+  });
+}
+
+const onActiveMenu = (item) => {
   const foundItemKey = item.items
     ? isActiveMenu.value
       ? props.parentItemKey
@@ -70,15 +98,21 @@ function itemClick(event, item) {
     : itemKey.value;
 
   setActiveMenuItem(foundItemKey);
-}
+};
 
 function checkActiveRoute(item) {
-  return route.path === item.to || route.fullPath.startsWith(item?.startWith);
+  return route.path === item.to || (item?.startWith && route.fullPath.startsWith(item.startWith));
 }
 </script>
 
 <template>
-  <li :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }">
+  <li
+    :class="[
+      'fb-text-sm',
+      { 'fb-border-l fb-ml-5': item.grandchild },
+      { 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }
+    ]"
+  >
     <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">
       {{ item.label }}
     </div>
@@ -89,10 +123,15 @@ function checkActiveRoute(item) {
       :class="item.class"
       :target="item.target"
       tabindex="0"
+      class="fb-border-l-[6px] fb-border-l-[transparent] fb-font-medium fb-rounded-md fb-flex fb-items-center fb-justify-between"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+      <IconChevronRight
+        :class="[
+          isActiveMenu ? 'fb-rotate-[270deg]' : 'fb-rotate-[90deg]',
+          'fb-transition-transform'
+        ]"
+      />
     </a>
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
@@ -105,9 +144,7 @@ function checkActiveRoute(item) {
       tabindex="0"
       :to="item.to"
     >
-      <i :class="item.icon" class="layout-menuitem-icon"></i>
       <span class="layout-menuitem-text">{{ item.label }}</span>
-      <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
     </router-link>
     <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
       <ul v-show="root ? true : isActiveMenu" class="layout-submenu">

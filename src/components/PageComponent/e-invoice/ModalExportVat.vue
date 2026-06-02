@@ -8,6 +8,12 @@
   >
     <template #header>
       <div v-if="props.saleData?.is_immediate"></div>
+      <div
+        v-else-if="props.saleData?.is_re_export_vat"
+        class="fb-flex fb-flex-col fb-items-center fb-flex-1"
+      >
+        <h6 class="fb-font-semibold fb-text-lg">{{ 'Xuất VAT' }}</h6>
+      </div>
       <div v-else class="fb-flex fb-flex-col fb-items-center fb-flex-1">
         <h6 class="fb-font-semibold fb-text-lg">{{ $t('SALE_SYNC_VAT--VAT_INFO') }}</h6>
         <p class="fb-text-sm fb-text-error fb-mt-1">
@@ -23,9 +29,18 @@
       >
         {{
           $t('SALE_SYNC_VAT--EXPORT_IMMEDIATE--TEXT_NOTE', {
-            buyerDisplayname: getInvBuyerDisplayName()
+            buyerDisplayname: getInvBuyerDisplayName(),
           })
         }}
+      </div>
+      <div v-else-if="props.saleData?.is_re_export_vat" class="fb-font-medium fb-text-lg">
+        <FbTable
+          :columns="reExportVatColumns"
+          :items="extraSale ? [extraSale] : []"
+          :showGridlines="true"
+          :hideIndexRow="true"
+          :scrollHeight="'flex'"
+        ></FbTable>
       </div>
       <Fluid v-else class="fb-space-y-4">
         <!-- Đối tượng: Cá nhân / Tổ chức -->
@@ -203,7 +218,7 @@
           </div>
         </div>
 
-        <!-- Mã đơn vị dự toán -->
+        <!-- Mã quan hệ ngân sách toán -->
         <div class="fb-grid fb-grid-cols-12 fb-gap-1">
           <label for="budget_unit" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
             {{ $t('SALE_SYNC_VAT--INPUT_BUDGET_UNIT') }}
@@ -256,6 +271,7 @@
         />
         <div v-else class="fb-space-x-2">
           <Button
+            v-if="!props.saleData?.is_re_export_vat"
             class="btn"
             :label="$t('SALE_SYNC_VAT--NOT_RECEIVE_BILL')"
             raised
@@ -292,14 +308,15 @@ const props = defineProps({
   // sale hoặc list sales cần xuất
   saleData: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 });
 
 const visible = defineModel('visible', { default: false });
 const emit = defineEmits(['success']);
 const toast = useToast();
 const { t } = useI18n();
+
 const isLoading = ref(false);
 const scope = ref(1); // 0: Tổ chức, 1: Cá nhân
 
@@ -317,10 +334,25 @@ const DEFAULT_EXTRA_SALE = {
   inv_buyerIdentityCard: '',
   note: '',
   budget_unit_code: '',
-  passport_number: ''
+  passport_number: '',
 };
 
 const extraSale = ref({ ...DEFAULT_EXTRA_SALE });
+
+const reExportVatColumns = [
+  { field: 'inv_buyerDisplayName', header: 'Tên người mua' },
+  { field: 'inv_buyerLegalName', header: 'Tên đơn vị' },
+  { field: 'inv_buyerTaxCode', header: 'Mã số thuế' },
+  { field: 'inv_buyerAddressLine', header: 'Địa chỉ' },
+  { field: 'inv_buyerEmail', header: 'Email' },
+  { field: 'sdtnmua', header: 'Số điện thoại' },
+  { field: 'inv_buyerIdentityCard', header: 'CCCD' },
+  { field: 'passport_number', header: 'Hộ chiếu' },
+  { field: 'inv_buyerBankAccount', header: 'Tài khoản ngân hàng' },
+  { field: 'inv_buyerBankName', header: 'Tên ngân hàng' },
+  { field: 'budget_unit_code', header: 'Mã quan hệ ngân sách toán' },
+  { field: 'note', header: 'Ghi chú' },
+];
 
 // Simple debounce implementation
 const debounce = (fn, delay) => {
@@ -339,7 +371,7 @@ const searchByTaxCode = async () => {
 
   try {
     const respoonse = await invoiceService.searchByTaxCode({
-      tax_code: extraSale.value.inv_buyerTaxCode
+      tax_code: extraSale.value.inv_buyerTaxCode,
     });
 
     if (respoonse?.data) {
@@ -354,8 +386,8 @@ const searchByTaxCode = async () => {
     toast.add({
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
-      detail: error.message || 'Đã có lỗi xảy ra',
-      life: 3000
+      detail: error?.message || '',
+      life: 3000,
     });
   }
 };
@@ -373,7 +405,7 @@ const validateForm = () => {
         severity: 'warn',
         summary: t('NOTIFICATION--TITLE_WARNING'),
         detail: t('VALIDATE--REQUIRED'),
-        life: 3000
+        life: 3000,
       });
       return false;
     }
@@ -405,7 +437,7 @@ const handleExport = async () => {
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
       store_uid: salesList.length ? salesList[0]?.store_uid : '',
-      list_tran_id: salesList.map((e) => e.tran_id)
+      list_tran_id: salesList.map((e) => e.tran_id),
     };
 
     const { error } = await invoiceStore.exportVatInvoice(payload);
@@ -416,7 +448,7 @@ const handleExport = async () => {
       severity: 'success',
       // summary: t('NOTIFICATION--TITLE_SUCCESS'),
       detail: 'Dữ liệu đang được đồng bộ sang HĐĐT',
-      life: 5000
+      life: 5000,
     });
 
     emit('success');
@@ -428,7 +460,7 @@ const handleExport = async () => {
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
       detail: error?.message || t('ERROR_RESPONSE_MESSAGE--520'),
-      life: 3000
+      life: 5000,
     });
   } finally {
     isLoading.value = false;
@@ -436,8 +468,8 @@ const handleExport = async () => {
 };
 
 const mapStoreData = () => {
-  return globalStore.storesAccessibleInCurrentBrand.find(
-    (store) => store.id === props.saleData.sales[0].store_uid
+  return globalStore.currentBrandStores.find(
+    (store) => store.id === props.saleData.sales[0].store_uid,
   );
 };
 
@@ -455,7 +487,6 @@ watch(visible, (newVal) => {
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
     console.log(props.saleData);
-    
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };

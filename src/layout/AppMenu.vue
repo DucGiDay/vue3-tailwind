@@ -1,20 +1,24 @@
 <script setup>
 import AppMenuItem from './AppMenuItem.vue';
+import { eInvoiceMenu, employee } from '@/common/constant/menu.constant';
+import { useRoute } from 'vue-router';
 
-const models = ref([
-  {
-    label: '',
-    items: [
-      { label: 'Tổng quan', to: '/e-invoice/summary' },
-      { label: 'Quản lý hóa đơn', to: '/e-invoice/invoice-manage' },
-      { label: 'Hóa đơn bán hàng', to: '/e-invoice/sale-order' },
-      { label: 'Cấu hình', to: '/e-invoice/config' }
-    ]
-  }
-]);
+const route = useRoute();
+
+const parentRoute = computed(() => {
+  const path = route.fullPath.split('/');
+  return path[1];
+});
 
 const listItems = computed(() => {
-  return models.value;
+  switch (parentRoute.value) {
+    case 'e-invoice':
+      return eInvoiceMenu;
+    case 'employee':
+      return employee;
+    default:
+      return eInvoiceMenu;
+  }
 });
 </script>
 

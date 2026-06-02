@@ -441,7 +441,7 @@ const searchByTaxCode = async () => {
     toast.add({
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
-      detail: error.message || 'Đã có lỗi xảy ra',
+      detail: error.message || '',
       life: 3000
     });
   }
@@ -573,7 +573,7 @@ const handleExport = async () => {
     toast.add({
       severity: 'error',
       detail: error?.message || t('ERROR_RESPONSE_MESSAGE--520'),
-      life: 3000
+      life: 5000
     });
   } finally {
     isLoadingSave.value = false;
@@ -650,7 +650,7 @@ const deleteVatOption = (option) => {
         toast.add({
           severity: 'error',
           detail: error.message || 'Xóa thất bại',
-          life: 3000
+          life: 5000
         });
       }
     }

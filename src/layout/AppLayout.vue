@@ -23,7 +23,7 @@ const containerClass = computed(() => {
     'layout-static-inactive':
       layoutState.staticMenuDesktopInactive && layoutConfig.menuMode === 'static',
     'layout-overlay-active': layoutState.overlayMenuActive,
-    'layout-mobile-active': layoutState.staticMenuMobileActive
+    'layout-mobile-active': layoutState.staticMenuMobileActive,
   };
 });
 
@@ -63,8 +63,18 @@ function isOutsideClicked(event) {
 <template>
   <div class="layout-wrapper" :class="containerClass">
     <!-- <app-topbar></app-topbar> -->
-    <app-sidebar></app-sidebar>
-    <div class="layout-main-container" :class="{ 'is-table-layout': $route.meta.isTableLayout }">
+    <app-sidebar :class="{ 'fb-hidden': $route.meta.disableSidebar }"></app-sidebar>
+    <div
+      :class="[
+        'layout-main-container',
+        'fb-relative',
+        $route.meta?.layoutClass || '',
+        {
+          'is-table-view-paginate': $route.meta?.isTableViewPaginate,
+          'disabled-sidebar-sub': $route.meta?.disableSidebar,
+        },
+      ]"
+    >
       <router-view></router-view>
     </div>
     <div class="layout-mask fb-animate-fadein"></div>

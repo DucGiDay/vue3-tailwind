@@ -1,14 +1,14 @@
 <template>
   <div class="layout-wrapper">
     <div class="layout-main-container is-table-layout !fb-px-4">
-      <FbTableView
+      <TableView
         v-model:searchValue="searchField"
         searchPlaceholder="Tìm kiếm mã hóa đơn"
         @search="onSearchChange"
       >
         <template #table>
           <FbTable
-            :columns="tableColumns"
+            :columns="EXTEND_LICENSE_TABLE_COLUMNS"
             :is-loading="isLoading"
             :items="orderHistory.data"
             enablePagination
@@ -90,7 +90,7 @@
             @hide="onHidePaying"
           />
         </template>
-      </FbTableView>
+      </TableView>
     </div>
   </div>
 </template>
@@ -98,7 +98,8 @@
 <script setup>
 import {
   ORDER_STATUS_FILTER_LIST,
-  ORDER_STATUS_COLOR
+  ORDER_STATUS_COLOR,
+  EXTEND_LICENSE_TABLE_COLUMNS
 } from '@/common/constant/extend-license.constant';
 import { useExtendLicenseStore } from '@/stores/extend-license.store';
 import { useGlobalStore } from '@/stores/global.store';
@@ -106,27 +107,17 @@ import { storeToRefs } from 'pinia';
 import { formatCurrency } from '@/common/utils/common';
 import DetailOrder from '@/components/PageComponent/extend-license/DetailOrder.vue';
 import ModalPayingOrder from '@/components/PageComponent/extend-license/ModalPayingOrder.vue';
-import FbTableView from '@/components/Common/FbTableView.vue';
+import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { extendLicenseService } from '@/api/services/extend-license/extend-license.service';
 import { useToast } from 'primevue/usetoast';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-// Constants
-const tableColumns = [
-  { field: 'roCode', header: 'Mã hóa đơn' },
-  { field: 'contactName', header: 'Người liên hệ' },
-  { field: 'contactPhone', header: 'Số điện thoại' },
-  { field: 'companyTaxEmail', header: 'Email' },
-  { field: 'amount', header: 'Tổng tiền' },
-  { field: 'status', header: 'Trạng thái' },
-  { field: 'action', header: '', style: { padding: '0 !important' } }
-];
+const route = useRoute();
 const toast = useToast();
 
 // States
 const searchField = ref('');
-const statusField = ref(null);
-const statusOptions = ref([{ name: 'Tất cả trạng thái', code: null }, ...ORDER_STATUS_FILTER_LIST]);
 const statusMap = (status) => {
   return ORDER_STATUS_COLOR[status];
 };
@@ -153,7 +144,8 @@ const getData = async ({ page, rows } = {}) => {
     page: currentPage.value,
     numPerPage: numPerPage.value,
     list_store_uid: globalStore.storesIdPermissionActive.join(','),
-    search: searchField.value
+    textSearch: searchField.value,
+    ...(route.query?.product_code ? { productCode: route.query?.product_code } : {})
   });
 
   totalRecords.value = orderHistory.value?.meta?.count;
