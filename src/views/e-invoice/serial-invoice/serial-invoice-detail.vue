@@ -24,6 +24,7 @@
               placeholder="Chọn mã số thuế"
               size="small"
               class="fb-w-full"
+              disabled
               :invalid="!!error.tax_code"
               :loading="isLoadingTaxStores"
               @change="onTaxCodeChange"
@@ -70,9 +71,18 @@
                 :invalid="!!error.serial"
                 @input="delete error.serial"
               />
-              <Message v-if="error.serial" severity="error" size="small" variant="simple">
+              <Message v-if="error.serial" class="fb-text-xs" severity="error" size="small" variant="simple">
                 {{ error.serial }}
               </Message>
+              <div class="fb-text-xs fb-text-gray-500">
+                Cấu trúc ký hiệu (tối thiểu 6 ký tự, VD: C26MC01):
+                <ul class="fb-list-disc fb-pl-4 fb-mt-1">
+                  <li>Ký tự 1: Chữ cái phân loại hóa đơn (VD: C, K).</li>
+                  <li>Ký tự 2-3: Hai số cuối của năm phát hành.</li>
+                  <li>Ký tự 4: Bắt buộc là chữ "M".</li>
+                  <li>Từ ký tự thứ 5 trở đi: Các ký tự tùy chọn.</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Mẫu số -->
@@ -85,6 +95,7 @@
                 v-model="form.pattern"
                 placeholder="Nhập mẫu số"
                 size="small"
+                disabled
                 class="fb-w-full"
                 :invalid="!!error.pattern"
                 @input="delete error.pattern"
@@ -153,7 +164,7 @@ const isLoadingTemplate = ref(false);
 const error = ref({});
 
 const form = reactive({
-  tax_code: '',
+  tax_code: invoiceStore.currentTaxCode || '',
   pattern: '', // mẫu số
   template_obj: null, // đối tượng mẫu hóa đơn được chọn từ list
   serial: '', // ký hiệu
@@ -161,7 +172,7 @@ const form = reactive({
   note: '',
   register_id: '',
   register_name: '',
-  is_pos: true
+  is_pos: true,
 });
 
 const taxStoreList = computed(() => invoiceStore.listTaxStores.data || []);
@@ -178,14 +189,14 @@ const onTaxCodeChange = async () => {
   try {
     isLoadingTemplate.value = true;
     await invoiceStore.getSerialInvoiceTemplate({
-      tax_code: form.tax_code
+      tax_code: form.tax_code,
     });
   } catch (err) {
     toast.add({
       severity: 'error',
       summary: 'Lỗi',
       detail: err?.message || '',
-      life: 3000
+      life: 3000,
     });
   } finally {
     isLoadingTemplate.value = false;
@@ -197,9 +208,11 @@ const onTemplateChange = () => {
   if (form.template_obj) {
     form.register_id = form.template_obj.Value ? String(form.template_obj.Value) : '';
     form.register_name = form.template_obj.Name || '';
+    form.pattern = form.template_obj.Description || '';
   } else {
     form.register_id = '';
     form.register_name = '';
+    form.pattern = '';
   }
 };
 
@@ -208,15 +221,24 @@ const handleSave = async () => {
     { id: 'tax_code', rules: ['required'] },
     { id: 'template_obj', rules: ['required'], message: 'Vui lòng chọn template' },
     { id: 'pattern', rules: ['required'] },
-    { id: 'serial', rules: ['required'] },
-    { id: 'note', rules: ['required'] }
+    {
+      id: 'serial',
+      rules: [
+        'required',
+        (val) =>
+          !val ||
+          /^[a-zA-Z]\d{2}[mM][a-zA-Z0-9]{2,}$/.test(val) ||
+          'Ký hiệu hóa đơn không đúng định dạng',
+      ],
+    },
+    { id: 'note', rules: ['required'] },
   ]);
 
   if (Object.keys(error.value).length > 0) {
     toast.add({
       severity: 'warn',
       summary: 'Vui lòng kiểm tra lại các trường thông tin',
-      life: 3000
+      life: 3000,
     });
     return;
   }
@@ -231,7 +253,7 @@ const handleSave = async () => {
     register_name: form.register_name,
     is_pos: form.is_pos,
     brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid
+    company_uid: globalStore?.currentUser?.company_uid,
   };
 
   loading.value = true;
@@ -241,14 +263,14 @@ const handleSave = async () => {
       severity: 'success',
       summary: 'Thành công',
       detail: 'Thêm ký hiệu hóa đơn thành công',
-      life: 3000
+      life: 3000,
     });
     router.back();
   } catch (err) {
     toast.add({
       severity: 'error',
       summary: 'Lỗi',
-      detail: err?.message || ''
+      detail: err?.message || '',
     });
   } finally {
     loading.value = false;
@@ -264,7 +286,7 @@ const getListStoreGroupByTaxCode = async () => {
   isLoadingTaxStores.value = true;
   const payload = {
     brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid
+    company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getListStoreGroupByTaxCode(payload);
   isLoadingTaxStores.value = false;
@@ -272,5 +294,8 @@ const getListStoreGroupByTaxCode = async () => {
 
 onMounted(async () => {
   getListStoreGroupByTaxCode();
+  if (form.tax_code) {
+    onTaxCodeChange();
+  }
 });
 </script>

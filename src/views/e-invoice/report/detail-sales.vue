@@ -24,68 +24,87 @@
     </template>
 
     <template #filters>
-      <!-- Filter by Date -->
-      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
+      <div
+        class="fb-bg-white fb-flex-1 fb-p-2 fb-rounded-lg fb-border fb-border-surface-200 fb-flex fb-flex-col fb-gap-4"
+      >
+        <div class="fb-flex fb-items-center fb-gap-3 fb-flex-wrap">
+          <!-- Filter by Date -->
+          <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
 
-      <!-- Lọc Store -->
-      <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
+          <!-- Lọc Store -->
+          <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
 
-      <!-- Other filters -->
-      <Select
-        v-model="statisticTypeField"
-        :options="statisticTypeOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Hình thức thống kê"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
-      <Select
-        v-model="creatorField"
-        :options="creatorOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn Người tạo"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
-      <Select
-        v-model="patternField"
-        :options="patternOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn Mẫu số"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
-      <Select
-        v-model="serialField"
-        :options="serialOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn Ký hiệu"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
-      <Select
-        v-model="statusField"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Chọn Trạng thái"
-        class="fb-w-auto md:fb-w-48"
-        showClear
-        size="small"
-        @change="filter"
-      />
+          <Button
+            v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
+            :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+            outlined
+            size="small"
+            class="fb-ml-auto"
+            @click="showAdvancedFilter = !showAdvancedFilter"
+          >
+            <IconFilter color="currentColor" />
+          </Button>
+        </div>
+      </div>
+      <transition name="filter-slide">
+        <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full">
+          <Select
+            v-model="statisticTypeField"
+            :options="statisticTypeOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Hình thức thống kê"
+            class="fb-flex-1"
+            showClear
+            size="small"
+            @change="filter"
+          />
+          <Select
+            v-model="creatorField"
+            :options="creatorOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn Người tạo"
+            class="fb-flex-1"
+            showClear
+            size="small"
+            @change="filter"
+          />
+          <Select
+            v-model="patternField"
+            :options="patternOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn Mẫu số"
+            class="fb-flex-1"
+            showClear
+            size="small"
+            @change="filter"
+          />
+          <Select
+            v-model="serialField"
+            :options="serialOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn Ký hiệu"
+            class="fb-flex-1"
+            showClear
+            size="small"
+            @change="filter"
+          />
+          <Select
+            v-model="statusField"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn Trạng thái"
+            class="fb-flex-1"
+            showClear
+            size="small"
+            @change="filter"
+          />
+        </div>
+      </transition>
     </template>
 
     <template #table>
@@ -121,6 +140,7 @@ import { saveAs } from 'file-saver';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { DETAIL_SALES_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
+import IconFilter from '@/components/Common/Icon/IconFilter.vue';
 import FbLoading from '@/components/Common/FbLoading.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
@@ -138,6 +158,7 @@ const creatorField = ref(null);
 const patternField = ref(null);
 const serialField = ref(null);
 const statusField = ref(null);
+const showAdvancedFilter = ref(true);
 
 const statisticTypeOptions = ref([]); // Will be populated from API/Constants
 const creatorOptions = ref([]);

@@ -65,7 +65,9 @@
         </template>
         <!-- START Tab hóa đơn chưa xuất -->
         <template #tran_id="{ record, row }">
-          <span v-tooltip.top="record ? { value: record } : null">
+          <span
+            v-tooltip.top="{ value: record, showDelay: 500, hideDelay: 100 }"
+          >
             {{ truncate(record) }}
           </span>
           <span v-if="row?.extra_sale?.error_vat" v-tooltip="{ value: row?.extra_sale?.error_vat }">
@@ -94,9 +96,14 @@
             </svg>
           </span>
         </template>
+        <template #end_date="{ row }">{{ row.end_hour }}:{{ row.end_minute }}</template>
         <!-- END Tab hóa đơn chưa xuất -->
 
         <!-- START Tab hóa đơn chờ đồng bộ và Hóa đơn xuất lỗi -->
+        <template #inv_series="{ record, row }">
+          <div>{{ `Mẫu số: ${row.pattern || ''}` }}</div>
+          <div>{{ `Ký hiệu: ${record || ''}` }}</div>
+        </template>
         <template #inv_buyerLegalName="{ record, row }">
           <div>{{ `Tên: ${record}` }}</div>
           <div class="fb-text-muted-color">{{ `Mã/MST: ${row?.info_customer}` }}</div>
@@ -168,6 +175,36 @@
         :saleData="currentSaleData"
         @success="filter"
       />
+      <Dialog
+        v-model:visible="showPreview"
+        header="Xem trước hóa đơn"
+        modal
+        maximizable
+        :style="{ width: '70vw' }"
+        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
+      >
+        <div class="fb-flex fb-justify-center">
+          <vue-pdf-embed v-if="previewUrl" :source="previewUrl" :width="800" />
+        </div>
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-pt-2">
+            <Button
+              @click="onDownloadPDF(itemPreview)"
+              :loading="loadingPdfTranId === itemPreview.tran_id && pdfAction === 'download'"
+              raised
+            >
+              Tải xuống
+              <ProgressSpinner
+                v-if="loadingPdfTranId === itemPreview.tran_id && pdfAction === 'download'"
+                class="!fb-m-0"
+                strokeWidth="6"
+                style="width: 1rem; height: 1rem"
+              />
+              <IconDownload v-else class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
+      </Dialog>
     </template>
   </TableView>
 </template>
@@ -178,22 +215,25 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
+import VuePdfEmbed from 'vue-pdf-embed';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   SALE_ORDER_TABLE_COLUMNS,
   INVOICE_MANAGE_TABLE_COLUMNS,
 } from '@/common/constant/e-invoice-column.constant';
-import {
-  VAT_PUBLISH_STATUS_COLOR,
-} from '@/common/constant/e-invoice.constant';
+import { VAT_PUBLISH_STATUS_COLOR } from '@/common/constant/e-invoice.constant';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 const route = useRoute();
+const toast = useToast();
 
 // State
 const searchField = ref(null);
@@ -203,6 +243,13 @@ const isLoading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(50);
 const visibleExportVat = ref(false);
+
+const loadingPdfTranId = ref(null);
+const loadingRefreshTranId = ref(null);
+const pdfAction = ref(null);
+const showPreview = ref(false);
+const itemPreview = ref(null);
+const previewUrl = ref(null);
 
 const saleNotSyncVat = computed(() => invoiceStore.saleNotSyncVat);
 const vatInvoice = computed(() => invoiceStore.vatInvoice); // data from api
@@ -291,6 +338,84 @@ const handleExportVat = (isImmediate = false) => {
 };
 
 let searchTimeout = null;
+
+const refreshRow = async (row) => {
+  loadingRefreshTranId.value = row.tran_id;
+  await getStatusSale(null, row);
+  loadingRefreshTranId.value = null;
+};
+
+const getStatusSale = async (_, row) => {
+  try {
+    const response = await invoiceService.getStatus({ tran_id: row.tran_id });
+    Object.assign(row, {
+      statusSale: response?.data,
+      vat_publish_status: response?.data?.vat_publish_status || row?.vat_publish_status,
+      vat_publish_status_code:
+        response?.data?.vat_publish_status_code || row?.vat_publish_status_code,
+    });
+  } catch (error) {
+    console.error('Error fetching status:', error);
+  }
+};
+
+const fetchAndCachePDF = async (item) => {
+  if (item.pdfUrl) return item.pdfUrl;
+
+  try {
+    loadingPdfTranId.value = item.tran_id;
+    const payload = {
+      brand_uid: globalStore?.brandUid,
+      company_uid: globalStore?.currentUser?.company_uid,
+      tran_id: item.tran_id,
+      store_uid: item?.store_uid,
+    };
+    const responseData = await invoiceService.exportPDF(payload);
+    const base64String = responseData.data;
+
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Uint8Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const blob = new Blob([byteNumbers], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+
+    item.pdfUrl = url;
+    return url;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: error?.message, life: 3000 });
+    return null;
+  } finally {
+    loadingPdfTranId.value = null;
+  }
+};
+
+const onPreviewPDF = async (item) => {
+  pdfAction.value = 'preview';
+  itemPreview.value = null;
+
+  const url = await fetchAndCachePDF(item);
+  if (url) {
+    previewUrl.value = url;
+    itemPreview.value = item;
+    showPreview.value = true;
+  }
+};
+
+const onDownloadPDF = async (item) => {
+  pdfAction.value = 'download';
+  const url = await fetchAndCachePDF(item);
+  if (url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `e_invoice_${item.tran_id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+};
 const onSearchChange = async () => {
   if (searchTimeout) clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
@@ -300,10 +425,6 @@ const onSearchChange = async () => {
 
 const truncate = (value) => {
   return value ? `#${value.toString().slice(-5)}` : '';
-};
-
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 onMounted(() => {

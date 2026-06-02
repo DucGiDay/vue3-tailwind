@@ -1,9 +1,9 @@
 <template>
-  <transition name="filter-slide">
+  <!-- <transition name="filter-slide">
     <div
       v-if="hasTaxCode && isLoaded"
       title="Chọn mã số thuế"
-      class="fb-z-[2] fb-fixed fb-w-full lg:fb-w-[calc(100%-20rem)] lg:fb-top-[60px] fb-left-0 lg:fb-left-[20rem] fb-bg-primary-50 fb-backdrop-blur-md fb-border-b fb-border-primary-100 fb-px-4 fb-py-2 fb-flex fb-items-center fb-shadow-sm fb-cursor-pointer"
+      class="fb-z-[2] fb-fixed fb-w-full lg:fb-w-[calc(100%-var(--layout-static-sidebar-width))] lg:fb-top-[60px] fb-left-0 lg:fb-left-[var(--layout-static-sidebar-width)] fb-bg-primary-50 fb-backdrop-blur-md fb-border-b fb-border-primary-100 fb-px-4 fb-py-2 fb-flex fb-items-center fb-shadow-sm fb-cursor-pointer"
       @click="eInvoiceStore.showTaxCodeDialog = true"
     >
       <span class="fb-text-sm fb-text-primary-900">
@@ -11,7 +11,7 @@
         <strong class="fb-text-primary-700 fb-ml-1">{{ eInvoiceStore.currentTaxCode }}</strong>
       </span>
     </div>
-  </transition>
+  </transition> -->
   <router-view v-if="hasTaxCode && isLoaded" :key="eInvoiceStore.currentTaxCode"></router-view>
 
   <Dialog
@@ -71,7 +71,7 @@ onMounted(async () => {
     return;
   }
 
-  const savedTaxCode = localStorage.getItem('fabi_selected_tax_code');
+  const savedTaxCode = eInvoiceStore.currentTaxCode;
   const isValidTaxCode =
     savedTaxCode && eInvoiceStore.listTaxStores.data.some((item) => item.tax_code === savedTaxCode);
 
@@ -85,8 +85,7 @@ onMounted(async () => {
 
 const confirmTaxCode = () => {
   if (selectedTaxCode.value) {
-    localStorage.setItem('fabi_selected_tax_code', selectedTaxCode.value);
-    eInvoiceStore.currentTaxCode = selectedTaxCode.value;
+    eInvoiceStore.setCurrentTaxCode(selectedTaxCode.value);
     eInvoiceStore.showTaxCodeDialog = false;
     hasTaxCode.value = true;
   }

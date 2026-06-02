@@ -56,6 +56,15 @@ export const useEInoiveStore = defineStore('eInoive', {
   },
 
   actions: {
+    setCurrentTaxCode(taxCode) {
+      this.currentTaxCode = taxCode;
+      if (taxCode) {
+        localStorage.setItem('fabi_selected_tax_code', taxCode);
+      } else {
+        localStorage.removeItem('fabi_selected_tax_code');
+      }
+    },
+
     async getListRecentInvoice(params) {
       try {
         this.recentInvoice.isLoading = true;

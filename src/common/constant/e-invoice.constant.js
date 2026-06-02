@@ -7,100 +7,63 @@ export const INVOICE_STATUS = {
   invalid_invoices: 'Hóa đơn hợp lệ',
 };
 
-// Mapping text cho trạng thái hóa đơn
-export const VAT_PUBLISH_STATUS_MAPPING = {
-  // # Hóa đơn chưa gửi TCTN
-  0: 'Hóa đơn chưa gửi TCTN',
-  1: 'Hóa đơn chưa gửi TCTN',
-  2: 'Hóa đơn chưa gửi TCTN',
-  3: 'Hóa đơn chưa gửi TCTN',
-
-  // # Hóa đơn đã nằm trong danh sách tổng hợp
-  4000: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-  4001: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-  4002: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-  4003: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-
-  // # Hóa đơn bị TCTN từ chối
-  8000: 'Hóa đơn bị TCTN từ chối',
-  8001: 'Hóa đơn bị TCTN từ chối',
-  8002: 'Hóa đơn bị TCTN từ chối',
-  8003: 'Hóa đơn bị TCTN từ chối',
-
-  // # Hóa đơn đã gửi TCTN
-  12000: 'Hóa đơn đã gửi TCTN',
-  12001: 'Hóa đơn đã gửi TCTN',
-  12002: 'Hóa đơn đã gửi TCTN',
-  12003: 'Hóa đơn đã gửi TCTN',
-
-  // # Hóa đơn không hợp lệ
-  24000: 'Hóa đơn không hợp lệ',
-  24001: 'Hóa đơn không hợp lệ',
-  24002: 'Hóa đơn không hợp lệ',
-  24003: 'Hóa đơn không hợp lệ',
-
-  // # Hóa đơn hợp lệ
-  28000: 'Hóa đơn hợp lệ',
-  28001: 'Hóa đơn hợp lệ',
-  28002: 'Hóa đơn hợp lệ',
-  28003: 'Hóa đơn hợp lệ',
-  32000: 'Hóa đơn hợp lệ',
-
-  null: 'Hóa đơn dự thảo',
-
-  '-1': 'Không xác định',
-};
-
-// Mapping màu cho trạng thái hóa đơn
-export const VAT_PUBLISH_STATUS_COLOR = {
-  // # Hóa đơn chưa gửi TCTN
+// # Hóa đơn chưa gửi TCTN
+export const UNSEND_INVOICE_STATUS = {
   0: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
   1: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
   2: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
   3: { label: 'Hóa đơn chưa gửi TCTN', severity: 'warn' },
+};
 
-  // # Hóa đơn đã nằm trong danh sách tổng hợp
-  4000: {
-    label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    severity: 'primary',
-  },
-  4001: {
-    label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    severity: 'primary',
-  },
-  4002: {
-    label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    severity: 'primary',
-  },
-  4003: {
-    label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
-    severity: 'primary',
-  },
+// # Hóa đơn đã nằm trong danh sách tổng hợp
+export const SUMMARIZED_INVOICE_STATUS = {
+  4000: { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', severity: 'primary' },
+  4001: { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', severity: 'primary' },
+  4002: { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', severity: 'primary' },
+  4003: { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', severity: 'primary' },
+};
 
-  // # Hóa đơn bị TCTN từ chối
+// # Hóa đơn bị TCTN từ chối
+export const REJECTED_INVOICE_STATUS = {
   8000: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
   8001: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
   8002: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
   8003: { label: 'Hóa đơn bị TCTN từ chối', severity: 'danger' },
+};
 
-  // # Hóa đơn đã gửi TCTN
+// # Hóa đơn đã gửi TCTN
+export const SENT_INVOICE_STATUS = {
   12000: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
   12001: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
   12002: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
   12003: { label: 'Hóa đơn đã gửi TCTN', severity: 'info' },
+};
 
-  // # Hóa đơn không hợp lệ
+// # Hóa đơn không hợp lệ
+export const INVALID_INVOICE_STATUS = {
   24000: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
   24001: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
   24002: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
   24003: { label: 'Hóa đơn không hợp lệ', severity: 'danger' },
+};
 
-  // # Hóa đơn hợp lệ
+// # Hóa đơn hợp lệ
+export const VALID_INVOICE_STATUS = {
   28000: { label: 'Hóa đơn hợp lệ', severity: 'success' },
   28001: { label: 'Hóa đơn hợp lệ', severity: 'success' },
   28002: { label: 'Hóa đơn hợp lệ', severity: 'success' },
   28003: { label: 'Hóa đơn hợp lệ', severity: 'success' },
   32000: { label: 'Hóa đơn hợp lệ', severity: 'success' },
+};
+
+// Mapping màu cho trạng thái hóa đơn
+export const VAT_PUBLISH_STATUS_COLOR = {
+  ...UNSEND_INVOICE_STATUS,
+  ...SUMMARIZED_INVOICE_STATUS,
+  ...REJECTED_INVOICE_STATUS,
+  ...SENT_INVOICE_STATUS,
+  ...INVALID_INVOICE_STATUS,
+  ...VALID_INVOICE_STATUS,
 
   null: { label: 'Hóa đơn dự thảo', severity: 'secondary' },
   '-1': { label: 'Không xác định', severity: 'secondary' },
@@ -117,11 +80,26 @@ export const VAT_PUBLISH_STATUS_LIST = [
 // Filter trạng thái báo cáo
 export const VAT_PUBLISH_STATUS_CODE_LIST = [
   { label: 'Hóa đơn chưa gửi TCTN', value: '0,1,2,3' },
-  { label: 'Hóa đơn đã nằm trong danh sách tổng hợp', value: '4000,4001,4002,4003' },
-  { label: 'Hóa đơn bị TCTN từ chối', value: '8000,8001,8002,8003' },
-  { label: 'Hóa đơn đã gửi TCTN', value: '12000,12001,12002,12003' },
-  { label: 'Hóa đơn không hợp lệ', value: '24000,24001,24002,24003' },
-  { label: 'Hóa đơn hợp lệ', value: '28000,28001,28002,28003,32000' },
+  {
+    label: 'Hóa đơn đã nằm trong danh sách tổng hợp',
+    value: '4000,4001,4002,4003',
+  },
+  {
+    label: 'Hóa đơn bị TCTN từ chối',
+    value: '8000,8001,8002,8003',
+  },
+  {
+    label: 'Hóa đơn đã gửi TCTN',
+    value: '12000,12001,12002,12003',
+  },
+  {
+    label: 'Hóa đơn không hợp lệ',
+    value: '24000,24001,24002,24003',
+  },
+  {
+    label: 'Hóa đơn hợp lệ',
+    value: '28000,28001,28002,28003,32000',
+  },
 ];
 
 export const INVOICE_PARTNERS = [

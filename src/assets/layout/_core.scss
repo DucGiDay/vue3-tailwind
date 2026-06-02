@@ -94,7 +94,8 @@
 //   font-display: swap;
 // }
 
-$font-family-base: 'SF Pro Display',
+$font-family-base:
+  'SF Pro Display',
   -apple-system,
   BlinkMacSystemFont,
   'Segoe UI',
@@ -123,6 +124,21 @@ body #sub-app {
   a {
     text-decoration: none;
   }
+
+  // ::-webkit-scrollbar {
+  //   width: 8px;
+  //   height: 8px;
+  // }
+  // ::-webkit-scrollbar-track {
+  //   background: transparent;
+  // }
+  // ::-webkit-scrollbar-thumb {
+  //   border-radius: 4px;
+  //   background: rgba(156, 163, 175, 0.5); /* gray-400 */
+  // }
+  // ::-webkit-scrollbar-thumb:hover {
+  //   background: rgba(107, 114, 128, 0.8); /* gray-500 */
+  // }
 
   // Hiệu ứng slide cho filter
   .filter-slide-enter-active,

@@ -7,6 +7,7 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import IconChevronDown from '@/components/Common/Icon/IconChevronDown.vue';
 
 const onDateChange = () => {
   const payload = {
@@ -99,10 +100,6 @@ const get7Day = () => {
   };
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
-
 // life cycle
 onMounted(() => {
   getData();
@@ -113,6 +110,16 @@ onMounted(() => {
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Tổng quan</h5>
+      <div 
+        class="fb-flex fb-items-center fb-px-3 fb-py-1.5 fb-border fb-border-surface-200 fb-rounded-md fb-bg-white fb-cursor-pointer hover:fb-border-primary fb-transition-colors fb-text-sm fb-text-color"
+        @click="invoiceStore.showTaxCodeDialog = true"
+        title="Chọn mã số thuế"
+      >
+        <span>
+          MST: <strong class="fb-font-semibold">{{ invoiceStore.currentTaxCode || 'Chưa chọn' }}</strong>
+        </span>
+        <IconChevronDown class="fb-ml-2 fb-text-color-secondary fb-w-4 fb-h-4" />
+      </div>
     </div>
     <ButtonExtendInvoice />
   </div>

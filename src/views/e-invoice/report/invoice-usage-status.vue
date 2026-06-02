@@ -88,7 +88,7 @@ const hasMoreData = ref(true);
 const getPayload = () => {
   return {
     company_uid: globalStore?.currentUser?.company_uid,
-    report_type: 'invoices',
+    report_type: 'invoice_usage',
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
     list_store_uid: (() => {

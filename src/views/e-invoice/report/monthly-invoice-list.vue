@@ -213,8 +213,8 @@ const toast = useToast();
 const router = useRouter();
 
 // State for filters
-const showAdvancedFilter = ref(false);
-const filterType = ref('date'); // 'month' | 'date'
+const showAdvancedFilter = ref(true);
+const filterType = ref('date'); // 'month' | 'date' | 'quarter'
 const filterTypeOptions = [
   { label: 'Theo ngày', value: 'date' },
   { label: 'Theo tháng', value: 'month' },
@@ -273,9 +273,7 @@ const getPayload = () => {
     }
   } else if (filterType.value === 'quarter') {
     if (quarterField.value && yearField.value) {
-      const date = moment()
-        .year(yearField.value)
-        .quarter(quarterField.value);
+      const date = moment().year(yearField.value).quarter(quarterField.value);
       start_date = date.startOf('quarter').valueOf();
       end_date = date.endOf('quarter').valueOf();
     }
@@ -367,7 +365,7 @@ const exportExcel = async () => {
     isLoadingExport.value = true;
     const payload = getPayload();
     const res = await invoiceService.exportReportInvoice(payload);
-    const fileName = `BCN_MTT_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
+    const fileName = `BANG_KE_HD_HANG_THANG_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
     saveAs(res, fileName);
     toast.add({
       severity: 'success',

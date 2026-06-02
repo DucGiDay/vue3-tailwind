@@ -69,9 +69,9 @@ export const SALE_ORDER_TABLE_COLUMNS = [
     frozen: true,
     alignFrozen: 'left',
   },
-  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true },
+  { field: 'vat_amount', header: 'Giá trị VAT', sortable: true, format: 'currency' },
   { field: 'shift_id', header: 'Mã ca', format: 'truncate' },
-  { field: 'staff', header: 'Nhân viên' },
+  { field: 'employee_name', header: 'Nhân viên' },
   { field: 'table_name', header: 'Bàn' },
   { field: 'area_name', header: 'Khu vực' },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
@@ -260,5 +260,5 @@ export const CONFIG_TIME_TABLE_COLUMNS = [
   { field: 'package_time_slots', header: 'Thời gian tạo' },
   { field: 'send_time_slots', header: 'Thời gian ký' },
   { field: 'is_enabled', header: 'Trạng thái' },
-  { field: 'action', header: 'Thao tác', classes: 'fb-w-4 !fb-text-center' }
+  { field: 'action', header: 'Thao tác', classes: 'fb-w-4 !fb-text-center' },
 ];

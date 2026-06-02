@@ -11,7 +11,6 @@
     tableClass="fb_table--t_table fb-text-[0.8125rem]"
     class="fb_table--wrapper"
     v-bind="$attrs"
-    resizable-columns
     @columnReorder="onColReorder"
     @rowClick="emit('row-click', $event)"
     @rowDblclick="emit('row-dblclick', $event)"
@@ -287,7 +286,7 @@
           },
         ]"
       >
-        <component v-if="item.icon" :is="item.icon" />
+        <component v-if="item.icon" :is="item.icon" class="!fb-h-4 !fb-w-4" color="#A4A7AE"/>
         <span :class="item?.class || ''">{{ item.label }}</span>
         <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
         <span
@@ -891,7 +890,6 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0.5rem 0;
   gap: 1rem;
   font-size: 0.875rem;
   color: var(--text-color-secondary);

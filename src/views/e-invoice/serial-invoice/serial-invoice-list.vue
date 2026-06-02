@@ -119,7 +119,8 @@ const getData = async ({ page, rows } = {}) => {
     end_date: dateRange.value?.[1] ? new Date(dateRange.value[1]).setHours(23, 59, 59, 999) : undefined,
     page: currentPage.value,
     perpage: pageSize.value,
-    serial: searchField.value
+    serial: searchField.value,
+    tax_code: invoiceStore?.currentTaxCode
   };
 
   isLoading.value = true;

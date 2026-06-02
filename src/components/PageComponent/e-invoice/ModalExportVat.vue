@@ -218,7 +218,7 @@
           </div>
         </div>
 
-        <!-- Mã đơn vị dự toán -->
+        <!-- Mã quan hệ ngân sách toán -->
         <div class="fb-grid fb-grid-cols-12 fb-gap-1">
           <label for="budget_unit" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
             {{ $t('SALE_SYNC_VAT--INPUT_BUDGET_UNIT') }}
@@ -350,7 +350,7 @@ const reExportVatColumns = [
   { field: 'passport_number', header: 'Hộ chiếu' },
   { field: 'inv_buyerBankAccount', header: 'Tài khoản ngân hàng' },
   { field: 'inv_buyerBankName', header: 'Tên ngân hàng' },
-  { field: 'budget_unit_code', header: 'Mã đơn vị dự toán' },
+  { field: 'budget_unit_code', header: 'Mã quan hệ ngân sách toán' },
   { field: 'note', header: 'Ghi chú' },
 ];
 

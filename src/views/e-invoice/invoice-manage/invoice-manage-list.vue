@@ -83,6 +83,8 @@
         :columns="INVOICE_MANAGE_TABLE_COLUMNS"
         :items="sales"
         enablePagination
+        showGridlines
+        resizable-columns
         :stripedRows="false"
         :isLoading="isLoading"
         :currentPage="currentPage"
@@ -238,7 +240,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useFilterStore } from '@/stores/filter.store';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { formatCurrency } from '@/common/utils/common';
 import ModalExportVat from '@/components/PageComponent/e-invoice/ModalExportVat.vue';
 import ModalViewBeforeSend from '@/components/PageComponent/e-invoice/ModalViewBeforeSend.vue';
@@ -247,6 +249,7 @@ import TableView from '@/components/SharedComponent/views/TableView.vue';
 import {
   VAT_PUBLISH_STATUS_COLOR,
   VAT_PUBLISH_STATUS_LIST,
+  VALID_INVOICE_STATUS,
 } from '@/common/constant/e-invoice.constant';
 import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
@@ -260,7 +263,8 @@ import IconUpload from '@/components/Common/Icon/IconUpload.vue';
 import IconDeleteDoc from '@/components/Common/Icon/IconDeleteDoc.vue';
 import IconEye from '@/components/Common/Icon/IconEye.vue';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
-import IconMail from '@/components/Common/Icon/IconMail.vue';
+// import IconMail from '@/components/Common/Icon/IconMail.vue';
+import IconUpload2 from '@/components/Common/Icon/IconUpload2.vue';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -268,6 +272,7 @@ const globalStore = useGlobalStore();
 const filterStore = useFilterStore();
 
 const route = useRoute();
+const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 
@@ -475,10 +480,24 @@ const menuItems = (row) => {
         {
           label: 'Phát hành hóa đơn',
           visible: !row?.vat_invoice_number || row?.vat_invoice_number === '00000000',
-          icon: markRaw(IconMail),
+          icon: markRaw(IconUpload2),
           command: async () => {
             publishTranIds.value = [row.tran_id];
             showPublishDialog.value = true;
+          },
+        },
+        {
+          label: 'Tạo thông báo sai sót',
+          visible: !!VALID_INVOICE_STATUS[row?.vat_publish_status_code],
+          command: async () => {
+            router.push({
+              path: '/e-invoice/noti-error/detail',
+              query: {
+                tran_id: row.tran_id,
+                inv_series: row.inv_series,
+                vat_invoice_number: row.vat_invoice_number,
+              },
+            });
           },
         },
       ]

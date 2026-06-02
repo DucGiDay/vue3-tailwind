@@ -108,6 +108,7 @@ function checkActiveRoute(item) {
 <template>
   <li
     :class="[
+      'fb-text-sm',
       { 'fb-border-l fb-ml-5': item.grandchild },
       { 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }
     ]"

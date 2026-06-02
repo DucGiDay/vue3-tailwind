@@ -1,0 +1,20 @@
+<template>
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M19 1H1M4 11L10 5L16 11M10 5V19"
+      :stroke="color"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</template>
+
+<script setup>
+const props = defineProps({
+  color: {
+    type: String,
+    default: 'black',
+  },
+});
+</script>

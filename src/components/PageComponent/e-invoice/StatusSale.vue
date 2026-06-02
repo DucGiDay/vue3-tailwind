@@ -47,7 +47,7 @@ function setColorOptions() {
           documentStyle.getPropertyValue('--p-orange-500'),
           documentStyle.getPropertyValue('--p-red-500'),
           documentStyle.getPropertyValue('--p-indigo-500'),
-          documentStyle.getPropertyValue('--p-teal-500')
+          documentStyle.getPropertyValue('--p-teal-500'),
         ],
         hoverBackgroundColor: [
           documentStyle.getPropertyValue('--p-green-400'),
@@ -55,10 +55,10 @@ function setColorOptions() {
           documentStyle.getPropertyValue('--p-orange-400'),
           documentStyle.getPropertyValue('--p-red-400'),
           documentStyle.getPropertyValue('--p-indigo-400'),
-          documentStyle.getPropertyValue('--p-teal-400')
-        ]
-      }
-    ]
+          documentStyle.getPropertyValue('--p-teal-400'),
+        ],
+      },
+    ],
   };
 
   pieOptions.value = {
@@ -68,10 +68,10 @@ function setColorOptions() {
         position: 'right',
         labels: {
           usePointStyle: true,
-          color: textColor
-        }
-      }
-    }
+          color: textColor,
+        },
+      },
+    },
   };
 }
 
@@ -88,9 +88,12 @@ const legendItems = computed(() => {
     label,
     color: pieData.value.datasets[0].backgroundColor[i],
     index: i,
-    value: pieData.value.datasets[0].data[i]
+    value: pieData.value.datasets[0].data[i],
   }));
 });
+const totalValueStatusInvoices = computed(() =>
+  legendItems.value.reduce((acc, curr) => acc + curr.value, 0),
+);
 
 // onMounted(() => {
 //   setColorOptions();
@@ -100,7 +103,7 @@ watch(
   () => {
     setColorOptions();
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 </script>
 <template>
@@ -125,25 +128,29 @@ watch(
 
     <div
       v-else-if="!isEmpty"
-      class="fb-flex-col md:fb-flex-row fb-flex fb-items-center fb-justify-center fb-gap-4"
+      class="fb-flex-col md:fb-flex-row fb-flex fb-items-center fb-justifycenter md:fb-justify-start fb-gap-4"
     >
-      <div class="fb-w-48 fb-h-48 fb-shrink-0">
+      <div class="fb-w-48">
         <Chart type="doughnut" :data="pieData" :options="pieOptions" class="fb-w-full fb-h-full" />
       </div>
 
-      <ul class="fb-flex md:fb-flex-col fb-justify-center fb-gap-3 fb-min-w-0 fb-flex-wrap">
+      <ul class="fb-flex md:fb-flex-col fb-justify-center fb-gap-2 fb-min-w-0 fb-flex-wrap">
         <li
           v-for="item in legendItems"
           :key="item.index"
           class="fb-flex fb-items-start fb-gap-2 fb-text-sm"
         >
           <span
-            class="fb-w-3 fb-h-3 fb-rounded-full fb-shrink-0 fb-mt-0.5"
+            class="fb-w-3 fb-h-3 fb-rounded-full fb-shrink-0 fb-mt-1.5"
             :style="{ background: item.color }"
           />
           <div>
             <div class="fb-break-words fb-text-muted-color">{{ item.label }}</div>
-            <div class="">{{ item.value }}</div>
+            <div class="fb-font-medium">
+              {{ item.value }} ({{
+                ((item.value / totalValueStatusInvoices) * 100).toFixed(2).replace('.00', '')
+              }}%)
+            </div>
           </div>
         </li>
       </ul>
