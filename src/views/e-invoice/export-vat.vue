@@ -669,8 +669,24 @@ const getData = async () => {
 const getGuestSession = async () => {
   isLoadingSession.value = true;
   // const visitorId = await getVisitorId();
-  const visitorId = await getStableVisitorId();
-  await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
+  let visitorId = '';
+  try {
+    visitorId = await getStableVisitorId();
+  } catch (error) {
+    console.error('Error getting stable visitor ID', error);
+    try {
+      visitorId = (typeof localStorage !== 'undefined' && localStorage) ? localStorage.getItem('stable_visitor_id') || '' : '';
+    } catch (e) {
+      visitorId = '';
+    }
+  }
+
+  try {
+    console.log('visitorId', visitorId);
+    await invoiceStore.fetchGuestSession({ visitor_id: visitorId });
+  } catch (error) {
+    console.log('Error fetching guest session', error);
+  }
   isLoadingSession.value = false;
 };
 
@@ -716,5 +732,22 @@ const handleSelectVatInfo = (event) => {
 
 onMounted(() => {
   getData();
+
+  // Tải và khởi tạo Eruda động để debug trên thiết bị di động (chỉ chạy trong file này)
+  if (!window.eruda) {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    script.async = true;
+    script.onload = () => {
+      window.eruda.init();
+    };
+    document.body.appendChild(script);
+  } else {
+    try {
+      window.eruda.init();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 });
 </script>
