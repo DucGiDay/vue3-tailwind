@@ -30,6 +30,7 @@
                   placeholder="Chọn mã số thuế"
                   size="small"
                   class="fb-w-full"
+                  disabled
                   :invalid="!!error.tax_code"
                   :loading="isLoadingTaxStores"
                   @change="onTaxCodeChange"
@@ -272,7 +273,7 @@ const isLoadingTaxStores = ref(false);
 const error = ref({});
 
 const form = ref({
-  tax_code: null,
+  tax_code: invoiceStore.currentTaxCode || null,
   status: false,
   package_time_slots: [{ start: new Date(), end: new Date() }],
   send_time_slots: [{ start: new Date(), end: new Date() }],
@@ -318,7 +319,7 @@ const getListStoreGroupByTaxCode = async () => {
 const handleCreate = () => {
   isEdit.value = false;
   form.value = {
-    tax_code: null,
+    tax_code: invoiceStore.currentTaxCode || null,
     status: true,
     package_time_slots: [{ start: new Date(), end: new Date() }],
     send_time_slots: [{ start: new Date(), end: new Date() }],
