@@ -6,7 +6,7 @@ export const LAST_BILL_TABLE_COLUMNS = [
   { field: 'vat_invoice_code', header: 'Mã CQT' },
   { field: 'extra_data', header: 'Người mua' },
   { field: 'vat_publish_status', header: 'Trạng thái' },
-  { field: 'vat_invoice_date', header: 'Ngày hóa đơn' },
+  { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },
 ];
 
 // Columns Cấu hình - Danh sách cấu hình
@@ -153,8 +153,9 @@ export const MONTHLY_INVOICE_LIST_COLUMNS = [
   { field: 'payment_method', header: 'Phương thức thanh toán' },
   { field: 'amount_before_tax', header: 'Doanh số bán chưa có thuế', format: 'currency' },
   { field: 'vat_amount', header: 'Thuế GTGT', format: 'currency' },
+  { field: 'total_amount', header: 'Thành tiền', format: 'currency' },
   { field: 'note', header: 'Ghi chú' },
-  { field: 'reference_code', header: 'Mã tra cứu' },
+  { field: 'merged_tran_id', header: 'Mã tra cứu' },
 ];
 
 // Columns Báo cáo chi tiết bán hàng
@@ -167,7 +168,7 @@ export const DETAIL_SALES_COLUMNS = [
   { field: 'buyer_address', header: 'Địa chỉ' },
   { field: 'sale_date', header: 'Ngày bán (Xuất HD)', format: 'date' },
   { field: 'invoice_template', header: 'Mẫu HĐ' },
-  { field: 'serial', header: 'Ký hiệu' },
+  { field: 'invoice_series', header: 'Ký hiệu' },
   { field: 'invoice_number', header: 'Số HĐ' },
   { field: 'description', header: 'Diễn giải' },
   { field: 'item_id', header: 'Mã hàng' },
@@ -176,7 +177,7 @@ export const DETAIL_SALES_COLUMNS = [
   { field: 'quantity', header: 'Số lượng' },
   { field: 'unit_price', header: 'Đơn giá', format: 'currency' },
   { field: 'discount', header: 'Chiết khấu', format: 'currency' },
-  { field: 'revenue', header: 'Doanh thu', format: 'currency' },
+  { field: 'revenue', header: 'Doanh thu', format: 'date' },
   { field: 'vat_rate', header: 'Thuế suất' },
   { field: 'vat_amount', header: 'Tiền thuế', format: 'currency' },
   { field: 'total_amount', header: 'Thành tiền', format: 'currency' },
@@ -184,7 +185,7 @@ export const DETAIL_SALES_COLUMNS = [
   { field: 'note', header: 'Ghi chú' },
   { field: 'tran_id', header: 'Mã đơn hàng' },
   { field: 'lookup_code', header: 'Mã đặt hàng' },
-  { field: 'reference_code', header: 'Mã tra cứu' },
+  { field: 'merged_tran_id', header: 'Mã tra cứu' },
 ];
 
 // Columns Báo cáo tổng hợp bán hàng
@@ -210,6 +211,19 @@ export const DETAIL_INVOICE_LIST_COLUMNS = [
   { field: 'payment_method', header: 'PTTT' },
   { field: 'total_amount', header: 'Tổng tiền', format: 'currency' },
   { field: 'status', header: 'Trạng thái' },
+];
+// Columns Tình hình sử dụng hóa đơn
+export const INVOICE_USAGE_COLUMNS = [
+  { field: 'invoice_type_name', header: 'Tên loại hóa đơn' },
+  { field: 'invoice_series', header: 'Ký hiệu' },
+  { field: 'invoice_template', header: 'Mẫu hóa đơn' },
+  { field: 'used_from_no', header: 'Từ số' },
+  { field: 'used_to_no', header: 'Đến số' },
+  { field: 'used_total', header: 'Cộng' },
+  { field: 'used_total', header: 'Sử dụng' },
+  { field: 'deleted_qty', header: 'Xóa bỏ' },
+  { field: 'lost_qty', header: 'Mất' },
+  { field: 'cancelled_qty', header: 'Hủy' },
 ];
 
 export const HISTORY_ACTION_COLUMNS = [
