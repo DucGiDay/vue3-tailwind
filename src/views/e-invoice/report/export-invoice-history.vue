@@ -58,6 +58,7 @@ const hasMoreData = ref(true);
 const globalStore = useGlobalStore();
 
 const exportHistoryColumns = [
+  { field: 'id', header: 'ID', format: 'truncate' },
   { field: 'report_type', header: 'Loại báo cáo' },
   { field: 'created_at', header: 'Thời gian xuất', format: 'datetime' },
   { field: 'requested_by', header: 'Người xuất' },
