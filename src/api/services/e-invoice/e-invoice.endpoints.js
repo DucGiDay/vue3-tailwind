@@ -29,7 +29,7 @@ export const INVOICE_ENDPOINTS = {
   SEND_INVOICE_CQT: '/api/einvoice/v1/invoice/send-invoice-cqt',
 
   SYNC_SALE_MINVOICE: '/api/v3/pos-client/sync-sale-minvoice',
-  GET_STATUS: '/api/invoice/v1/status',
+  GET_STATUS: '/api/invoice/v1/status/v2',
   SEARCH_BY_TAXCODE: '/api/search-by-tax-code',
   DELETE_DRAFT_INVOICE: '/api/einvoice/v1/invoice/delete-draft',
   DELETE_VAT_INVOICE: '/api/invoice/v1/delete',

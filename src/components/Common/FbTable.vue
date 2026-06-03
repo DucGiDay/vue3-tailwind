@@ -86,7 +86,14 @@
     >
       <template #body="{ data, index: i }">
         <Skeleton v-if="props.isLoading && !isLoadmore" />
-        <span v-else-if="!$slots?.[col.field]">
+        <span
+          v-else-if="!$slots?.[col.field]"
+          v-tooltip="{
+            value: data[col.field] != null ? String(data[col.field]) : '',
+            showDelay: 500,
+            hideDelay: 100,
+          }"
+        >
           {{ formatData(data[col.field], data, col?.format) }}
         </span>
         <slot
@@ -286,7 +293,7 @@
           },
         ]"
       >
-        <component v-if="item.icon" :is="item.icon" class="!fb-h-4 !fb-w-4" color="#A4A7AE"/>
+        <component v-if="item.icon" :is="item.icon" class="!fb-h-4 !fb-w-4" color="#A4A7AE" />
         <span :class="item?.class || ''">{{ item.label }}</span>
         <Badge v-if="item.badge" class="fb-ml-auto" :value="item.badge" />
         <span

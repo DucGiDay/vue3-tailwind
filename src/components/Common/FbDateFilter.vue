@@ -1,5 +1,5 @@
 <template>
-  <FbDateSelect v-model="dates" v-bind="$attrs" @update:modelValue="onDateChange" />
+  <FbDateSelect v-model="dates" @update:modelValue="onDateChange" />
 </template>
 
 <script setup>
@@ -30,7 +30,7 @@ const getDefaultStartDate = () => {
     ? moment().subtract(6, 'days').startOf('day').valueOf()
     : moment().startOf('day').valueOf();
 };
-const getDefaultEndDate = () => moment().endOf('day').valueOf()
+const getDefaultEndDate = () => moment().endOf('day').valueOf();
 
 const dates = ref([
   currentState?.start_date ? new Date(currentState.start_date) : getDefaultStartDate(),

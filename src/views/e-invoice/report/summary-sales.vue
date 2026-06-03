@@ -49,11 +49,11 @@
       <transition name="filter-slide">
         <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full">
           <Select
-            v-model="statisticTypeField"
-            :options="statisticTypeOptions"
+            v-model="statusField"
+            :options="statusOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Hình thức thống kê"
+            placeholder="Trạng thái"
             class="fb-flex-1"
             showClear
             size="small"
@@ -64,44 +64,54 @@
             :options="creatorOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Chọn Người tạo"
+            placeholder="Người tạo"
+            filterPlaceholder="Tìm kiếm"
             class="fb-flex-1"
             showClear
+            filter
             size="small"
             @change="filter"
+            @filter="onFilterCreators"
+            :loading="isLoadingCreators"
+            :virtualScrollerOptions="{
+              lazy: true,
+              onLazyLoad: onLazyLoadCreators,
+              itemSize: 38,
+            }"
           />
           <Select
             v-model="patternField"
             :options="patternOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Chọn Mẫu số"
+            placeholder="Mẫu số"
+            filterPlaceholder="Tìm kiếm"
             class="fb-flex-1"
             showClear
+            filter
             size="small"
             @change="filter"
+            :loading="isLoadingPatterns"
           />
           <Select
             v-model="serialField"
             :options="serialOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Chọn Ký hiệu"
+            placeholder="Ký hiệu"
+            filterPlaceholder="Tìm kiếm"
             class="fb-flex-1"
             showClear
+            filter
             size="small"
             @change="filter"
-          />
-          <Select
-            v-model="statusField"
-            :options="statusOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Chọn Trạng thái"
-            class="fb-flex-1"
-            showClear
-            size="small"
-            @change="filter"
+            @filter="onFilterSerials"
+            :loading="isLoadingSerials"
+            :virtualScrollerOptions="{
+              lazy: true,
+              onLazyLoad: onLazyLoadSerials,
+              itemSize: 38,
+            }"
           />
         </div>
       </transition>
@@ -147,6 +157,9 @@ import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatCurrency } from '@/common/utils/common';
+import { VAT_PUBLISH_STATUS_CODE_LIST } from '@/common/constant/e-invoice.constant';
+import { employeeService } from '@/api/services/employee/employee.service';
+import { useReportFilterOptions } from '@/composables/useReportFilterOptions';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
@@ -155,18 +168,27 @@ const toast = useToast();
 const router = useRouter();
 
 // State for filters
-const statisticTypeField = ref(null);
+const statusField = ref(null);
 const creatorField = ref(null);
 const patternField = ref(null);
 const serialField = ref(null);
-const statusField = ref(null);
 const showAdvancedFilter = ref(true);
 
-const statisticTypeOptions = ref([]); // Will be populated from API/Constants
-const creatorOptions = ref([]);
-const patternOptions = ref([]);
-const serialOptions = ref([]);
-const statusOptions = ref([]);
+const statusOptions = ref(VAT_PUBLISH_STATUS_CODE_LIST);
+
+const {
+  creatorOptions,
+  isLoadingCreators,
+  onLazyLoadCreators,
+  onFilterCreators,
+  serialOptions,
+  isLoadingSerials,
+  onLazyLoadSerials,
+  onFilterSerials,
+  patternOptions,
+  isLoadingPatterns,
+  loadAllFilterOptions
+} = useReportFilterOptions();
 
 // State for Table
 const dataList = ref([]);
@@ -191,6 +213,10 @@ const getPayload = () => {
       return Object.values(selectedObj).flat().filter(Boolean).join(',');
     })(),
     tax_code: invoiceStore.currentTaxCode,
+    vat_publish_status: statusField.value || null,
+    created_by: creatorField.value || null,
+    template_id: patternField.value || null,
+    invoice_series: serialField.value || null,
   };
 };
 
@@ -248,15 +274,14 @@ const exportExcel = async () => {
   try {
     isLoadingExport.value = true;
     const payload = getPayload();
-    const res = await invoiceService.exportReportInvoice(payload);
-    const fileName = `BC_TONGHOP_BANHANG_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
-    saveAs(res, fileName);
+    await invoiceService.exportReportInvoice(payload);
     toast.add({
       severity: 'success',
       summary: 'Thành công',
-      detail: 'Đang tải tệp báo cáo',
+      detail: 'Đã gửi yêu cầu xuất báo cáo. Vui lòng kiểm tra lịch sử xuất.',
       life: 3000,
     });
+    router.push('/e-invoice/report/export-invoice-history');
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -270,6 +295,7 @@ const exportExcel = async () => {
 };
 
 onMounted(() => {
+  loadAllFilterOptions();
   getData();
 });
 </script>
