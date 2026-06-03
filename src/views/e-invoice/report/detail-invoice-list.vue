@@ -156,15 +156,14 @@ const exportExcel = async () => {
   try {
     isLoadingExport.value = true;
     const payload = getPayload();
-    const res = await invoiceService.exportReportInvoice(payload);
-    const fileName = `BC_TONGHOP_BANHANG_${moment().format('YYYYMMDD_HHmm')}.xlsx`;
-    saveAs(res, fileName);
+    await invoiceService.exportReportInvoice(payload);
     toast.add({
       severity: 'success',
       summary: 'Thành công',
-      detail: 'Đang tải tệp báo cáo',
+      detail: 'Đã gửi yêu cầu xuất báo cáo. Vui lòng kiểm tra lịch sử xuất.',
       life: 3000,
     });
+    router.push('/e-invoice/report/export-invoice-history');
   } catch (error) {
     toast.add({
       severity: 'error',

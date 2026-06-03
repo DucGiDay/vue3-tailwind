@@ -7,4 +7,5 @@ export const employeeService = {
   updateProductAccess: (params) => {
     return api.put(EMPLOYEE_ENDPOINTS.REQUEST_ACCESS, params);
   },
+  getUsers: (params) => api.get(EMPLOYEE_ENDPOINTS.LIST_USERS, { params }),
 };
