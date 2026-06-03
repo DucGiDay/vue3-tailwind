@@ -121,7 +121,7 @@
         @page-change="loadMore"
       >
         <template #revenue="{ row }">
-          {{ (row?.quantity || 0) * (row?.unit_price || 0) }}
+          {{ formatCurrency((row?.quantity || 0) * (row?.unit_price || 0)) }}
         </template>
         <template #empty>Chưa có dữ liệu</template>
       </FbTable>
@@ -146,6 +146,7 @@ import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
+import { formatCurrency } from '@/common/utils/common';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();

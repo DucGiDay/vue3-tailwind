@@ -84,12 +84,14 @@ const isEmpty = computed(() => {
 });
 const legendItems = computed(() => {
   if (!pieData.value) return [];
-  return (pieData?.value?.labels || []).map((label, i) => ({
-    label,
-    color: pieData.value.datasets[0].backgroundColor[i],
-    index: i,
-    value: pieData.value.datasets[0].data[i],
-  }));
+  return (pieData?.value?.labels || [])
+    .map((label, i) => ({
+      label,
+      color: pieData.value.datasets[0].backgroundColor[i],
+      index: i,
+      value: pieData.value.datasets[0].data[i],
+    }))
+    .filter((item) => item.value > 0);
 });
 const totalValueStatusInvoices = computed(() =>
   legendItems.value.reduce((acc, curr) => acc + curr.value, 0),
