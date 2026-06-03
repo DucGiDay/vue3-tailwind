@@ -33,7 +33,7 @@
 
     <template #table>
       <FbTable
-        :columns="DETAIL_INVOICE_LIST_COLUMNS"
+        :columns="INVOICE_USAGE_COLUMNS"
         :items="dataList"
         enableScrollPagination
         :hasMoreData="hasMoreData"
@@ -45,7 +45,7 @@
         @page-change="loadMore"
       >
         <template #revenue="{ row }">
-          {{ (row?.quantity || 0) * (row?.unit_price || 0) }}
+          {{ formatCurrency((row?.quantity || 0) * (row?.unit_price || 0)) }}
         </template>
         <template #empty>Chưa có dữ liệu</template>
       </FbTable>
@@ -62,13 +62,14 @@ import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
 import { saveAs } from 'file-saver';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
-import { DETAIL_INVOICE_LIST_COLUMNS } from '@/common/constant/e-invoice-column.constant';
+import { INVOICE_USAGE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
 import FbLoading from '@/components/Common/FbLoading.vue';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
+import { formatCurrency } from '@/common/utils/common';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();

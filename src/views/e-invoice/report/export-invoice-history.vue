@@ -72,6 +72,7 @@ const getReportTypeName = (type) => {
     invoice_details: 'Báo cáo chi tiết bán hàng',
     invoices_grouped_by_items: 'Báo cáo tổng hợp bán hàng',
     invoices: 'Bảng kê chi tiết hóa đơn',
+    invoice_usage: 'Tình hình sử dụng hóa đơn',
   };
   return types[type] || type;
 };

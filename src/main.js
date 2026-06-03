@@ -18,24 +18,24 @@ import './assets/styles/tailwind.css';
 import './assets/styles/main.scss';
 import SmartReport from '@/components/PageComponent/smart-report/SmartReport.vue';
 
-const handleChunkError = () => {
-  window.addEventListener('vite:preloadError', (event) => {
-    event.preventDefault(); // Ngăn crash
-
-    // Thông báo nhẹ nhàng
+const triggerUpdateReload = () => {
+  const last = sessionStorage.getItem('chunk_reload_at');
+  const now = Date.now();
+  if (!last || now - Number(last) > 30000) {
     const confirmed = window.confirm(
       'Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang.',
     );
-
     if (confirmed) {
-      // Tránh reload loop
-      const last = sessionStorage.getItem('chunk_reload_at');
-      const now = Date.now();
-      if (!last || now - Number(last) > 30000) {
-        sessionStorage.setItem('chunk_reload_at', String(now));
-        window.location.reload();
-      }
+      sessionStorage.setItem('chunk_reload_at', String(now));
+      window.location.reload();
     }
+  }
+};
+
+const handleChunkError = () => {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault(); // Ngăn crash
+    triggerUpdateReload();
   });
 };
 
@@ -77,6 +77,17 @@ function render(props = {}) {
   app.use(pinia);
 
   router = createAppRouter(props?.microRouters || {}, props?.componentName);
+  
+  router.onError((error) => {
+    if (
+      error.message &&
+      (error.message.includes('Failed to fetch dynamically imported module') ||
+        error.message.includes('Importing a module script failed'))
+    ) {
+      triggerUpdateReload();
+    }
+  });
+
   app.use(router);
 
   app.use(PrimeVue, {
