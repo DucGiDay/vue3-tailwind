@@ -4,10 +4,12 @@ import { setCookie } from '@/common/utils/common';
 
 const STORAGE_KEY = 'visitor_id';
 const STABLE_STORAGE_KEY = 'stable_visitor_id';
+const DEVICE_UUID_KEY = 'device_uuid';
 
 let fpPromise = null;
 let cachedId = null;
 let cachedStableId = null;
+let cachedDeviceUuid = null;
 
 const getSharedDomain = () => {
   const host = window.location.hostname;
@@ -18,7 +20,9 @@ const getSharedDomain = () => {
 // Safe localStorage access helpers
 const safeGetItem = (key) => {
   try {
-    return typeof window !== 'undefined' && window.localStorage ? window.localStorage.getItem(key) : null;
+    return typeof window !== 'undefined' && window.localStorage
+      ? window.localStorage.getItem(key)
+      : null;
   } catch (e) {
     console.warn(`[Storage] Failed to read key "${key}" from localStorage:`, e);
     return null;
@@ -50,7 +54,7 @@ const withTimeout = (promise, ms, fallbackValue) => {
       if (timer) clearTimeout(timer);
       return res;
     }),
-    timeoutPromise
+    timeoutPromise,
   ]);
 };
 
@@ -69,6 +73,19 @@ const generateUUID = () => {
   });
 };
 
+
+const getCachedDeviceUUID = () => {
+  if (cachedDeviceUuid) return cachedDeviceUuid;
+  const stored = safeGetItem(DEVICE_UUID_KEY);
+  if (stored) {
+    cachedDeviceUuid = stored;
+    return cachedDeviceUuid;
+  }
+  cachedDeviceUuid = generateUUID();
+  safeSetItem(DEVICE_UUID_KEY, cachedDeviceUuid);
+  return cachedDeviceUuid;
+};
+
 // Pure JS SHA-256 implementation
 function sha256_js(ascii) {
   function rightRotate(value, amount) {
@@ -84,8 +101,8 @@ function sha256_js(ascii) {
   const words = [];
   const asciiLength = ascii[lengthProperty] * 8;
 
-  let hash = sha256_js.h = sha256_js.h || [];
-  const k = sha256_js.k = sha256_js.k || [];
+  let hash = (sha256_js.h = sha256_js.h || []);
+  const k = (sha256_js.k = sha256_js.k || []);
   let primeCounter = k[lengthProperty];
 
   const isComposite = {};
@@ -94,28 +111,43 @@ function sha256_js(ascii) {
       for (i = 0; i < 313; i += candidate) {
         isComposite[i] = 1;
       }
-      hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
       k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
     }
   }
 
   ascii += '\x80';
-  while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+  while ((ascii[lengthProperty] % 64) - 56) ascii += '\x00';
   for (i = 0; i < ascii[lengthProperty]; i++) {
     j = ascii.charCodeAt(i);
     if (j >> 8) return ''; // ASCII only fallback check
     words[i >> 2] |= j << (24 - (i % 4) * 8);
   }
-  words[words[lengthProperty]] = ((asciiLength / maxWord) | 0);
-  words[words[lengthProperty]] = (asciiLength | 0);
+  words[words[lengthProperty]] = (asciiLength / maxWord) | 0;
+  words[words[lengthProperty]] = asciiLength | 0;
 
-  let H0 = hash[0], H1 = hash[1], H2 = hash[2], H3 = hash[3], H4 = hash[4], H5 = hash[5], H6 = hash[6], H7 = hash[7];
+  let H0 = hash[0],
+    H1 = hash[1],
+    H2 = hash[2],
+    H3 = hash[3],
+    H4 = hash[4],
+    H5 = hash[5],
+    H6 = hash[6],
+    H7 = hash[7];
   for (i = 0; i < words[lengthProperty]; i += 16) {
     const w = words.slice(i, i + 16);
-    let a = H0, b = H1, c = H2, d = H3, e = H4, f = H5, g = H6, h = H7;
+    let a = H0,
+      b = H1,
+      c = H2,
+      d = H3,
+      e = H4,
+      f = H5,
+      g = H6,
+      h = H7;
     for (j = 0; j < 64; j++) {
       if (j >= 16) {
-        const w15 = w[j - 15], w2 = w[j - 2];
+        const w15 = w[j - 15],
+          w2 = w[j - 2];
         const s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
         const s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
         w[j] = (w[j - 16] + s0 + w[j - 7] + s1) | 0;
@@ -160,7 +192,8 @@ export async function buildStableId(components) {
     languages: components?.languages?.value,
     screen: components?.screenResolution?.value,
     hardwareConcurrency: components?.hardwareConcurrency?.value,
-    deviceMemory: components?.deviceMemory?.value
+    deviceMemory: components?.deviceMemory?.value,
+    uuid: getCachedDeviceUUID(),
   };
 
   const json = JSON.stringify(payload);
@@ -179,51 +212,42 @@ export async function buildStableId(components) {
   return sha256_js(json);
 }
 
-async function getVisitorId() {
-  if (cachedId) return cachedId;
+// async function getVisitorId() {
+//   if (cachedId) return cachedId;
 
-  const stored = safeGetItem(STORAGE_KEY);
-  if (stored) {
-    cachedId = stored;
-    setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
-    return cachedId;
-  }
+//   const stored = safeGetItem(STORAGE_KEY);
+//   if (stored) {
+//     cachedId = stored;
+//     setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
+//     return cachedId;
+//   }
 
-  let visitorId = '';
-  try {
-    if (!fpPromise) fpPromise = FingerprintJS.load();
-    const fp = await withTimeout(fpPromise, 1500, null);
-    if (fp) {
-      const result = await withTimeout(fp.get(), 1500, null);
-      if (result && result.visitorId) {
-        visitorId = result.visitorId;
-      }
-    }
-  } catch (e) {
-    console.error('[VisitorId] Failed to load/get FingerprintJS:', e);
-  }
+//   let visitorId = '';
+//   try {
+//     if (!fpPromise) fpPromise = FingerprintJS.load();
+//     const fp = await withTimeout(fpPromise, 1500, null);
+//     if (fp) {
+//       const result = await withTimeout(fp.get(), 1500, null);
+//       if (result && result.visitorId) {
+//         visitorId = result.visitorId;
+//       }
+//     }
+//   } catch (e) {
+//     console.error('[VisitorId] Failed to load/get FingerprintJS:', e);
+//   }
 
-  if (!visitorId) {
-    console.warn('[VisitorId] FingerprintJS failed or timed out. Falling back to generated UUID.');
-    visitorId = generateUUID();
-  }
+//   if (!visitorId) {
+//     console.warn('[VisitorId] FingerprintJS failed or timed out. Falling back to generated UUID.');
+//     visitorId = generateUUID();
+//   }
 
-  cachedId = visitorId;
-  safeSetItem(STORAGE_KEY, cachedId);
-  setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
-  return cachedId;
-}
+//   cachedId = visitorId;
+//   safeSetItem(STORAGE_KEY, cachedId);
+//   setCookie('g-x', cachedId, 365 * 24 * 60, getSharedDomain());
+//   return cachedId;
+// }
 
 async function getStableVisitorId() {
-  if (cachedStableId) return cachedStableId;
-
-  const stored = safeGetItem(STABLE_STORAGE_KEY);
-  if (stored) {
-    cachedStableId = stored;
-    setCookie('g-x', cachedStableId, 365 * 24 * 60, getSharedDomain());
-    return cachedStableId;
-  }
-
   let stableId = '';
   try {
     if (!fpPromise) fpPromise = FingerprintJS.load();
@@ -239,24 +263,26 @@ async function getStableVisitorId() {
   }
 
   if (!stableId) {
-    console.warn('[StableId] FingerprintJS failed or timed out. Generating random fallback stable ID.');
+    console.log('======');
+    console.log('Fallback');
+    console.log(
+      '[StableId] FingerprintJS failed or timed out. Generating random fallback stable ID.',
+    );
     stableId = sha256_js(generateUUID());
   }
 
-  cachedStableId = stableId;
-  safeSetItem(STABLE_STORAGE_KEY, cachedStableId);
-  setCookie('g-x', cachedStableId, 365 * 24 * 60, getSharedDomain());
+  setCookie('g-x', stableId, 365 * 24 * 60, getSharedDomain());
 
-  return cachedStableId;
+  return stableId;
 }
 
 async function resetVisitorId() {
   cachedId = null;
-  cachedStableId = null;
+  cachedDeviceUuid = null;
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.removeItem(STORAGE_KEY);
-      window.localStorage.removeItem(STABLE_STORAGE_KEY);
+      window.localStorage.removeItem(DEVICE_UUID_KEY);
     }
   } catch (e) {
     console.warn('[Storage] Failed to remove items from localStorage:', e);
@@ -265,8 +291,8 @@ async function resetVisitorId() {
 }
 
 export const useVisitorId = () => ({
-  getVisitorId,
+  // getVisitorId,
   resetVisitorId,
   buildStableId,
-  getStableVisitorId
+  getStableVisitorId,
 });

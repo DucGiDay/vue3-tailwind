@@ -392,7 +392,7 @@ const DEFAULT_EXTRA_SALE = {
   note: '',
   budget_unit_code: '',
   passport_number: '',
-  _id: ''
+  _id: '',
 };
 
 const isLoadingSave = ref(false);
@@ -426,7 +426,7 @@ const searchByTaxCode = async () => {
   if (!extraSale.value.inv_buyerTaxCode) return;
   try {
     const respoonse = await invoiceService.searchByTaxCode({
-      tax_code: extraSale.value.inv_buyerTaxCode
+      tax_code: extraSale.value.inv_buyerTaxCode,
     });
 
     if (respoonse?.data) {
@@ -442,7 +442,7 @@ const searchByTaxCode = async () => {
       severity: 'error',
       // summary: t('NOTIFICATION--TITLE_ERROR'),
       detail: error.message || '',
-      life: 3000
+      life: 3000,
     });
   }
 };
@@ -456,7 +456,7 @@ const validateForm = () => {
         severity: 'warn',
         // summary: t('NOTIFICATION--TITLE_WARNING'),
         detail: t('VALIDATE--REQUIRED'),
-        life: 3000
+        life: 3000,
       });
       return false;
     }
@@ -466,7 +466,7 @@ const validateForm = () => {
         severity: 'warn',
         // summary: t('NOTIFICATION--TITLE_WARNING'),
         detail: t('VALIDATE--REQUIRED'),
-        life: 3000
+        life: 3000,
       });
       return false;
     }
@@ -480,7 +480,7 @@ const handleExport = async () => {
     toast.add({
       severity: 'error',
       detail: 'Truyền thiếu dữ liệu, vui lòng kiểm tra lại!',
-      life: 3000
+      life: 3000,
     });
     return;
   }
@@ -500,7 +500,7 @@ const handleExport = async () => {
     const payload = {
       extra_sale,
       store_uid,
-      tran_id
+      tran_id,
     };
 
     const timestamp = Date.now().toString();
@@ -511,7 +511,7 @@ const handleExport = async () => {
     const headers = {
       timestamp,
       token,
-      options: ''
+      options: '',
     };
 
     const response = await invoiceService.updateInvoiceByQr(payload, headers);
@@ -523,7 +523,7 @@ const handleExport = async () => {
     toast.add({
       severity: 'success',
       detail: 'Gửi yêu cầu xuất VAT thành công',
-      life: 3000
+      life: 3000,
     });
 
     const {
@@ -531,7 +531,7 @@ const handleExport = async () => {
       link_image_invoice,
       partner_id,
       tax_code,
-      url: url_res
+      url: url_res,
     } = response?.data || {};
 
     if (link_image_invoice) {
@@ -542,7 +542,7 @@ const handleExport = async () => {
       const {
         data: imageData,
         success: imageSuccess,
-        message: imageMessage
+        message: imageMessage,
       } = await invoiceService.customService(url_res, {
         headers: Object.assign(
           {
@@ -550,11 +550,11 @@ const handleExport = async () => {
             fabi_type: undefined,
             timezone: undefined,
             'x-client-timezone': undefined,
-            access_token: undefined
+            access_token: undefined,
           },
-          partner_id === 'MEINVOICE' ? { TaxCode: tax_code } : null
+          partner_id === 'MEINVOICE' ? { TaxCode: tax_code } : null,
         ),
-        responseType: 'blob'
+        responseType: 'blob',
       });
 
       isLoadingPreview.value = false;
@@ -565,7 +565,7 @@ const handleExport = async () => {
         toast.add({
           severity: 'error',
           detail: imageMessage,
-          life: 3000
+          life: 3000,
         });
       }
     }
@@ -573,7 +573,7 @@ const handleExport = async () => {
     toast.add({
       severity: 'error',
       detail: error?.message || t('ERROR_RESPONSE_MESSAGE--520'),
-      life: 5000
+      life: 5000,
     });
   } finally {
     isLoadingSave.value = false;
@@ -604,7 +604,7 @@ const saveVatInfo = async () => {
       note: extraSale.value.note,
       inv_buyerIdentityCard: extraSale.value.inv_buyerIdentityCard,
       budget_unit_code: extraSale.value.budget_unit_code,
-      passport_number: extraSale.value.passport_number
+      passport_number: extraSale.value.passport_number,
     };
     if (extraSale.value._id) {
       await invoiceService.updateGuestVatInfo(extraSale.value._id, payload);
@@ -627,12 +627,12 @@ const deleteVatOption = (option) => {
     header: 'Xác nhận xóa',
     acceptProps: {
       label: 'Xác nhận',
-      severity: 'danger'
+      severity: 'danger',
     },
     rejectProps: {
       label: 'Hủy',
       severity: 'secondary',
-      outlined: true
+      outlined: true,
     },
     accept: async () => {
       try {
@@ -644,16 +644,16 @@ const deleteVatOption = (option) => {
         toast.add({
           severity: 'success',
           detail: 'Đã xóa thông tin đã lưu',
-          life: 3000
+          life: 3000,
         });
       } catch (error) {
         toast.add({
           severity: 'error',
           detail: error.message || 'Xóa thất bại',
-          life: 5000
+          life: 5000,
         });
       }
-    }
+    },
   });
 };
 
@@ -674,11 +674,6 @@ const getGuestSession = async () => {
     visitorId = await getStableVisitorId();
   } catch (error) {
     console.error('Error getting stable visitor ID', error);
-    try {
-      visitorId = (typeof localStorage !== 'undefined' && localStorage) ? localStorage.getItem('stable_visitor_id') || '' : '';
-    } catch (e) {
-      visitorId = '';
-    }
   }
 
   try {
@@ -719,7 +714,7 @@ const handleSelectVatInfo = (event) => {
     note: value.note || '',
     inv_buyerIdentityCard: value.inv_buyerIdentityCard || '',
     budget_unit_code: value.budget_unit_code || '',
-    passport_number: value.passport_number || ''
+    passport_number: value.passport_number || '',
   };
 
   // Tự động chuyển đổi scope dựa trên thông tin
