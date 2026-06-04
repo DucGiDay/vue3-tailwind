@@ -364,7 +364,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=1`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
             window.open(url, '_self');
           },
         },
@@ -375,7 +375,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
             window.open(url, '_self');
           },
         },
@@ -386,7 +386,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4`;
             window.open(url, '_self');
           },
         },
@@ -415,7 +415,9 @@ const menuItems = (row) => {
         {
           label: 'Sửa thông tin VAT',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit,
+          visible:
+            (row?.statusSale?.is_edit && !VALID_INVOICE_STATUS[row?.vat_publish_status_code]) ||
+            invoiceTab.value === 'tab2',
           // notAllowClick: row?.enable_vat_cms == 0,
           // tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
           command: () => {
