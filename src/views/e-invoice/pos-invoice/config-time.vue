@@ -293,7 +293,6 @@ const getData = async () => {
   loadingTable.value = true;
   try {
     const res = await invoiceService.getListPosConfigTime({
-      company_uid: globalStore?.currentUser?.company_uid,
       tax_code: invoiceStore.currentTaxCode,
     });
     items.value = res?.data?.configs || [];
