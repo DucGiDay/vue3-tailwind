@@ -181,7 +181,6 @@ onMounted(async () => {
 // Methods
 const fetchStores = async () => {
   const params = {
-    brand_uid: globalStore.brandUid,
     company_uid: globalStore.currentUser?.company_uid,
   };
   await eInvoiceStore.getListStoreGroupByTaxCode(params);

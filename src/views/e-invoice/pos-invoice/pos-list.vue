@@ -138,7 +138,7 @@ const posInvoiceList = computed(() => invoiceStore.posInvoiceList || {});
 // --- Methods ---
 const getData = async () => {
   const payload = {
-    company_uid: globalStore?.currentUser?.company_uid,
+    tax_code: invoiceStore.currentTaxCode,
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
     offset: (currentPage.value - 1) * pageSize.value,

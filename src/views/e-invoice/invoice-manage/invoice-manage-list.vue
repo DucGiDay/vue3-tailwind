@@ -1,7 +1,7 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
-      <Button size="small" raised>
+      <Button size="small" raised @click="directToDetail">
         <IconPlus />
         Tạo hóa đơn
       </Button>
@@ -113,6 +113,18 @@
             @change="filter"
           />
         </template>
+        <template #invoice_type="{ record, row }">
+          <span v-if="record !== 'Hóa đơn bị điều chỉnh'">{{ record }}</span>
+          <span v-else>
+            {{
+              row.total_amount === 0
+                ? 'Hóa đơn điều chỉnh thông tin'
+                : row.total_amount > 0
+                  ? 'Hóa đơn điều chỉnh tăng'
+                  : 'Hóa đơn điều chỉnh giảm'
+            }}
+          </span>
+        </template>
 
         <template #vat_publish_status="{ record, row }">
           <Tag
@@ -217,6 +229,26 @@
         :mergedTranIds="publishTranIds"
         @success="filter"
       />
+      <Dialog
+        v-model:visible="showStoreSelectDialog"
+        header="Chọn cửa hàng"
+        modal
+        :style="{ width: '25rem' }"
+      >
+        <div class="fb-flex fb-flex-col fb-gap-4">
+          <Select
+            v-model="selectedStoreUid"
+            :options="invoiceStore.listStoreInCurrentTaxCode"
+            optionLabel="store_name"
+            optionValue="store_uid"
+            placeholder="Chọn cửa hàng"
+            class="fb-w-full"
+          />
+          <div class="fb-flex fb-justify-end fb-mt-2">
+            <Button label="Xác nhận" @click="onConfirmStoreSelect" :disabled="!selectedStoreUid" />
+          </div>
+        </div>
+      </Dialog>
     </template>
   </TableView>
 </template>
@@ -265,6 +297,9 @@ const toast = useToast();
 const confirm = useConfirm();
 
 // State
+const showStoreSelectDialog = ref(false);
+const selectedStoreUid = ref(null);
+
 const showAdvancedFilter = ref(true);
 const searchField = ref(null);
 const statusField = ref(null);
@@ -750,6 +785,17 @@ const onSendEmail = async (row) => {
     toast.add({ severity: 'error', detail: error?.message, life: 5000 });
   } finally {
     loadingActionRowCustom.value = null;
+  }
+};
+
+const directToDetail = () => {
+  showStoreSelectDialog.value = true;
+};
+
+const onConfirmStoreSelect = () => {
+  if (selectedStoreUid.value) {
+    showStoreSelectDialog.value = false;
+    window.location.assign(window.location.origin + '/sale/create-sale?storeUid=' + selectedStoreUid.value + '&');
   }
 };
 

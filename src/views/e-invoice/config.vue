@@ -6,7 +6,8 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <Button @click="openDetail()" size="small" raised>
         <IconPlus />
-        Tạo cấu hình mới</Button>
+        Tạo cấu hình mới
+      </Button>
       <ButtonExtendInvoice />
     </div>
   </div>
@@ -84,10 +85,6 @@ const openDetail = (store = null) => {
   visibleDetail.value = true;
   storeSelected.value = store ? store.data : null;
   isEditConfig.value = !!store;
-};
-
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 onMounted(() => {

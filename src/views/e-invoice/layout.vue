@@ -60,7 +60,6 @@ const taxCodeOptions = computed(() => eInvoiceStore.listTaxStores.data || []);
 
 onMounted(async () => {
   const params = {
-    brand_uid: globalStore.brandUid,
     company_uid: globalStore.currentUser?.company_uid,
   };
   await eInvoiceStore.getListStoreGroupByTaxCode(params);
@@ -71,15 +70,24 @@ onMounted(async () => {
     return;
   }
 
-  const savedTaxCode = eInvoiceStore.currentTaxCode;
-  const isValidTaxCode =
-    savedTaxCode && eInvoiceStore.listTaxStores.data.some((item) => item.tax_code === savedTaxCode);
-
-  if (!isValidTaxCode) {
-    eInvoiceStore.showTaxCodeDialog = true;
-  } else {
+  const taxStores = eInvoiceStore.listTaxStores?.data || [];
+  if (taxStores.length === 1) {
+    const onlyTaxCode = taxStores[0].tax_code;
+    selectedTaxCode.value = onlyTaxCode;
+    eInvoiceStore.setCurrentTaxCode(onlyTaxCode);
     hasTaxCode.value = true;
-    selectedTaxCode.value = savedTaxCode;
+    eInvoiceStore.showTaxCodeDialog = false;
+  } else {
+    const savedTaxCode = eInvoiceStore.currentTaxCode;
+    const isValidTaxCode =
+      savedTaxCode && taxStores.some((item) => item.tax_code === savedTaxCode);
+
+    if (!isValidTaxCode) {
+      eInvoiceStore.showTaxCodeDialog = true;
+    } else {
+      hasTaxCode.value = true;
+      selectedTaxCode.value = savedTaxCode;
+    }
   }
 });
 

@@ -308,7 +308,6 @@ const getListStoreGroupByTaxCode = async () => {
   if (taxStoreList.value && taxStoreList.value.length) return;
   isLoadingTaxStores.value = true;
   const payload = {
-    brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getListStoreGroupByTaxCode(payload);

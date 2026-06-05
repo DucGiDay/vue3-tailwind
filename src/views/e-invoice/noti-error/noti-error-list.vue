@@ -287,10 +287,6 @@ const directToDetail = () => {
   router.push({ path: '/e-invoice/noti-error/detail' });
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
-
 // life cycle
 onMounted(async () => {
   getErrorType();
