@@ -1,7 +1,6 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
-      <ShareButton />
       <Button size="small" raised @click="directToDetail">
         <IconPlus />
         Tạo hóa đơn
