@@ -34,6 +34,7 @@ export function usePublishInvoice() {
           timeout: 10000,
         });
         const resData = checkResponse.data;
+        console.log('response check Hilo plugin', resData);
         if (resData && (resData.status === true || resData.Status === true)) {
           const certData = resData.data || resData.Data;
           if (certData) {
@@ -112,13 +113,13 @@ export function usePublishInvoice() {
         }
       } else {
         // Đi theo NHÁNH HSM (Bước 3A)
-        toast.add({
-          severity: 'warn',
-          summary: 'Cảnh báo',
-          detail:
-            'Hệ thống đang chuyển sang phát hành bằng HSM do không tìm thấy USB Token/Hilo Plugin',
-          life: 5000,
-        });
+        // toast.add({
+        //   severity: 'warn',
+        //   summary: 'Cảnh báo',
+        //   detail:
+        //     'Hệ thống đang chuyển sang phát hành bằng HSM do không tìm thấy USB Token/Hilo Plugin',
+        //   life: 5000,
+        // });
         return await publishHsm(mergedTranIds);
       }
     } catch (error) {

@@ -59,7 +59,7 @@
           @click="onSelectSignMethod('TOKEN')" 
         />
         <Button 
-          label="Ký bằng HSMs" 
+          label="Ký bằng HSM" 
           severity="secondary" 
           outlined
           @click="onSelectSignMethod('HSM')" 

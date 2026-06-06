@@ -1,6 +1,7 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
+      <ShareButton />
       <Button size="small" raised @click="directToDetail">
         <IconPlus />
         Tạo hóa đơn
@@ -275,6 +276,7 @@ import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import ShareButton from '@/components/SharedComponent/ShareButton.vue';
 import ModalPublishInvoice from '@/components/PageComponent/e-invoice/ModalPublishInvoice.vue';
 
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
