@@ -157,6 +157,10 @@
             header: 'Ký hiệu số',
           },
           {
+            field: 'total_amount',
+            header: 'Tổng tiền',
+          },
+          {
             field: 'created_at',
             header: 'Ngày lập',
             format: 'date',
