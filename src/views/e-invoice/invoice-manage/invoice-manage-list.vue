@@ -795,8 +795,12 @@ const directToDetail = () => {
 
 const onConfirmStoreSelect = () => {
   if (selectedStoreUid.value) {
+    const brand_uid = globalStore.storesById?.[selectedStoreUid.value]?.brand_uid;
     showStoreSelectDialog.value = false;
-    window.location.assign(window.location.origin + '/sale/create-sale?storeUid=' + selectedStoreUid.value + '&');
+    const queryString = new URLSearchParams();
+    queryString.append('brandUid', brand_uid);
+    queryString.append('storeUid', selectedStoreUid.value);
+    window.location.assign(window.location.origin + '/sale/create-sale?' + queryString.toString());
   }
 };
 
