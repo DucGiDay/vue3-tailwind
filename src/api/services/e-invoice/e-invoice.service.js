@@ -64,6 +64,16 @@ export const invoiceService = {
   // Danh sách thông tin vat đã lưu
   getGuestVatInfo: (params) =>
     api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), { params, noAuth: true, withCredentials: true }),
+
+  // Guest VAT - lấy extra_data theo store_uid
+  // backend: /api/einvoice/v1/guest-vat-info/store?store_uid=...
+  getGuestVatExtraDataByStore: (params) =>
+    api.get(INVOICE_ENDPOINTS.GUEST_VAT_INFO('store'), {
+      params,
+      noAuth: true,
+      withCredentials: true,
+    }),
+
   // Tạo thông tin vat
   createGuestVatInfo: (payload) =>
     api.post(INVOICE_ENDPOINTS.GUEST_VAT_INFO(), payload, { noAuth: true, withCredentials: true }),
