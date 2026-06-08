@@ -30,32 +30,18 @@ export function usePublishInvoice() {
       let certs = [];
       let isPluginAvailable = false;
       try {
-        const checkResponse = await axios.get(`${HILO_BASE}/api/certificate/get`, {
+        const checkResponse = await axios.get(`${HILO_BASE}/api/certificate/getall`, {
           timeout: 10000,
         });
         const resData = checkResponse.data;
         console.log('response check Hilo plugin', resData);
         if (resData && (resData.status === true || resData.Status === true)) {
           const certData = resData.data || resData.Data;
-          if (certData) {
-            const rawCerts = Array.isArray(certData) ? certData : [certData];
-            certs = rawCerts.map((c) => {
-              const toDate = c.ValidTo || c.ToDate || c.toDate;
-              const fromDate = c.ValidFrom || c.FromDate || c.fromDate;
-              return {
-                ...c,
-                CertSerial: c.CertSerial || c.certSerial,
-                Subject: c.Subject || c.subject,
-                // Issuer: c.Issuer || c.Owner || c.owner || c.Supplier || c.supplier || '',
-                ValidTo: parseHiloDateString(toDate),
-                ValidFrom: parseHiloDateString(fromDate),
-              };
-            });
-            if (certs.length > 0) {
-              isPluginAvailable = true;
-            }
+          if (certData && certData.length > 0) {
+            isPluginAvailable = true;
           }
         }
+        
       } catch (e) {
         console.error('[PublishInvoice] Lỗi kết nối Hilo Plugin ở bước kiểm tra:', e);
         // Không có chữ ký số hoặc plugin chưa cài -> đi nhánh HSM
@@ -86,6 +72,30 @@ export function usePublishInvoice() {
         // BƯỚC 2.1 — CHỌN CHỮ KÝ SỐ (Tự làm giao diện chọn)
         if (onSelectCert) {
           try {
+            const checkResponse = await axios.get(`${HILO_BASE}/api/certificate/get`, {
+              timeout: 10000,
+            });
+            const resData = checkResponse.data;
+            console.log('response Select cert Hilo plugin', resData);
+            if (resData && (resData.status === true || resData.Status === true)) {
+              const certData = resData.data || resData.Data;
+              if (certData) {
+                const rawCerts = Array.isArray(certData) ? certData : [certData];
+                certs = rawCerts.map((c) => {
+                  const toDate = c.ValidTo || c.ToDate || c.toDate;
+                  const fromDate = c.ValidFrom || c.FromDate || c.fromDate;
+                  return {
+                    ...c,
+                    CertSerial: c.CertSerial || c.certSerial,
+                    Subject: c.Subject || c.subject,
+                    // Issuer: c.Issuer || c.Owner || c.owner || c.Supplier || c.supplier || '',
+                    ValidTo: parseHiloDateString(toDate),
+                    ValidFrom: parseHiloDateString(fromDate),
+                  };
+                });
+              }
+            }
+
             isLoading.value = false;
             loadingMessage.value = '';
             selectedCertSerial = await onSelectCert(certs);
