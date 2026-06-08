@@ -10,6 +10,8 @@ export const invoiceService = {
     api.get(INVOICE_ENDPOINTS.TOTAL_QUANTITY_INVOICES, { params }),
   getStatusInvoices: (params) => api.get(INVOICE_ENDPOINTS.STATUS_INVOICE, { params }),
   getDailyStatistics: (params) => api.get(INVOICE_ENDPOINTS.DAILY_STATISTICS, { params }),
+  getInvoicePackagesHistory: (params) =>
+    api.get(INVOICE_ENDPOINTS.INVOICE_PACKAGES_HISTORY, { params }),
   getSaleByListTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_LIST_TRAN_ID, { params }),
   getSaleByTranId: (params) => api.get(INVOICE_ENDPOINTS.GET_SALE_BY_TRAN_ID, { params }),
   getSaleChangeLog: (params) => api.get(INVOICE_ENDPOINTS.SALE_CHANGE_LOG, { params }),

@@ -5,6 +5,7 @@ export const INVOICE_ENDPOINTS = {
   TOTAL_QUANTITY_INVOICES: '/api/invoice/v1/count/remaining_invoice',
   STATUS_INVOICE: '/api/einvoice/v1/dashboard/status-invoices',
   DAILY_STATISTICS: '/api/einvoice/v1/dashboard/daily-statistics',
+  INVOICE_PACKAGES_HISTORY: '/api/einvoice/v1/invoice_packages/history-by-tax-code',
   GET_SALE_BY_LIST_TRAN_ID: '/api/v3/pos-cms/get-sale-by-list-tran-id',
   GET_SALE_BY_TRAN_ID: '/api/v1/reports/sales/get-sale-by-tran-id',
   SALE_CHANGE_LOG: '/api/v3/pos-cms/sale-change-log',

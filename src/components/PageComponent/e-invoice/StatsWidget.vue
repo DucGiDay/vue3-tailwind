@@ -3,7 +3,11 @@
     <div class="fb-grid fb-grid-cols-12 fb-gap-6">
       <!-- Số lượng hóa đơn đã mua -->
       <div class="fb-col-span-12 lg:fb-col-span-6 xl:fb-col-span-4">
-        <div class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs">
+        <div
+          class="card fb-mb-0 fb-border fb-border-gray-200 fb-shadow-xs fb-cursor-pointer hover:fb-border-primary hover:fb-shadow-sm fb-transition-all fb-duration-200"
+          @click="navigateTo('/e-invoice/invoice-package-history')"
+          title="Xem lịch sử gói hóa đơn điện tử"
+        >
           <div class="fb-flex fb-justify-between">
             <span class="fb-text-muted-color fb-text-sm !fb-font-semibold fb-mb-2">
               Số lượng hóa đơn đã mua

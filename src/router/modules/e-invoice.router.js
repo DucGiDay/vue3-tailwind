@@ -200,6 +200,14 @@ export const eInvoiceRouter = [
           title: 'Lịch sử thao tác - HDDT',
         },
       },
+      {
+        path: 'invoice-package-history',
+        name: 'InvoicePackageHistory',
+        component: () => import('@/views/e-invoice/invoice-package-history.vue'),
+        meta: {
+          title: 'Lịch sử gói hóa đơn điện tử - HDDT',
+        },
+      },
     ],
   },
 ];

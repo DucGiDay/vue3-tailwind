@@ -25,6 +25,7 @@ export const useEInoiveStore = defineStore('eInoive', {
     posInvoiceList: {},
     showTaxCodeDialog: false,
     currentTaxCode: localStorage.getItem('fabi_selected_tax_code') || null,
+    invoicePackagesHistory: {},
   }),
 
   getters: {
@@ -306,6 +307,19 @@ export const useEInoiveStore = defineStore('eInoive', {
         return { data: response?.data || null, error: null };
       } catch (err) {
         return { data: null, error: err };
+      }
+    },
+
+    async getInvoicePackagesHistory(params) {
+      try {
+        this.invoicePackagesHistory.isLoading = true;
+        const response = await invoiceService.getInvoicePackagesHistory(params);
+        this.invoicePackagesHistory.data = response?.data || [];
+        console.log(this.invoicePackagesHistory);
+      } catch (err) {
+        this.invoicePackagesHistory.error = err?.message;
+      } finally {
+        this.invoicePackagesHistory.isLoading = false;
       }
     },
   },
