@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router'
 import AppLayout from '@/layout/AppLayout.vue';
 
 import { reportComponentMap, reportRouters } from './modules/report';
-import { extendLicenseComponentMap } from './modules/extend-license.router';
+import { extendLicenseComponentMap, extendLicenseRouter } from './modules/extend-license.router';
 import { employee } from './modules/employee.router.js';
 import { eInvoiceRouter, exportVatRouter } from './modules/e-invoice.router';
 import { pagesExampleRouter, pagesNotHaveLayoutRouter, uikitRouter } from './modules/uikit.router';
@@ -12,7 +12,7 @@ import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 
 const componentMap = {
   MicroReport: reportComponentMap,
-  ExtendLicense: extendLicenseComponentMap
+  ExtendLicense: extendLicenseComponentMap,
 };
 
 const mapMicroRouters = (routes, inheritedAbstractName = '') => {
@@ -59,20 +59,20 @@ const createAppRouter = (microRouter, componentName = '') => {
         {
           path: '/',
           name: 'Default',
-          component: { render: () => null }
-        }
-      ]
+          component: { render: () => null },
+        },
+      ],
     });
   }
 
   // Trường hợp chạy độc lập hoặc chạy dưới Qiankun với vai trò là micro app thì setup router bình thường với các route được map từ microRouter config
-  const microRouters =
-    Object.keys(microRouter).length > 0
-      ? mapMicroRouters(microRouter?.children, '').map((route) => ({
-          ...route,
-          path: '/' + route.path
-        }))
-      : [];
+  // const microRouters =
+  //   Object.keys(microRouter).length > 0
+  //     ? mapMicroRouters(microRouter?.children, '').map((route) => ({
+  //         ...route,
+  //         path: '/' + route.path
+  //       }))
+  //     : [];
 
   const routes = [
     {
@@ -97,8 +97,9 @@ const createAppRouter = (microRouter, componentName = '') => {
         ...employee,
       ],
     },
+    ...extendLicenseRouter,
     ...pagesNotHaveLayoutRouter,
-    ...microRouters,
+    // ...microRouters,
     ...exportVatRouter,
     { path: '/404', name: 'NotFound', component: NotFound },
     { path: '/:pathMatch(.*)*', component: () => import('@/views/pages/NotFound.vue') },
@@ -106,7 +107,7 @@ const createAppRouter = (microRouter, componentName = '') => {
 
   const router = createRouter({
     history: createWebHistory(qiankunWindow.__POWERED_BY_QIANKUN__ ? '/micro' : '/'),
-    routes
+    routes,
   });
 
   return router;
