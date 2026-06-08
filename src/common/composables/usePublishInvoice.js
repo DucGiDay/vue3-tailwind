@@ -37,11 +37,11 @@ export function usePublishInvoice() {
         console.log('response check Hilo plugin', resData);
         if (resData && (resData.status === true || resData.Status === true)) {
           const certData = resData.data || resData.Data;
-          if (certData && certData.length > 0) {
-            isPluginAvailable = true;
+          if (certData) {
+            const rawCerts = Array.isArray(certData) ? certData : [certData];
+            if (rawCerts.length > 0) isPluginAvailable = true;
           }
         }
-        
       } catch (e) {
         console.error('[PublishInvoice] Lỗi kết nối Hilo Plugin ở bước kiểm tra:', e);
         // Không có chữ ký số hoặc plugin chưa cài -> đi nhánh HSM
@@ -69,33 +69,42 @@ export function usePublishInvoice() {
           return await publishHsm(mergedTranIds);
         }
 
-        // BƯỚC 2.1 — CHỌN CHỮ KÝ SỐ (Tự làm giao diện chọn)
+        // BƯỚC 2.1 — LẤY CHI TIẾT CHỨNG THƯ SỐ (Gọi /get để lấy đủ data)
+        try {
+          isLoading.value = true;
+          loadingMessage.value = 'Đang lấy dữ liệu chứng thư số...';
+          const checkResponse = await axios.get(`${HILO_BASE}/api/certificate/get`, {
+            timeout: 10000,
+          });
+          const resData = checkResponse.data;
+          console.log('response Select cert Hilo plugin', resData);
+          if (resData && (resData.status === true || resData.Status === true)) {
+            const certData = resData.data || resData.Data;
+            if (certData) {
+              const rawCerts = Array.isArray(certData) ? certData : [certData];
+              certs = rawCerts.map((c) => {
+                const toDate = c.ValidTo || c.ToDate || c.toDate;
+                const fromDate = c.ValidFrom || c.FromDate || c.fromDate;
+                return {
+                  ...c,
+                  CertSerial: c.CertSerial || c.certSerial,
+                  Subject: c.Subject || c.subject,
+                  ValidTo: parseHiloDateString(toDate),
+                  ValidFrom: parseHiloDateString(fromDate),
+                };
+              });
+            }
+          }
+        } catch (e) {
+          console.error('[PublishInvoice] Lỗi khi lấy chi tiết chứng thư:', e);
+          toast.error('Lỗi khi kết nối với Hilo Plugin để lấy chứng thư số.');
+          isLoading.value = false;
+          return false;
+        }
+
+        // BƯỚC 2.2 — CHỌN CHỮ KÝ SỐ (Tự làm giao diện chọn hoặc fallback)
         if (onSelectCert) {
           try {
-            const checkResponse = await axios.get(`${HILO_BASE}/api/certificate/get`, {
-              timeout: 10000,
-            });
-            const resData = checkResponse.data;
-            console.log('response Select cert Hilo plugin', resData);
-            if (resData && (resData.status === true || resData.Status === true)) {
-              const certData = resData.data || resData.Data;
-              if (certData) {
-                const rawCerts = Array.isArray(certData) ? certData : [certData];
-                certs = rawCerts.map((c) => {
-                  const toDate = c.ValidTo || c.ToDate || c.toDate;
-                  const fromDate = c.ValidFrom || c.FromDate || c.fromDate;
-                  return {
-                    ...c,
-                    CertSerial: c.CertSerial || c.certSerial,
-                    Subject: c.Subject || c.subject,
-                    // Issuer: c.Issuer || c.Owner || c.owner || c.Supplier || c.supplier || '',
-                    ValidTo: parseHiloDateString(toDate),
-                    ValidFrom: parseHiloDateString(fromDate),
-                  };
-                });
-              }
-            }
-
             isLoading.value = false;
             loadingMessage.value = '';
             selectedCertSerial = await onSelectCert(certs);
