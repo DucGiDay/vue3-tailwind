@@ -287,10 +287,6 @@ const onDownloadPDF = async (item) => {
   }
 };
 
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
-};
-
 onMounted(() => {
   getData();
 });

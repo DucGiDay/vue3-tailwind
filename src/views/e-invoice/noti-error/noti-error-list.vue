@@ -14,7 +14,7 @@
     </template>
 
     <template #filters>
-      <Select
+      <!-- <Select
         v-model="typeErrorField"
         :options="errorTypeList"
         optionLabel="name"
@@ -25,7 +25,7 @@
         size="small"
         :loading="isLoadingErrorType"
         @change="filter"
-      />
+      /> -->
 
       <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
     </template>
@@ -184,8 +184,9 @@ const getData = async ({ page, rows } = {}) => {
   pageSize.value = rows || 50;
 
   const payload = {
-    brand_uid: globalStore?.brandUid,
-    company_uid: globalStore?.currentUser?.company_uid,
+    tax_code: invoiceStore?.currentTaxCode,
+    // brand_uid: globalStore?.brandUid,
+    // company_uid: globalStore?.currentUser?.company_uid,
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
     page: currentPage.value,
@@ -285,10 +286,6 @@ const onDownloadPDF = async (item) => {
 
 const directToDetail = () => {
   router.push({ path: '/e-invoice/noti-error/detail' });
-};
-
-const onBuyInvoice = () => {
-  window.location.assign(window.location.origin + '/extend-license/invoice-renewal-stores');
 };
 
 // life cycle

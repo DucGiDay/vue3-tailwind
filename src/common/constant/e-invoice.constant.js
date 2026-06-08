@@ -137,7 +137,8 @@ export const AGREEMENT_STATUS_MAP = {
 export const CREATE_MTT_TABLE_COLUMNS = [
   { field: 'no', header: 'STT' },
   { field: 'merged_tran_id', header: 'Mã giao dịch' },
-  { field: 'vat_invoice_code', header: 'Mẫu số' },
+  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'vat_invoice_code', header: 'Mã CQT' },
   { field: 'vat_invoice_series', header: 'Ký hiệu' },
   { field: 'vat_invoice_number', header: 'Số hóa đơn' },
   { field: 'vat_invoice_date', header: 'Ngày hóa đơn', format: 'date' },

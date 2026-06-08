@@ -293,7 +293,6 @@ const getData = async () => {
   loadingTable.value = true;
   try {
     const res = await invoiceService.getListPosConfigTime({
-      company_uid: globalStore?.currentUser?.company_uid,
       tax_code: invoiceStore.currentTaxCode,
     });
     items.value = res?.data?.configs || [];
@@ -308,7 +307,6 @@ const getListStoreGroupByTaxCode = async () => {
   if (taxStoreList.value && taxStoreList.value.length) return;
   isLoadingTaxStores.value = true;
   const payload = {
-    brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
   };
   await invoiceStore.getListStoreGroupByTaxCode(payload);

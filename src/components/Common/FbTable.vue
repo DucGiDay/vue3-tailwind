@@ -89,7 +89,8 @@
         <span
           v-else-if="!$slots?.[col.field]"
           v-tooltip="{
-            value: data[col.field] != null ? String(data[col.field]) : '',
+            value:
+              data[col.field] != null && col?.format === 'truncate' ? String(data[col.field]) : '',
             showDelay: 500,
             hideDelay: 100,
           }"

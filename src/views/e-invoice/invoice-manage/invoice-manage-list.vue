@@ -1,7 +1,8 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
-      <Button size="small" raised>
+      <ShareButton />
+      <Button size="small" raised @click="directToDetail">
         <IconPlus />
         Tạo hóa đơn
       </Button>
@@ -113,6 +114,18 @@
             @change="filter"
           />
         </template>
+        <template #invoice_type="{ record, row }">
+          <span v-if="record !== 'Hóa đơn bị điều chỉnh'">{{ record }}</span>
+          <span v-else>
+            {{
+              row.total_amount === 0
+                ? 'Hóa đơn điều chỉnh thông tin'
+                : row.total_amount > 0
+                  ? 'Hóa đơn điều chỉnh tăng'
+                  : 'Hóa đơn điều chỉnh giảm'
+            }}
+          </span>
+        </template>
 
         <template #vat_publish_status="{ record, row }">
           <Tag
@@ -217,6 +230,26 @@
         :mergedTranIds="publishTranIds"
         @success="filter"
       />
+      <Dialog
+        v-model:visible="showStoreSelectDialog"
+        header="Chọn cửa hàng"
+        modal
+        :style="{ width: '25rem' }"
+      >
+        <div class="fb-flex fb-flex-col fb-gap-4">
+          <Select
+            v-model="selectedStoreUid"
+            :options="invoiceStore.listStoreInCurrentTaxCode"
+            optionLabel="store_name"
+            optionValue="store_uid"
+            placeholder="Chọn cửa hàng"
+            class="fb-w-full"
+          />
+          <div class="fb-flex fb-justify-end fb-mt-2">
+            <Button label="Xác nhận" @click="onConfirmStoreSelect" :disabled="!selectedStoreUid" />
+          </div>
+        </div>
+      </Dialog>
     </template>
   </TableView>
 </template>
@@ -243,6 +276,7 @@ import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
+import ShareButton from '@/components/SharedComponent/ShareButton.vue';
 import ModalPublishInvoice from '@/components/PageComponent/e-invoice/ModalPublishInvoice.vue';
 
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
@@ -265,6 +299,9 @@ const toast = useToast();
 const confirm = useConfirm();
 
 // State
+const showStoreSelectDialog = ref(false);
+const selectedStoreUid = ref(null);
+
 const showAdvancedFilter = ref(true);
 const searchField = ref(null);
 const statusField = ref(null);
@@ -364,7 +401,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=1`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
             window.open(url, '_self');
           },
         },
@@ -375,7 +412,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
             window.open(url, '_self');
           },
         },
@@ -386,7 +423,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4`;
             window.open(url, '_self');
           },
         },
@@ -415,7 +452,9 @@ const menuItems = (row) => {
         {
           label: 'Sửa thông tin VAT',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit,
+          visible:
+            (row?.statusSale?.is_edit && !VALID_INVOICE_STATUS[row?.vat_publish_status_code]) ||
+            invoiceTab.value === 'tab2',
           // notAllowClick: row?.enable_vat_cms == 0,
           // tooltipText: row?.enable_vat_cms == 0 ? $t('SALE_SYNC_VAT--DISABLE_VAT_NOTE') : null,
           command: () => {
@@ -748,6 +787,17 @@ const onSendEmail = async (row) => {
     toast.add({ severity: 'error', detail: error?.message, life: 5000 });
   } finally {
     loadingActionRowCustom.value = null;
+  }
+};
+
+const directToDetail = () => {
+  showStoreSelectDialog.value = true;
+};
+
+const onConfirmStoreSelect = () => {
+  if (selectedStoreUid.value) {
+    showStoreSelectDialog.value = false;
+    window.location.assign(window.location.origin + '/sale/create-sale?storeUid=' + selectedStoreUid.value + '&');
   }
 };
 

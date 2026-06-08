@@ -114,7 +114,7 @@
               <label
                 class="fb-w-full md:fb-w-1/3 fb-text-sm fb-font-medium fb-text-gray-700 fb-pt-2"
               >
-                Lý do
+                Nội dung thông báo sai sót
                 <span class="fb-text-error">*</span>
               </label>
               <div class="fb-w-full md:fb-w-2/3">
@@ -123,7 +123,7 @@
                   class="fb-w-full"
                   :invalid="!!error['reason']"
                   rows="4"
-                  placeholder="Vui lòng nhập lý do"
+                  placeholder="Vui lòng nhập nội dung"
                   style="min-height: 5rem"
                   size="small"
                   maxlength="255"
@@ -155,6 +155,10 @@
           {
             field: 'vat_invoice_series',
             header: 'Ký hiệu số',
+          },
+          {
+            field: 'total_amount',
+            header: 'Tổng tiền',
           },
           {
             field: 'created_at',
