@@ -114,7 +114,7 @@
           />
         </template>
         <template #invoice_type="{ record, row }">
-          <span v-if="record !== 'Hóa đơn bị điều chỉnh'">{{ record }}</span>
+          <span v-if="row.invoice_action !== 'adjust'">{{ record }}</span>
           <span v-else>
             {{
               row.total_amount === 0
@@ -275,7 +275,6 @@ import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
-import ShareButton from '@/components/SharedComponent/ShareButton.vue';
 import ModalPublishInvoice from '@/components/PageComponent/e-invoice/ModalPublishInvoice.vue';
 
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
