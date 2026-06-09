@@ -395,7 +395,10 @@ const menuItems = (row) => {
         {
           label: 'Điều chỉnh tăng',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
@@ -406,7 +409,10 @@ const menuItems = (row) => {
         {
           label: 'Điều chỉnh giảm',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
@@ -417,7 +423,10 @@ const menuItems = (row) => {
         {
           label: 'Điều chỉnh thông tin',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
@@ -428,7 +437,10 @@ const menuItems = (row) => {
         {
           label: 'Thay thế',
           icon: markRaw(IconReplace),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_replace,
           command: () => {
             const url =
               window.location.origin +
