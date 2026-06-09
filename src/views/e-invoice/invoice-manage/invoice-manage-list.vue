@@ -8,73 +8,79 @@
       <ButtonExtendInvoice />
     </template>
     <template #toolbar>
-      <div
-        class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
-      >
-        <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-        <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
-        <Button
-          v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
-          :severity="showAdvancedFilter ? 'primary' : 'secondary'"
-          outlined
-          size="small"
-          @click="showAdvancedFilter = !showAdvancedFilter"
-        >
-          <IconFilter color="currentColor" />
-        </Button>
-        <IconField class="fb-ml-auto">
-          <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-            <IconSearch />
-          </InputIcon>
-          <InputText
-            v-model="searchField"
-            placeholder="Tìm kiếm mã hóa đơn"
-            class="fb-w-full md:fb-w-72"
+      <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
+        <div class="fb-flex fb-gap-2 fb-flex-wrap">
+          <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
+          <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
+          <Button
+            v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
+            :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+            outlined
             size="small"
-            @input="onSearchChange"
-          />
-        </IconField>
-      </div>
-      <transition name="filter-slide">
-        <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-3">
-          <!-- Các bộ lọc khác -->
-          <Select
-            v-if="invoiceTab === 'tab1'"
-            v-model="statusField"
-            :options="statusOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Chọn trạng thái"
-            class="fb-w-full md:fb-w-52"
-            showClear
-            size="small"
-            @change="filter"
-          />
-
-          <InputText
-            v-model="serialField"
-            placeholder="Ký hiệu"
-            class="fb-w-full md:fb-w-52"
-            size="small"
-            @input="onSearchChange"
-          />
-          <Select
-            v-model="invoiceAction"
-            :options="[
-              { label: 'Hóa đơn gốc', value: 'origin' },
-              { label: 'Hóa đơn điều chỉnh', value: 'adjust' },
-              { label: 'Hóa đơn thay thế', value: 'replace' },
-            ]"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Loại hóa đơn"
-            class="fb-w-full md:fb-w-52"
-            showClear
-            size="small"
-            @change="filter"
-          />
+            @click="showAdvancedFilter = !showAdvancedFilter"
+          >
+            <IconFilter color="currentColor" />
+          </Button>
+          <IconField class="fb-ml-auto">
+            <InputIcon
+              class="!fb-mt-0 !-fb-translate-y-1/2 fb-cursor-pointer hover:fb-scale-125 fb-transition-all active:fb-scale-95"
+              @click="filter"
+            >
+              <IconSearch />
+            </InputIcon>
+            <InputText
+              v-model="searchField"
+              placeholder="Tìm kiếm mã hóa đơn"
+              class="fb-w-full md:fb-w-72"
+              size="small"
+              @input="onSearchChange"
+            />
+          </IconField>
         </div>
-      </transition>
+        <transition name="filter-slide">
+          <div
+            v-show="showAdvancedFilter"
+            class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-2 fb-pt-2 fb-border-t"
+          >
+            <!-- Các bộ lọc khác -->
+            <Select
+              v-if="invoiceTab === 'tab1'"
+              v-model="statusField"
+              :options="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn trạng thái"
+              class="fb-w-full md:fb-w-52"
+              showClear
+              size="small"
+              @change="filter"
+            />
+
+            <InputText
+              v-model="serialField"
+              placeholder="Ký hiệu"
+              class="fb-w-full md:fb-w-52"
+              size="small"
+              @input="onSearchChange"
+            />
+            <Select
+              v-model="invoiceAction"
+              :options="[
+                { label: 'Hóa đơn gốc', value: 'origin' },
+                { label: 'Hóa đơn điều chỉnh', value: 'adjust' },
+                { label: 'Hóa đơn thay thế', value: 'replace' },
+              ]"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Loại hóa đơn"
+              class="fb-w-full md:fb-w-52"
+              showClear
+              size="small"
+              @change="filter"
+            />
+          </div>
+        </transition>
+      </div>
     </template>
 
     <template #table>
