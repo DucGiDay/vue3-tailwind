@@ -408,7 +408,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -422,7 +422,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -436,7 +436,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -450,7 +450,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -461,7 +461,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
