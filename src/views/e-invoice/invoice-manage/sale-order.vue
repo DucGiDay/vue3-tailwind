@@ -278,7 +278,7 @@ const getData = async ({ page, rows } = {}) => {
   pageSize.value = rows || 50;
 
   const payload = {
-    brand_uid: globalStore?.brandUid,
+    // brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
     list_store_uid: storeUidByTaxCode.value,
     start_date: filterStore?.invoice?.start_date,
