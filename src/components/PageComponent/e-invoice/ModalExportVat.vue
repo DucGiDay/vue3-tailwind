@@ -256,11 +256,11 @@
             />
           </div>
           <!-- Ngày hóa đơn -->
-          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+          <div v-if="props.saleData?.is_draft" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
             <label for="note" class="fb-font-medium fb-text-sm fb-mb-0">Ngày hóa đơn</label>
             <DatePicker
               ref="datePicker"
-              v-model="extraSale.vat_invoice_date"
+              v-model="vatInvoiceDate"
               selectionMode="single"
               :manualInput="false"
               dateFormat="dd/mm/yy"
@@ -268,6 +268,8 @@
               inputClass="!fb-font-medium"
               selectOtherMonths
               panelClass="fb-custom-date-panel"
+              showClear
+              showButtonBar
             />
           </div>
         </div>
@@ -351,10 +353,10 @@ const DEFAULT_EXTRA_SALE = {
   note: '',
   budget_unit_code: '',
   passport_number: '',
-  vat_invoice_date: new Date(),
 };
 
 const extraSale = ref({ ...DEFAULT_EXTRA_SALE });
+const vatInvoiceDate = ref(null);
 
 const reExportVatColumns = [
   { field: 'inv_buyerDisplayName', header: 'Tên người mua' },
@@ -450,8 +452,9 @@ const handleExport = async () => {
     const salesList = props.saleData?.sales || [];
     const extra_sale = { ...extraSale.value };
     
-    if (extra_sale.vat_invoice_date) {
-      const d = new Date(extra_sale.vat_invoice_date);
+    // Nếu là draft và có dữ liệu ngày hóa đơn thì truyền lên
+    if (props.saleData?.is_draft && vatInvoiceDate.value) {
+      const d = new Date(vatInvoiceDate.value);
       if (!isNaN(d.getTime())) {
         extra_sale.vat_invoice_date = d.getTime();
       }
@@ -510,27 +513,34 @@ watch(visible, (newVal) => {
     if (props.saleData?.extra_sale) {
       extraSale.value = { ...extraSale.value, ...props.saleData.extra_sale };
       
-      // Đảm bảo vat_invoice_date luôn là đối tượng Date hợp lệ
-      if (extraSale.value.vat_invoice_date) {
-        let rawDate = extraSale.value.vat_invoice_date;
-        // Nếu rawDate là chuỗi chỉ chứa số (timestamp milisecond dạng string)
-        if (typeof rawDate === 'string' && /^\d+$/.test(rawDate)) {
-          rawDate = parseInt(rawDate, 10);
+      // Đảm bảo vatInvoiceDate được gán đúng nếu là draft
+      if (props.saleData?.is_draft) {
+        if (extraSale.value.vat_invoice_date) {
+          let rawDate = extraSale.value.vat_invoice_date;
+          // Nếu rawDate là chuỗi chỉ chứa số (timestamp milisecond dạng string)
+          if (typeof rawDate === 'string' && /^\d+$/.test(rawDate)) {
+            rawDate = parseInt(rawDate, 10);
+          }
+          const parsedDate = new Date(rawDate);
+          vatInvoiceDate.value = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+        } else {
+          vatInvoiceDate.value = new Date();
         }
-        const parsedDate = new Date(rawDate);
-        extraSale.value.vat_invoice_date = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
       } else {
-        extraSale.value.vat_invoice_date = new Date();
+        vatInvoiceDate.value = null;
       }
+
+      // Xóa trường vat_invoice_date khỏi extraSale để tránh tự động gửi
+      delete extraSale.value.vat_invoice_date;
 
       scope.value =
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
-    console.log(props.saleData);
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };
     scope.value = 1;
+    vatInvoiceDate.value = null;
   }
 });
 </script>

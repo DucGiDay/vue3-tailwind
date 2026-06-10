@@ -478,6 +478,7 @@ const menuItems = (row) => {
               extra_sale: row || null,
               sales: [row],
               is_immediate: false,
+              is_draft: invoiceTab.value === 'tab2',
             };
             visibleExportVat.value = true;
           },
