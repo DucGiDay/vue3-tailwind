@@ -1,7 +1,6 @@
 <template>
   <TableView title="Quản lý hóa đơn">
     <template #header-actions>
-      <ShareButton />
       <Button size="small" raised @click="directToDetail">
         <IconPlus />
         Tạo hóa đơn
@@ -9,73 +8,79 @@
       <ButtonExtendInvoice />
     </template>
     <template #toolbar>
-      <div
-        class="fb-flex fb-gap-2 fb-flex-wrap fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200"
-      >
-        <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-        <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
-        <Button
-          v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
-          :severity="showAdvancedFilter ? 'primary' : 'secondary'"
-          outlined
-          size="small"
-          @click="showAdvancedFilter = !showAdvancedFilter"
-        >
-          <IconFilter color="currentColor" />
-        </Button>
-        <IconField class="fb-ml-auto">
-          <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
-            <IconSearch />
-          </InputIcon>
-          <InputText
-            v-model="searchField"
-            placeholder="Tìm kiếm mã hóa đơn"
-            class="fb-w-full md:fb-w-72"
+      <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
+        <div class="fb-flex fb-gap-2 fb-flex-wrap">
+          <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
+          <FbSelectTaxStoreFilter isSingleGroup @update:modelValue="filter" />
+          <Button
+            v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
+            :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+            outlined
             size="small"
-            @input="onSearchChange"
-          />
-        </IconField>
-      </div>
-      <transition name="filter-slide">
-        <div v-show="showAdvancedFilter" class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-3">
-          <!-- Các bộ lọc khác -->
-          <Select
-            v-if="invoiceTab === 'tab1'"
-            v-model="statusField"
-            :options="statusOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Chọn trạng thái"
-            class="fb-w-full md:fb-w-52"
-            showClear
-            size="small"
-            @change="filter"
-          />
-
-          <InputText
-            v-model="serialField"
-            placeholder="Ký hiệu"
-            class="fb-w-full md:fb-w-52"
-            size="small"
-            @input="onSearchChange"
-          />
-          <Select
-            v-model="invoiceAction"
-            :options="[
-              { label: 'Hóa đơn gốc', value: 'origin' },
-              { label: 'Hóa đơn điều chỉnh', value: 'adjust' },
-              { label: 'Hóa đơn thay thế', value: 'replace' },
-            ]"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Loại hóa đơn"
-            class="fb-w-full md:fb-w-52"
-            showClear
-            size="small"
-            @change="filter"
-          />
+            @click="showAdvancedFilter = !showAdvancedFilter"
+          >
+            <IconFilter color="currentColor" />
+          </Button>
+          <IconField class="fb-ml-auto">
+            <InputIcon
+              class="!fb-mt-0 !-fb-translate-y-1/2 fb-cursor-pointer hover:fb-scale-125 fb-transition-all active:fb-scale-95"
+              @click="filter"
+            >
+              <IconSearch />
+            </InputIcon>
+            <InputText
+              v-model="searchField"
+              placeholder="Tìm kiếm mã hóa đơn"
+              class="fb-w-full md:fb-w-72"
+              size="small"
+              @input="onSearchChange"
+            />
+          </IconField>
         </div>
-      </transition>
+        <transition name="filter-slide">
+          <div
+            v-show="showAdvancedFilter"
+            class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-2 fb-pt-2 fb-border-t"
+          >
+            <!-- Các bộ lọc khác -->
+            <Select
+              v-if="invoiceTab === 'tab1'"
+              v-model="statusField"
+              :options="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Chọn trạng thái"
+              class="fb-w-full md:fb-w-52"
+              showClear
+              size="small"
+              @change="filter"
+            />
+
+            <InputText
+              v-model="serialField"
+              placeholder="Ký hiệu"
+              class="fb-w-full md:fb-w-52"
+              size="small"
+              @input="onSearchChange"
+            />
+            <Select
+              v-model="invoiceAction"
+              :options="[
+                { label: 'Hóa đơn gốc', value: 'origin' },
+                { label: 'Hóa đơn điều chỉnh', value: 'adjust' },
+                { label: 'Hóa đơn thay thế', value: 'replace' },
+              ]"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Loại hóa đơn"
+              class="fb-w-full md:fb-w-52"
+              showClear
+              size="small"
+              @change="filter"
+            />
+          </div>
+        </transition>
+      </div>
     </template>
 
     <template #table>
@@ -115,7 +120,7 @@
           />
         </template>
         <template #invoice_type="{ record, row }">
-          <span v-if="record !== 'Hóa đơn bị điều chỉnh'">{{ record }}</span>
+          <span v-if="row.invoice_action !== 'adjust'">{{ record }}</span>
           <span v-else>
             {{
               row.total_amount === 0
@@ -276,7 +281,6 @@ import { INVOICE_MANAGE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import ButtonExtendInvoice from '@/components/SharedComponent/ButtonExtendInvoice.vue';
-import ShareButton from '@/components/SharedComponent/ShareButton.vue';
 import ModalPublishInvoice from '@/components/PageComponent/e-invoice/ModalPublishInvoice.vue';
 
 import IconEdit from '@/components/Common/Icon/IconEdit.vue';
@@ -397,44 +401,56 @@ const menuItems = (row) => {
         {
           label: 'Điều chỉnh tăng',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=2&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
         {
           label: 'Điều chỉnh giảm',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=3&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
         {
           label: 'Điều chỉnh thông tin',
           icon: markRaw(IconEdit),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_adjust,
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&adjustType=4&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
         {
           label: 'Thay thế',
           icon: markRaw(IconReplace),
-          visible: row?.statusSale?.is_edit && row?.statusSale?.edit_type === 1,
+          visible:
+            row?.statusSale?.is_edit &&
+            row?.statusSale?.edit_type === 1 &&
+            row?.statusSale?.is_replace,
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -445,7 +461,7 @@ const menuItems = (row) => {
           command: () => {
             const url =
               window.location.origin +
-              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}`;
+              `/sale/edit-sale?tranId=${row.tran_id}&storeUid=${row.store_uid}&editType=${row.statusSale?.edit_type}&is_e_invoice_thread=1`;
             window.open(url, '_self');
           },
         },
@@ -796,8 +812,12 @@ const directToDetail = () => {
 
 const onConfirmStoreSelect = () => {
   if (selectedStoreUid.value) {
+    const brand_uid = globalStore.storesById?.[selectedStoreUid.value]?.brand_uid;
     showStoreSelectDialog.value = false;
-    window.location.assign(window.location.origin + '/sale/create-sale?storeUid=' + selectedStoreUid.value + '&');
+    const queryString = new URLSearchParams();
+    queryString.append('brandUid', brand_uid);
+    queryString.append('storeUid', selectedStoreUid.value);
+    window.location.assign(window.location.origin + '/sale/create-sale?' + queryString.toString());
   }
 };
 
