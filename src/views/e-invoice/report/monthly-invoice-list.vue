@@ -225,7 +225,7 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { saveAs } from 'file-saver';
 import { employeeService } from '@/api/services/employee/employee.service';
-import { useReportFilterOptions } from '@/composables/useReportFilterOptions';
+import { useReportFilterOptions } from '@/common/composables/useReportFilterOptions';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();

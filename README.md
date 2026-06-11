@@ -1,181 +1,55 @@
-# Fabi sub Vue 3 (Sub-app) (Tailwind + Vue Router modular + Pinia)
+# Fabi sub Vue 3 (Sub-app)
 
- 
+Dự án Micro-frontend (Sub-app) sử dụng Vue 3, Vite, Tailwind CSS, PrimeVue, Vue Router và Pinia.
 
-Quick starter project created for the user.
+## 🚨 BẮT BUỘC (MANDATORY) - KHÔNG LÀM THEO SẼ GÂY LỖI!
 
-## Requirements
+Những quy định dưới đây là **bắt buộc**. Nếu vi phạm, dự án sẽ bị lỗi khi build, lỗi runtime hoặc gây xung đột trực tiếp với giao diện của Host-app.
 
-- Node.js 22
+1. **Node.js Version**: 
+   - Bắt buộc sử dụng **Node.js 22**.
+   - Chạy lệnh `nvm use 22` trước khi thao tác lệnh `npm`.
 
-Features:
+2. **Tailwind CSS Prefix (Chống xung đột class)**:
+   - Tất cả các utility class của Tailwind **bắt buộc** phải có tiền tố `fb-`.
+   - ❌ **Sai**: `class="bg-primary text-white p-4"`
+   - ✅ **Đúng**: `class="fb-bg-primary fb-text-white fb-p-4"`
+   - *Lý do: Cấu hình `prefix: 'fb-'` trong `tailwind.config.cjs` được dùng để không gây xung đột với bộ CSS của Host-app (Vue 2).*
 
-- Vue 3 + Vite
-- Tailwind CSS
-- Vue Router with modular route files under `src/router/modules` (user, report)
-- Global auth guard: routes with `meta.requiresAuth` require `localStorage.token`
-- Pinia store (simple `user` store with token helpers)
+3. **CSS/SCSS Scoping (Chống tràn style)**:
+   - Nếu phải viết CSS/SCSS tĩnh trong assets, chúng **bắt buộc** phải được bọc trong ID `#sub-app` hoặc sử dụng thẻ `<style scoped>` ở trong component.
+   - Tuyệt đối không khai báo Global CSS thả nổi, vì style sẽ bị rò rỉ (leak) ra ngoài làm vỡ layout của hệ thống Host-app.
 
-How to run
+4. **Khai báo Router Độc Lập**:
+   - Sub-app phải **tự quản lý và khai báo router đầy đủ**, không còn nhận và phụ thuộc vào router được truyền xuống từ Host-app (Fabi CMS Vue 2) nữa.
+   - Mọi router cần được khai báo chi tiết (path, name, meta, component) trong các module thuộc thư mục `src/router`.
 
-1. Install dependencies:
+5. **Qiankun Micro-frontend Port**:
+   - Cấu hình server port (`5173`), `allowedHosts` và plugin `qiankun` trong `vite.config.js` đã được thiết lập cứng. Không được tự ý thay đổi nếu không có yêu cầu cập nhật liên kết.
 
-```bash
-cd c:\Users\duc.hoang01\Documents\duc\ipos\projects\micro-cms\fabi-cms-sub-vue3
-npm install
-```
+---
 
-2. Start dev server:
+## 🚀 Cài đặt và Chạy dự án (Getting Started)
 
-```bash
-npm run dev
-```
+1. **Cài đặt thư viện**:
+   ```bash
+   nvm use 22
+   npm install
+   ```
 
-Notes
+2. **Khởi chạy môi trường Dev**:
+   ```bash
+   npm run dev
+   ```
 
-- To protect routes, set a token in browser localStorage (or use the login page at `/login`).
-- Tailwind is pre-configured via `tailwind.config.cjs` and `src/assets/tailwind.css`.
+3. **Build dự án**:
+   ```bash
+   npm run build:site-dev      # Dành cho môi trường dev
+   npm run build:site-product  # Dành cho môi trường production
+   ```
 
-Next steps (optional):
+---
 
-- Add ESLint/Prettier, typescript, real auth flow, API clients, and tests.
+## 📖 Tiêu chuẩn Code (Coding Standards)
 
-## Note
-
-1. Router:
-- Router được truyền xuống từ Host-app (Fabi CMS Vue 2) thông qua props.
-- Khai báo đường dẫn component được map bằng key 'name' của các router
-```json
-// Props truyền xuống
-{
-  // ...
-  "children": [
-    {
-      "path": "report",
-      "name": "MicroReport",
-      // ...
-      "children": [
-        {
-          "path": "sale-audit",
-          "name": "SaleAudit",
-          // ...
-        }
-      ]
-    }
-  ]
-}
-```
-
-```js
-// Khai báo map component
-export const reportComponentMap = {
-  // D05
-  SaleAudit: () => import('@/views/micro-report/sale-audit/index.vue')
-};
-```
-Lưu ý, sau khi chuyển toàn bộ report sang Vue 3, Tự quản lý router thay vì nhận router thông qua props
-
-2. Styling:
-
-- Các class của Tailwind được thêm prefix 'fb-' để không xung đột với các class của Host-app. Ví dụ:
-
-```
-'fb-bg-primary fb-text-white'
-```
-
-- Các CSS/SCSS trong assets được bọc trong #sub-app để không xung đột với các class của
-- Màu của Tailwind được reset, thay bằng bảng màu trong tailwind.config.cjs
-- Áp dụng theme Aura của PrimeUI, Có thể tùy biến trong './src/theme/my-design-preset.js'.
-- variables SCSS './src/assets/layout/variables/...': Nơi khai báo các variable. Các variable '--p-...' được truy xuất từ theme của PrimeUI (aura | lara | nora), ta có thể tùy biến trong ./src/theme/my-design-preset.js
-# Fabi-Cms-Sub-Vue3
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.ipos.vn/ipos-dev/FABI/fabi-cms-sub-vue3.git
-git branch -M site-dev
-git push -uf origin site-dev
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.ipos.vn/ipos-dev/FABI/fabi-cms-sub-vue3/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Vui lòng đọc kỹ file [RULES.md](./RULES.md) để biết các tiêu chuẩn và quy ước (conventions) code được áp dụng. Đây là các quy chuẩn bắt buộc tuân theo để giữ source code đồng bộ và sạch sẽ.

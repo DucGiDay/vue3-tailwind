@@ -159,7 +159,7 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatCurrency } from '@/common/utils/common';
 import { VAT_PUBLISH_STATUS_CODE_LIST } from '@/common/constant/e-invoice.constant';
 import { employeeService } from '@/api/services/employee/employee.service';
-import { useReportFilterOptions } from '@/composables/useReportFilterOptions';
+import { useReportFilterOptions } from '@/common/composables/useReportFilterOptions';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();
