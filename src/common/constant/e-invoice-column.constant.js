@@ -276,5 +276,49 @@ export const CONFIG_TIME_TABLE_COLUMNS = [
   { field: 'package_time_slots', header: 'Thời gian tạo' },
   { field: 'send_time_slots', header: 'Thời gian ký' },
   { field: 'is_enabled', header: 'Trạng thái' },
-  { field: 'action', header: 'Thao tác', classes: 'fb-w-4 !fb-text-center' },
+];
+
+// Columns Hóa đơn đầu vào
+export const INPUT_INVOICE_TABLE_COLUMNS = [
+  { field: 'invoice_date', header: 'Ngày hoá đơn', format: 'date' },
+  { field: 'pattern_serial', header: 'Mẫu số & Ký hiệu' },
+  { field: 'no', header: 'Số hóa đơn' },
+  { field: 'seller_name', header: 'Tên đơn vị bán' },
+  { field: 'tax_declared', header: 'Trạng thái MST' },
+  { field: 'total_before_tax', header: 'Tổng tiền trước thuế', format: 'currency' },
+  { field: 'total_tax', header: 'Tiền thuế', format: 'currency' },
+  { field: 'total_payment', header: 'Tổng thanh toán', format: 'currency' },
+  { field: 'payment_method', header: 'Hình thức TT' },
+  { field: 'currency', header: 'Mã tiền tệ' },
+  { field: 'invoice_status', header: 'Trạng thái hóa đơn' },
+  { field: 'note', header: 'Ghi chú' },
+  { field: 'action', header: 'Kiểm tra' },
+];
+
+// Columns Danh sách sản phẩm theo HDDV
+export const INPUT_INVOICE_PRODUCT_COLUMNS = [
+  { field: 'invoice_date', header: 'Ngày hoá đơn', format: 'date' },
+  { field: 'pattern_serial', header: 'Mẫu số và ký hiệu' },
+  { field: 'seller_name', header: 'Tên đơn vị bán' },
+  { field: 'product_code', header: 'Mã hàng hóa' },
+  { field: 'product_name', header: 'Tên hàng hóa' },
+  { field: 'quantity', header: 'Số lượng' },
+  { field: 'unit_price', header: 'Đơn giá', format: 'currency' },
+  { field: 'unit', header: 'ĐVT' },
+  { field: 'amount', header: 'Thành tiền', format: 'currency' },
+  { field: 'tax_rate', header: 'Thuế suất' },
+  { field: 'payment_method', header: 'Hình thức thanh toán' },
+];
+
+// Columns Bảng kê hóa đơn đầu vào
+export const INPUT_INVOICE_SUMMARY_COLUMNS = [
+  { field: 'serial', header: 'Ký hiệu hóa đơn' },
+  { field: 'pattern', header: 'Mẫu số' },
+  { field: 'invoice_number', header: 'Số hóa đơn' },
+  { field: 'invoice_date', header: 'Thời gian lập', format: 'date' },
+  { field: 'seller_name', header: 'Đơn vị bán' },
+  { field: 'seller_tax_code', header: 'Mã số thuế bên bán' },
+  { field: 'total_before_tax', header: 'Tiền trước thuế', format: 'currency' },
+  { field: 'total_tax', header: 'Tiền thuế', format: 'currency' },
+  { field: 'note', header: 'Ghi chú' },
 ];

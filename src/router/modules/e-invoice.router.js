@@ -37,6 +37,33 @@ export const eInvoiceRouter = [
         },
       },
       {
+        path: 'input-invoice',
+        name: 'InputInvoiceList',
+        component: () => import('@/views/e-invoice/input-invoice/input-invoice-list.vue'),
+        meta: {
+          title: 'Danh sách hóa đơn đầu vào - HDDT',
+          isTableViewPaginate: true,
+        },
+      },
+      {
+        path: 'input-invoice/products',
+        name: 'InputInvoiceProductList',
+        component: () => import('@/views/e-invoice/input-invoice/input-invoice-product-list.vue'),
+        meta: {
+          title: 'Danh sách sản phẩm theo HDDV - HDDT',
+          isTableViewPaginate: true,
+        },
+      },
+      {
+        path: 'input-invoice/summary',
+        name: 'InputInvoiceSummary',
+        component: () => import('@/views/e-invoice/input-invoice/input-invoice-summary.vue'),
+        meta: {
+          title: 'Bảng kê hóa đơn đầu vào - HDDT',
+          isTableViewPaginate: true,
+        },
+      },
+      {
         path: 'config',
         name: 'Config',
         component: () => import('@/views/e-invoice/config.vue'),
