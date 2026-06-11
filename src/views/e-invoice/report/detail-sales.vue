@@ -144,9 +144,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
-import { saveAs } from 'file-saver';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { DETAIL_SALES_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import IconDownload from '@/components/Common/Icon/IconDownload.vue';
@@ -158,8 +156,7 @@ import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { formatCurrency } from '@/common/utils/common';
 import { VAT_PUBLISH_STATUS_CODE_LIST } from '@/common/constant/e-invoice.constant';
-import { employeeService } from '@/api/services/employee/employee.service';
-import { useReportFilterOptions } from '@/composables/useReportFilterOptions';
+import { useReportFilterOptions } from '@/common/composables/useReportFilterOptions';
 
 const filterStore = useFilterStore();
 const globalStore = useGlobalStore();

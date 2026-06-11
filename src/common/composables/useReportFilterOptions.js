@@ -4,7 +4,7 @@ import { employeeService } from '@/api/services/employee/employee.service';
 import { useGlobalStore } from '@/stores/global.store';
 import { useEInoiveStore } from '@/stores/e-invoice.store';
 
-// Global cache state outside the composable (acts as a singleton)
+// Trạng thái cache toàn cục bên ngoài composable (hoạt động như một singleton)
 const globalCreatorsPage1 = ref([]);
 const globalSerialsPage1 = ref([]);
 const globalPatterns = ref([]);
@@ -14,7 +14,7 @@ export function useReportFilterOptions() {
   const globalStore = useGlobalStore();
   const invoiceStore = useEInoiveStore();
 
-  // Creators state
+  // Trạng thái người tạo (Creators)
   const creatorOptions = ref([...globalCreatorsPage1.value]);
   const creatorPage = ref(1);
   const isLoadingCreators = ref(false);
@@ -23,7 +23,7 @@ export function useReportFilterOptions() {
   let filterTimeoutCreator = null;
   const CREATOR_PAGE_SIZE = 20;
 
-  // Serials state
+  // Trạng thái ký hiệu (Serials)
   const serialOptions = ref([...globalSerialsPage1.value]);
   const serialPage = ref(1);
   const isLoadingSerials = ref(false);
@@ -32,15 +32,15 @@ export function useReportFilterOptions() {
   let filterTimeoutSerial = null;
   const SERIAL_PAGE_SIZE = 20;
 
-  // Patterns state
+  // Trạng thái mẫu số (Patterns)
   const patternOptions = ref(globalPatterns.value);
   const isLoadingPatterns = ref(false);
 
-  // Creators Logic
+  // Logic xử lý người tạo
   const getCreators = async (isLoadMore = false) => {
     if (isLoadingCreators.value || (!hasMoreCreators.value && isLoadMore)) return;
 
-    // Cache check for page 1 without search keyword
+    // Kiểm tra cache cho trang 1 khi không có từ khóa tìm kiếm
     const isFirstPageNoSearch = creatorPage.value === 1 && !searchKeywordCreator.value;
     if (isFirstPageNoSearch && globalCreatorsPage1.value.length > 0 && !isLoadMore) {
       creatorOptions.value = [...globalCreatorsPage1.value];
@@ -108,11 +108,11 @@ export function useReportFilterOptions() {
     }, 500);
   };
 
-  // Serials Logic
+  // Logic xử lý ký hiệu
   const getSerials = async (isLoadMore = false) => {
     if (isLoadingSerials.value || (!hasMoreSerials.value && isLoadMore)) return;
 
-    // Cache check for page 1 without search keyword
+    // Kiểm tra cache cho trang 1 khi không có từ khóa tìm kiếm
     const isFirstPageNoSearch = serialPage.value === 1 && !searchKeywordSerial.value;
     if (isFirstPageNoSearch && globalSerialsPage1.value.length > 0 && !isLoadMore) {
       serialOptions.value = [...globalSerialsPage1.value];
@@ -181,7 +181,7 @@ export function useReportFilterOptions() {
     }, 500);
   };
 
-  // Patterns Logic
+  // Logic xử lý mẫu số
   const getPatterns = async () => {
     if (isLoadingPatterns.value) return;
 
