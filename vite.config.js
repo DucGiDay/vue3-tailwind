@@ -70,6 +70,10 @@ export default defineConfig(({ mode }) => {
         // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         // 'Access-Control-Allow-Headers': 'Content-Type'
       },
+      watch: {
+        usePolling: true,
+        interval: 1000,
+      },
     },
 
     base: env.VITE_SUB_APP_URL,

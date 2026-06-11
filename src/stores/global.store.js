@@ -5,8 +5,8 @@ const SHARED_STATE_KEYS = ['brandUid', 'currentBrand', 'currentUser'];
 export const useGlobalStore = defineStore('global', {
   state: () => ({
     brandUid: null,
-    currentBrand: {},
-    currentUser: {}
+    currentBrand: JSON.parse(localStorage.getItem('current_brand')) || {},
+    currentUser: JSON.parse(localStorage.getItem('user')) || {},
   }),
 
   getters: {
@@ -23,7 +23,7 @@ export const useGlobalStore = defineStore('global', {
     // Danh sách stores được phân quyền tới user
     storesPermissionActive(state) {
       return (state.currentUser?.brands || []).flatMap((brand) =>
-        brand.cities.flatMap((city) => city.stores.filter((store) => store.active === 1))
+        brand.cities.flatMap((city) => city.stores.filter((store) => store.active === 1)),
       );
     },
 
@@ -49,7 +49,7 @@ export const useGlobalStore = defineStore('global', {
         acc[s.id] = s;
         return acc;
       }, {});
-    }
+    },
   },
 
   actions: {
@@ -70,6 +70,6 @@ export const useGlobalStore = defineStore('global', {
       this.brandUid = null;
       this.currentBrand = {};
       this.currentUser = {};
-    }
-  }
+    },
+  },
 });

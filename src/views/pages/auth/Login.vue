@@ -1,9 +1,35 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import FloatingConfigurator from '@/components/PageComponent/FloatingConfigurator.vue';
+import { useAuthStore } from '@/stores/auth.store';
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+
+const handleLogin = async () => {
+  if (!email.value || !password.value) return;
+  
+  try {
+    const res = await authStore.processLogin({
+      email: email.value,
+      password: password.value
+    });
+    
+    if (res && res.isChooseCompany) {
+      console.log('Choose company:', res.companies);
+      // Implement choose company logic if needed
+    } else {
+      router.push('/');
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
+};
 </script>
 
 <template>
@@ -51,7 +77,7 @@ const checked = ref(false);
               </div>
               <span class="fb-font-medium fb-no-underline fb-ml-2 fb-text-right fb-cursor-pointer fb-text-primary">Forgot password?</span>
             </div>
-            <Button label="Sign In" class="fb-w-full" as="router-link" to="/"></Button>
+            <Button label="Sign In" class="fb-w-full" :loading="authStore.isProcessing" @click="handleLogin"></Button>
           </div>
         </div>
       </div>

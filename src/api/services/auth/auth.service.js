@@ -3,5 +3,6 @@ import api from '@/api/axios';
 import { AUTH_ENDPOINTS } from './auth.endpoints';
 
 export const authService = {
-  logout: () => api.post(AUTH_ENDPOINTS.LOGOUT, {}, { noAuth: true })
+  logout: () => api.post(AUTH_ENDPOINTS.LOGOUT, {}, { noAuth: true }),
+  login: (payload) => api.post(AUTH_ENDPOINTS.LOGIN, payload, { noAuth: true })
 };
