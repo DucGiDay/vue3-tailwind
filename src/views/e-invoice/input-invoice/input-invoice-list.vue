@@ -56,10 +56,10 @@
       >
         <template #pattern_serial="{ row }">{{ row.pattern }} - {{ row.serial }}</template>
 
-        <!-- <template #invoice_status="{ row }">
+        <template #invoice_status="{ row }">
           <Tag
-            :severity="row.status === 1 ? 'success' : 'secondary'"
-            :value="row.status === 1 ? 'Hợp lệ' : row.invoice_status || '-'"
+            :severity="INVOICE_STATUS_SEVERITY[row.invoice_status] || 'secondary'"
+            :value="INVOICE_STATUS_LABEL[row.invoice_status] || '-'"
             class="!fb-text-xs !fb-font-medium"
           />
         </template>
@@ -108,6 +108,24 @@ import TableView from '@/components/SharedComponent/views/TableView.vue';
 import { INPUT_INVOICE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+
+const INVOICE_STATUS_LABEL = {
+  '1': 'Hóa đơn mới',
+  '2': 'Hóa đơn điều chỉnh',
+  '3': 'Hóa đơn thay thế',
+  '4': 'Hóa đơn đã bị thay thế',
+  '5': 'Hóa đơn đã bị điều chỉnh',
+  '6': 'Hóa đơn đã bị hủy',
+};
+
+const INVOICE_STATUS_SEVERITY = {
+  '1': 'success',
+  '2': 'info',
+  '3': 'info',
+  '4': 'secondary',
+  '5': 'secondary',
+  '6': 'danger',
+};
 
 const router = useRouter();
 
