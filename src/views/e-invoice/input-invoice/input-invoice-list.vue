@@ -64,10 +64,10 @@
           />
         </template>
 
-        <template #tax_declared="{ row }">
+        <template #status_tax_code_name="{ row }">
           <Tag
-            :severity="row.tax_declared ? 'success' : 'warning'"
-            :value="row.tax_declared ? 'Đã kê khai' : 'Chưa kê khai'"
+            severity="success"
+            :value="row.status_tax_code_name || 'NNT đang hoạt động'"
             class="!fb-text-xs !fb-font-medium"
           />
         </template>

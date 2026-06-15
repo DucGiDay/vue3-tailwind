@@ -284,7 +284,7 @@ export const INPUT_INVOICE_TABLE_COLUMNS = [
   { field: 'pattern_serial', header: 'Mẫu số & Ký hiệu' },
   { field: 'no', header: 'Số hóa đơn' },
   { field: 'seller_name', header: 'Tên đơn vị bán' },
-  { field: 'tax_declared', header: 'Trạng thái MST' },
+  { field: 'status_tax_code_name', header: 'Trạng thái MST' },
   { field: 'total_before_tax', header: 'Tổng tiền trước thuế', format: 'currency' },
   { field: 'total_tax', header: 'Tiền thuế', format: 'currency' },
   { field: 'total_payment', header: 'Tổng thanh toán', format: 'currency' },
