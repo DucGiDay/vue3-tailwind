@@ -105,9 +105,9 @@
 
           <!-- Grid 2 cột cho các trường còn lại -->
           <div class="fb-grid fb-grid-cols-1 md:fb-grid-cols-2 fb-gap-x-6 fb-gap-y-4 fb-mb-4">
-            <!-- Mã số thuế (Chỉ hiện nếu là Tổ chức) -->
+            <!-- Mã số thuế (Chỉ hiện nếu là Tổ chức, bit 1) -->
             <div
-              v-if="scope === 0"
+              v-if="scope === 0 && isFieldVisible(1)"
               class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
             >
               <label for="tax_code" class="fb-font-medium fb-text-sm fb-mb-0">
@@ -126,9 +126,9 @@
               />
             </div>
 
-            <!-- Tên đơn vị (Chỉ hiện nếu là Tổ chức) -->
+            <!-- Tên đơn vị (Chỉ hiện nếu là Tổ chức, bit 3) -->
             <div
-              v-if="scope === 0"
+              v-if="scope === 0 && isFieldVisible(3)"
               class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
             >
               <label for="legal_name" class="fb-font-medium fb-text-sm fb-mb-0">
@@ -146,11 +146,11 @@
               />
             </div>
 
-            <!-- Tên khách hàng -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
+            <!-- Tên khách hàng (bit 2) -->
+            <div v-if="isFieldVisible(2)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
               <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
-                <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
+                <span v-if="isFieldRequired(2)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="display_name"
@@ -158,45 +158,48 @@
                 class="fb-w-full"
                 size="small"
                 :disabled="isLoading"
-                :invalid="scope === 1 && !extraSale.inv_buyerDisplayName"
+                :invalid="isFieldRequired(2) && !extraSale.inv_buyerDisplayName"
                 :placeholder="t('CREATE_EDIT_LOCATION--INPUT_GUEST_NAME_PLACEHOLDER')"
               />
             </div>
 
-            <!-- Email -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Email (bit 0) -->
+            <div v-if="isFieldVisible(0)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="email" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_SYNC_VAT--BUYER_EMAIL') }}
+                <span v-if="isFieldRequired(0)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="email"
                 v-model="extraSale.inv_buyerEmail"
                 size="small"
                 :disabled="isLoading"
+                :invalid="isFieldRequired(0) && !extraSale.inv_buyerEmail"
                 :placeholder="t('REGISTER--FORM_EMAIL_PLACEHOLDER')"
               />
             </div>
 
-            <!-- Số điện thoại -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Số điện thoại (bit 5) -->
+            <div v-if="isFieldVisible(5)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('BILL_CONTENT--CUSTOMER_PHONE') }}
-                <span v-if="scope === 1" class="fb-text-error fb-ml-1">*</span>
+                <span v-if="isFieldRequired(5)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="phone"
                 v-model="extraSale.sdtnmua"
                 size="small"
                 :disabled="isLoading"
-                :invalid="scope === 1 && !extraSale.sdtnmua"
+                :invalid="isFieldRequired(5) && !extraSale.sdtnmua"
                 :placeholder="t('CONNECT_AHAMOVE_MODAL--PHONE_INPUT_PLACEHOLDER')"
               />
             </div>
 
-            <!-- CCCD / Identity Card -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- CCCD / Identity Card (bit 6) -->
+            <div v-if="isFieldVisible(6)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="id_card" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_SYNC_VAT--INPUT_CCCD') }}
+                <span v-if="isFieldRequired(6)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputGroup>
                 <InputText
@@ -204,6 +207,7 @@
                   v-model="extraSale.inv_buyerIdentityCard"
                   size="small"
                   :disabled="isLoading"
+                  :invalid="isFieldRequired(6) && !extraSale.inv_buyerIdentityCard"
                   :placeholder="t('SALE_SYNC_VAT--INPUT_CCCD_PLACEHOLDER')"
                   maxlength="12"
                 />
@@ -213,10 +217,11 @@
               </InputGroup>
             </div>
 
-            <!-- Hộ chiếu -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Hộ chiếu (bit 11) -->
+            <div v-if="isFieldVisible(11)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="passport" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER') }}
+                <span v-if="isFieldRequired(11)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputGroup>
                 <InputText
@@ -224,6 +229,7 @@
                   v-model="extraSale.passport_number"
                   size="small"
                   :disabled="isLoading"
+                  :invalid="isFieldRequired(11) && !extraSale.passport_number"
                   :placeholder="t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER_PLACEHOLDER')"
                   maxlength="20"
                 />
@@ -233,37 +239,43 @@
               </InputGroup>
             </div>
 
-            <!-- Số tai khoản -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Số tài khoản (bit 8) -->
+            <div v-if="isFieldVisible(8)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="bank_acc" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
+                <span v-if="isFieldRequired(8)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="bank_acc"
                 v-model="extraSale.inv_buyerBankAccount"
                 size="small"
                 :disabled="isLoading"
+                :invalid="isFieldRequired(8) && !extraSale.inv_buyerBankAccount"
                 :placeholder="t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
               />
             </div>
-            <!-- Tên ngân hàng -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+
+            <!-- Tên ngân hàng (bit 9) -->
+            <div v-if="isFieldVisible(9)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="bank_name" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL') }}
+                <span v-if="isFieldRequired(9)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="bank_name"
                 v-model="extraSale.inv_buyerBankName"
                 size="small"
                 :disabled="isLoading"
+                :invalid="isFieldRequired(9) && !extraSale.inv_buyerBankName"
                 :placeholder="t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL')"
               />
             </div>
 
-            <!-- Ghi chú (Full width) -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Ghi chú (bit 7) -->
+            <div v-if="isFieldVisible(7)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="note" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('BILL_CONTENT--NOTE') }}
+                <span v-if="isFieldRequired(7)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <Textarea
                 id="note"
@@ -276,10 +288,11 @@
               />
             </div>
 
-            <!-- Địa chỉ -->
-            <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <!-- Địa chỉ (bit 4) -->
+            <div v-if="isFieldVisible(4)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="address" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_SYNC_VAT--BUYER_ADDRESS') }}
+                <span v-if="isFieldRequired(4)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <Textarea
                 id="address"
@@ -411,6 +424,69 @@ const isLoading = computed(() => {
   return isLoadingSession.value;
 });
 
+// ─── Bitmask helpers ────────────────────────────────────────────────────────
+// Bit mapping:
+// 0: Email | 1: Mã số thuế | 2: Tên khách hàng | 3: Tên công ty
+// 4: Địa chỉ | 5: Số điện thoại | 6: CMTND/CCCD | 7: Ghi chú
+// 8: Số tài khoản | 9: Tên ngân hàng | 10: Mã đơn vị dự toán | 11: Số hộ chiếu
+
+// Lấy vat extra data từ API guest-vat-info thay vì query string
+const vatExtraData = ref(null);
+
+const getVatExtraDataFromApi = async () => {
+  try {
+    const store_uid = route.query?.store_uid;
+    if (!store_uid) return;
+
+    // Dùng service giống getGuestVatInfo (không nhét customService trực tiếp trong component)
+    const response = await invoiceService.getGuestVatExtraDataByStore({ store_uid });
+
+    vatExtraData.value = response?.data?.extra_data ?? null;
+  } catch {
+    vatExtraData.value = null;
+  }
+};
+
+const vatFieldVisibility = computed(() => {
+// Giữ nguyên logic cũ: chỉ đọc trực tiếp từ extra_data khi có (không dùng normalized nếu extra_data null)
+  const src = vatExtraData.value;
+
+  const v = src?.vat_field_visibility;
+  return v != null ? Number(v) : null;
+});
+
+const vatFieldIsRequired = computed(() => {
+  // Ưu tiên normalizedVatExtraData (nếu extra_data là string JSON)
+  const src = normalizedVatExtraData.value ?? vatExtraData.value;
+  const v = src?.vat_field_is_required;
+  return v != null ? Number(v) : null;
+});
+
+// Nếu API trả về extra_data dạng string JSON
+const normalizedVatExtraData = computed(() => {
+  const v = vatExtraData.value;
+  if (typeof v === 'string') {
+    try {
+      return JSON.parse(v);
+    } catch {
+      return null;
+    }
+  }
+  return v;
+});
+
+/** Trả về true nếu field nên hiển thị. Khi không có bitmask → giữ nguyên logic cũ (true) */
+const isFieldVisible = (bitIndex) => {
+  if (vatFieldVisibility.value == null) return true;
+  return !!(vatFieldVisibility.value & (1 << bitIndex));
+};
+
+/** Trả về true nếu field là required theo bitmask. Khi không có bitmask → false (giữ nguyên logic cũ) */
+const isFieldRequired = (bitIndex) => {
+  if (vatFieldIsRequired.value == null) return false;
+  return !!(vatFieldIsRequired.value & (1 << bitIndex));
+};
+
 // Simple debounce implementation
 const debounce = (fn, delay) => {
   let timeoutId;
@@ -450,27 +526,53 @@ const searchByTaxCode = async () => {
 const handleSearchTaxCode = debounce(searchByTaxCode, 500);
 
 const validateForm = () => {
-  if (scope.value === 0) {
-    if (!extraSale.value.inv_buyerTaxCode || !extraSale.value.inv_buyerLegalName) {
-      toast.add({
-        severity: 'warn',
-        // summary: t('NOTIFICATION--TITLE_WARNING'),
-        detail: t('VALIDATE--REQUIRED'),
-        life: 3000,
-      });
-      return false;
-    }
-  } else if (scope.value === 1) {
-    if (!extraSale.value.sdtnmua || !extraSale.value.inv_buyerDisplayName) {
-      toast.add({
-        severity: 'warn',
-        // summary: t('NOTIFICATION--TITLE_WARNING'),
-        detail: t('VALIDATE--REQUIRED'),
-        life: 3000,
-      });
+  // Kiểm tra các field chỉ required theo bitmask (không có logic tab riêng)
+  const bitmaskOnlyChecks = [
+    { bit: 0, value: extraSale.value.inv_buyerEmail },
+    { bit: 2, value: extraSale.value.inv_buyerDisplayName },
+    { bit: 4, value: extraSale.value.inv_buyerAddressLine },
+    { bit: 5, value: extraSale.value.sdtnmua },
+    { bit: 6, value: extraSale.value.inv_buyerIdentityCard },
+    { bit: 7, value: extraSale.value.note },
+    { bit: 8, value: extraSale.value.inv_buyerBankAccount },
+    { bit: 9, value: extraSale.value.inv_buyerBankName },
+    { bit: 11, value: extraSale.value.passport_number },
+  ];
+  for (const { bit, value } of bitmaskOnlyChecks) {
+    if (isFieldRequired(bit) && !value) {
+            toast.add({ severity: 'warn', detail: t('VALIDATE--REQUIRED'), life: 3000 });
       return false;
     }
   }
+
+  if (scope.value === 0) {
+    // Tổ chức: MST và Tên công ty luôn required (logic tab gốc) khi field đang hiển thị
+    if (
+      (isFieldVisible(1) && !extraSale.value.inv_buyerTaxCode) ||
+      (isFieldVisible(3) && !extraSale.value.inv_buyerLegalName)
+    ) {
+      toast.add({
+        severity: 'warn',
+        detail: t('VALIDATE--REQUIRED'),
+        life: 3000,
+      });
+      return false;
+    }
+  } 
+ // else if (scope.value === 1) {
+    // Cá nhân: Chỉ yêu cầu SĐT (bit 5) và Tên KH (bit 2) nếu cấu hình bitmask yêu cầu (đã check ở vòng lặp trên)
+    // Loại bỏ logic ép buộc (scope.value === 1) để tuân thủ cấu hình động
+  //  const needPhone = isFieldVisible(5) && isFieldRequired(5);
+  //  const needName = isFieldVisible(2) && isFieldRequired(2);
+   // if ((needPhone && !extraSale.value.sdtnmua) || (needName && !extraSale.value.inv_buyerDisplayName)) {
+   //   toast.add({
+   //     severity: 'warn',
+   //     detail: t('VALIDATE--REQUIRED'),
+   //     life: 3000,
+   //   });
+   //   return false;
+   // }
+  //}
   return true;
 };
 
@@ -661,6 +763,8 @@ const getData = async () => {
   try {
     await getGuestSession();
     await getVatInfo();
+    // Lấy cấu hình hiển thị/required từ API guest-vat-info
+    await getVatExtraDataFromApi();
   } catch (error) {
     console.error('Error fetching guest data', error);
   }
