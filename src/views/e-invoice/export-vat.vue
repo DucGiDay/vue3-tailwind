@@ -150,7 +150,7 @@
             <div v-if="isFieldVisible(2)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2">
               <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
-                <span v-if="scope === 1 || isFieldRequired(2)" class="fb-text-error fb-ml-1">*</span>
+                <span v-if="isFieldRequired(2)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="display_name"
@@ -158,7 +158,7 @@
                 class="fb-w-full"
                 size="small"
                 :disabled="isLoading"
-                :invalid="(scope === 1 || isFieldRequired(2)) && !extraSale.inv_buyerDisplayName"
+                :invalid="isFieldRequired(2) && !extraSale.inv_buyerDisplayName"
                 :placeholder="t('CREATE_EDIT_LOCATION--INPUT_GUEST_NAME_PLACEHOLDER')"
               />
             </div>
@@ -183,14 +183,14 @@
             <div v-if="isFieldVisible(5)" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
               <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
                 {{ t('BILL_CONTENT--CUSTOMER_PHONE') }}
-                <span v-if="scope === 1 || isFieldRequired(5)" class="fb-text-error fb-ml-1">*</span>
+                <span v-if="isFieldRequired(5)" class="fb-text-error fb-ml-1">*</span>
               </label>
               <InputText
                 id="phone"
                 v-model="extraSale.sdtnmua"
                 size="small"
                 :disabled="isLoading"
-                :invalid="(scope === 1 || isFieldRequired(5)) && !extraSale.sdtnmua"
+                :invalid="isFieldRequired(5) && !extraSale.sdtnmua"
                 :placeholder="t('CONNECT_AHAMOVE_MODAL--PHONE_INPUT_PLACEHOLDER')"
               />
             </div>
@@ -527,10 +527,11 @@ const handleSearchTaxCode = debounce(searchByTaxCode, 500);
 
 const validateForm = () => {
   // Kiểm tra các field chỉ required theo bitmask (không có logic tab riêng)
-  // Bit 2 (Tên KH) và 5 (SĐT) được xử lý riêng bên dưới kết hợp với scope
   const bitmaskOnlyChecks = [
     { bit: 0, value: extraSale.value.inv_buyerEmail },
+    { bit: 2, value: extraSale.value.inv_buyerDisplayName },
     { bit: 4, value: extraSale.value.inv_buyerAddressLine },
+    { bit: 5, value: extraSale.value.sdtnmua },
     { bit: 6, value: extraSale.value.inv_buyerIdentityCard },
     { bit: 7, value: extraSale.value.note },
     { bit: 8, value: extraSale.value.inv_buyerBankAccount },
@@ -539,7 +540,7 @@ const validateForm = () => {
   ];
   for (const { bit, value } of bitmaskOnlyChecks) {
     if (isFieldRequired(bit) && !value) {
-      toast.add({ severity: 'warn', detail: t('VALIDATE--REQUIRED'), life: 3000 });
+            toast.add({ severity: 'warn', detail: t('VALIDATE--REQUIRED'), life: 3000 });
       return false;
     }
   }
@@ -557,20 +558,21 @@ const validateForm = () => {
       });
       return false;
     }
-  } else if (scope.value === 1) {
-    // Cá nhân: SĐT và Tên KH required khi (logic tab gốc scope=1) HOẶC (bitmask yêu cầu)
-    // Kết hợp OR — không thay thế nhau
-    const needPhone = isFieldVisible(5) && (scope.value === 1 || isFieldRequired(5));
-    const needName = isFieldVisible(2) && (scope.value === 1 || isFieldRequired(2));
-    if ((needPhone && !extraSale.value.sdtnmua) || (needName && !extraSale.value.inv_buyerDisplayName)) {
-      toast.add({
-        severity: 'warn',
-        detail: t('VALIDATE--REQUIRED'),
-        life: 3000,
-      });
-      return false;
-    }
-  }
+  } 
+ // else if (scope.value === 1) {
+    // Cá nhân: Chỉ yêu cầu SĐT (bit 5) và Tên KH (bit 2) nếu cấu hình bitmask yêu cầu (đã check ở vòng lặp trên)
+    // Loại bỏ logic ép buộc (scope.value === 1) để tuân thủ cấu hình động
+  //  const needPhone = isFieldVisible(5) && isFieldRequired(5);
+  //  const needName = isFieldVisible(2) && isFieldRequired(2);
+   // if ((needPhone && !extraSale.value.sdtnmua) || (needName && !extraSale.value.inv_buyerDisplayName)) {
+   //   toast.add({
+   //     severity: 'warn',
+   //     detail: t('VALIDATE--REQUIRED'),
+   //     life: 3000,
+   //   });
+   //   return false;
+   // }
+  //}
   return true;
 };
 
