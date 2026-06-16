@@ -4,6 +4,7 @@
     v-model:searchValue="searchField"
     searchPlaceholder="Tìm kiếm mã hóa đơn"
     @search="onSearchChange"
+    @force-search="filter"
   >
     <template #header-actions>
       <Button
@@ -28,7 +29,7 @@
     <template #table>
       <FbTable
         v-model:selection="saleSelecteds"
-        :columns="invoiceTab === 'tab1' ? SALE_ORDER_TABLE_COLUMNS : INVOICE_MANAGE_TABLE_COLUMNS"
+        :columns="invoiceTab === 'tab1' ? SALE_ORDER_TABLE_COLUMNS : invoiceManageColumns"
         :items="sales"
         enableCheckbox
         enablePagination
@@ -66,7 +67,7 @@
         <!-- START Tab hóa đơn chưa xuất -->
         <template #tran_id="{ record, row }">
           <span v-tooltip.top="{ value: record, showDelay: 500, hideDelay: 100 }">
-            {{ truncate(record) }}
+            {{ invoiceTab === 'tab1' ? truncate(record) : record }}
           </span>
           <span v-if="row?.extra_sale?.error_vat" v-tooltip="{ value: row?.extra_sale?.error_vat }">
             <svg
@@ -249,6 +250,26 @@ const storeUidByTaxCode = computed(() => {
   return Object.values(selectedObj).flat().filter(Boolean).join(',');
 });
 
+const invoiceManageColumns = computed(() => {
+  // tab3
+  if (invoiceTab.value === 'tab3') {
+    const columns = [
+      ...INVOICE_MANAGE_TABLE_COLUMNS,
+      { field: 'error_message', header: 'Lý do xuất lỗi' },
+    ];
+    const actionIndex = columns.findIndex((col) => col.field === 'action');
+    const newColumn = { field: 'error_message', header: 'Lý do xuất lỗi' };
+    if (actionIndex !== -1) {
+      columns.splice(actionIndex, 0, newColumn);
+    } else {
+      columns.push(newColumn);
+    }
+    return columns;
+  }
+  // tab2
+  return INVOICE_MANAGE_TABLE_COLUMNS;
+});
+
 // Methods
 const getData = async ({ page, rows } = {}) => {
   if (!storeUidByTaxCode.value) return;
@@ -257,7 +278,7 @@ const getData = async ({ page, rows } = {}) => {
   pageSize.value = rows || 50;
 
   const payload = {
-    brand_uid: globalStore?.brandUid,
+    // brand_uid: globalStore?.brandUid,
     company_uid: globalStore?.currentUser?.company_uid,
     list_store_uid: storeUidByTaxCode.value,
     start_date: filterStore?.invoice?.start_date,

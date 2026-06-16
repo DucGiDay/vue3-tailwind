@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
+import {
+  inputInvoiceList as mockInputInvoiceList,
+  inputInvoicProduct as mockInputInvoiceProduct,
+} from '@/api/services/e-invoice/e-invoice.mockdata';
 
 export const useEInoiveStore = defineStore('eInoive', {
   state: () => ({
@@ -26,6 +30,9 @@ export const useEInoiveStore = defineStore('eInoive', {
     showTaxCodeDialog: false,
     currentTaxCode: localStorage.getItem('fabi_selected_tax_code') || null,
     invoicePackagesHistory: {},
+    inputInvoiceList: {},
+    inputInvoiceProducts: {},
+    inputInvoiceSummary: {},
   }),
 
   getters: {
@@ -320,6 +327,31 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.invoicePackagesHistory.error = err?.message;
       } finally {
         this.invoicePackagesHistory.isLoading = false;
+      }
+    },
+    
+    async getInputInvoiceList(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceList(params);
+        this.inputInvoiceList.data = response || {};
+      } catch (err) {
+        this.inputInvoiceList.error = err?.message;
+      }
+    },
+    async getInputInvoiceProducts(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceProducts(params);
+        this.inputInvoiceProducts.data = response || {};
+      } catch (err) {
+        this.inputInvoiceProducts.error = err?.message;
+      }
+    },
+    async getInputInvoiceSummary(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceSummary(params);
+        this.inputInvoiceSummary.data = response || {};
+      } catch (err) {
+        this.inputInvoiceSummary.error = err?.message;
       }
     },
   },

@@ -42,9 +42,9 @@
           :scrollHeight="'flex'"
         ></FbTable>
       </div>
-      <Fluid v-else class="fb-space-y-4">
+      <Fluid v-else>
         <!-- Đối tượng: Cá nhân / Tổ chức -->
-        <div class="fb-flex fb-gap-4 fb-justify-around">
+        <div class="fb-flex fb-gap-4 fb-justify-around fb-mb-4">
           <div class="fb-flex fb-items-center">
             <RadioButton v-model="scope" inputId="scope_company" :value="0" />
             <label for="scope_company" class="fb-ml-2 fb-mb-0 fb-cursor-pointer">
@@ -59,109 +59,94 @@
           </div>
         </div>
 
-        <!-- Mã số thuế (Chỉ hiện nếu là Tổ chức) -->
-        <div v-if="scope === 0" class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="tax_code" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('MINVOICE_ROW--LIST_CONFIG--TAX_CODE') }}
-            <span class="fb-text-error fb-ml-1">*</span>
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+        <!-- Grid 2 cột cho các trường thông tin còn lại -->
+        <div class="fb-grid fb-grid-cols-1 md:fb-grid-cols-2 fb-gap-x-6 fb-gap-y-4">
+          <!-- Mã số thuế (Chỉ hiện nếu là Tổ chức) -->
+          <div
+            v-if="scope === 0"
+            class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
+          >
+            <label for="tax_code" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('MINVOICE_ROW--LIST_CONFIG--TAX_CODE') }}
+              <span class="fb-text-error fb-ml-1">*</span>
+            </label>
             <InputText
               id="tax_code"
               v-model="extraSale.inv_buyerTaxCode"
+              class="fb-w-full"
               size="small"
               :invalid="!extraSale.inv_buyerTaxCode"
               :placeholder="$t('MINVOICE_ROW--DETAIL_CONFIG--TAX_CODE_INPUT_PLACEHOLDER')"
               @input="handleSearchTaxCode"
             />
           </div>
-        </div>
 
-        <!-- Tên đơn vị (Chỉ hiện nếu là Tổ chức) -->
-        <div v-if="scope === 0" class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="legal_name" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--BUYER_LEGAL_NAME') }}
-            <span class="fb-text-error fb-ml-1">*</span>
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Tên đơn vị (Chỉ hiện nếu là Tổ chức) -->
+          <div
+            v-if="scope === 0"
+            class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1"
+          >
+            <label for="legal_name" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--BUYER_LEGAL_NAME') }}
+              <span class="fb-text-error fb-ml-1">*</span>
+            </label>
             <InputText
               id="legal_name"
               v-model="extraSale.inv_buyerLegalName"
+              class="fb-w-full"
               size="small"
               :invalid="!extraSale.inv_buyerLegalName"
               :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_COMPANY_NAME_PLACEHOLDER')"
             />
           </div>
-        </div>
 
-        <!-- Tên người mua -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="display_name" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Tên người mua -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="display_name" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_EDIT_DELETE_DETAIL--BILL_CONTENT--CUSTOMER_NAME') }}
+            </label>
             <InputText
               id="display_name"
               v-model="extraSale.inv_buyerDisplayName"
+              class="fb-w-full"
               size="small"
               :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_GUEST_NAME_PLACEHOLDER')"
             />
           </div>
-        </div>
 
-        <!-- Địa chỉ -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="address" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--BUYER_ADDRESS') }}
-            <span v-if="scope === 0" class="fb-text-error fb-ml-1">*</span>
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
-            <InputText
-              id="address"
-              v-model="extraSale.inv_buyerAddressLine"
-              size="small"
-              :invalid="!extraSale.inv_buyerLegalName && scope === 0"
-              :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_ADDRESS_PLACEHOLDER')"
-            />
-          </div>
-        </div>
-
-        <!-- Email -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="email" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--BUYER_EMAIL') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Email -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="email" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--BUYER_EMAIL') }}
+            </label>
             <InputText
               id="email"
               v-model="extraSale.inv_buyerEmail"
+              class="fb-w-full"
               size="small"
               :placeholder="$t('REGISTER--FORM_EMAIL_PLACEHOLDER')"
             />
           </div>
-        </div>
 
-        <!-- Số điện thoại -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="phone" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('BILL_CONTENT--CUSTOMER_PHONE') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Số điện thoại -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="phone" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('BILL_CONTENT--CUSTOMER_PHONE') }}
+            </label>
             <InputText
               id="phone"
               v-model="extraSale.sdtnmua"
+              class="fb-w-full"
               size="small"
               :placeholder="$t('CONNECT_AHAMOVE_MODAL--PHONE_INPUT_PLACEHOLDER')"
             />
           </div>
-        </div>
 
-        <!-- CCCD / Identity Card -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="id_card" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--INPUT_CCCD') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- CCCD / Identity Card -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="id_card" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--INPUT_CCCD') }}
+            </label>
             <InputGroup class="fb-w-full">
               <InputText
                 id="id_card"
@@ -175,14 +160,12 @@
               </InputGroupAddon>
             </InputGroup>
           </div>
-        </div>
 
-        <!-- Hộ chiếu -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="passport" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Hộ chiếu -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="passport" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--INPUT_PASSPORT_NUMBER') }}
+            </label>
             <InputGroup class="fb-w-full">
               <InputText
                 id="passport"
@@ -196,56 +179,97 @@
               </InputGroupAddon>
             </InputGroup>
           </div>
-        </div>
 
-        <!-- Thông tin ngân hàng -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="bank_acc" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9 fb-grid fb-grid-cols-2 fb-gap-2">
-            <InputText
-              id="bank_acc"
-              v-model="extraSale.inv_buyerBankAccount"
-              size="small"
-              :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
-            />
-            <InputText
-              v-model="extraSale.inv_buyerBankName"
-              size="small"
-              :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL')"
-            />
-          </div>
-        </div>
-
-        <!-- Mã quan hệ ngân sách toán -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="budget_unit" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('SALE_SYNC_VAT--INPUT_BUDGET_UNIT') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Mã quan hệ ngân sách -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="budget_unit" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--INPUT_BUDGET_UNIT') }}
+            </label>
             <InputText
               id="budget_unit"
               v-model="extraSale.budget_unit_code"
+              class="fb-w-full"
               size="small"
               :placeholder="$t('SALE_SYNC_VAT--INPUT_BUDGET_UNIT_PLACEHOLDER')"
             />
           </div>
-        </div>
 
-        <!-- Ghi chú -->
-        <div class="fb-grid fb-grid-cols-12 fb-gap-1">
-          <label for="note" class="fb-flex fb-items-center fb-col-span-12 md:fb-col-span-3">
-            {{ $t('BILL_CONTENT--NOTE') }}
-          </label>
-          <div class="fb-col-span-12 md:fb-col-span-9">
+          <!-- Số tài khoản -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="bank_acc" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC') }}
+            </label>
+            <InputText
+              id="bank_acc"
+              v-model="extraSale.inv_buyerBankAccount"
+              class="fb-w-full"
+              size="small"
+              :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_BANK_ACC')"
+            />
+          </div>
+
+          <!-- Tên ngân hàng -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="bank_name" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL') }}
+            </label>
+            <InputText
+              id="bank_name"
+              v-model="extraSale.inv_buyerBankName"
+              class="fb-w-full"
+              size="small"
+              :placeholder="$t('STORE_DETAIL--VIET_QR_INPUT_LIST_BANK--LABEL')"
+            />
+          </div>
+
+          <!-- Ghi chú -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="note" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('BILL_CONTENT--NOTE') }}
+            </label>
             <Textarea
               id="note"
               v-model="extraSale.note"
+              class="fb-w-full"
               size="small"
               :placeholder="$t('SALE_SYNC_VAT--INPUT_NOTE_PLACEHOLDER')"
               rows="2"
               autoResize
+            />
+          </div>
+
+          <!-- Địa chỉ -->
+          <div class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="address" class="fb-font-medium fb-text-sm fb-mb-0">
+              {{ $t('SALE_SYNC_VAT--BUYER_ADDRESS') }}
+              <span v-if="scope === 0" class="fb-text-error fb-ml-1">*</span>
+            </label>
+            <Textarea
+              id="address"
+              v-model="extraSale.inv_buyerAddressLine"
+              class="fb-w-full"
+              size="small"
+              :invalid="!extraSale.inv_buyerLegalName && scope === 0"
+              :placeholder="$t('CREATE_EDIT_LOCATION--INPUT_ADDRESS_PLACEHOLDER')"
+              rows="2"
+              autoResize
+            />
+          </div>
+          <!-- Ngày hóa đơn -->
+          <div v-if="props.saleData?.is_draft" class="fb-flex fb-flex-col fb-gap-2 fb-col-span-2 md:fb-col-span-1">
+            <label for="note" class="fb-font-medium fb-text-sm fb-mb-0">Ngày hóa đơn</label>
+            <DatePicker
+              ref="datePicker"
+              v-model="vatInvoiceDate"
+              selectionMode="single"
+              :manualInput="false"
+              dateFormat="dd/mm/yy"
+              placeholder="Chọn thời gian"
+              inputClass="!fb-font-medium"
+              selectOtherMonths
+              panelClass="fb-custom-date-panel"
+              showClear
+              showButtonBar
             />
           </div>
         </div>
@@ -279,13 +303,7 @@
             :loading="isLoading"
             @click="handleExportNotReceiveBill"
           />
-          <Button
-            class="btn"
-            :label="$t('SALE_SYNC_VAT--EXPORT_VAT')"
-            raised
-            :loading="isLoading"
-            @click="handleExport"
-          />
+          <Button class="btn" label="Lưu lại" raised :loading="isLoading" @click="handleExport" />
         </div>
       </div>
     </template>
@@ -338,6 +356,7 @@ const DEFAULT_EXTRA_SALE = {
 };
 
 const extraSale = ref({ ...DEFAULT_EXTRA_SALE });
+const vatInvoiceDate = ref(null);
 
 const reExportVatColumns = [
   { field: 'inv_buyerDisplayName', header: 'Tên người mua' },
@@ -350,7 +369,7 @@ const reExportVatColumns = [
   { field: 'passport_number', header: 'Hộ chiếu' },
   { field: 'inv_buyerBankAccount', header: 'Tài khoản ngân hàng' },
   { field: 'inv_buyerBankName', header: 'Tên ngân hàng' },
-  { field: 'budget_unit_code', header: 'Mã quan hệ ngân sách toán' },
+  { field: 'budget_unit_code', header: 'Mã quan hệ ngân sách' },
   { field: 'note', header: 'Ghi chú' },
 ];
 
@@ -431,8 +450,18 @@ const handleExport = async () => {
     }
 
     const salesList = props.saleData?.sales || [];
+    const extra_sale = { ...extraSale.value };
+    
+    // Nếu là draft và có dữ liệu ngày hóa đơn thì truyền lên
+    if (props.saleData?.is_draft && vatInvoiceDate.value) {
+      const d = new Date(vatInvoiceDate.value);
+      if (!isNaN(d.getTime())) {
+        extra_sale.vat_invoice_date = d.getTime();
+      }
+    }
+
     const payload = {
-      extra_sale: { ...extraSale.value },
+      extra_sale,
       ...(salesList.length > 1 && { is_not_merge: 1 }),
       brand_uid: globalStore?.brandUid,
       company_uid: globalStore?.currentUser?.company_uid,
@@ -483,14 +512,35 @@ watch(visible, (newVal) => {
     // Nếu có dữ liệu cũ truyền vào từ props.saleData.extra_sale thì fill vào
     if (props.saleData?.extra_sale) {
       extraSale.value = { ...extraSale.value, ...props.saleData.extra_sale };
+      
+      // Đảm bảo vatInvoiceDate được gán đúng nếu là draft
+      if (props.saleData?.is_draft) {
+        if (extraSale.value.vat_invoice_date) {
+          let rawDate = extraSale.value.vat_invoice_date;
+          // Nếu rawDate là chuỗi chỉ chứa số (timestamp milisecond dạng string)
+          if (typeof rawDate === 'string' && /^\d+$/.test(rawDate)) {
+            rawDate = parseInt(rawDate, 10);
+          }
+          const parsedDate = new Date(rawDate);
+          vatInvoiceDate.value = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+        } else {
+          vatInvoiceDate.value = new Date();
+        }
+      } else {
+        vatInvoiceDate.value = null;
+      }
+
+      // Xóa trường vat_invoice_date khỏi extraSale để tránh tự động gửi
+      delete extraSale.value.vat_invoice_date;
+
       scope.value =
         extraSale.value.inv_buyerTaxCode && extraSale.value.inv_buyerTaxCode !== '.' ? 0 : 1;
     }
-    console.log(props.saleData);
   } else {
     // Reset về mặc định khi đóng
     extraSale.value = { ...DEFAULT_EXTRA_SALE };
     scope.value = 1;
+    vatInvoiceDate.value = null;
   }
 });
 </script>

@@ -10,6 +10,7 @@ export const eInvoiceMenu = [
           { label: 'Hóa đơn bán hàng', to: '/e-invoice/sale-order' },
         ],
       },
+
       {
         label: 'Quản lý sai sót',
         items: [
@@ -59,6 +60,22 @@ export const eInvoiceMenu = [
       },
 
       ...(import.meta.env.PROD ? [] : [{ label: 'Cấu hình', to: '/e-invoice/config' }]),
+      {
+        label: 'Hóa đơn đầu vào',
+        items: [
+          { label: 'Danh sách hóa đơn đầu vào', to: '/e-invoice/input-invoice', grandchild: true },
+          {
+            label: 'Bảng kê hóa đơn đầu vào',
+            to: '/e-invoice/input-invoice/summary',
+            grandchild: true,
+          },
+          {
+            label: 'Danh sách sản phẩm theo HDDV',
+            to: '/e-invoice/input-invoice/products',
+            grandchild: true,
+          },
+        ],
+      },
       { label: 'Lịch sử thao tác', to: '/e-invoice/history-action' },
     ],
   },

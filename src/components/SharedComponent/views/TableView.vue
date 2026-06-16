@@ -23,7 +23,10 @@
           <div class="fb-flex-shrink-0 fb-flex fb-flex-wrap fb-gap-3 fb-items-center fb-ml-auto">
             <slot v-if="searchable" name="search">
               <IconField>
-                <InputIcon class="!fb-mt-0 !-fb-translate-y-1/2">
+                <InputIcon
+                  class="!fb-mt-0 !-fb-translate-y-1/2 fb-cursor-pointer hover:fb-scale-125 fb-transition-all active:fb-scale-95"
+                  @click="onForceInput"
+                >
                   <IconSearch />
                 </InputIcon>
                 <InputText
@@ -86,5 +89,9 @@ const emit = defineEmits(['update:searchValue', 'search']);
 const onInput = (event) => {
   emit('update:searchValue', event.target.value);
   emit('search');
+};
+const onForceInput = (event) => {
+  emit('update:searchValue', event.target.value);
+  emit('forceSearch');
 };
 </script>
