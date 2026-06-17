@@ -8,13 +8,12 @@ import { computed } from 'vue';
 const { layoutConfig } = useLayout();
 const route = useRoute();
 
-const isEInvoice = computed(() => {
-  return route.fullPath.startsWith('/e-invoice/');
+const menuTitle = computed(() => {
+  return route.meta?.menuTitle || route.meta?.title || '';
 });
 
 const onMenuModeChange = () => {
   layoutConfig.menuMode = layoutConfig.menuMode === 'static' ? 'overlay' : 'static';
-  console.log(route);
 };
 </script>
 
@@ -24,7 +23,7 @@ const onMenuModeChange = () => {
       class="fb-flex fb-items-center fb-sticky fb-bottom-0"
       style="background-color: var(--surface-overlay)"
     >
-      <span v-if="isEInvoice" class="fb-font-bold fb-uppercase">Hóa đơn điện tử</span>
+      <span v-if="menuTitle" class="fb-font-bold fb-uppercase">{{ menuTitle }}</span>
       <Button
         text
         variant="secondary"
