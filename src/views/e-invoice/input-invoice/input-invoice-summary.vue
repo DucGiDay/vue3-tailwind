@@ -3,6 +3,17 @@
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Bảng kê hóa đơn đầu vào</h5>
     </div>
+    <Button
+      :loading="isLoadingExport"
+      size="small"
+      outlined
+      class="!fb-rounded-lg"
+      @click="handleExportExcel"
+    >
+      <IconDownload v-if="!isLoadingExport" color="currentColor" />
+      <FbLoading v-else show />
+      Xuất excel
+    </Button>
   </div>
 
   <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200 fb-mb-4">
@@ -20,7 +31,7 @@
       >
         <IconSearch color="currentColor" />
       </Button>
-      <div class="fb-ml-auto">
+      <div class="fb-ml-auto fb-flex fb-gap-2">
         <Button
           v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
           :severity="showAdvancedFilter ? 'primary' : 'secondary'"
@@ -178,6 +189,7 @@ import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 import { formatDate, formatCurrency } from '@/common/utils/common';
 import Paginator from 'primevue/paginator';
+import { useInputInvoiceSummaryExport } from '@/composables/export/useInputInvoiceSummaryExport';
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -219,6 +231,8 @@ const totalTaxableAll = computed(() => {
   return totalBeforeTaxAll.value - totalTaxAll.value;
 });
 
+const { isLoadingExport, executeExport } = useInputInvoiceSummaryExport();
+
 // Methods
 const onPageChange = (event) => {
   getData({ page: event.page + 1, rows: event.rows });
@@ -252,6 +266,15 @@ const filter = async () => {
   currentPage.value = 1;
   items.value = [];
   await getData();
+};
+
+const handleExportExcel = async () => {
+  await executeExport({
+    filterStatus: filterStatus.value,
+    filterPattern: filterPattern.value,
+    filterSerial: filterSerial.value,
+    filterNo: filterNo.value,
+  });
 };
 
 onMounted(() => {

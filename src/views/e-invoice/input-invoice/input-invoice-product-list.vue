@@ -1,5 +1,18 @@
 <template>
   <TableView title="Danh sách sản phẩm theo HDDV" :searchable="false">
+    <template #header-actions>
+      <Button
+        :loading="isLoadingExport"
+        size="small"
+        outlined
+        class="!fb-rounded-lg"
+        @click="handleExportExcel"
+      >
+        <IconDownload v-if="!isLoadingExport" color="currentColor" />
+        <FbLoading v-else show />
+        Xuất excel
+      </Button>
+    </template>
     <template #toolbar>
       <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
         <div class="fb-flex fb-gap-2 fb-flex-wrap">
@@ -16,7 +29,7 @@
           >
             <IconSearch color="currentColor" />
           </Button>
-          <div class="fb-ml-auto">
+          <div class="fb-ml-auto fb-flex fb-gap-2">
             <Button
               v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
               :severity="showAdvancedFilter ? 'primary' : 'secondary'"
@@ -131,20 +144,22 @@
               </tr>
 
               <template v-else>
-                <tr v-for="(row, index) in items" :key="row.id || index">
-                  <td v-for="col in INPUT_INVOICE_PRODUCT_COLUMNS" :key="col.field">
-                    <template v-if="col.field === 'no'">{{ index + 1 }}</template>
-                    <template v-else-if="col.field === 'pattern_serial'">
-                      {{ row.pattern }} - {{ row.serial }}
-                    </template>
-                    <template v-else-if="col.format === 'date'">
-                      {{ formatDate(row[col.field]) }}
-                    </template>
-                    <template v-else-if="col.format === 'currency'">
-                      {{ formatCurrency(row[col.field]) }}
-                    </template>
-                    <template v-else>{{ row[col.field] }}</template>
-                  </td>
+                <tr v-for="(row, index) in processedItems" :key="row.id || index">
+                  <template v-for="col in INPUT_INVOICE_PRODUCT_COLUMNS" :key="col.field">
+                    <td v-if="!row.mergeFlags[col.field]" :rowspan="row.rowSpans[col.field] || 1">
+                      <template v-if="col.field === 'no'">{{ row.displayIndex }}</template>
+                      <template v-else-if="col.field === 'pattern_serial'">
+                        {{ row.pattern }} - {{ row.serial }}
+                      </template>
+                      <template v-else-if="col.format === 'date'">
+                        {{ formatDate(row[col.field]) }}
+                      </template>
+                      <template v-else-if="col.format === 'currency'">
+                        {{ formatCurrency(row[col.field]) }}
+                      </template>
+                      <template v-else>{{ row[col.field] }}</template>
+                    </td>
+                  </template>
                 </tr>
               </template>
             </tbody>
@@ -191,7 +206,9 @@
                   severity="secondary"
                   variant="outlined"
                   disabled
-                >…</Button>
+                >
+                  …
+                </Button>
                 <Button
                   v-else
                   size="small"
@@ -199,7 +216,9 @@
                   :severity="page !== currentPage ? 'secondary' : null"
                   :variant="page !== currentPage ? 'outlined' : null"
                   @click="goToPage(page)"
-                >{{ page }}</Button>
+                >
+                  {{ page }}
+                </Button>
               </template>
               <Button
                 size="small"
@@ -240,6 +259,9 @@ import IconChevronRight from '@/components/Common/Icon/IconChevronRight.vue';
 import IconChevronLeft from '@/components/Common/Icon/IconChevronLeft.vue';
 import IconChevronRightDouble from '@/components/Common/Icon/IconChevronRightDouble.vue';
 import IconChevronLeftDouble from '@/components/Common/Icon/IconChevronLeftDouble.vue';
+import { useInputInvoiceProductExport } from '@/composables/export/useInputInvoiceProductExport';
+
+const { isLoadingExport, executeExport } = useInputInvoiceProductExport();
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -273,6 +295,53 @@ const items = ref([]);
 const totalRecords = computed(() => inputInvoiceProducts.value?.data?.total || 0);
 
 const isLoading = ref(false);
+
+// Xử lý gộp dòng (merge cells) cho các sản phẩm cùng hóa đơn
+const processedItems = computed(() => {
+  const result = [];
+  const rawItems = items.value;
+  if (!rawItems.length) return [];
+
+  // Các cột cần gộp nếu trùng invoice_no
+  const fieldsToMerge = ['no', 'invoice_no', 'invoice_date', 'pattern_serial', 'seller_name'];
+
+  let currentInvoiceNo = null;
+  let currentGroupStartIndex = -1;
+  let displayIndex = 1; // Đánh số thứ tự (1 STT cho 1 hóa đơn)
+
+  for (let i = 0; i < rawItems.length; i++) {
+    const item = { ...rawItems[i], rowSpans: {}, mergeFlags: {} };
+
+    // Khởi tạo mặc định cho tất cả các cột không gộp
+    INPUT_INVOICE_PRODUCT_COLUMNS.forEach((col) => {
+      if (!fieldsToMerge.includes(col.field)) {
+        item.rowSpans[col.field] = 1;
+        item.mergeFlags[col.field] = false;
+      }
+    });
+
+    if (item.invoice_no !== currentInvoiceNo) {
+      currentInvoiceNo = item.invoice_no;
+      currentGroupStartIndex = i;
+      item.displayIndex = displayIndex++;
+
+      fieldsToMerge.forEach((field) => {
+        item.rowSpans[field] = 1;
+        item.mergeFlags[field] = false; // Render bình thường
+      });
+    } else {
+      item.displayIndex = ''; // Không hiển thị STT ở các dòng bị gộp
+      fieldsToMerge.forEach((field) => {
+        result[currentGroupStartIndex].rowSpans[field] += 1;
+        item.rowSpans[field] = 1;
+        item.mergeFlags[field] = true; // Ẩn thẻ td
+      });
+    }
+    result.push(item);
+  }
+
+  return result;
+});
 
 // Pagination computed
 const totalPageCount = computed(() => Math.ceil(totalRecords.value / internalRows.value) || 1);
@@ -335,6 +404,16 @@ const filter = async () => {
   await getData();
 };
 
+const handleExportExcel = async () => {
+  await executeExport({
+    searchField: searchField.value,
+    filterStatus: filterStatus.value,
+    filterPattern: filterPattern.value,
+    filterSerial: filterSerial.value,
+    filterNo: filterNo.value,
+  });
+};
+
 const goToPage = (page) => {
   if (isLoading.value) return;
   if (page < 1 || page > totalPageCount.value) return;
@@ -389,14 +468,10 @@ onMounted(async () => {
         color: #85888e;
         font-weight: 500;
         text-align: left;
-        border-bottom: 1px solid var(--surface-border, #e5e7eb);
+        border: 1px solid var(--surface-border, #e5e7eb);
       }
 
       tbody tr {
-        &:not(:last-child) td {
-          border-bottom: 1px solid var(--surface-border, #e5e7eb);
-        }
-
         &:hover td {
           background-color: var(--surface-hover, #f9fafb);
         }
@@ -404,6 +479,7 @@ onMounted(async () => {
         td {
           padding: 0.5rem 1.5rem;
           color: var(--text-color, #374151);
+          border: 1px solid var(--surface-border, #e5e7eb);
         }
       }
     }

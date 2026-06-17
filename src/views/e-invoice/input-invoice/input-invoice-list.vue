@@ -1,5 +1,18 @@
 <template>
   <TableView title="Danh sách hóa đơn đầu vào" :searchable="false">
+    <template #header-actions>
+      <Button
+        :loading="isLoadingExport"
+        size="small"
+        outlined
+        class="!fb-rounded-lg"
+        @click="handleExportExcel"
+      >
+        <IconDownload v-if="!isLoadingExport" color="currentColor" />
+        <FbLoading v-else show />
+        Xuất excel
+      </Button>
+    </template>
     <template #toolbar>
       <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
         <div class="fb-flex fb-gap-2 fb-flex-wrap">
@@ -145,7 +158,31 @@
         </template>
 
         <template #action="{ row }">
-          <div class="fb-flex fb-justify-center">
+          <div class="fb-flex fb-justify-center fb-items-center fb-gap-2">
+            <div class="fb-flex fb-flex-col fb-gap-2">
+              <Button
+                size="small"
+                class="!fb-p-0"
+                severity="secondary"
+                text
+                @click="handleViewXml(row)"
+                :loading="isFetchingXml && currentXmlRowNo === row.no"
+              >
+                <FbLoading v-if="isFetchingXml && currentXmlRowNo === row.no" show />
+                <span v-else>XML</span>
+              </Button>
+              <Button
+                size="small"
+                class="!fb-p-0"
+                severity="secondary"
+                text
+                @click="handleViewPdf(row)"
+                :loading="isFetchingPdf && currentPdfRowNo === row.no"
+              >
+                <FbLoading v-if="isFetchingPdf && currentPdfRowNo === row.no" show />
+                <span v-else>PDF</span>
+              </Button>
+            </div>
             <Checkbox v-model="row.checked" :binary="true" />
           </div>
         </template>
@@ -180,6 +217,53 @@
           </div>
         </div>
       </Dialog>
+
+      <Dialog
+        v-model:visible="showXmlDialog"
+        header="Chi tiết XML"
+        modal
+        :style="{ width: '50rem' }"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+      >
+        <div class="fb-flex fb-flex-col fb-gap-4">
+          <div
+            class="fb-bg-surface-50 fb-p-4 fb-rounded-lg fb-max-h-[60vh] fb-overflow-y-auto fb-border"
+          >
+            <pre class="fb-text-sm fb-whitespace-pre-wrap fb-break-all">{{ xmlContent }}</pre>
+          </div>
+          <div class="fb-flex fb-justify-end fb-gap-2 fb-mt-2">
+            <Button label="Đóng" severity="secondary" outlined @click="showXmlDialog = false" />
+            <Button
+              label="Copy"
+              severity="secondary"
+              @click="handleCopyXml"
+              :disabled="!xmlContent"
+            />
+            <Button label="Tải về" @click="handleDownloadXml" :disabled="!xmlContent" />
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        v-model:visible="showPdfDialog"
+        header="Xem trước PDF"
+        modal
+        maximizable
+        :style="{ width: '70vw' }"
+        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
+      >
+        <div class="fb-flex fb-justify-center">
+          <vue-pdf-embed v-if="pdfUrl" :source="pdfUrl" :width="800" />
+        </div>
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-pt-2">
+            <Button @click="handleDownloadPdf(itemPreviewPdf)" raised>
+              Tải xuống
+              <IconDownload class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
+      </Dialog>
     </template>
   </TableView>
 </template>
@@ -189,9 +273,12 @@ import { useEInoiveStore } from '@/stores/e-invoice.store';
 import { useFilterStore } from '@/stores/filter.store';
 import { useGlobalStore } from '@/stores/global.store';
 import TableView from '@/components/SharedComponent/views/TableView.vue';
+import VuePdfEmbed from 'vue-pdf-embed';
 import { INPUT_INVOICE_TABLE_COLUMNS } from '@/common/constant/e-invoice-column.constant';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import { useInputInvoiceExport } from '@/composables/export/useInputInvoiceExport';
+import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 
 const INVOICE_STATUS_LABEL = {
   '1': 'Hóa đơn mới',
@@ -212,6 +299,7 @@ const INVOICE_STATUS_SEVERITY = {
 };
 
 const router = useRouter();
+const { isLoadingExport, executeExport } = useInputInvoiceExport();
 
 // Store/Getter
 const invoiceStore = useEInoiveStore();
@@ -381,6 +469,148 @@ const onViewDetail = (row) => {
     summary: `Xem chi tiết hóa đơn: ${row.invoice_number}`,
     life: 3000,
   });
+};
+
+const handleExportExcel = async () => {
+  await executeExport(
+    {
+      searchField: searchField.value,
+      filterStatus: filterStatus.value,
+      filterStatusMST: filterStatusMST.value,
+      filterPattern: filterPattern.value,
+      filterSerial: filterSerial.value,
+      filterNo: filterNo.value,
+    },
+    statusMap.value,
+  );
+};
+
+const showXmlDialog = ref(false);
+const xmlContent = ref('');
+const isFetchingXml = ref(false);
+const currentXmlRowNo = ref(null);
+
+const fetchAndCacheXML = async (row) => {
+  if (row.xmlContent) return row.xmlContent;
+
+  try {
+    isFetchingXml.value = true;
+    currentXmlRowNo.value = row.no;
+    const payload = { invoice_id: row.no };
+    const res = await invoiceService.getInputInvoiceXml(payload);
+    const content = res?.data || res || '';
+
+    row.xmlContent = content;
+    return content;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error?.message || 'Không thể lấy dữ liệu XML',
+      life: 3000,
+    });
+    return null;
+  } finally {
+    isFetchingXml.value = false;
+    currentXmlRowNo.value = null;
+  }
+};
+
+const handleViewXml = async (row) => {
+  const content = await fetchAndCacheXML(row);
+  if (content) {
+    xmlContent.value = content;
+    showXmlDialog.value = true;
+  }
+};
+
+const handleCopyXml = () => {
+  if (!xmlContent.value) return;
+  navigator.clipboard.writeText(xmlContent.value);
+  toast.add({
+    severity: 'success',
+    summary: 'Thành công',
+    detail: 'Đã copy nội dung XML',
+    life: 3000,
+  });
+};
+
+const handleDownloadXml = () => {
+  if (!xmlContent.value) return;
+  const blob = new Blob([xmlContent.value], { type: 'application/xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `invoice_${new Date().getTime()}.xml`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+const showPdfDialog = ref(false);
+const pdfUrl = ref(null);
+const isFetchingPdf = ref(false);
+const currentPdfRowNo = ref(null);
+const itemPreviewPdf = ref(null);
+
+const fetchAndCachePDF = async (row) => {
+  if (row.pdfUrl) return row.pdfUrl;
+
+  try {
+    isFetchingPdf.value = true;
+    currentPdfRowNo.value = row.no;
+    const payload = { invoice_id: row.no };
+    const responseData = await invoiceService.getInputInvoicePdf(payload);
+
+    let blob;
+    const dataContent = responseData?.data?.Data || responseData?.data || responseData;
+
+    if (typeof dataContent === 'string' && dataContent.match(/^[A-Za-z0-9+/=]+$/)) {
+      const byteCharacters = atob(dataContent);
+      const byteNumbers = new Uint8Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      blob = new Blob([byteNumbers], { type: 'application/pdf' });
+    } else {
+      blob = new Blob([dataContent], { type: 'application/pdf' });
+    }
+
+    const url = URL.createObjectURL(blob);
+    row.pdfUrl = url;
+    return url;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error?.message || 'Không thể lấy dữ liệu PDF',
+      life: 3000,
+    });
+    return null;
+  } finally {
+    isFetchingPdf.value = false;
+    currentPdfRowNo.value = null;
+  }
+};
+
+const handleViewPdf = async (row) => {
+  const url = await fetchAndCachePDF(row);
+  if (url) {
+    pdfUrl.value = url;
+    itemPreviewPdf.value = row;
+    showPdfDialog.value = true;
+  }
+};
+
+const handleDownloadPdf = async (row) => {
+  const url = await fetchAndCachePDF(row);
+  if (url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice_${row.no || new Date().getTime()}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 };
 
 // life cycle
