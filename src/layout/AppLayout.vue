@@ -1,10 +1,12 @@
 <script setup>
+import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 import { useLayout } from '@/layout/composables/layout';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
+const isQiankun = qiankunWindow.__POWERED_BY_QIANKUN__;
 
 const outsideClickListener = ref(null);
 
