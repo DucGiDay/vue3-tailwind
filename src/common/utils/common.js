@@ -33,7 +33,7 @@ export const formatCurrency = (value, payload) => {
     payload?.fractionCount !== undefined ? payload.fractionCount : allowFloat ? 2 : 0;
   const options = {
     minimumFractionDigits: fractionCount,
-    maximumFractionDigits: fractionCount
+    maximumFractionDigits: fractionCount,
   };
 
   const numberValue = +value.toString().replaceAll(',', '');
@@ -42,6 +42,21 @@ export const formatCurrency = (value, payload) => {
     return numberValue.toLocaleString('en-US', options) + ' ' + label;
   }
   return label + ' ' + numberValue.toLocaleString('en-US', options);
+};
+
+export const getExcelCurrencyFormat = (crc = null) => {
+  const currentBrand = JSON.parse(localStorage.getItem('current_brand') || '{}');
+  const currency = crc || currentBrand?.currency || 'VND';
+
+  const label = CURRENTCY_OPTIONS[currency] || '₫';
+  const allowFloat = CURRENCY_ALLOW_FLOAT.includes(currency);
+
+  const fractionFmt = allowFloat ? '.00' : '';
+
+  if (label === '₫') {
+    return `#,##0${fractionFmt}" ${label}"`;
+  }
+  return `"${label} "#,##0${fractionFmt}`;
 };
 
 export const formatNumber = (value) => {

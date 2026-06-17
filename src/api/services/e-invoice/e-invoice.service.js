@@ -178,5 +178,5 @@ export const invoiceService = {
   getInputInvoiceProducts: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_PRODUCTS, { params }),
   getInputInvoiceSummary: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_SUMMARY, { params }),
   getInputInvoiceXml: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_XML, { params }),
-  getInputInvoicePdf: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_PDF, { params }),
+  getInputInvoicePdf: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_PDF, { params, responseType: 'blob' }),
 };

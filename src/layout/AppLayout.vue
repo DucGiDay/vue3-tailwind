@@ -62,8 +62,8 @@ function isOutsideClicked(event) {
 
 <template>
   <div class="layout-wrapper" :class="containerClass">
-    <!-- <app-topbar></app-topbar> -->
-    <app-sidebar v-show="!$route.meta.disableSidebar"></app-sidebar>
+    <app-topbar v-if="!isQiankun"></app-topbar>
+    <app-sidebar></app-sidebar>
     <div
       :class="[
         'layout-main-container',

@@ -18,7 +18,7 @@ const onMenuModeChange = () => {
 </script>
 
 <template>
-  <div class="layout-sidebar fb-flex fb-flex-col">
+  <div class="layout-sidebar fb-flex fb-flex-col" v-show="!route.meta.disableSidebar">
     <div
       class="fb-flex fb-items-center fb-sticky fb-bottom-0"
       style="background-color: var(--surface-overlay)"
@@ -53,7 +53,7 @@ const onMenuModeChange = () => {
 
   <!-- Nút mở lại sidebar khi bị thu gọn -->
   <div
-    v-if="layoutConfig.menuMode === 'overlay'"
+    v-if="!route.meta.disableSidebar && layoutConfig.menuMode === 'overlay'"
     class="fb-fixed fb-left-0 fb-top-[4.55rem] fb-z-[999]"
   >
     <Button

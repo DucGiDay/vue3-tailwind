@@ -166,9 +166,9 @@
                 severity="secondary"
                 text
                 @click="handleViewXml(row)"
-                :loading="isFetchingXml && currentXmlRowNo === row.no"
+                :loading="isFetchingXml && currentXmlRowNo === row.id"
               >
-                <FbLoading v-if="isFetchingXml && currentXmlRowNo === row.no" show />
+                <FbLoading v-if="isFetchingXml && currentXmlRowNo === row.id" show />
                 <span v-else>XML</span>
               </Button>
               <Button
@@ -177,9 +177,9 @@
                 severity="secondary"
                 text
                 @click="handleViewPdf(row)"
-                :loading="isFetchingPdf && currentPdfRowNo === row.no"
+                :loading="isFetchingPdf && currentPdfRowNo === row.id"
               >
-                <FbLoading v-if="isFetchingPdf && currentPdfRowNo === row.no" show />
+                <FbLoading v-if="isFetchingPdf && currentPdfRowNo === row.id" show />
                 <span v-else>PDF</span>
               </Button>
             </div>
@@ -222,26 +222,32 @@
         v-model:visible="showXmlDialog"
         header="Chi tiết XML"
         modal
-        :style="{ width: '50rem' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+        maximizable
+        :style="{ width: '70vw' }"
+        :breakpoints="{ '1199px': '85vw', '575px': '95vw' }"
       >
         <div class="fb-flex fb-flex-col fb-gap-4">
-          <div
-            class="fb-bg-surface-50 fb-p-4 fb-rounded-lg fb-max-h-[60vh] fb-overflow-y-auto fb-border"
-          >
-            <pre class="fb-text-sm fb-whitespace-pre-wrap fb-break-all">{{ xmlContent }}</pre>
-          </div>
-          <div class="fb-flex fb-justify-end fb-gap-2 fb-mt-2">
-            <Button label="Đóng" severity="secondary" outlined @click="showXmlDialog = false" />
-            <Button
-              label="Copy"
-              severity="secondary"
-              @click="handleCopyXml"
-              :disabled="!xmlContent"
-            />
-            <Button label="Tải về" @click="handleDownloadXml" :disabled="!xmlContent" />
+          <div class="fb-bg-surface-50 fb-p-4 fb-rounded-lg fb-overflow-y-auto fb-border">
+            <pre class="fb-text-sm fb-whitespace-pre-wrap fb-break-all">{{ formattedXml }}</pre>
+            <!-- <pre class="fb-text-sm fb-whitespace-pre-wrap fb-break-all">{{ xmlContent }}</pre> -->
           </div>
         </div>
+        <template #footer>
+          <div class="fb-flex fb-justify-end fb-gap-2 fb-mt-2">
+            <Button
+              label="Copy"
+              size="small"
+              severity="secondary"
+              :disabled="!xmlContent"
+              @click="handleCopyXml"
+            />
+            <Button size="small" :disabled="!xmlContent" @click="handleDownloadXml">
+              Tải xuống
+
+              <IconDownload class="!fb-text-white" color="currentColor" />
+            </Button>
+          </div>
+        </template>
       </Dialog>
 
       <Dialog
@@ -257,7 +263,7 @@
         </div>
         <template #footer>
           <div class="fb-flex fb-justify-end fb-pt-2">
-            <Button @click="handleDownloadPdf(itemPreviewPdf)" raised>
+            <Button size="small" raised @click="handleDownloadPdf(itemPreviewPdf)">
               Tải xuống
               <IconDownload class="!fb-text-white" color="currentColor" />
             </Button>
@@ -490,13 +496,40 @@ const xmlContent = ref('');
 const isFetchingXml = ref(false);
 const currentXmlRowNo = ref(null);
 
+const formattedXml = computed(() => {
+  if (!xmlContent.value) return '';
+  let formatted = '';
+  let pad = 0;
+  const PADDING = '  ';
+
+  let xml = xmlContent.value.replace(/>\s+</g, '><');
+  xml = xml.replace(/(>)(<)(\/*)/g, '$1\n$2$3');
+
+  xml.split('\n').forEach((node) => {
+    let indent = 0;
+    if (node.match(/.+<\/\w[^>]*>$/)) {
+      indent = 0;
+    } else if (node.match(/^<\/\w/)) {
+      if (pad > 0) pad -= 1;
+    } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+      indent = 1;
+    } else {
+      indent = 0;
+    }
+    formatted += PADDING.repeat(pad) + node + '\n';
+    pad += indent;
+  });
+
+  return formatted;
+});
+
 const fetchAndCacheXML = async (row) => {
   if (row.xmlContent) return row.xmlContent;
 
   try {
     isFetchingXml.value = true;
-    currentXmlRowNo.value = row.no;
-    const payload = { invoice_id: row.no };
+    currentXmlRowNo.value = row.id;
+    const payload = { invoice_id: row.id };
     const res = await invoiceService.getInputInvoiceXml(payload);
     const content = res?.data || res || '';
 
@@ -557,14 +590,16 @@ const fetchAndCachePDF = async (row) => {
 
   try {
     isFetchingPdf.value = true;
-    currentPdfRowNo.value = row.no;
-    const payload = { invoice_id: row.no };
+    currentPdfRowNo.value = row.id;
+    const payload = { invoice_id: row.id };
     const responseData = await invoiceService.getInputInvoicePdf(payload);
 
     let blob;
-    const dataContent = responseData?.data?.Data || responseData?.data || responseData;
+    const dataContent = responseData;
 
-    if (typeof dataContent === 'string' && dataContent.match(/^[A-Za-z0-9+/=]+$/)) {
+    if (dataContent instanceof Blob) {
+      blob = new Blob([dataContent], { type: 'application/pdf' });
+    } else if (typeof dataContent === 'string' && dataContent.match(/^[A-Za-z0-9+/=]+$/)) {
       const byteCharacters = atob(dataContent);
       const byteNumbers = new Uint8Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -606,7 +641,7 @@ const handleDownloadPdf = async (row) => {
   if (url) {
     const a = document.createElement('a');
     a.href = url;
-    a.download = `invoice_${row.no || new Date().getTime()}.pdf`;
+    a.download = `invoice_${row.id || new Date().getTime()}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
