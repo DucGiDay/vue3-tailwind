@@ -1,43 +1,85 @@
 <template>
   <TableView title="Danh sách hóa đơn đầu vào" :searchable="false">
-    <template #filters>
-      <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-      <Select
-        v-model="filterStatus"
-        :options="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Trạng thái"
-        class="fb-flex-1"
-        size="small"
-        showClear
-        @change="filter"
-      />
-      <InputText
-        v-model="filterPattern"
-        placeholder="Mẫu số"
-        class="fb-flex-1"
-        size="small"
-        @keyup.enter="filter"
-      />
-      <InputText
-        v-model="filterSerial"
-        placeholder="Ký hiệu"
-        class="fb-flex-1"
-        size="small"
-        @keyup.enter="filter"
-      />
-      <InputText
-        v-model="filterNo"
-        placeholder="Số hóa đơn"
-        class="fb-flex-1"
-        type="number"
-        size="small"
-        @keyup.enter="filter"
-      />
-      <Button size="small" @click.prevent="filter">
-        <IconSearch color="currentColor" />
-      </Button>
+    <template #toolbar>
+      <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
+        <div class="fb-flex fb-gap-2 fb-flex-wrap">
+          <FbDateFilter module="invoice" useSinglePicker @update:modelValue="filter" size="small" />
+
+          <Button
+            size="small"
+            @click.prevent="filter"
+            v-tooltip.top="{
+              value: 'Tra cứu',
+              showDelay: 500,
+              hideDelay: 100,
+            }"
+          >
+            <IconSearch color="currentColor" />
+          </Button>
+          <div class="fb-ml-auto">
+            <Button
+              v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
+              :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+              outlined
+              size="small"
+              @click="showAdvancedFilter = !showAdvancedFilter"
+            >
+              <IconFilter color="currentColor" />
+            </Button>
+          </div>
+        </div>
+        <transition name="filter-slide">
+          <div
+            v-show="showAdvancedFilter"
+            class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-2 fb-pt-2 fb-border-t"
+          >
+            <Select
+              v-model="filterStatus"
+              :options="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Trạng thái"
+              class="fb-flex-1"
+              size="small"
+              showClear
+              @change="filter"
+            />
+            <Select
+              v-model="filterStatusMST"
+              :options="statusMSTOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Trạng thái MST"
+              class="fb-flex-1"
+              size="small"
+              showClear
+              @change="filter"
+            />
+            <InputText
+              v-model="filterPattern"
+              placeholder="Mẫu số"
+              class="fb-flex-1"
+              size="small"
+              @keyup.enter="filter"
+            />
+            <InputText
+              v-model="filterSerial"
+              placeholder="Ký hiệu"
+              class="fb-flex-1"
+              size="small"
+              @keyup.enter="filter"
+            />
+            <InputText
+              v-model="filterNo"
+              placeholder="Số hóa đơn"
+              class="fb-flex-1"
+              type="number"
+              size="small"
+              @keyup.enter="filter"
+            />
+          </div>
+        </transition>
+      </div>
     </template>
 
     <template #table>
@@ -56,37 +98,57 @@
       >
         <template #pattern_serial="{ row }">{{ row.pattern }} - {{ row.serial }}</template>
 
+        <template #header>
+          <div class="fb-justify-end fb-flex fb-gap-2">
+            <Button size="small" :loading="isUpdatingStatus" @click="updatePaymentStatus">
+              Cập nhật thanh toán
+            </Button>
+            <Button size="small" :loading="isUpdatingStatus" @click="updateTaxDeclared">
+              Cập nhật kê khai
+            </Button>
+          </div>
+        </template>
+
+        <template #tax_declared="{ row }">
+          {{ row?.status_tax_code_name }}
+        </template>
+
         <template #invoice_status="{ row }">
-          <Tag
-            :severity="INVOICE_STATUS_SEVERITY[row.invoice_status] || 'secondary'"
-            :value="INVOICE_STATUS_LABEL[row.invoice_status] || '-'"
-            class="!fb-text-xs !fb-font-medium"
-          />
+          {{ statusMap[row?.invoice_status] || row?.invoice_status }}
         </template>
 
-        <template #status_tax_code_name="{ row }">
-          <Tag
-            severity="success"
-            :value="row.status_tax_code_name || 'NNT đang hoạt động'"
-            class="!fb-text-xs !fb-font-medium"
-          />
-        </template>
-
-        <template #payment_status="{ row }">
-          <Tag
-            :severity="row.payment_status ? 'success' : 'warning'"
-            :value="row.payment_status ? 'Đã thanh toán' : 'Chưa thanh toán'"
-            class="!fb-text-xs !fb-font-medium"
-          />
+        <template #note="{ record, row }">
+          <div
+            class="fb-cursor-pointer fb-flex fb-items-center fb-justify-end fb-gap-1 hover:fb-text-primary fb-underline fb-underline-offset-2"
+            @click="openEditNoteDialog(row, record)"
+          >
+            {{ record || '' }}
+            <span>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="fb-h-4 fb-w-4"
+              >
+                <path
+                  d="M2.5 21.4998L8.04927 19.3655C8.40421 19.229 8.58168 19.1607 8.74772 19.0716C8.8952 18.9924 9.0358 18.901 9.16804 18.7984C9.31692 18.6829 9.45137 18.5484 9.72028 18.2795L21 6.99982C22.1046 5.89525 22.1046 4.10438 21 2.99981C19.8955 1.89525 18.1046 1.89524 17 2.99981L5.72028 14.2795C5.45138 14.5484 5.31692 14.6829 5.20139 14.8318C5.09877 14.964 5.0074 15.1046 4.92823 15.2521C4.83911 15.4181 4.77085 15.5956 4.63433 15.9506L2.5 21.4998ZM2.5 21.4998L4.55812 16.1488C4.7054 15.7659 4.77903 15.5744 4.90534 15.4867C5.01572 15.4101 5.1523 15.3811 5.2843 15.4063C5.43533 15.4351 5.58038 15.5802 5.87048 15.8703L8.12957 18.1294C8.41967 18.4195 8.56472 18.5645 8.59356 18.7155C8.61877 18.8475 8.58979 18.9841 8.51314 19.0945C8.42545 19.2208 8.23399 19.2944 7.85107 19.4417L2.5 21.4998Z"
+                  stroke="black"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </div>
         </template>
 
         <template #action="{ row }">
           <div class="fb-flex fb-justify-center">
-            <Button size="small" variant="text" @click="onViewDetail(row)">
-              <IconEye class="!fb-text-primary" color="currentColor" />
-            </Button>
+            <Checkbox v-model="row.checked" :binary="true" />
           </div>
-        </template> -->
+        </template>
 
         <template #empty>
           {{
@@ -96,6 +158,28 @@
           }}
         </template>
       </FbTable>
+    </template>
+    <template #extra>
+      <Dialog
+        v-model:visible="showEditNoteDialog"
+        header="Chỉnh sửa ghi chú"
+        modal
+        :style="{ width: '30rem' }"
+      >
+        <div class="fb-flex fb-flex-col fb-gap-4">
+          <Textarea
+            v-model="editNoteValue"
+            rows="4"
+            placeholder="Nhập ghi chú..."
+            class="fb-w-full"
+            autoResize
+          />
+          <div class="fb-flex fb-justify-end fb-gap-2 fb-mt-2">
+            <Button label="Hủy" severity="secondary" outlined @click="showEditNoteDialog = false" />
+            <Button label="Lưu lại" :loading="isSavingNote" @click="saveNote" />
+          </div>
+        </div>
+      </Dialog>
     </template>
   </TableView>
 </template>
@@ -138,10 +222,12 @@ const toast = useToast();
 
 // State
 const searchField = ref(null);
+const showAdvancedFilter = ref(true);
 const currentPage = ref(1);
 const pageSize = ref(50);
 
 const filterStatus = ref(null);
+const filterStatusMST = ref(null);
 const filterPattern = ref('');
 const filterSerial = ref('');
 const filterNo = ref('');
@@ -154,11 +240,90 @@ const statusOptions = ref([
   { label: 'Hóa đơn đã bị điều chỉnh', value: '5' },
   { label: 'Hóa đơn đã bị hủy', value: '6' },
 ]);
+const statusMSTOptions = ref([
+  { label: 'NNT đang hoạt động', value: '1' },
+  { label: 'Rủi ro vi phạm', value: '2' },
+]);
+
+const statusMap = computed(() => {
+  return statusOptions.value.reduce((acc, curr) => {
+    acc[curr.value] = curr.label;
+    return acc;
+  }, {});
+});
 
 const inputInvoiceList = computed(() => invoiceStore.inputInvoiceList); // data from api
 const items = ref([]); // data display in table
 
 const isLoading = ref(false);
+
+const showEditNoteDialog = ref(false);
+const editNoteValue = ref('');
+const currentRowForNote = ref(null);
+const isSavingNote = ref(false);
+const isUpdatingStatus = ref(false);
+
+const openEditNoteDialog = (row, currentNote) => {
+  currentRowForNote.value = row;
+  editNoteValue.value = currentNote || '';
+  showEditNoteDialog.value = true;
+};
+
+const handleUpdateInvoice = async (payload, successMessage, shouldReload = true) => {
+  try {
+    isUpdatingStatus.value = true;
+    const res = await invoiceStore.updateInputInvoice(payload);
+    if (res?.error) throw res.error;
+
+    toast.add({ severity: 'success', summary: successMessage, life: 3000 });
+
+    if (shouldReload) await filter();
+    return true;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Lỗi', detail: error?.message || '', life: 5000 });
+    return false;
+  } finally {
+    isUpdatingStatus.value = false;
+  }
+};
+
+const saveNote = async () => {
+  isSavingNote.value = true;
+  const payload = [
+    {
+      id: currentRowForNote.value.id,
+      note: editNoteValue.value,
+    },
+  ];
+
+  const success = await handleUpdateInvoice(payload, 'Lưu ghi chú thành công', false);
+
+  if (success) {
+    if (currentRowForNote.value) {
+      currentRowForNote.value.note = editNoteValue.value;
+    }
+    showEditNoteDialog.value = false;
+  }
+  isSavingNote.value = false;
+};
+
+const updatePaymentStatus = async () => {
+  if (!items.value || !items.value.length) return;
+  const payload = items.value.map((item) => ({
+    id: item.id,
+    payment_status: item.checked || false,
+  }));
+  await handleUpdateInvoice(payload, 'Cập nhật thanh toán thành công');
+};
+
+const updateTaxDeclared = async () => {
+  if (!items.value || !items.value.length) return;
+  const payload = items.value.map((item) => ({
+    id: item.id,
+    tax_declared: item.checked || false,
+  }));
+  await handleUpdateInvoice(payload, 'Cập nhật kê khai thành công');
+};
 
 // Methods
 const getData = async ({ page, rows } = {}) => {
@@ -177,14 +342,18 @@ const getData = async ({ page, rows } = {}) => {
   };
 
   if (searchField.value) payload.search = searchField.value;
-  if (filterStatus.value) payload.tax_declared = filterStatus.value;
+  if (filterStatus.value) payload.invoice_status = filterStatus.value;
+  if (filterStatusMST.value) payload.status_company_tax_code = filterStatusMST.value;
   if (filterPattern.value) payload.pattern = filterPattern.value;
   if (filterSerial.value) payload.serial = filterSerial.value;
   if (filterNo.value) payload.no = filterNo.value;
 
   isLoading.value = true;
   await invoiceStore.getInputInvoiceList(payload);
-  items.value = inputInvoiceList.value?.data?.data || [];
+  items.value = (inputInvoiceList.value?.data?.data || []).map((item) => ({
+    ...item,
+    checked: false,
+  }));
   isLoading.value = false;
 };
 

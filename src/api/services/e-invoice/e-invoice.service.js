@@ -174,6 +174,7 @@ export const invoiceService = {
 
   // Input Invoice
   getInputInvoiceList: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_LIST, { params }),
+  updateInputInvoice: (payload) => api.patch(INVOICE_ENDPOINTS.INPUT_INVOICE_LIST, payload),
   getInputInvoiceProducts: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_PRODUCTS, { params }),
   getInputInvoiceSummary: (params) => api.get(INVOICE_ENDPOINTS.INPUT_INVOICE_SUMMARY, { params }),
 };

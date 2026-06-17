@@ -2,10 +2,10 @@
   <DatePicker
     ref="datePicker"
     v-model="dates"
-    selectionMode="range"
-    :manualInput="false"
+    :selectionMode="selectionMode"
+    :manualInput="manualInput"
     dateFormat="dd/mm/yy"
-    placeholder="Chọn thời gian"
+    :placeholder="placeholder"
     inputClass="!fb-font-medium"
     selectOtherMonths
     panelClass="fb-custom-date-panel"
@@ -14,7 +14,7 @@
   >
     <template #weekheaderlabel>W</template>
     <template #footer>
-      <div class="fb-p-4 fb-border-t fb-border-gray-200">
+      <div class="fb-p-4 fb-border-t fb-border-gray-200" v-if="showFooter">
         <div class="fb-flex fb-flex-wrap fb-justify-around fb-gap-2">
           <Button
             v-for="item in PRESET_OPTIONS"
@@ -43,8 +43,24 @@ import moment from 'moment';
  */
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: [Array, Date, String, Number],
     default: () => null,
+  },
+  showFooter: {
+    type: Boolean,
+    default: true,
+  },
+  selectionMode: {
+    type: String,
+    default: 'range',
+  },
+  manualInput: {
+    type: Boolean,
+    default: false,
+  },
+  placeholder: {
+    type: String,
+    default: 'Chọn thời gian',
   },
 });
 
@@ -90,13 +106,13 @@ const PRESET_OPTIONS = [
 ];
 
 const currentPreset = ref('');
-const dates = ref(props.modelValue ? [...props.modelValue] : null);
+const dates = ref(props.modelValue ? (Array.isArray(props.modelValue) ? [...props.modelValue] : props.modelValue) : null);
 
 // Sync nếu modelValue thay đổi từ bên ngoài
 watch(
   () => props.modelValue,
   (val) => {
-    dates.value = val ? [...val] : null;
+    dates.value = val ? (Array.isArray(val) ? [...val] : val) : null;
   },
 );
 
@@ -108,11 +124,15 @@ const selectPreset = (item) => {
 };
 
 const onDateChange = (value) => {
-  if (value && value[0] && value[1]) {
-    datePicker.value.overlayVisible = false;
-    emit('update:modelValue', value);
-  } else if (!value) {
-    datePicker.value.overlayVisible = false;
+  if (props.selectionMode === 'range') {
+    if (value && value[0] && value[1]) {
+      datePicker.value.overlayVisible = false;
+      emit('update:modelValue', value);
+    } else if (!value) {
+      datePicker.value.overlayVisible = false;
+      emit('update:modelValue', value);
+    }
+  } else {
     emit('update:modelValue', value);
   }
 };

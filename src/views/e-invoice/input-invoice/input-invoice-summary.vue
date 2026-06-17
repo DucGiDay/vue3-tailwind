@@ -5,47 +5,76 @@
     </div>
   </div>
 
-  <div class="fb-mb-4 fb-flex fb-items-center fb-space-x-4 fb-flex-wrap gap-4">
-    <FbDateFilter module="invoice" @update:modelValue="filter" size="small" />
-    <Select
-      v-model="filterStatus"
-      :options="statusOptions"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Trạng thái"
-      class="fb-flex-1"
-      size="small"
-      showClear
-      @change="filter"
-    />
-    <InputText
-      v-model="filterPattern"
-      placeholder="Mẫu số"
-      class="fb-flex-1"
-      size="small"
-      @keyup.enter="filter"
-    />
-    <InputText
-      v-model="filterSerial"
-      placeholder="Ký hiệu"
-      class="fb-flex-1"
-      size="small"
-      @keyup.enter="filter"
-    />
-    <InputText
-      v-model="filterNo"
-      placeholder="Số hóa đơn"
-      class="fb-flex-1"
-      type="number"
-      size="small"
-      @keyup.enter="filter"
-    />
-    <Button size="small" @click.prevent="filter">
-      <IconSearch color="currentColor" />
-    </Button>
+  <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200 fb-mb-4">
+    <div class="fb-flex fb-gap-2 fb-flex-wrap">
+      <FbDateFilter module="invoice" useSinglePicker @update:modelValue="filter" size="small" />
+
+      <Button
+        size="small"
+        @click.prevent="filter"
+        v-tooltip.top="{
+          value: 'Tra cứu',
+          showDelay: 500,
+          hideDelay: 100,
+        }"
+      >
+        <IconSearch color="currentColor" />
+      </Button>
+      <div class="fb-ml-auto">
+        <Button
+          v-tooltip.bottom="showAdvancedFilter ? 'Ẩn bộ lọc' : 'Lọc nâng cao'"
+          :severity="showAdvancedFilter ? 'primary' : 'secondary'"
+          outlined
+          size="small"
+          @click="showAdvancedFilter = !showAdvancedFilter"
+        >
+          <IconFilter color="currentColor" />
+        </Button>
+      </div>
+    </div>
+    <transition name="filter-slide">
+      <div
+        v-show="showAdvancedFilter"
+        class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-2 fb-pt-2 fb-border-t"
+      >
+        <Select
+          v-model="filterStatus"
+          :options="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Trạng thái"
+          class="fb-flex-1"
+          size="small"
+          showClear
+          @change="filter"
+        />
+        <InputText
+          v-model="filterPattern"
+          placeholder="Mẫu số"
+          class="fb-flex-1"
+          size="small"
+          @keyup.enter="filter"
+        />
+        <InputText
+          v-model="filterSerial"
+          placeholder="Ký hiệu"
+          class="fb-flex-1"
+          size="small"
+          @keyup.enter="filter"
+        />
+        <InputText
+          v-model="filterNo"
+          placeholder="Số hóa đơn"
+          class="fb-flex-1"
+          type="number"
+          size="small"
+          @keyup.enter="filter"
+        />
+      </div>
+    </transition>
   </div>
 
-  <div class="!fb-p-0 summary-table-container">
+  <div class="!fb-p-0 fb-mb-14 fb-border summary-table-container">
     <div v-if="isLoading" class="fb-flex fb-justify-center fb-py-8">Đang tải dữ liệu...</div>
     <div v-else-if="!items || items.length === 0" class="fb-text-center fb-py-8 fb-text-gray-500">
       {{ inputInvoiceSummary?.error ? 'Error: ' + inputInvoiceSummary?.error : 'Chưa có bảng kê' }}
@@ -96,6 +125,38 @@
             <td></td>
           </tr>
         </template>
+
+        <!-- 3 Hàng tổng cuối -->
+        <tr>
+          <td
+            colspan="10"
+            class="!fb-p-0 !fb-h-12 !fb-border-l-0 !fb-border-r-0 !fb-bg-transparent"
+          ></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="7" class="fb-text-left fb-font-bold">
+            Tổng doanh thu hàng hoá, dịch vụ mua vào trước thuế
+          </td>
+          <td class="fb-text-right fb-font-bold">{{ formatCurrency(totalBeforeTaxAll) }}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="7" class="fb-text-left fb-font-bold">
+            Tổng doanh thu hàng hoá, dịch vụ mua vào chịu thuế GTGT
+          </td>
+          <td class="fb-text-right fb-font-bold">{{ formatCurrency(totalTaxableAll) }}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="7" class="fb-text-left fb-font-bold">
+            Tổng số thuế GTGT của hàng hóa, dịch vụ mua vào
+          </td>
+          <td class="fb-text-right fb-font-bold">{{ formatCurrency(totalTaxAll) }}</td>
+          <td></td>
+          <td></td>
+        </tr>
       </table>
 
       <Paginator
@@ -131,6 +192,7 @@ const filterStatus = ref(null);
 const filterPattern = ref('');
 const filterSerial = ref('');
 const filterNo = ref('');
+const showAdvancedFilter = ref(true);
 
 const statusOptions = ref([
   { label: 'Hóa đơn mới', value: '1' },
@@ -144,6 +206,18 @@ const statusOptions = ref([
 const inputInvoiceSummary = computed(() => invoiceStore.inputInvoiceSummary);
 const items = ref([]);
 const isLoading = ref(false);
+
+const totalBeforeTaxAll = computed(() => {
+  return items.value.reduce((sum, group) => sum + (Number(group.total_before_tax) || 0), 0);
+});
+
+const totalTaxAll = computed(() => {
+  return items.value.reduce((sum, group) => sum + (Number(group.total_tax) || 0), 0);
+});
+
+const totalTaxableAll = computed(() => {
+  return totalBeforeTaxAll.value - totalTaxAll.value;
+});
 
 // Methods
 const onPageChange = (event) => {
@@ -161,11 +235,9 @@ const getData = async ({ page, rows } = {}) => {
     list_store_uid: invoiceStore.listStoreUidInCurrentTaxCode.join(','),
     start_date: filterStore?.invoice?.start_date,
     end_date: filterStore?.invoice?.end_date,
-    page: currentPage.value,
-    page_size: pageSize.value,
   };
 
-  if (filterStatus.value) payload.tax_declared = filterStatus.value;
+  if (filterStatus.value) payload.invoice_status = filterStatus.value;
   if (filterPattern.value) payload.pattern = filterPattern.value;
   if (filterSerial.value) payload.serial = filterSerial.value;
   if (filterNo.value) payload.no = filterNo.value;

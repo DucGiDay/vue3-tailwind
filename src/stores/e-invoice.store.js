@@ -338,6 +338,14 @@ export const useEInoiveStore = defineStore('eInoive', {
         this.inputInvoiceList.error = err?.message;
       }
     },
+    async updateInputInvoice(payload) {
+      try {
+        const response = await invoiceService.updateInputInvoice(payload);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
     async getInputInvoiceProducts(params) {
       try {
         const response = await invoiceService.getInputInvoiceProducts(params);

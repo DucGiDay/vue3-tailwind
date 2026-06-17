@@ -1,19 +1,42 @@
 <script setup>
 import AppMenu from './AppMenu.vue';
+import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
 import IconExpandMenu from '@/components/Common/Icon/IconExpandMenu.vue';
+import { computed } from 'vue';
 
 const { layoutConfig } = useLayout();
+const route = useRoute();
+
+const isEInvoice = computed(() => {
+  return route.fullPath.startsWith('/e-invoice/');
+});
 
 const onMenuModeChange = () => {
   layoutConfig.menuMode = layoutConfig.menuMode === 'static' ? 'overlay' : 'static';
+  console.log(route);
 };
 </script>
 
 <template>
   <div class="layout-sidebar fb-flex fb-flex-col">
-    <app-menu></app-menu>
     <div
+      class="fb-flex fb-items-center fb-sticky fb-bottom-0"
+      style="background-color: var(--surface-overlay)"
+    >
+      <span v-if="isEInvoice" class="fb-font-bold fb-uppercase">Hóa đơn điện tử</span>
+      <Button
+        text
+        variant="secondary"
+        @click="onMenuModeChange"
+        class="!fb-p-2 fb-ml-auto"
+        v-tooltip.right="'Thu gọn'"
+      >
+        <IconExpandMenu class="fb-w-5 fb-h-5 fb-text-color-secondary" />
+      </Button>
+    </div>
+    <app-menu></app-menu>
+    <!-- <div
       class="fb-mt-auto fb-flex fb-justify-end fb-sticky fb-bottom-0 fb-pt-2"
       style="background-color: var(--surface-overlay)"
     >
@@ -26,11 +49,14 @@ const onMenuModeChange = () => {
       >
         <IconExpandMenu class="fb-w-5 fb-h-5 fb-text-color-secondary" />
       </Button>
-    </div>
+    </div> -->
   </div>
 
   <!-- Nút mở lại sidebar khi bị thu gọn -->
-  <div v-if="layoutConfig.menuMode === 'overlay'" class="fb-fixed fb-left-0 fb-bottom-6 fb-z-[999]">
+  <div
+    v-if="layoutConfig.menuMode === 'overlay'"
+    class="fb-fixed fb-left-0 fb-top-[4.55rem] fb-z-[999]"
+  >
     <Button
       text
       variant="secondary"

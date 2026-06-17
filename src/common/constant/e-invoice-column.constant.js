@@ -292,19 +292,27 @@ export const INPUT_INVOICE_TABLE_COLUMNS = [
   { field: 'currency', header: 'Mã tiền tệ' },
   { field: 'invoice_status', header: 'Trạng thái hóa đơn' },
   { field: 'note', header: 'Ghi chú' },
-  { field: 'action', header: 'Kiểm tra' },
+  {
+    field: 'action',
+    header: 'Kiểm tra',
+    style: { padding: '0 0.5rem !important' },
+    frozen: true,
+    alignFrozen: 'right',
+  },
 ];
 
 // Columns Danh sách sản phẩm theo HDDV
 export const INPUT_INVOICE_PRODUCT_COLUMNS = [
+  { field: 'no', header: '#' },
+  { field: 'invoice_no', header: 'Số hóa đơn' },
   { field: 'invoice_date', header: 'Ngày hoá đơn', format: 'date' },
   { field: 'pattern_serial', header: 'Mẫu số và ký hiệu' },
   { field: 'seller_name', header: 'Tên đơn vị bán' },
   { field: 'product_code', header: 'Mã hàng hóa' },
   { field: 'product_name', header: 'Tên hàng hóa' },
+  { field: 'unit', header: 'ĐVT' },
   { field: 'quantity', header: 'Số lượng' },
   { field: 'unit_price', header: 'Đơn giá', format: 'currency' },
-  { field: 'unit', header: 'ĐVT' },
   { field: 'amount', header: 'Thành tiền', format: 'currency' },
   { field: 'tax_rate', header: 'Thuế suất' },
   { field: 'payment_method', header: 'Hình thức thanh toán' },
