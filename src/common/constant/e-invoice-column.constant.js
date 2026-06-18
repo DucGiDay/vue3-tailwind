@@ -295,7 +295,7 @@ export const INPUT_INVOICE_TABLE_COLUMNS = [
   {
     field: 'action',
     header: 'Kiểm tra',
-    style: { padding: '0 0.5rem !important' },
+    // style: { padding: '0 0.5rem !important' },
     frozen: true,
     alignFrozen: 'right',
   },

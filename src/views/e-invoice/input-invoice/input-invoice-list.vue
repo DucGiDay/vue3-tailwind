@@ -162,7 +162,7 @@
             <div class="fb-flex fb-flex-col fb-gap-2">
               <Button
                 size="small"
-                class="!fb-p-0"
+                class="!fb-py-0"
                 severity="secondary"
                 text
                 @click="handleViewXml(row)"
@@ -173,7 +173,8 @@
               </Button>
               <Button
                 size="small"
-                class="!fb-p-0"
+                y
+                class="!fb-py-0"
                 severity="secondary"
                 text
                 @click="handleViewPdf(row)"
@@ -183,7 +184,15 @@
                 <span v-else>PDF</span>
               </Button>
             </div>
-            <Checkbox v-model="row.checked" :binary="true" />
+            <div class="fb-flex fb-flex-col fb-gap-2">
+              <Checkbox v-model="row.tax_declared" :binary="true" />
+              <IconDollarCircle
+                class="fb-cursor-pointer"
+                :solid="row.payment_status"
+                :color="row.payment_status ? '#0560A6' : '#A4A7AE'"
+                @click.stop="row.payment_status = !row.payment_status"
+              />
+            </div>
           </div>
         </template>
 
@@ -286,25 +295,6 @@ import { useRouter } from 'vue-router';
 import { useInputInvoiceExport } from '@/composables/export/useInputInvoiceExport';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
 
-const INVOICE_STATUS_LABEL = {
-  '1': 'Hóa đơn mới',
-  '2': 'Hóa đơn điều chỉnh',
-  '3': 'Hóa đơn thay thế',
-  '4': 'Hóa đơn đã bị thay thế',
-  '5': 'Hóa đơn đã bị điều chỉnh',
-  '6': 'Hóa đơn đã bị hủy',
-};
-
-const INVOICE_STATUS_SEVERITY = {
-  '1': 'success',
-  '2': 'info',
-  '3': 'info',
-  '4': 'secondary',
-  '5': 'secondary',
-  '6': 'danger',
-};
-
-const router = useRouter();
 const { isLoadingExport, executeExport } = useInputInvoiceExport();
 
 // Store/Getter
@@ -386,6 +376,8 @@ const saveNote = async () => {
   const payload = [
     {
       id: currentRowForNote.value.id,
+      payment_status: currentRowForNote.value.payment_status || false,
+      tax_declared: currentRowForNote.value.tax_declared || false,
       note: editNoteValue.value,
     },
   ];
@@ -405,7 +397,9 @@ const updatePaymentStatus = async () => {
   if (!items.value || !items.value.length) return;
   const payload = items.value.map((item) => ({
     id: item.id,
-    payment_status: item.checked || false,
+    payment_status: item.payment_status || false,
+    tax_declared: item.tax_declared || false,
+    note: item.note || '',
   }));
   await handleUpdateInvoice(payload, 'Cập nhật thanh toán thành công');
 };
@@ -414,7 +408,9 @@ const updateTaxDeclared = async () => {
   if (!items.value || !items.value.length) return;
   const payload = items.value.map((item) => ({
     id: item.id,
-    tax_declared: item.checked || false,
+    payment_status: item.payment_status || false,
+    tax_declared: item.tax_declared || false,
+    note: item.note || '',
   }));
   await handleUpdateInvoice(payload, 'Cập nhật kê khai thành công');
 };
@@ -446,7 +442,7 @@ const getData = async ({ page, rows } = {}) => {
   await invoiceStore.getInputInvoiceList(payload);
   items.value = (inputInvoiceList.value?.data?.data || []).map((item) => ({
     ...item,
-    checked: false,
+    checked: item.tax_declared,
   }));
   isLoading.value = false;
 };
