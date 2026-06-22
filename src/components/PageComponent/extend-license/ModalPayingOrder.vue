@@ -51,9 +51,8 @@ watch(visible, async (newVal) => {
   if (newVal) await getQRCode();
 });
 
+const QR_TTL_MINUTES = 15; // 15 phút
 // Methods
-const QR_TTL_MINUTES = 100; // 100 phút = 1 giờ 40 phút
-
 const getQRCode = async () => {
   // 1. Kiểm tra cookie trước (key là roCode)
   const cached = getCookie(props.item?.roCode);

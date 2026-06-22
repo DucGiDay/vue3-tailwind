@@ -1,3 +1,7 @@
+export const PRODUCT_CODE = 'FABI';
+export const PRODUCT_CODE_BOX = 'FABIBOX';
+export const PRODUCT_CODE_INVOICE = 'IPOSDVHDDT';
+
 export const CURRENTCY_OPTIONS = {
   VND: '₫',
   USD: '$',

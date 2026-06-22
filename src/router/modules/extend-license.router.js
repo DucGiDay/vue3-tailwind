@@ -6,7 +6,10 @@ export const extendLicenseRouter = [
   {
     path: '/extend-license/extend-license-history',
     name: 'ExtendLicense',
-    meta: {},
+    meta: {
+      disableSidebar: true,
+      isTableViewPaginate: true,
+    },
     component: () => import('@/views/extend-license/extend-license-history.vue'),
   },
 ];

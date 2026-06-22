@@ -445,9 +445,9 @@
         <p class="fb-font-semibold">
           {{ $t('ANNOUNCE_CREATE_ORDER_SUCCESS--TRAN_ID') }}: {{ item?.roCode }}
         </p>
-        <RouterLink to="/micro/extend-license/extend-license-history">
+        <!-- <RouterLink to="/micro/extend-license/extend-license-history">
           Quay về trang danh sách
-        </RouterLink>
+        </RouterLink> -->
       </div>
     </template>
 
@@ -542,7 +542,7 @@ function startCountdown() {
     } else {
       clearInterval(timer);
     }
-    if (timeLeft.value % 30 === 0 || timeLeft.value === 0) {
+    if (timeLeft.value % 10 === 0 || timeLeft.value === 0) {
       await checkPayment();
     }
   }, 1000);
