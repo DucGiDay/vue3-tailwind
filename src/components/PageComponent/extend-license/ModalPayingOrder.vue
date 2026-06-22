@@ -4,15 +4,16 @@
     modal
     maximizable
     header="Thanh toán đơn hàng"
-    :style="{ width: '75vw' }"
+    :style="{ width: '85vw' }"
     :breakpoints="{ '1199px': '85vw', '575px': '90vw' }"
     @hide="onHideDialog"
   >
-    <div v-if="isLoading" class="fb-flex fb-justify-center">
+    <div v-if="isLoading" class="fb-flex fb-justify-center fb-items-center fb-min-h-52">
       <ProgressSpinner class="fb-stroke-primary" />
     </div>
     <PayingComponent v-else :item="item" :qrCode="qrCode" />
-    <template #footer>
+
+    <!-- <template #footer>
       <Button
         type="button"
         label="Đóng lại"
@@ -20,7 +21,7 @@
         severity="secondary"
         @click="visible = false"
       ></Button>
-    </template>
+    </template> -->
   </Dialog>
 </template>
 <script setup>
@@ -32,8 +33,8 @@ import { setCookie, getCookie } from '@/common/utils/common';
 const props = defineProps({
   item: {
     type: Object,
-    default: () => {}
-  }
+    default: () => {},
+  },
 });
 const emit = defineEmits(['success', 'hide']);
 const visible = defineModel('visible', { default: false });
@@ -47,8 +48,8 @@ const qrCode = ref({});
 
 // Watchers
 watch(visible, async (newVal) => {
-  if (newVal) await getQRCode()
-})
+  if (newVal) await getQRCode();
+});
 
 // Methods
 const QR_TTL_MINUTES = 100; // 100 phút = 1 giờ 40 phút
@@ -71,7 +72,8 @@ const getQRCode = async () => {
     amount: props.item?.amount || 0,
     tranId: props.item?.roCode,
     paymentMethod: 'MOMO_QR',
-    returnUrl: 'https://fabidev.ipos.vn/shop/extend-license-status'
+    orderExpireTime: 15,
+    returnUrl: 'https://fabidev.ipos.vn/shop/extend-license-status',
   };
   isLoading.value = true;
   const response = await extendLicenseStore.getQRPayment(payload);
@@ -81,7 +83,7 @@ const getQRCode = async () => {
   if (!response.error && response.data?.qrCodeUrl) {
     const payload = JSON.stringify({
       qrCodeUrl: response.data.qrCodeUrl,
-      createdAt: Date.now() // timestamp ms
+      createdAt: Date.now(), // timestamp ms
     });
     setCookie(props.item?.roCode, payload, QR_TTL_MINUTES);
     // Gắn createdAt vào qrCode để PayingComponent tính countdown
