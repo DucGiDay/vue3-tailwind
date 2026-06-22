@@ -143,7 +143,7 @@ const getData = async ({ page, rows } = {}) => {
     companyId: globalStore?.currentUser?.company_id,
     page: currentPage.value,
     numPerPage: numPerPage.value,
-    list_store_uid: globalStore.storesIdPermissionActive.join(','),
+    // list_store_uid: globalStore.storesIdPermissionActive.join(','),
     textSearch: searchField.value,
     ...(route.query?.product_code ? { productCode: route.query?.product_code } : {}),
   });

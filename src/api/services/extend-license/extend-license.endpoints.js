@@ -3,6 +3,7 @@ export const EXTEND_LICENSE_ENDPOINTS = {
   LIST_ORDER_HISTORY: '/api/v3/forward/billing/api/partner/request_order/list',
   QR_PAYMENT: '/forward/billing/pos-cms/api/v3/get-qr',
   CHECK_PAYMENT: '/forward/billing/pos-cms/api/v3/check-payment',
+  CHECK_PAYMENT_DEPOSIT: '/forward/billing/api/partner/deposit/detail',
   UPDATE_STATUS_ORDER: '/forward/billing/pos-client/api/v3/update-order-status',
   CANCEL_ORDER: '/api/v3/forward/billing/api/partner/request_order/cancel'
 };
