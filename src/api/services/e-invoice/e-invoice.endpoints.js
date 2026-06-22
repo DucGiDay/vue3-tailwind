@@ -69,4 +69,11 @@ export const INVOICE_ENDPOINTS = {
   PUBLISH_HSM: '/api/einvoice/v1/invoice/publish-hsm',
   HASH_PUBLISH_USB_TOKEN: '/api/einvoice/v1/invoice/hash-publish-usb-token',
   PUBLISH_USB_TOKEN: '/api/einvoice/v1/invoice/publish-usb-token',
+  
+  // Input Invoice
+  INPUT_INVOICE_LIST: '/api/einvoice/v1/input-invoices',
+  INPUT_INVOICE_PRODUCTS: '/api/einvoice/v1/input-invoices/products',
+  INPUT_INVOICE_SUMMARY: '/api/einvoice/v1/input-invoices/by-tax-rate',
+  INPUT_INVOICE_XML: '/api/einvoice/v1/input-invoices/xml',
+  INPUT_INVOICE_PDF: '/api/einvoice/v1/input-invoices/pdf',
 };

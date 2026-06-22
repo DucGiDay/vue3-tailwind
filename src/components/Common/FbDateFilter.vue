@@ -1,5 +1,26 @@
 <template>
-  <FbDateSelect v-model="dates" @update:modelValue="onDateChange" />
+  <div v-if="useSinglePicker" class="fb-flex fb-items-center fb-gap-2">
+    <FbDateSelect
+      v-model="startDate"
+      selectionMode="single"
+      :manualInput="true"
+      :showFooter="false"
+      placeholder="Từ ngày"
+      :size="size"
+      @update:modelValue="onSingleDateChange"
+    />
+    <span class="fb-text-gray-500">-</span>
+    <FbDateSelect
+      v-model="endDate"
+      selectionMode="single"
+      :manualInput="true"
+      :showFooter="false"
+      placeholder="Đến ngày"
+      :size="size"
+      @update:modelValue="onSingleDateChange"
+    />
+  </div>
+  <FbDateSelect v-else v-model="dates" :size="size" @update:modelValue="onDateChange" />
 </template>
 
 <script setup>
@@ -16,6 +37,15 @@ const props = defineProps({
   module: {
     type: String,
     default: 'report', // 'report' | 'invoice'
+  },
+  useSinglePicker: {
+    type: Boolean,
+    default: false,
+  },
+
+  size: {
+    type: String,
+    default: 'small',
   },
 });
 
@@ -37,6 +67,16 @@ const dates = ref([
   currentState?.end_date ? new Date(currentState.end_date) : getDefaultEndDate(),
 ]);
 
+const startDate = ref(dates.value[0]);
+const endDate = ref(dates.value[1]);
+
+watch(dates, (newVal) => {
+  if (newVal) {
+    startDate.value = newVal[0];
+    endDate.value = newVal[1];
+  }
+});
+
 const onDateChange = async (value) => {
   if (value && value[0] && value[1]) {
     await filterStore.updateFilter({
@@ -49,5 +89,20 @@ const onDateChange = async (value) => {
   }
 
   emit('update:modelValue', value);
+};
+
+const onSingleDateChange = async () => {
+  const value = [startDate.value, endDate.value];
+  if (value && value[0] && value[1]) {
+    dates.value = value;
+    await filterStore.updateFilter({
+      [props.module]: {
+        ...filterStore[props.module],
+        start_date: moment(value[0]).startOf('day').valueOf(),
+        end_date: moment(value[1]).endOf('day').valueOf(),
+      },
+    });
+    emit('update:modelValue', value);
+  }
 };
 </script>

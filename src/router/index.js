@@ -37,7 +37,7 @@ const mapMicroRouters = (routes, inheritedAbstractName = '') => {
         name,
         component,
         children: mappedChildren,
-        meta
+        meta,
       };
     })
     .filter((route) => {
@@ -108,6 +108,10 @@ const createAppRouter = (microRouter, componentName = '') => {
   const router = createRouter({
     history: createWebHistory(qiankunWindow.__POWERED_BY_QIANKUN__ ? '/micro' : '/'),
     routes,
+  });
+
+  router.afterEach((to) => {
+    document.title = to.meta.title || 'Fabi';
   });
 
   return router;

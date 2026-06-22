@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
 import { invoiceService } from '@/api/services/e-invoice/e-invoice.service';
+import {
+  inputInvoiceList as mockInputInvoiceList,
+  inputInvoicProduct as mockInputInvoiceProduct,
+} from '@/api/services/e-invoice/e-invoice.mockdata';
 
 export const useEInoiveStore = defineStore('eInoive', {
   state: () => ({
@@ -25,6 +29,9 @@ export const useEInoiveStore = defineStore('eInoive', {
     posInvoiceList: {},
     showTaxCodeDialog: false,
     currentTaxCode: localStorage.getItem('fabi_selected_tax_code') || null,
+    inputInvoiceList: {},
+    inputInvoiceProducts: {},
+    inputInvoiceSummary: {},
   }),
 
   getters: {
@@ -306,6 +313,38 @@ export const useEInoiveStore = defineStore('eInoive', {
         return { data: response?.data || null, error: null };
       } catch (err) {
         return { data: null, error: err };
+      }
+    },
+    async getInputInvoiceList(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceList(params);
+        this.inputInvoiceList.data = response || {};
+      } catch (err) {
+        this.inputInvoiceList.error = err?.message;
+      }
+    },
+    async updateInputInvoice(payload) {
+      try {
+        const response = await invoiceService.updateInputInvoice(payload);
+        return { data: response?.data || null, error: null };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+    async getInputInvoiceProducts(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceProducts(params);
+        this.inputInvoiceProducts.data = response || {};
+      } catch (err) {
+        this.inputInvoiceProducts.error = err?.message;
+      }
+    },
+    async getInputInvoiceSummary(params) {
+      try {
+        const response = await invoiceService.getInputInvoiceSummary(params);
+        this.inputInvoiceSummary.data = response || {};
+      } catch (err) {
+        this.inputInvoiceSummary.error = err?.message;
       }
     },
   },

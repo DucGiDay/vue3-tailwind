@@ -1,10 +1,12 @@
 <script setup>
+import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 import { useLayout } from '@/layout/composables/layout';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
+const isQiankun = qiankunWindow.__POWERED_BY_QIANKUN__;
 
 const outsideClickListener = ref(null);
 
@@ -62,8 +64,8 @@ function isOutsideClicked(event) {
 
 <template>
   <div class="layout-wrapper" :class="containerClass">
-    <!-- <app-topbar></app-topbar> -->
-    <app-sidebar v-show="!$route.meta.disableSidebar"></app-sidebar>
+    <app-topbar v-if="!isQiankun"></app-topbar>
+    <app-sidebar></app-sidebar>
     <div
       :class="[
         'layout-main-container',

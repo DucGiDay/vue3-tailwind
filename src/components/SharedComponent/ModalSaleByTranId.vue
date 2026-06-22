@@ -337,7 +337,7 @@ const exportSale = async () => {
   [headerRow1, headerRow2].forEach((row) => {
     row.eachCell((cell) => {
       cell.font = { bold: true };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '79abe3' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '0560A6' } };
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       cell.border = {
         top: { style: 'thin' },

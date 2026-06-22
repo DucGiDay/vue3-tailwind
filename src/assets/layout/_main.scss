@@ -1,12 +1,17 @@
 #sub-app {
   .layout-wrapper {
     height: 100vh;
+    overflow: hidden;
 
     .layout-main-container {
+      --mt-layout: 3.75rem;
+      --space-y-layout: 5rem;
       display: flex;
       flex-direction: column;
-      height: 100%;
-      padding: 5rem 2rem 5rem 2rem;
+      height: calc(100% - var(--mt-layout));
+      padding: 0 2rem var(--space-y-layout) 2rem;
+      padding-top: calc(var(--space-y-layout) - var(--mt-layout));
+      margin-top: var(--mt-layout);
       transition: margin-left var(--layout-section-transition-duration);
       box-sizing: border-box;
       overflow: auto;
