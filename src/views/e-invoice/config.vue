@@ -1,5 +1,5 @@
 <template>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
+  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-5']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Cấu hình</h5>
     </div>

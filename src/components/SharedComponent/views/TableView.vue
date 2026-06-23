@@ -4,7 +4,7 @@
       <!-- Title row: title + actions -->
       <div
         v-if="!!title || !!$slots['header-actions']"
-        class="fb-flex fb-justify-between fb-items-center fb-mb-6"
+        class="fb-flex fb-justify-between fb-items-center fb-mb-5"
       >
         <div class="fb-flex fb-items-center fb-space-x-3">
           <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">{{ title }}</h5>
