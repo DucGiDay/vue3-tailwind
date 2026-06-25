@@ -8,7 +8,9 @@
     "build": "vite build",
     "build:site-dev": "vite build --mode development",
     "build:site-product": "vite build --mode production",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src --ext .vue,.js,.jsx,.cjs,.mjs --max-warnings 0",
+    "lint:fix": "eslint src --ext .vue,.js,.jsx,.cjs,.mjs --fix"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^5.1.0",

@@ -1,23 +1,7 @@
 <template>
-  <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-6']">
-    <div class="fb-flex fb-items-center fb-space-x-3">
-      <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Bảng kê hóa đơn đầu vào</h5>
-    </div>
-    <Button
-      :loading="isLoadingExport"
-      size="small"
-      outlined
-      class="!fb-rounded-lg"
-      @click="handleExportExcel"
-    >
-      <IconDownload v-if="!isLoadingExport" color="currentColor" />
-      <FbLoading v-else show />
-      Xuất excel
-    </Button>
-  </div>
-
   <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200 fb-mb-4">
-    <div class="fb-flex fb-gap-2 fb-flex-wrap">
+    <div class="fb-flex fb-gap-2 fb-items-center fb-flex-wrap">
+      <p class="fb-font-semibold fb-text-base">Bảng kê hóa đơn đầu vào</p>
       <FbDateFilter module="invoice" useSinglePicker @update:modelValue="filter" size="small" />
 
       <Button
@@ -39,7 +23,18 @@
           size="small"
           @click="showAdvancedFilter = !showAdvancedFilter"
         >
-          <IconFilter color="currentColor" />
+          <IconFilter color="currentColor" class="fb-h-5 fb-w-5" />
+        </Button>
+        <Button
+          :loading="isLoadingExport"
+          size="small"
+          outlined
+          class="!fb-rounded-lg"
+          @click="handleExportExcel"
+        >
+          <IconDownload v-if="!isLoadingExport" color="currentColor" />
+          <FbLoading v-else show />
+          Xuất excel
         </Button>
       </div>
     </div>

@@ -6,30 +6,32 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    es2021: true
+    es2021: true,
+  },
+  globals: {
+    __webpack_public_path__: 'writable',
   },
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-prettier',
-    './.eslintrc-auto-import.json'
+    './.eslintrc-auto-import.json',
   ],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
   },
   rules: {
-    singleQuote: true,
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-reserved-component-names': 'off',
-    'vue/no-unused-vars': 'warn',
-    'no-unused-vars': 'warn'
+    'vue/no-unused-vars': ['warn', { ignorePattern: '^_' }],
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     // 'vue/component-tags-order': [
     //   'error',
     //   {
     //     order: ['script', 'template', 'style']
     //   }
     // ]
-  }
+  },
 };

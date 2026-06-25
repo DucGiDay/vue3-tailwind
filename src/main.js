@@ -22,9 +22,7 @@ const triggerUpdateReload = () => {
   const last = sessionStorage.getItem('chunk_reload_at');
   const now = Date.now();
   if (!last || now - Number(last) > 30000) {
-    const confirmed = window.confirm(
-      'Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang.',
-    );
+    const confirmed = window.confirm('Hệ thống vừa được cập nhật.\nBấm OK để tải lại trang.');
     if (confirmed) {
       sessionStorage.setItem('chunk_reload_at', String(now));
       window.location.reload();
@@ -48,7 +46,7 @@ let router = null;
 
 function render(props = {}) {
   const { container, i18n } = props;
-  const rootComponent = props?.componentName === 'smart-report' ? SmartReport : App;
+  const _rootComponent = props?.componentName === 'smart-report' ? SmartReport : App;
   // Nếu là chế độ nhúng lẻ Smart Report
   if (props?.componentName === 'smart-report') {
     // h(Component, Props, Children)
@@ -63,7 +61,7 @@ function render(props = {}) {
   } else {
     app = createApp(App);
   }
-  // app = createApp(rootComponent);
+  // app = createApp(_rootComponent);
 
   if (i18n) {
     setupI18n(i18n);
@@ -77,7 +75,7 @@ function render(props = {}) {
   app.use(pinia);
 
   router = createAppRouter(props?.microRouters || {}, props?.componentName);
-  
+
   router.onError((error) => {
     if (
       error.message &&
