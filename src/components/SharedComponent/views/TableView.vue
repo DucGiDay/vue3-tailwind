@@ -70,10 +70,25 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:searchValue', 'search']);
+const home = ref({
+  label: 'Home',
+});
+const items = ref([
+  { label: 'Electronics' },
+  { label: 'Computer' },
+  { label: 'Accessories' },
+  { label: 'Keyboard' },
+  { label: 'Wireless' },
+]);
+
+const emit = defineEmits(['update:searchValue', 'search', 'force-search']);
 
 const onInput = (event) => {
   emit('update:searchValue', event.target.value);
   emit('search');
+};
+const onForceInput = (event) => {
+  emit('update:searchValue', event.target.value);
+  emit('force-search');
 };
 </script>
