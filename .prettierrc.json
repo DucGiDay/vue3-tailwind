@@ -9,5 +9,5 @@
   "bracketSameLine": false,
   "proseWrap": "preserve",
   "htmlWhitespaceSensitivity": "ignore",
-  "endOfLine": "lf"
+  "endOfLine": "auto"
 }

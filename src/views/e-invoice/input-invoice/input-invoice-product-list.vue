@@ -1,21 +1,9 @@
 <template>
-  <TableView title="Danh sách sản phẩm theo HDDV" :searchable="false">
-    <template #header-actions>
-      <Button
-        :loading="isLoadingExport"
-        size="small"
-        outlined
-        class="!fb-rounded-lg"
-        @click="handleExportExcel"
-      >
-        <IconDownload v-if="!isLoadingExport" color="currentColor" />
-        <FbLoading v-else show />
-        Xuất excel
-      </Button>
-    </template>
+  <TableView :searchable="false">
     <template #toolbar>
       <div class="fb-bg-white fb-px-4 fb-py-3 fb-rounded-lg fb-border fb-border-surface-200">
-        <div class="fb-flex fb-gap-2 fb-flex-wrap">
+        <div class="fb-flex fb-gap-2 fb-items-center fb-flex-wrap">
+          <p class="fb-font-semibold fb-text-base">Danh sách sản phẩm theo HDDV</p>
           <FbDateFilter module="invoice" useSinglePicker @update:modelValue="filter" size="small" />
 
           <Button
@@ -37,7 +25,18 @@
               size="small"
               @click="showAdvancedFilter = !showAdvancedFilter"
             >
-              <IconFilter color="currentColor" />
+              <IconFilter color="currentColor" class="fb-h-5 fb-w-5" />
+            </Button>
+            <Button
+              :loading="isLoadingExport"
+              size="small"
+              outlined
+              class="!fb-rounded-lg"
+              @click="handleExportExcel"
+            >
+              <IconDownload v-if="!isLoadingExport" color="currentColor" />
+              <FbLoading v-else show />
+              Xuất excel
             </Button>
           </div>
         </div>

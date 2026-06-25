@@ -41,6 +41,13 @@ export default defineConfig(({ mode }) => {
             '@/common/i18n/index': ['$t'],
           },
         ],
+        eslintrc: {
+          enabled: true,
+          filepath: './.eslintrc-auto-import.json',
+          globals: {
+            __webpack_public_path__: true,
+          },
+        },
       }),
     ],
 
