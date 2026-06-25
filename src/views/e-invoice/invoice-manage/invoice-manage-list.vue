@@ -43,15 +43,20 @@
             class="fb-flex fb-flex-wrap fb-gap-4 fb-w-full fb-mt-2 fb-pt-2 fb-border-t"
           >
             <!-- Các bộ lọc khác -->
-            <Select
+
+            <MultiSelect
               v-if="invoiceTab === 'tab1'"
-              v-model="statusField"
+              v-model="statusFieldList"
+              showClear
               :options="statusOptions"
               optionLabel="label"
               optionValue="value"
+              filter
               placeholder="Chọn trạng thái"
-              class="fb-w-full md:fb-w-52"
-              showClear
+              filterPlaceholder="Tìm kiếm"
+              selectedItemsLabel="Đã chọn {0} trạng thái"
+              :maxSelectedLabels="3"
+              class="fb-w-full md:fb-w-auto md:fb-min-w-52"
               size="small"
               @change="filter"
             />
@@ -59,7 +64,7 @@
             <InputText
               v-model="serialField"
               placeholder="Ký hiệu"
-              class="fb-w-full md:fb-w-52"
+              class="fb-w-full md:fb-w-auto md:fb-min-w-52"
               size="small"
               @input="onSearchChange"
             />
@@ -73,7 +78,7 @@
               optionLabel="label"
               optionValue="value"
               placeholder="Loại hóa đơn"
-              class="fb-w-full md:fb-w-52"
+              class="fb-w-full md:fb-w-auto md:fb-min-w-52"
               showClear
               size="small"
               @change="filter"
@@ -308,11 +313,14 @@ const selectedStoreUid = ref(null);
 
 const showAdvancedFilter = ref(true);
 const searchField = ref(null);
-const statusField = ref(null);
+const statusField = ref(route.query?.vat_publish_status || null);
 const invoiceAction = ref(null); // Loại hóa đơn
 const serialField = ref(null);
 const invoiceTab = ref('tab1'); // tab1, tab2, tab3
 const statusOptions = reactive(VAT_PUBLISH_STATUS_LIST);
+const statusFieldList = ref(
+  route.query?.vat_publish_status ? route.query?.vat_publish_status.split(',') : [],
+);
 const currentPage = ref(1);
 const pageSize = ref(50);
 
@@ -368,7 +376,8 @@ const getData = async ({ page, rows } = {}) => {
     is_sync_vat: invoiceTab.value === 'tab3' ? '2,3' : '1',
     vat_invoice_serial: serialField.value,
     invoice_action: invoiceAction.value,
-    vat_publish_status: invoiceTab.value === 'tab1' ? statusField.value : null,
+    // vat_publish_status: invoiceTab.value === 'tab1' ? statusField.value : null,
+    vat_publish_status: invoiceTab.value === 'tab1' ? statusFieldList.value.join(',') : null,
   };
 
   isLoading.value = true;

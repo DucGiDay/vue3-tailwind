@@ -253,12 +253,14 @@ const storeUidByTaxCode = computed(() => {
 const invoiceManageColumns = computed(() => {
   // tab3
   if (invoiceTab.value === 'tab3') {
-    const columns = [
-      ...INVOICE_MANAGE_TABLE_COLUMNS,
-      { field: 'error_message', header: 'Lý do xuất lỗi' },
-    ];
+    const columns = INVOICE_MANAGE_TABLE_COLUMNS;
     const actionIndex = columns.findIndex((col) => col.field === 'action');
-    const newColumn = { field: 'error_message', header: 'Lý do xuất lỗi' };
+    const newColumn = {
+      field: 'error_message',
+      header: 'Lý do xuất lỗi',
+      classes: '!fb-whitespace-normal !fb-break-words',
+      style: { minWidth: '40rem', maxWidth: '50rem' },
+    };
     if (actionIndex !== -1) {
       columns.splice(actionIndex, 0, newColumn);
     } else {

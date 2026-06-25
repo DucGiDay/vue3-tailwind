@@ -84,7 +84,7 @@ const items = ref([
   { label: 'Wireless' },
 ]);
 
-const emit = defineEmits(['update:searchValue', 'search']);
+const emit = defineEmits(['update:searchValue', 'search', 'force-search']);
 
 const onInput = (event) => {
   emit('update:searchValue', event.target.value);
@@ -92,6 +92,6 @@ const onInput = (event) => {
 };
 const onForceInput = (event) => {
   emit('update:searchValue', event.target.value);
-  emit('forceSearch');
+  emit('force-search');
 };
 </script>

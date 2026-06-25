@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import StatusSale from '@/components/PageComponent/e-invoice/StatusSale.vue';
 import LastBillTable from '@/components/PageComponent/e-invoice/LastBillTable.vue';
 import SaleByDate from '@/components/PageComponent/e-invoice/SaleByDate.vue';
@@ -24,6 +25,16 @@ const onDateChange = () => {
 const filterStore = useFilterStore();
 const invoiceStore = useEInoiveStore();
 const globalStore = useGlobalStore();
+
+const taxCodeOptions = computed(() => invoiceStore.listTaxStores.data || []);
+
+const confirmTaxCode = (selectedTaxCode) => {
+  if (selectedTaxCode) {
+    invoiceStore.setCurrentTaxCode(selectedTaxCode);
+    invoiceStore.showTaxCodeDialog = false;
+    getData();
+  }
+};
 
 // Methods
 const getData = async () => {
@@ -110,7 +121,7 @@ onMounted(() => {
   <div :class="['fb-flex fb-justify-between fb-items-center fb-mb-5']">
     <div class="fb-flex fb-items-center fb-space-x-3">
       <h5 class="!fb-m-0 !fb-text-lg !fb-font-semibold">Tổng quan</h5>
-      <div 
+      <!-- <div 
         class="fb-flex fb-items-center fb-px-3 fb-py-1.5 fb-border fb-border-surface-200 fb-rounded-md fb-bg-white fb-cursor-pointer hover:fb-border-primary fb-transition-colors fb-text-sm fb-text-color"
         @click="invoiceStore.showTaxCodeDialog = true"
         title="Chọn mã số thuế"
@@ -119,7 +130,27 @@ onMounted(() => {
           MST: <strong class="fb-font-semibold">{{ invoiceStore.currentTaxCode || 'Chưa chọn' }}</strong>
         </span>
         <IconChevronDown class="fb-ml-2 fb-text-color-secondary fb-w-4 fb-h-4" />
-      </div>
+      </div> -->
+      <Select
+        :modelValue="invoiceStore.currentTaxCode"
+        @update:modelValue="confirmTaxCode"
+        :options="taxCodeOptions"
+        size="small"
+        optionLabel="tax_code"
+        optionValue="tax_code"
+        placeholder="Chọn mã số thuế"
+        class="fb-w-60 fb-h-9 fb-items-center"
+      >
+        <template #value="slotProps">
+          <span v-if="slotProps.value">
+            MST: <strong class="fb-font-semibold">{{ slotProps.value }}</strong>
+          </span>
+          <span v-else>Chọn mã số thuế</span>
+        </template>
+        <template #option="slotProps">
+          <span>{{ slotProps.option.tax_code }}</span>
+        </template>
+      </Select>
     </div>
     <ButtonExtendInvoice />
   </div>
